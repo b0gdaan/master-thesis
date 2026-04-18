@@ -1,0 +1,173 @@
+"""
+DCC-GARCH(1,1) benchmark — Engle (2002).
+Econometric baseline for correlation forecasting.
+"""
+import warnings
+import numpy as np
+import pandas as pd
+from typing import Optional, Tuple
+
+from scipy.optimize import minimize
+
+try:
+    from arch import arch_model
+    ARCH_AVAILABLE = True
+except Exception:
+    ARCH_AVAILABLE = False
+
+
+def _fit_univariate_garch(r: pd.Series) -> np.ndarray:
+    """Fit GARCH(1,1) with zero mean. Returns standardized residuals z_t = eps_t / sigma_t."""
+    if not ARCH_AVAILABLE:
+        raise ImportError("arch package required: pip install arch")
+    x = 100.0 * r.dropna().astype(float).values
+    am = arch_model(x, vol="Garch", p=1, q=1, mean="Zero", dist="normal", rescale=True)
+    res = am.fit(disp="off", show_warning=False)
+    eps = res.resid
+    sig = np.maximum(res.conditional_volatility, 1e-10)
+    return eps / sig
+
+
+def _fit_garch_state(r: pd.Series) -> dict:
+    """Fit GARCH(1,1) and return parameters plus the current volatility state.
+
+    Used by dcc_walk to advance the GARCH variance one step at a time between
+    refits, producing a genuine 1-step-ahead forecast at every prediction point.
+    """
+    if not ARCH_AVAILABLE:
+        raise ImportError("arch package required: pip install arch")
+    scale = 100.0
+    x = scale * r.dropna().astype(float).values
+    am = arch_model(x, vol="Garch", p=1, q=1, mean="Zero", dist="normal", rescale=True)
+    res = am.fit(disp="off", show_warning=False)
+    params = res.params
+    try:
+        omega = float(params["omega"])
+        alpha = float(params["alpha[1]"])
+        beta  = float(params["beta[1]"])
+    except (KeyError, TypeError):
+        vals = np.asarray(params, dtype=float)
+        omega, alpha, beta = float(vals[0]), float(vals[1]), float(vals[2])
+    eps = res.resid
+    sig = np.maximum(res.conditional_volatility, 1e-10)
+    return {
+        "z": eps / sig,
+        "omega": omega,
+        "alpha": alpha,
+        "beta": beta,
+        "last_h": float(sig[-1] ** 2),
+        "last_eps": float(eps[-1]),
+        "scale": scale,
+    }
+
+
+def _dcc_loglik(params: np.ndarray, z: np.ndarray, Qbar: np.ndarray) -> float:
+    """
+    Negative log-likelihood for DCC(1,1).
+    Q_t = (1-a-b)*Qbar + a*z_{t-1}*z_{t-1}' + b*Q_{t-1}
+    R_t = diag(Q_t)^{-1/2} * Q_t * diag(Q_t)^{-1/2}
+
+    Uses closed-form 2x2 determinant and inverse to avoid linalg overhead.
+    """
+    a, b = params
+    if a <= 0 or b <= 0 or (a + b) >= 0.9999:
+        return 1e12
+
+    T = z.shape[0]
+    Q = Qbar.copy()
+    nll = 0.0
+
+    for t in range(1, T):
+        Q = (1.0 - a - b) * Qbar + a * np.outer(z[t - 1], z[t - 1]) + b * Q
+
+        q00, q01, q11 = Q[0, 0], Q[0, 1], Q[1, 1]
+        if q00 < 1e-10 or q11 < 1e-10:
+            return 1e12
+        rho = q01 / (np.sqrt(q00) * np.sqrt(q11))
+        rho = max(-0.9999, min(0.9999, rho))
+        det_r = 1.0 - rho * rho
+        if det_r < 1e-15:
+            return 1e12
+        z0, z1 = z[t, 0], z[t, 1]
+        nll += 0.5 * (np.log(det_r) + (z0*z0 + z1*z1 - 2.0*rho*z0*z1) / det_r - (z0*z0 + z1*z1))
+
+    return float(nll)
+
+
+def dcc_garch_fit_predict(
+    r1: pd.Series,
+    r2: pd.Series,
+    horizon: int = 1,
+    opt_start: Optional[np.ndarray] = None,
+) -> Tuple[np.ndarray, np.ndarray]:
+    """Fit DCC-GARCH(1,1) on two return series and produce 1-step-ahead correlation forecasts.
+
+    Returns
+    -------
+    full_pred : aligned 1-step-ahead forecasted correlation
+    full_corr : in-sample DCC conditional correlation
+    """
+    if not ARCH_AVAILABLE:
+        raise ImportError("arch package required: pip install arch")
+
+    df = pd.concat([r1.rename("r1"), r2.rename("r2")], axis=1).dropna()
+    if len(df) < 250:
+        raise ValueError(f"Not enough data for DCC-GARCH: {len(df)} rows (need >=250).")
+
+    z1 = _fit_univariate_garch(df["r1"])
+    z2 = _fit_univariate_garch(df["r2"])
+    T = min(len(z1), len(z2))
+    z = np.column_stack([z1[-T:], z2[-T:]])
+    Qbar = np.cov(z.T)
+
+    x0 = opt_start if opt_start is not None else np.array([0.05, 0.90])
+    bounds = [(1e-4, 0.49), (1e-4, 0.9989)]
+    cons = ({"type": "ineq", "fun": lambda p: 0.9999 - (p[0] + p[1])},)
+    res = minimize(
+        lambda p: _dcc_loglik(p, z, Qbar),
+        x0=x0, bounds=bounds, constraints=cons,
+        method="SLSQP", options={"maxiter": 500, "ftol": 1e-9},
+    )
+    if not res.success:
+        warnings.warn(
+            f"DCC-GARCH optimisation did not converge: {res.message}. "
+            "Using best-found parameters; forecasts may be sub-optimal."
+        )
+    a, b = float(res.x[0]), float(res.x[1])
+    if a + b >= 0.9999:
+        warnings.warn(
+            f"DCC near unit-root: a={a:.4f}, b={b:.4f}, a+b={a+b:.4f}. "
+            "Clamping to stable region. Consider shorter estimation window."
+        )
+        scale = 0.998 / (a + b)
+        a, b = a * scale, b * scale
+        res.x[0], res.x[1] = a, b
+
+    Q = Qbar.copy()
+    corr_t = np.full(T, np.nan, dtype=float)
+    pred = np.full(T, np.nan, dtype=float)
+
+    for t in range(1, T):  # noqa: E741
+        Q = (1.0 - a - b) * Qbar + a * np.outer(z[t - 1], z[t - 1]) + b * Q
+        d = np.sqrt(np.diag(Q))
+        Dinv = np.diag(1.0 / d)
+        R = Dinv @ Q @ Dinv
+        corr_t[t] = float(np.clip(R[0, 1], -0.9999, 0.9999))
+
+        # E[Q_{t+1}] = (1-a-b)*Qbar + (a+b)*Q_t
+        Q_f = (1.0 - a - b) * Qbar + (a + b) * Q
+        d_f = np.sqrt(np.diag(Q_f))
+        R_f = np.diag(1.0 / d_f) @ Q_f @ np.diag(1.0 / d_f)
+        pred[t] = float(np.clip(R_f[0, 1], -0.9999, 0.9999))
+
+    idx = df.index[-T:]
+    pred_s = pd.Series(pred, index=idx).reindex(df.index)
+    corr_s = pd.Series(corr_t, index=idx).reindex(df.index)
+
+    full_idx = pd.concat([r1.to_frame(), r2.to_frame()], axis=1).index
+    full_pred = pd.Series(np.nan, index=full_idx, dtype=float)
+    full_corr = pd.Series(np.nan, index=full_idx, dtype=float)
+    full_pred.loc[df.index] = pred_s.values
+    full_corr.loc[df.index] = corr_s.values
+
+    return full_pred.values, full_corr.values

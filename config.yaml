@@ -1,0 +1,80 @@
+base_dir: "."
+
+# Data window
+start_date: "2016-01-01"
+end_date: null
+
+# For reproducibility (web source access date)
+yahoo_access_date: "2026-01-01"
+
+assets:
+  crypto:
+    - "BTC-USD"
+    - "ETH-USD"
+  traditional:
+    - "^GSPC"
+    - "^IXIC"
+    - "GLD"
+    - "SLV"
+    - "UUP"
+
+# Pair setup
+base_asset: "BTC-USD"
+extra_assets:
+  - "ETH-USD"   # crypto-crypto dependency
+
+# Dependency definition: rolling correlation windows (sensitivity analysis)
+rolling_windows: [14, 30, 60, 90]
+
+# Forecast settings
+forecast_horizon: 1
+
+# Target transform (recommended for correlations, stabilizes variance)
+use_fisher_transform: true
+
+# Econometric benchmark (Variant A: DCC-GARCH)
+use_dcc_garch: true
+
+# Walk-forward evaluation (expanding window)
+min_train_size: 800
+# refit_every ≈ 20 trading days ≈ 1 calendar month.
+# Monthly rebalancing is the standard frequency in portfolio risk management
+# (see e.g. Grinold & Kahn 1999; common practice in institutional PM).
+# Sensitivity over [5, 10, 21, 42, 63] is documented in outputs/results/refit_sensitivity.csv.
+refit_every: 20
+
+# Diebold–Mariano test (Newey–West lag; for h=1, 0 is standard)
+dm_nw_lag: 0
+
+random_state: 42
+use_xgboost: true
+
+# XGBoost device: "cuda" for GPU, "cpu" for CPU
+xgb_device: "cuda"
+
+# Investor signal layer: predict next-day down move in traditional assets
+enable_signal_layer: true
+signal_probability_threshold: 0.55
+signal_min_train_size: 800
+signal_refit_every: 20
+signal_target_mode: "stress"
+signal_stress_sigma: 0.75
+
+# Nested signal block (mirrors flat signal_* keys above; used by sensitivity scripts)
+signal:
+  stress_sigma_threshold: 0.75   # default; matches signal_stress_sigma above
+
+# Bootstrap confidence intervals for OOS metrics
+bootstrap:
+  n_samples: 1000
+
+# Sensitivity analyses (written to outputs/results/)
+sensitivity:
+  # refit_every values to sweep for the representative pair (BTC vs ^GSPC, w=30)
+  refit_every_values: [5, 10, 21, 42, 63]
+  # stress_sigma thresholds to sweep (uses already-computed probability predictions)
+  stress_thresholds: [0.5, 0.75, 1.0, 1.5, 2.0]
+
+# Reproducibility: explicit XGBoost seed (mirrors random_state above)
+reproducibility:
+  xgb_seed: 42

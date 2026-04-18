@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+.venv_broken/
+venv/
+env/
+
+# IDE / Editor
+.idea/
+.vscode/
+*.iml
+
+# Claude / AI tool traces
+.claude/
+.claire/
+
+# Data (auto-downloaded on first run via yfinance)
+data/raw/
+data/processed/
+
+# Generated outputs (reproducible — run main.py to regenerate)
+outputs/predictions/
+outputs/results/
+outputs/tables/
+models/
+out/
+
+# Figures are kept for README preview
+# outputs/figures/ is intentionally tracked
+
+# Utility scripts
+fix_for_github.py
+
+# LaTeX build artefacts
+thesis_template/
+docx_tmp/
+*.aux
+*.log
+*.toc
+*.out
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Personal / local files
+files for prof/
+*.docx
+auxil/
+report/
+
+# OS
+.DS_Store
+Thumbs.db
