@@ -1,0 +1,59 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{What the results actually say}
+
+The two cleanest takeaways from the empirical section are these. First, the rolling intermarket dependency between Bitcoin and conventional assets is genuinely forecastable out of sample---not a fluke of in-sample overfitting, but a real signal that survives strict temporal ordering constraints across all six pairs and four window lengths. Second, that forecastability is almost entirely driven by persistence. Rolling correlation does not jump around randomly; it remembers yesterday.
+
+Both findings matter, and neither cancels the other out.
+
+\subsection{Why AR1 wins, and what that actually means}
+
+The dominance of simple autoregressive baselines is not embarrassing. It tells you something specific about the data-generating process. A rolling Pearson correlation computed over $w$ days shares $w-1$ observations with the previous window, which mechanically creates strong autocorrelation. After Fisher transformation, the first-order lag captures the overwhelming majority of forecastable variance. Under those conditions, any sensible model will lean heavily on the most recent value---and a model that does nothing else will be very hard to beat.
+
+This is a documented pattern in financial forecasting \cite{welch2008}. Signal-to-noise ratios in financial markets are low. The incremental information in auxiliary features is often swamped by the autoregressive component. Recognising this early would have saved quite a bit of time running hyperparameter search on Random Forest configurations.
+
+That said, AR1 winning does not mean machine learning is useless here. It means machine learning is useful for a different reason: ruling out more flexible alternatives. The fact that a well-tuned XGBoost model cannot beat AR1 is itself informative. It tells you the dependency process does not contain exploitable nonlinear structure at the one-step horizon, at least not in the feature set used here.
+
+\subsection{ML versus DCC-GARCH: a fairer comparison}
+
+Ridge and ElasticNet consistently beat DCC-GARCH. That gap is large---average RMSE of around 0.09 versus 0.21. The DM statistics are all positive with $p$-values at the numerical floor of double precision.
+
+The right interpretation is not that DCC-GARCH is a bad model. It is a theoretically coherent model for conditional covariance that was designed for a different job. Its output is an instantaneous conditional correlation, not a smoothed rolling average. Projecting one onto the other introduces a systematic lag that the model was never designed to eliminate. Machine-learning models, trained directly on the Fisher-transformed rolling target, do not have that mismatch. They are optimised for the right objective from the start.
+
+This is the honest explanation for the performance gap, and it should be stated clearly in the thesis rather than celebrated as if ML had somehow defeated an econometric competitor on its home turf.
+
+\subsection{The investor signal: what works and what does not}
+
+The signal layer produces results that are moderate in every dimension: AUC around 0.51--0.54, balanced accuracy around 51--54\%, exit rates between 10 and 30\% depending on the model and threshold. None of those numbers is impressive in isolation. Combined, they describe a signal that consistently picks the right direction more often than chance, fires at a reasonable frequency, and is more informative for equity stress than for precious-metals or dollar-index stress.
+
+The equity result is economically interpretable. Bitcoin and the S\&P~500 share exposure to global risk appetite, funding liquidity, and sentiment cycles. When the dependency between them is rising or shifting, it often reflects broader market-regime transitions that also elevate equity downside risk. The crypto feature set is reasonably well-specified for that channel.
+
+Gold and silver respond to a wider set of forces---real rates, inflation expectations, geopolitical premia, safe-haven demand---that are not well represented by Bitcoin dynamics. The attenuated signal for those instruments is therefore not a surprise; it is consistent with a story where the feature set captures some drivers of market stress but not all of them.
+
+In practice, the signal should be treated as an auxiliary risk indicator, not an alarm system. It is best used alongside fundamental valuation, macro analysis, and position-sizing rules---raising the threshold for accepting risk when the dependency-based probability of a stress regime is elevated.
+
+\subsection{Methodological choices that mattered}
+
+A few design decisions turned out to be important:
+
+\begin{itemize}
+    \item \textbf{Walk-forward evaluation for DCC-GARCH as well.} Running DCC-GARCH on the full sample before producing out-of-sample predictions would have given it an unfair advantage. Implementing the same expanding-window protocol for all models leveled the comparison.
+    \item \textbf{Fisher transformation on the target.} Without it, the bounded nature of Pearson correlation near $\pm 1$ distorts errors near the extremes. Fisher-$z$ brings the target closer to Gaussian and makes RMSE a more sensible loss function across the full range.
+    \item \textbf{Multiple windows.} Using only the 30-day window would have understated how strongly predictability depends on the autocorrelation structure. The progression from $w=14$ to $w=90$ shows the autocorrelation effect systematically.
+    \item \textbf{Multiple metrics.} Relying on RMSE alone would have missed that DCC-GARCH is not just worse on average---it is worse for every pair, at every window, with statistical significance. The DM test adds that layer of certainty.
+\end{itemize}
+
+\subsection{What the results do not say}
+
+A few things this thesis cannot claim, and should not:
+
+Bitcoin does not predict equity returns. It predicts (partially) the evolving \emph{dependency} between Bitcoin and equities, which is a weaker and more precise statement. The signal layer predicts elevated downside risk probability for conventional assets---not direction, not magnitude, and not timing within a flagged period.
+
+The results are based on one-step-ahead forecasting. Multi-step performance could differ substantially, especially for machine learning where the autoregressive advantage weakens as the horizon extends. This is an open question.
+
+Finally, no transaction-cost analysis was done. Whether the signal produces risk-adjusted gains in a real portfolio after costs and turnover constraints is unknown. That would require a separate study with explicit portfolio construction assumptions.
+
+\subsection{Limitations, honestly stated}
+
+The main limitations are: daily frequency (no intraday), one-step horizon, Pearson correlation as the only dependency measure, a single base cryptocurrency (Bitcoin), and no portfolio backtest. Each represents a natural extension that could sharpen or complicate the findings. None of them invalidates the core empirical results within the scope of what was actually tested.
