@@ -29,7 +29,7 @@ Table~\ref{tab:model_ranking_summary} reports the average out-of-sample performa
         DCC\_GARCH & 0.2147 & 0.1687 & 0.3814 \\
         \bottomrule
     \end{tabular}
-    \par\smallskip\noindent\footnotesize{\textit{Note: Results averaged across all asset-pair and window-length combinations. RMSE and R$^2$ computed on out-of-sample walk-forward predictions. Best-performing model excluding DCC-GARCH is AR1. All metrics reflect the full sample through 18 April 2026 (3{,}025 observations); minor numerical differences from earlier pipeline runs are attributable to the expanded dataset.}}
+    \par\smallskip\noindent\footnotesize{\textit{Note: Results averaged across all asset-pair and window-length combinations. RMSE and R$^2$ computed on out-of-sample walk-forward predictions. Best-performing model excluding DCC-GARCH is AR1. All metrics reflect the full sample through 17 May 2026 (3{,}053 observations); minor numerical differences from earlier pipeline runs are attributable to the expanded dataset.}}
 \end{table}
 
 Four notable patterns emerge from Table~\ref{tab:model_ranking_summary}. First, the top-ranked model is the AR1 baseline, with an average RMSE of 0.0665 and an out-of-sample $R^2$ of 0.9423. Second, the naive persistence model is nearly indistinguishable from AR1 (RMSE difference of 0.0007), confirming that the dominant forecasting mechanism is autoregressive in nature. Third, the regularized linear models Ridge and ElasticNet occupy an intermediate tier with $R^2$ values near 0.89, outperforming all tree-based ensembles on average. Fourth, the DCC-GARCH benchmark ranks last by a substantial margin, with an average $R^2$ of only 0.3814, indicating that the parametric conditional-correlation model is not competitive in the direct one-step-ahead prediction of the Fisher-transformed rolling correlation target.
@@ -75,7 +75,7 @@ Despite the dominance of persistence baselines in the unconditional ranking, mac
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.82\textwidth]{../outputs/figures/dm_heatmap_Ridge_vs_DCC.png}
+    \includegraphics[width=0.82\textwidth]{../outputs/figures/dm_heatmap_XGB_GPU_vs_DCC.png}
     \caption{Diebold--Mariano test results comparing the best machine-learning model against DCC-GARCH across all asset-pair and window-length combinations. Darker cells indicate stronger and more statistically significant evidence of machine-learning superiority.}
     \label{fig:dm_heatmap}
 \end{figure}

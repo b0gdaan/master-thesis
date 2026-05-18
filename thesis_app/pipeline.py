@@ -884,26 +884,27 @@ def run_experiment(
     )
 
     dm_rows = []
-    rmse_map = dict(zip(metrics_df["model"], metrics_df["RMSE"])) if not metrics_df.empty else {}
-    benchmark_candidates = [model for model in metrics_df["model"].tolist() if model not in {"Naive_Last", "AR1", "DCC_GARCH"}]
-    best_model = min(benchmark_candidates, key=lambda model: rmse_map[model]) if benchmark_candidates else None
-
-    if best_model:
-        e_best = (out_df["y_true"] - out_df[best_model]).values
-        for benchmark in ["Naive_Last", "DCC_GARCH"]:
-            if benchmark in out_df.columns:
-                e_bench = (out_df["y_true"] - out_df[benchmark]).values
-                dm = diebold_mariano(e_best, e_bench, h=horizon, nw_lag=int(cfg.get("dm_nw_lag", 0)))
-                dm_rows.append(
-                    {
-                        "dependency": dependency_name,
-                        "window": window,
-                        "space": target_space,
-                        "model": best_model,
-                        "benchmark": benchmark,
-                        **dm,
-                    }
-                )
+    if not metrics_df.empty:
+        ml_models = [
+            m for m in metrics_df["model"].tolist()
+            if m not in {"Naive_Last", "AR1", "DCC_GARCH"} and m in out_df.columns
+        ]
+        for test_model in ml_models:
+            e_model = (out_df["y_true"] - out_df[test_model]).values
+            for benchmark in ["Naive_Last", "DCC_GARCH"]:
+                if benchmark in out_df.columns:
+                    e_bench = (out_df["y_true"] - out_df[benchmark]).values
+                    dm = diebold_mariano(e_model, e_bench, h=horizon, nw_lag=int(cfg.get("dm_nw_lag", 0)))
+                    dm_rows.append(
+                        {
+                            "dependency": dependency_name,
+                            "window": window,
+                            "space": target_space,
+                            "model": test_model,
+                            "benchmark": benchmark,
+                            **dm,
+                        }
+                    )
 
     dm_df = pd.DataFrame(dm_rows)
     signal_metrics_df = pd.DataFrame()
