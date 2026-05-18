@@ -1,0 +1,126 @@
+\section{Theoretical Background and Literature Review}
+
+\subsection{Why intermarket dependency matters}
+
+Intermarket dependency occupies a central position in modern financial theory because the benefits of diversification, the propagation of contagion, the efficacy of hedging strategies, and the measurement of portfolio risk all depend fundamentally on the co-movement structure among assets. In the canonical mean-variance framework, dependence is summarized by a constant correlation coefficient. Empirical evidence, however, has long established that this static representation is inadequate. Pairwise correlations are time-varying, respond asymmetrically to positive and negative shocks, and tend to rise sharply during market downturns---precisely the episodes in which diversification is most urgently required \cite{longin2001}. Consequently, the forecasting of \emph{time-varying dependence} is both theoretically motivated and practically indispensable for risk management.
+
+The relevance of dynamic dependence is amplified when one of the assets under study is cryptocurrency-based. Bitcoin trades on a continuous, globally accessible market, responds rapidly to shifts in sentiment and funding liquidity, and is simultaneously subject to a broad range of economic narratives: inflation-hedging demand, speculative risk appetite, technological optimism, regulatory uncertainty, and global macro positioning. This multiplicity of drivers means that Bitcoin occupies no single, stable role in a multi-asset portfolio. At different points in the business and credit cycle, it may exhibit the characteristics of a speculative high-beta growth instrument, a liquidity-sensitive risk proxy, or an idiosyncratic sentiment barometer. That structural instability renders its relationship with conventional assets uniquely suitable for a time-varying analytical approach.
+
+\subsection{Cryptocurrencies and conventional assets}
+
+The academic literature on the intersection of cryptocurrency markets and conventional asset classes has expanded substantially over the past decade, developing along several distinct research strands. One strand examines Bitcoin as a standalone asset and characterizes its return distribution, volatility clustering, tail risk profile, and degree of weak-form informational efficiency. A second strand investigates portfolio diversification and asks whether Bitcoin provides economically meaningful diversification benefits relative to equity indices, gold, crude oil, or major fiat currencies. A third strand, most directly relevant to the present thesis, studies connectedness, contagion, and return and volatility spillovers across markets, with particular attention to crisis and stress episodes.
+
+A recurring finding across these strands is structural instability \cite{bouri2017hedge, corbet2018exploring}. The dependence between Bitcoin and broad equity indices tends to be statistically weak or directionally inconsistent during tranquil market conditions but strengthens materially during episodes of pronounced risk-on or risk-off positioning \cite{ji2018network, kristoufek2015main}. Precious metals exhibit generally lower and more variable co-movement with Bitcoin \cite{dyhrberg2016bitcoin, klein2018bitcoin}, a pattern attributable to their distinct investor bases and established safe-haven role. Currency-related instruments introduce a further dimension, as they serve as proxies for global funding liquidity \cite{corbet2018exploring}.
+
+These empirical regularities motivate the modeling strategy adopted in the present thesis. Rather than imposing a static dependence coefficient or estimating a single full-sample correlation, the thesis models dependence as a time-varying process. This specification accommodates gradual regime drift, abrupt structural breaks, and heterogeneity in the pace and direction of co-movement changes across window lengths and asset pairs.
+
+\subsection{Rolling correlation as a forecasting target}
+
+The rolling window correlation estimator is conceptually transparent and computationally tractable. For two return series $\{r_{1,t}\}$ and $\{r_{2,t}\}$, the rolling correlation at time $t$ over a window of length $w$ is defined as
+\begin{equation}
+    \hat{\rho}_{t}^{(w)} = \frac{\sum_{s=t-w+1}^{t}(r_{1,s} - \bar{r}_{1,t})(r_{2,s} - \bar{r}_{2,t})}
+    {\sqrt{\sum_{s=t-w+1}^{t}(r_{1,s} - \bar{r}_{1,t})^{2}} \cdot
+     \sqrt{\sum_{s=t-w+1}^{t}(r_{2,s} - \bar{r}_{2,t})^{2}}},
+\end{equation}
+where $\bar{r}_{k,t}$ denotes the in-window mean of series $k$. Traversing this estimator across all $t$ yields a time series $\{\hat{\rho}_{t}^{(w)}\}$ that characterizes the temporal evolution of intermarket co-movement.
+
+The rolling correlation target possesses several properties that make it attractive in a forecasting study. It is directly interpretable: positive values signal co-directional movement, while negative values indicate a hedge-like relationship. It is comparable across asset pairs and window lengths, enabling a systematic multi-asset analysis. It focuses attention on changes in market structure rather than on the level dynamics of individual return series.
+
+The primary methodological challenge imposed by this target is strong serial persistence. Because $\hat{\rho}_{t}^{(w)}$ is constructed from overlapping observation windows, successive estimates share $w-1$ common observations, inducing high autocorrelation in the target series. This persistence is likely to dominate predictive performance and may prevent complex machine-learning models from contributing materially beyond simple autoregressive baselines. The present thesis treats this property not as an obstacle but as an analytically important empirical characteristic of the dependency process.
+
+To improve the statistical behavior of the target, the thesis applies the Fisher $z$-transformation:
+\begin{equation}
+    z_{t}^{(w)} = \frac{1}{2}\ln\!\left(\frac{1 + \hat{\rho}_{t}^{(w)}}{1 - \hat{\rho}_{t}^{(w)}}\right),
+\end{equation}
+which maps the bounded correlation values $\hat{\rho} \in (-1,1)$ to an approximately unbounded real-valued quantity whose sampling distribution is closer to Gaussian. This transformation is standard practice in the analysis of correlation-like quantities and stabilizes variance near the boundaries of the unit interval.
+
+An important alternative to Pearson rolling correlation is the copula-based dependence framework \cite{patton2006copula}, which separately models marginal distributions and the dependence structure, thereby capturing tail dependence and nonlinear co-movement that Pearson correlation cannot detect. The present thesis adopts rolling Pearson correlation for four reasons: (i) direct interpretability for risk-management practitioners; (ii) computational tractability within the walk-forward estimation framework; (iii) compatibility with the DCC-GARCH benchmark, whose output is the conditional correlation matrix $R_t$ derived from the conditional covariance structure \cite{engle2001theoretical}; and (iv) the Fisher $z$-transformation stabilizes the sampling distribution near the boundary of the unit interval. The restriction to Pearson dependence is acknowledged as a limitation, and copula-based extensions are identified as a priority for future research.
+
+\subsection{Econometric benchmark: DCC-GARCH}
+
+The Dynamic Conditional Correlation GARCH model, introduced by \textcite{engle2002}, provides the classical econometric benchmark for the present study. The DCC-GARCH framework decomposes the conditional covariance matrix $H_t$ of a vector of returns $\mathbf{r}_t$ according to
+\begin{equation}
+    H_t = D_t R_t D_t,
+\end{equation}
+where $D_t = \operatorname{diag}(h_{1,t}^{1/2}, h_{2,t}^{1/2})$ is a diagonal matrix of conditional standard deviations and $R_t$ is the time-varying conditional correlation matrix. Each conditional variance $h_{k,t}$ follows a univariate GARCH(1,1) process,
+\begin{equation}
+    h_{k,t} = \omega_k + \alpha_k \varepsilon_{k,t-1}^{2} + \beta_k h_{k,t-1},
+\end{equation}
+where $\varepsilon_{k,t} = r_{k,t}/h_{k,t}^{1/2}$ is the standardized residual. The standardized residuals $\tilde{\varepsilon}_t = D_t^{-1} r_t$ are then used to update the pseudo-correlation matrix $Q_t$ via
+\begin{equation}
+    Q_t = (1 - a - b)\bar{Q} + a\,\tilde{\varepsilon}_{t-1}\tilde{\varepsilon}_{t-1}^{\top} + b\, Q_{t-1},
+\end{equation}
+where $\bar{Q}$ is the unconditional covariance of standardized residuals, and the scalar parameters $a \geq 0$, $b \geq 0$, $a + b < 1$ govern the speed of mean reversion and the persistence of conditional correlation. The conditional correlation matrix is recovered as
+\begin{equation}
+    R_t = \operatorname{diag}(Q_t)^{-1/2}\, Q_t\, \operatorname{diag}(Q_t)^{-1/2}.
+\end{equation}
+
+DCC-GARCH is conceptually well suited to this thesis because it explicitly models time-varying co-movement under heteroskedastic conditions, which are characteristic of both cryptocurrency and conventional equity returns. However, the model's reliance on a specific parametric structure may limit its adaptability when the data exhibit nonlinear interactions or structural breaks. Furthermore, implementations that estimate the model on the full sample prior to computing out-of-sample predictions inadvertently exploit future information. To eliminate this source of leakage, the present thesis employs a strictly walk-forward re-estimation protocol in which the DCC-GARCH model is re-fitted on an expanding window at each evaluation step.
+
+\subsection{Machine-learning approaches to forecasting}
+
+Machine learning is relevant to financial dependency forecasting not because it provides a guaranteed performance advantage, but because it offers a class of models capable of capturing nonlinear patterns, threshold dynamics, and multivariate interaction effects that are difficult to specify parametrically. In this thesis, machine-learning methods are evaluated against both the DCC-GARCH econometric benchmark and simple persistence baselines, with the dual objective of characterizing their relative strengths and identifying the conditions under which they contribute incremental predictive value.
+
+\subsubsection{The HAR model and persistence-based forecasting}
+
+The Heterogeneous Autoregressive (HAR) model, introduced by \textcite{corsi2009har}, provides a natural benchmark for forecasting persistent financial time series. The HAR model approximates long-memory dynamics by summing three autoregressive components operating at daily, weekly, and monthly horizons:
+\begin{equation}
+    z_t = \phi_0 + \phi_d z_{t-1} + \phi_w \bar{z}_{t-5:t-1}
+          + \phi_m \bar{z}_{t-22:t-1} + \varepsilon_t,
+\end{equation}
+where $\bar{z}_{t-k:t-1}$ denotes the arithmetic mean of $z$ over the preceding $k$ periods. This specification is particularly well-suited to rolling correlation targets, which inherit a moving-average smoothing structure from the overlapping observation windows used in their construction \cite{andersen2003realized}. The absence of HAR from the present model set constitutes a recognized limitation; its inclusion is reserved for future work, where a systematic comparison of HAR against AR1 and machine-learning methods across multiple forecast horizons would be informative.
+
+\subsubsection{Regularized linear models}
+
+Regularized linear models, including Ridge regression and Elastic Net, represent strong baselines in structured tabular forecasting settings. Ridge regression imposes an $\ell_2$ penalty on the coefficient vector, shrinking estimates toward zero to reduce estimation variance without introducing sparsity. Elastic Net combines $\ell_1$ and $\ell_2$ regularization:
+\begin{equation}
+    \hat{\boldsymbol{\beta}} = \operatorname*{arg\,min}_{\boldsymbol{\beta}} \left\{
+        \frac{1}{n}\sum_{i=1}^{n}(y_i - \mathbf{x}_i^{\top}\boldsymbol{\beta})^2
+        + \lambda \left[(1-\alpha)\|\boldsymbol{\beta}\|_2^2 + \alpha\|\boldsymbol{\beta}\|_1\right]
+    \right\},
+\end{equation}
+where $\lambda > 0$ is the overall regularization strength and $\alpha \in [0,1]$ governs the relative contribution of the two penalties \cite{zou2005}. The $\ell_1$ component promotes sparsity and implicit variable selection, which is desirable when many lagged predictors carry weak or redundant signal. These models are particularly well suited to the present feature set, which contains multiple transformations of highly correlated return and volatility series.
+
+Despite their linear functional form, regularized models frequently perform competitively in smooth, persistence-driven forecasting problems. When the signal-to-noise ratio is modest and the dominant feature is a lagged value of the target itself, the bias introduced by linearity is often outweighed by the variance reduction achieved through regularization.
+
+\subsubsection{Tree-based ensemble models}
+
+Random Forests construct an ensemble of decision trees, each trained on a bootstrapped subsample and a random subset of features, and aggregate their predictions to reduce variance and improve generalization \cite{breiman2001}. Gradient Boosting Machines instead build trees sequentially, with each new tree fitted to the pseudo-residuals of the current ensemble \cite{friedman2001}. XGBoost extends this boosting framework with second-order gradient approximations, $\ell_1$ and $\ell_2$ regularization terms on tree structure, and computational optimizations that facilitate large-scale application \cite{chen2016}.
+
+Tree-based ensembles are natural candidates for the present forecasting problem because the relationship between cryptocurrency-derived features and dynamic intermarket dependence may involve nonlinearities and interaction effects. The marginal impact of Bitcoin realized volatility on future equity dependence, for instance, may differ substantially depending on whether the current correlation regime is already elevated. Tree ensembles can detect and exploit such conditional patterns without requiring the analyst to specify the interaction structure in advance.
+
+That said, tree-based models are not uniformly superior in one-step-ahead forecasting of a highly persistent target. When the target is overwhelmingly governed by its most recent lagged value, more flexible models may contribute negligible additional signal while incurring a higher estimation variance penalty. This is a primary motivation for the disciplined walk-forward comparison presented in the thesis.
+
+\subsection{Walk-forward evaluation and information leakage}
+
+The temporal ordering of financial time series imposes strict requirements on evaluation design. Random train-test splits are inadmissible in this context because they violate the causal ordering of observations and introduce look-ahead bias, allowing a model trained on data from period $t + k$ to predict outcomes from period $t$. The only defensible evaluation strategy for time-series forecasting is one that ensures every prediction is generated using only information available at or before the forecast origin.
+
+The thesis therefore employs a walk-forward procedure in which models are trained on an expanding historical window, a one-step-ahead prediction is produced, and the window is then extended by one observation. To balance computational cost against realism, model refitting is performed at periodic intervals rather than at every single step. This design mirrors the operational constraints of a real forecasting deployment and eliminates the possibility of inadvertent leakage.
+
+The evaluation protocol is accorded the same level of importance as model selection. A complex model evaluated with implicit leakage may appear to substantially outperform a simpler, correctly evaluated competitor, producing a misleading benchmark comparison. Because the thesis aims to deliver defensible empirical conclusions, methodological integrity in evaluation is treated as a non-negotiable requirement.
+
+\subsection{Model comparison and the Diebold--Mariano test}
+
+Ranking models by average prediction error across the out-of-sample evaluation period provides useful descriptive information but does not establish whether observed performance differences are statistically distinguishable from sampling variation. The Diebold--Mariano test addresses this gap by providing a formal test of the null hypothesis of equal predictive accuracy between two competing forecasts \cite{diebold1995}.
+
+Let $e_{1,t}$ and $e_{2,t}$ denote the forecast errors of models 1 and 2 at time $t$, and let $d_t = g(e_{1,t}) - g(e_{2,t})$ denote the loss differential under a loss function $g(\cdot)$ (typically squared or absolute error). The DM test statistic is
+\begin{equation}
+    \mathrm{DM} = \frac{\bar{d}}{\sqrt{\hat{V}(\bar{d})\,/\, T}} \xrightarrow{d} \mathcal{N}(0,1),
+\end{equation}
+where $\bar{d} = T^{-1}\sum_{t=1}^{T} d_t$ is the mean loss differential, $\hat{V}(\bar{d})$ is a heteroskedasticity- and autocorrelation-consistent (HAC) variance estimator, and $T$ is the number of evaluation periods. Under the null of equal predictive accuracy, the statistic is asymptotically standard normal.
+
+In the context of this thesis, the DM test serves two distinct inferential purposes. First, it determines whether the best-performing machine-learning configuration yields a statistically significant improvement over the leakage-safe DCC-GARCH benchmark. Second, it establishes whether any apparent machine-learning advantage over simple autoregressive or naive persistence baselines survives formal statistical scrutiny. This second comparison is critical: a failure to significantly outperform an AR(1) baseline would imply that the bulk of forecastability derives from the serial persistence of the target series rather than from cross-asset feature learning.
+
+\subsection{From dependency forecasting to investor signaling}
+
+A study confined to the statistical forecasting of rolling correlation would constitute a self-contained academic contribution. However, the practical motivation of the present thesis demands an additional analytical layer. For the forecasting results to be actionable from an investor perspective, the dependency forecasts must be translated into a decision-relevant object that addresses the risk-management problem directly.
+
+The thesis therefore introduces a second-stage signal layer. Rather than forecasting the next-day return direction of a conventional asset, the signal layer determines the probability that the next trading day will belong to a \emph{stress regime}, defined by conditions of elevated downside risk in the conventional asset of interest. This formulation is more directly aligned with portfolio risk management, where the primary objective is not to predict every daily fluctuation but to provide timely advance warning of deteriorating market conditions.
+
+The separation of forecasting and signaling into distinct stages also reflects a broader epistemological point. A model that is scientifically informative---in the sense of reducing forecasting error relative to a benchmark---need not be directly implementable as a trading rule, and conversely, a model engineered for binary classification of market stress may sacrifice statistical precision for decision-theoretic relevance. By making this separation explicit, the thesis establishes a transparent and intellectually honest bridge between the academic forecasting problem and the applied portfolio risk-management context.
+
+\subsection{Positioning of the present thesis}
+
+The present thesis occupies the intersection of financial econometrics, machine-learning methodology, and applied quantitative risk analysis. It does not advance the claim that cryptocurrency data can resolve the problem of market timing. Rather, it examines a more precisely formulated and empirically defensible claim: that cryptocurrency price dynamics contain statistically significant information about the evolution of intermarket dependency structures, and that this information can be used to construct a modest but economically meaningful early-warning signal for conventional asset markets.
+
+This positioning is consequential for the interpretation of results. The primary scientific contribution of the thesis lies in establishing the forecastability of dynamic intermarket dependence and in providing a rigorous comparison of persistence baselines, machine-learning models, and the DCC-GARCH econometric benchmark under a consistent walk-forward evaluation protocol. The investor signal layer extends this contribution into a practical direction while remaining anchored to what the empirical evidence can legitimately support.

@@ -1,0 +1,102 @@
+﻿    \documentclass[master, usehyperref, pdfmetadata]{finthesis}
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{csquotes}
+\usepackage{xurl}
+\sloppy
+
+\addbibresource{references.bib}
+
+% Use standard ttfamily instead of Bera Mono (fvmr8r not available)
+\lstset{basicstyle=\small\ttfamily, extendedchars=false}
+% Rename listing caption prefix from Serbian "Листинг" to English
+\renewcommand{\lstlistingname}{Listing}
+\renewcommand{\lstlistlistingname}{List of Listings}
+
+\title{Forecasting Time-Varying Intermarket Dependencies Between Cryptocurrencies and Conventional Assets Using Machine Learning}
+\author{Bogdan Babaev}
+\date{2026-03-10}
+\studid{1ВИ/2023}
+\studprog{ВЕШТАЧКА ИНТЕЛИГЕНЦИЈА}
+\module{}
+\course{Напредно машинско учење}
+\advisor{проф. др Владимир М. Миловановић}
+\advisorfull{Др Владимир М. Миловановић,\\редовни професор}
+\committee{TODO: члан комисије 1}
+\committee{TODO: члан комисије 2}
+
+% Задатак кандидата — приказује се на трећој насловној страни
+\studentshould{истражи могућност прогнозирања временски-променљивих међутржишних зависности између криптовалута и конвенционалних финансијских актива применом модела машинског учења. У склопу тога кандидат треба да:
+\begin{enumerate}
+    \item прикупи историјске дневне цене за Bitcoin и традиционалне активе (акцијске индексе, фондове племенитих метала, индекс америчког долара, Ethereum) и изврши одговарајућу предобраду и синхронизацију скупа података;
+    \item развије репродуцибилан рачунарски поступак за израчунавање временски-променљивих корелационих циљева помоћу клизних прозора различитих дужина и конструкцију предиктивних особина заснованих на инерцији зависности, волатилности и повратима;
+    \item реализује ванузорачну евалуацију и поређење неколико модела машинског учења (AR, ElasticNet, Ridge, Random Forest, GBM, XGBoost) са DCC-GARCH(1,1) економетријским репером применом процедуре проклизавајућег прозора и Diebold-Mariano теста статистичке значајности;
+    \item уведе практични сигнални слој за рано детектовање стресних дана на тржишту традиционалних актива на основу динамике криптовалута и прогноза зависности, и вреднује га метрикама класификационе тачности прикладним за неуравнотежен скуп класа.
+\end{enumerate}}
+
+\titlepagebib{engle2002}
+\titlepagebib{diebold1995}
+\titlepagebib{zou2005}
+\titlepagebib{friedman2001}
+\titlepagebib{chen2016}
+
+% Четврта насловна страна треба да садржи скенирану оверену пријаву мастер рада.
+% Уколико пријава тренутно није доступна, коментаришите \fourthtitlepage у \maketitle:
+\renewcommand{\maketitle}{%
+    \firsttitlepage%
+    \secondtitlepage%
+    \thirdtitlepage%
+%   \fourthtitlepage% <-- одкоментарисати када буде доступна скенирана пријава рада
+}
+
+\abstractsr{У овом мастер раду разматра се проблем прогнозирања променљивих међутржишних зависности између криптовалута и традиционалних финансијских актива. У фокусу је Bitcoin као основна криптовалута, док скуп традиционалних актива обухвата акцијске индексе, фондове везане за племените метале и индекс америчког долара. Развијен је репродуцибилан рачунарски поступак који покрива преузимање података, израчунавање логаритамских приноса, формирање временски променљивих корелационих циљева, конструисање особина, ванузорачну процену више модела машинског учења и поређење са DCC-GARCH економетријским репером. Поред основног задатка прогнозирања зависности, уведен је и практични слој за формирање раног сигнала ризика који треба да упозори инвеститора на стресне дане на тржишту традиционалних актива. Резултати показују да је временски променљива међутржишна зависност предвидива, али да највећи део предвидивости потиче из сопствене инерције циљне серије, док сложенији модели машинског учења доносе ограничено додатно побољшање у односу на једноставне ауторегресионе приступе. Практични сигнални слој даје умерене резултате и има смисла пре свега као додатни филтар ризика, а не као самосталан механизам за свакодневно одређивање смера тржишта.}
+\keywordssr{криптовалуте, Bitcoin, међутржишне зависности, корелација, машинско учење, DCC-GARCH, управљање ризиком}
+
+\abstracten{This thesis investigates whether information contained in cryptocurrency dynamics can be used to forecast time-varying dependency structures with conventional assets and, in a second step, to derive an early warning signal for investors. Bitcoin is treated as the base cryptocurrency, while the conventional asset universe includes equity indices, precious-metal exchange-traded funds, the U.S. dollar index, and Ethereum as an additional crypto reference. A reproducible machine-learning pipeline is developed for data acquisition, return construction, rolling-correlation target generation, feature engineering, walk-forward model evaluation, and benchmarking against a leakage-safe DCC-GARCH specification. The empirical results show that intermarket dependency is forecastable, but that most predictive power originates from persistence in the dependency series itself. Consequently, simple autoregressive baselines outperform more complex models on average, while machine-learning models still provide useful improvements relative to the DCC-GARCH benchmark. An investor-oriented signal layer based on crypto features and dependency forecasts achieves moderate but meaningful performance and is best interpreted as a risk-management overlay rather than a standalone market-timing engine.}
+\keywordsen{cryptocurrencies, Bitcoin, intermarket dependency, correlation, machine learning, DCC-GARCH, forecasting, risk management}
+
+\begin{document}
+
+% Disable page anchors for the title pages to prevent hyperref from generating
+% duplicate bookmark destinations (name{page.1}) for each title page.
+\hypersetup{pageanchor=false}
+\maketitle
+\hypersetup{pageanchor=true}
+\makeabstract
+\selectlanguage{english}
+\tableofcontents
+\listoffigures
+\listoftables
+\input{chapters/00_abbreviations}
+
+\input{chapters/01_uvod}
+\input{chapters/02_teorijske_osnove}
+\input{chapters/03_metodologija}
+\input{chapters/04_rezultati}
+\input{chapters/05_diskusija}
+\input{chapters/06_zakljucak}
+
+\appendix
+\input{chapters/appendix_a_dataset}
+\input{chapters/appendix_b_forecasts}
+\input{chapters/appendix_c_signals}
+\input{chapters/appendix_d_reproducibility}
+
+\nocite{*}
+\printbibliography
+
+% ── Objavljeni radovi ─────────────────────────────────────────────────────────
+{\selectlanguage{serbianc}
+\section*{Објављени радови}
+\addcontentsline{toc}{section}{Објављени радови}
+
+Кандидат није објавио радове током израде мастер рада.
+}
+
+\end{document}

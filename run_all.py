@@ -131,8 +131,10 @@ def step_notebooks():
                 "--inplace",
                 "--ExecutePreprocessor.timeout=1200",
                 "--ExecutePreprocessor.kernel_name=python3",
+                f"--ExecutePreprocessor.cwd={BASE}",
                 nb_path,
             ],
+            cwd=BASE,
             label=f"STEP 2 [{i}/{n_total}]: {nb}",
             allow_failure=True,  # a broken notebook should not abort all others
         )

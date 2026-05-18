@@ -66,7 +66,7 @@ signal:
 
 # Bootstrap confidence intervals for OOS metrics
 bootstrap:
-  n_samples: 1000
+  n_samples: 500
 
 # Sensitivity analyses (written to outputs/results/)
 sensitivity:
@@ -79,8 +79,10 @@ sensitivity:
 reproducibility:
   xgb_seed: 42
 
-# Parallel experiment workers.
-# 1  = fully serial (safe default, recommended for GPU XGBoost).
-# -1 = auto-detect (cpu_count // 2). Use only on CPU-only runs or
-#      after verifying that your XGBoost/DCC setup is thread-safe.
-n_parallel_workers: 1
+# Parallel experiment workers (ThreadPoolExecutor).
+# 4  = run 4 pair×window experiments concurrently (good default for most machines).
+# 1  = fully serial (safer on machines with <4 cores or limited GPU memory).
+# -1 = auto-detect (cpu_count // 2).
+# RF n_jobs is automatically scaled down to cpu_count // n_parallel_workers so
+# cores are not over-subscribed when multiple experiments run at once.
+n_parallel_workers: 4

@@ -212,6 +212,8 @@ def data_quality_to_latex(stats: pd.DataFrame, output_path: Optional[str] = None
         r"\midrule",
     ]
     for ticker, row in df.iterrows():
+        # Escape LaTeX special characters in ticker names (^ and _ are common)
+        safe_ticker = str(ticker).replace("^", r"\^{}").replace("_", r"\_")
         vals = []
         for col in df.columns:
             v = row[col]
@@ -221,7 +223,7 @@ def data_quality_to_latex(stats: pd.DataFrame, output_path: Optional[str] = None
                 vals.append(f"{v:.2f}")
             else:
                 vals.append(str(v))
-        lines.append(f"{ticker} & " + " & ".join(vals) + r" \\")
+        lines.append(f"{safe_ticker} & " + " & ".join(vals) + r" \\")
     lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
 
     latex = "\n".join(lines)

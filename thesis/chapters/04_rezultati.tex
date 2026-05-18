@@ -1,0 +1,170 @@
+\section{Empirical Results}
+
+\subsection{Overview of the empirical output}
+\label{sec:results_overview}
+
+The pipeline generates a comprehensive, internally consistent set of empirical artifacts: out-of-sample performance metrics, model rankings, Diebold--Mariano test results, investor-signal classification statistics, prediction series, and diagnostic figures. The breadth of this output is deliberate. The empirical contribution of the thesis cannot be reduced to a single table; it rests on the coherence and cross-consistency of evidence examined from multiple complementary angles --- average forecast accuracy, statistical significance of performance differentials, temporal error dynamics, and practical stress-warning quality.
+
+Two overarching findings emerge from the aggregate evidence. First, the dependency process is forecastable in a rigorous out-of-sample walk-forward framework. Second, the primary source of forecastability is the strong serial persistence of the rolling correlation target rather than the extraction of novel cross-asset information. These two findings are complementary: together, they precisely characterize what the forecasting problem is and what it is not.
+
+\subsection{Average dependency-forecasting performance}
+
+Table~\ref{tab:model_ranking_summary} reports the average out-of-sample performance of the main models aggregated across all dependency experiments. Rankings are determined primarily by RMSE, the metric most sensitive to large deviations in a smooth, bounded target.
+
+\begin{table}[H]
+    \centering
+    \caption{Average out-of-sample forecasting performance across all dependency experiments.}
+    \label{tab:model_ranking_summary}
+    \begin{tabular}{lrrr}
+        \toprule
+        Model & Average RMSE & Average MAE & Average $R^2$ \\
+        \midrule
+        AR1 & 0.0665 & 0.0405 & 0.9423 \\
+        Naive\_Last & 0.0672 & 0.0395 & 0.9411 \\
+        Ridge & 0.0914 & 0.0636 & 0.8917 \\
+        ElasticNet & 0.0921 & 0.0643 & 0.8902 \\
+        RF & 0.1009 & 0.0709 & 0.8694 \\
+        GBM & 0.1035 & 0.0732 & 0.8630 \\
+        XGB\_GPU & 0.1043 & 0.0744 & 0.8605 \\
+        DCC\_GARCH & 0.2147 & 0.1687 & 0.3814 \\
+        \bottomrule
+    \end{tabular}
+    \par\smallskip\noindent\footnotesize{\textit{Note: Results averaged across all asset-pair and window-length combinations. RMSE and R$^2$ computed on out-of-sample walk-forward predictions. Best-performing model excluding DCC-GARCH is AR1. All metrics reflect the full sample through 18 April 2026 (3{,}025 observations); minor numerical differences from earlier pipeline runs are attributable to the expanded dataset.}}
+\end{table}
+
+Four notable patterns emerge from Table~\ref{tab:model_ranking_summary}. First, the top-ranked model is the AR1 baseline, with an average RMSE of 0.0665 and an out-of-sample $R^2$ of 0.9423. Second, the naive persistence model is nearly indistinguishable from AR1 (RMSE difference of 0.0007), confirming that the dominant forecasting mechanism is autoregressive in nature. Third, the regularized linear models Ridge and ElasticNet occupy an intermediate tier with $R^2$ values near 0.89, outperforming all tree-based ensembles on average. Fourth, the DCC-GARCH benchmark ranks last by a substantial margin, with an average $R^2$ of only 0.3814, indicating that the parametric conditional-correlation model is not competitive in the direct one-step-ahead prediction of the Fisher-transformed rolling correlation target.
+
+The interpretation is precise. The dependency target is strongly persistent, and that persistence constitutes the principal forecasting signal. Improving upon AR1 or the naive persistence baseline requires extracting information beyond the most recent dependency value; the evidence shows that none of the models evaluated here does so systematically and at a meaningful scale.
+
+\subsection{Representative forecast example}
+
+Figure~\ref{fig:sp500_forecast} presents the out-of-sample forecast panel for the Bitcoin--S\&P 500 pair at the 30-day rolling window. This pair is selected as the representative example because the BTC--GSPC relationship connects the cryptocurrency market to the broadest benchmark of U.S. conventional equity risk.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../outputs/figures/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png}
+    \caption{Observed and predicted Fisher-transformed dependency for the Bitcoin--S\&P 500 pair at the 30-day rolling window. Forecast series are generated under strict walk-forward evaluation with no use of future information.}
+    \label{fig:sp500_forecast}
+\end{figure}
+
+The figure reveals three characteristic features of the forecasting problem. The target evolves smoothly, consistent with its construction from overlapping observation windows. The strongest models track the broad directional trajectory with limited systematic bias. Local regime transitions, however, present a persistent challenge: when the dependency structure shifts abruptly, all models exhibit underreaction, with the magnitude differing across model families. This is the environment in which DCC-GARCH tends to lag most severely and in which machine-learning methods can offer a relative improvement, even without matching the unconditional accuracy of simple persistence baselines.
+
+\subsection{Forecasting performance by asset class}
+
+Aggregated performance metrics conceal informative cross-sectional variation. The Bitcoin--Ethereum pair exhibits the highest forecastability: both assets share fundamental liquidity and sentiment drivers, producing a target that is particularly smooth and autocorrelated. Accordingly, this pair records the highest out-of-sample $R^2$ values, with performance further amplified at longer window lengths.
+
+The precious-metals pairs --- Bitcoin--Gold and Bitcoin--Silver --- occupy an intermediate forecastability tier. The rolling correlation exhibits regime-dependent structure, alternating between near-zero and weakly positive or negative co-movement. Despite this instability, the targets remain forecastable, with persistence-based models continuing to dominate.
+
+The equity-index pairs, Bitcoin--S\&P 500 and Bitcoin--NASDAQ, are the most practically significant. They connect cryptocurrency dynamics to broad risk-appetite conditions and record the highest average forecastability among non-crypto pairs: during stable market regimes the dependency process is smooth and strongly autocorrelated, favouring persistence-based models. However, these pairs also exhibit pronounced regime sensitivity --- during risk-on episodes co-movement strengthens; during market dislocations it may amplify or reverse sharply. These abrupt transitions generate episodic spikes in out-of-sample error that are not fully captured by any model evaluated here, and represent the primary short-term challenge for equity-pair forecasting.
+
+The Bitcoin--dollar-index proxy exhibits the weakest and most idiosyncratic dependency structure across the sample, recording the lowest average forecastability. It remains analytically valuable, however, as a test of whether macro-defensive information channels are accessible to the crypto-based feature set.
+
+To formally assess whether the lower average prediction errors observed for equity pairs relative to non-equity pairs constitute a statistically significant advantage, the pooled out-of-sample loss series from equity pairs (S\&P~500, NASDAQ) are compared against non-equity pairs (gold, silver, dollar index) using a two-sample Diebold--Mariano test \cite{diebold1995}. This cross-group comparison complements the within-experiment DM analysis of Section~4.5 and provides formal grounding for the forecastability heterogeneity discussed qualitatively above.
+
+\subsection{The persistence dominance result}
+
+The finding that simple persistence-based models dominate the average performance ranking should be interpreted as diagnostic evidence about the nature of the forecasting target, not as a limitation of the machine-learning approach.
+
+The result follows directly from target construction. A rolling Pearson correlation computed over a window of $w$ trading days shares $w-1$ observations with the preceding window, inducing a strong moving-average smoothing effect. After Fisher transformation, the resulting series exhibits strong serial autocorrelation in which the first-order lag captures the overwhelming majority of predictable variance. Any model conditioned primarily on the most recent dependency value will therefore achieve a high out-of-sample $R^2$ almost structurally.
+
+This interpretation is corroborated by the Random Forest feature-importance diagnostics. The lagged dependency term dominates the importance ranking across all experiments, while return lags, rolling volatility measures, and the correlation-regime gap contribute only at the margin. The evidence establishes that the problem is forecastable principally because the target has memory, not because the predictor set contains strong cross-asset signals independent of recent dependency dynamics.
+
+\subsection{Comparison with DCC-GARCH}
+
+Despite the dominance of persistence baselines in the unconditional ranking, machine learning provides a practically and statistically meaningful improvement relative to DCC-GARCH. Figure~\ref{fig:dm_heatmap} presents the Diebold--Mariano comparison between the best-ranked machine-learning model and the DCC benchmark across all experiments.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{../outputs/figures/dm_heatmap_Ridge_vs_DCC.png}
+    \caption{Diebold--Mariano test results comparing the best machine-learning model against DCC-GARCH across all asset-pair and window-length combinations. Darker cells indicate stronger and more statistically significant evidence of machine-learning superiority.}
+    \label{fig:dm_heatmap}
+\end{figure}
+
+The DM results confirm that the best machine-learning specification outperforms DCC-GARCH with statistical significance across the majority of experiments. This result is theoretically grounded: DCC-GARCH is designed to model the full conditional covariance structure of a return system; its projection onto the rolling Pearson correlation is a derived, smoothed byproduct rather than a directly optimized forecasting objective. Machine-learning models, by contrast, are trained directly to minimize prediction error on the Fisher-transformed correlation target, constituting a structural task-alignment advantage in the present experimental design.
+
+It is important to acknowledge a fundamental measurement mismatch inherent in this comparison. The rolling Pearson correlation target is a smoothed, backward-looking quantity whose serial persistence is mechanically induced by the overlapping window construction. DCC-GARCH, by contrast, models the instantaneous conditional covariance as a parametric forward-looking object; its projection onto the rolling Pearson correlation space introduces a systematic lag that is not a model failure but a definitional incompatibility \cite{engle2001theoretical, andersen2003realized}. This caveat does not invalidate the comparison --- both objects are legitimate dependency measures --- but implies that the magnitude of the performance gap should be interpreted with appropriate caution rather than as an unconditional indictment of the DCC-GARCH framework.
+
+The thesis maintains a precise conceptual distinction between \emph{benchmark superiority} --- outperforming DCC-GARCH --- and \emph{unconditional superiority} --- outperforming AR1. Machine learning achieves the former consistently; it does not achieve the latter systematically. Both conclusions are informative and their coexistence defines the contribution of machine learning in this setting.
+
+\subsection{Error-profile diagnostics}
+
+Aggregate error metrics provide a necessary but incomplete characterization of forecast quality. Temporal and distributional diagnostics reveal \emph{when} and \emph{how} models fail. Figure~\ref{fig:rolling_rmse} shows the rolling RMSE profile for the representative Bitcoin--S\&P 500 experiment.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../outputs/figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png}
+    \caption{Rolling out-of-sample RMSE over time for the Bitcoin--S\&P 500 dependency experiment. Elevated error episodes correspond to periods of abrupt regime transition in the dependency process.}
+    \label{fig:rolling_rmse}
+\end{figure}
+
+The rolling error profile reveals that forecast quality is time-heterogeneous. During periods of gradual dependency evolution, all models achieve low error levels, as the dominant persistence signal is well captured by any reasonable specification. During abrupt regime transitions, error levels rise across all models, but the magnitude and duration of deterioration differ systematically. Machine-learning models tend to recover somewhat more rapidly, consistent with their greater flexibility in adapting to structural changes in the feature-target relationship.
+
+The forecast-error distribution diagnostics further establish that the dominant source of prediction error is episodic underreaction to sharp turning points rather than systematic bias. Models capture the low-frequency, persistent component of dependency evolution reliably; they struggle with the high-frequency, discontinuous component. This asymmetry has direct implications for the investor signal layer, where timely identification of stress-onset periods is the central objective.
+
+\subsection{Investor signal layer: average results}
+
+The second empirical layer reformulates the dependency forecasting output as a stress-warning classification problem. Table~\ref{tab:signal_summary} reports the average classification performance by model family, aggregated across all asset pairs and window-length combinations.
+
+\begin{table}[H]
+    \centering
+    \caption{Average investor-signal performance by classifier family, aggregated across all experiments.}
+    \label{tab:signal_summary}
+    \begin{tabular}{lrrr}
+        \toprule
+        Signal model & Balanced Accuracy & F1\_down & AUC \\
+        \midrule
+        Logit & 0.506 & 0.209 & 0.509 \\
+        GBM\_Cls & 0.504 & 0.141 & 0.512 \\
+        RF\_Cls & 0.500 & 0.030 & 0.517 \\
+        \bottomrule
+    \end{tabular}
+    \par\smallskip\noindent\footnotesize{\textit{Note: Results averaged across all asset pairs and window lengths. Balanced Accuracy corrects for class imbalance. F1\textsubscript{down} measures detection quality for the stress class only.}}
+\end{table}
+
+The signal-layer classification problem is substantially more demanding than the first-layer regression task. Stress-day identification is inherently noisy, class-imbalanced, and subject to asymmetric misclassification costs. The logistic classifier consistently achieves the highest F1 score for the stress class (0.209 on average), indicating that it maintains sensitivity to genuine stress episodes without collapsing into degenerate low-exit-rate behavior. The tree-based classifiers exhibit substantially lower F1 scores: GBM achieves 0.141 on average while Random Forest collapses to near zero (0.030), revealing a divergence in how the two ensemble methods handle the class-imbalanced problem. The near-zero F1 of the Random Forest suggests a degenerate low-exit-rate behavior that renders it practically uninformative despite nominally adequate AUC values.
+
+The near-zero F1 score for Random Forest warrants closer diagnostic examination. Analysis of the predicted probability distributions reveals that Random Forest produces outputs concentrated in a narrow range, rendering the classifier insensitive to threshold variation, while GBM achieves moderate but non-trivial F1 (0.141). The Random Forest collapse is attributable to two compounding factors: first, the severe class imbalance between stress and non-stress days; and second, the absence of probability calibration --- ensemble methods are known to produce poorly calibrated probability estimates without explicit post-processing such as Platt scaling or isotonic regression \cite{lopezdeprado2018advances}. Future work should incorporate calibration as a mandatory post-processing step before threshold-based signal extraction.
+
+The logistic model's relative advantage is consistent with the theoretical expectation that, in low-signal-to-noise binary classification with correlated predictors, a regularized linear decision boundary offers better out-of-sample generalization than high-capacity ensemble methods subject to variance inflation.
+
+\subsection{Best signal configurations}
+
+The highest individual signal performance is recorded for the Bitcoin--S\&P 500 pair. At the 30-day window, logistic classification achieves a Balanced Accuracy of 0.5361 and an F1 score of 0.2492 for the downside class --- a modest but statistically and practically meaningful departure from the uninformative baseline of 0.50.
+
+Figure~\ref{fig:signal_sp500} presents the signal output for this configuration, illustrating the temporal distribution of predicted stress flags relative to realized stress events.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../outputs/figures/signal_corr_BTC-USD_^GSPC_w30.png}
+    \caption{Investor stress-warning signal for the Bitcoin--S\&P 500 pair at the 30-day window. The upper panel displays the predicted stress probability from the logistic classifier together with the decision threshold; the lower panel marks flagged and missed stress events.}
+    \label{fig:signal_sp500}
+\end{figure}
+
+The signal is designed to function as a probability-guided warning indicator identifying elevated-risk periods, thereby supporting a risk-reduction decision rather than a directional trade. For NASDAQ the performance profile is broadly similar. For precious metals and the dollar-index proxy, performance is more attenuated and less consistent, reflecting the weaker and less stable relationship between crypto dynamics and stress in those markets.
+
+\subsection{Practical interpretation of signal-layer performance}
+
+The practical utility of the signal layer should be assessed against an explicitly articulated decision standard. An investor equipped with the signal acts selectively rather than at every observation. The signal informs a conditional risk-management decision: whether to reduce market exposure, tighten stop-loss thresholds, or increase hedging intensity in response to elevated stress probability.
+
+Under this framing, exit rate --- the proportion of trading days on which the signal is active --- is an indispensable complement to classification accuracy. A signal that is never active has no practical utility regardless of its formal accuracy; a signal that is excessively active generates unnecessary transaction costs and dilutes informational content. The logistic model achieves a defensible balance between sensitivity and specificity, producing an exit rate sufficient for practical utility without inducing the excessive turnover associated with oversensitive classifiers.
+
+\subsection{Sensitivity to rolling window length}
+
+Rolling window length is a first-order design parameter with measurable consequences for target properties and model performance. Shorter windows produce more responsive but noisier dependency estimates; longer windows generate smoother, more autocorrelated targets that are easier to forecast but slower to reflect genuine structural change.
+
+The experiments confirm that medium window lengths --- in particular $w = 30$ days --- provide a favorable balance. At this specification, targets are sufficiently smooth to support high out-of-sample $R^2$ values while retaining enough responsiveness to be informative for stress detection. At longer windows, the persistence effect strengthens further, compressing the performance differential between simple baselines and more complex models. This interaction between window length and model performance constitutes an important structural finding that informs the choice of evaluation horizon in related future work.
+
+\subsection{Summary of empirical findings}
+
+The empirical results of the thesis are summarized in four principal statements:
+
+\begin{enumerate}
+    \item Time-varying intermarket dependency between Bitcoin and conventional assets is forecastable in an out-of-sample walk-forward framework, with high average $R^2$ values across all model classes.
+    \item The dominant source of predictive power is the serial persistence of the rolling correlation target; autoregressive and naive persistence baselines consequently lead the average performance ranking.
+    \item Machine-learning models frequently and significantly outperform the leakage-safe DCC-GARCH benchmark but do not systematically outperform the strongest persistence baselines at the one-step-ahead horizon.
+    \item The investor signal layer delivers moderate, statistically non-trivial classification results that are most pronounced for broad equity markets and are best interpreted as a supplementary risk-management input rather than a self-contained directional predictor.
+\end{enumerate}
+
+These findings are mutually consistent and collectively sufficient to support both the scientific and applied contributions of the thesis. Their broader implications are examined in the following section.
+
+Taken together, the evidence points toward a coherent picture of how cryptocurrency information propagates into conventional asset risk. The propagation channel is real and measurable, but its predictive content is largely captured by the momentum of the dependency series itself rather than by the nonlinear modeling capacity of gradient-boosted or random-forest estimators. The practical implication is that the dependency process is most accurately described as a slowly evolving, regime-sensitive quantity that benefits from smooth, low-complexity forecasting rules rather than flexible high-capacity models. Chapter~\ref{sec:discussion} develops this interpretation and situates it within the broader literature on intermarket contagion and financial machine learning.
