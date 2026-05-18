@@ -2,7 +2,7 @@ base_dir: "."
 
 # Data window
 start_date: "2016-01-01"
-end_date: null
+end_date: "2026-05-17"
 
 # For reproducibility (web source access date)
 yahoo_access_date: "2026-01-01"
@@ -78,3 +78,9 @@ sensitivity:
 # Reproducibility: explicit XGBoost seed (mirrors random_state above)
 reproducibility:
   xgb_seed: 42
+
+# Parallel experiment workers.
+# 1  = fully serial (safe default, recommended for GPU XGBoost).
+# -1 = auto-detect (cpu_count // 2). Use only on CPU-only runs or
+#      after verifying that your XGBoost/DCC setup is thread-safe.
+n_parallel_workers: 1
