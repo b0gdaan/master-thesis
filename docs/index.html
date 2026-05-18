@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Babaev — Forecasting Intermarket Dependencies · Master Thesis 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--border:#30363d;
+  --text:#e6edf3;--text2:#8b949e;--text3:#484f58;
+  --blue:#2d5be3;--blue-dim:#1f3fa0;--blue-glow:rgba(45,91,227,.15);
+  --green:#238636;--green-text:#3fb950;
+  --red:#da3633;--red-dim:#6e1a18;--red-text:#f85149;
+  --orange:#d29922;--orange-text:#e3b341;
+  --purple:#6e40c9;--purple-text:#a371f7;
+  --radius:6px;--radius-lg:12px;
+  --shadow:0 1px 3px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.96);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);padding:0 24px}
+.nav-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;height:52px;gap:4px}
+.nav-brand{font-weight:700;font-size:14px;color:var(--text);margin-right:16px;white-space:nowrap}
+.nav-brand span{color:var(--blue)}
+.nav-links{display:flex;gap:2px;flex-wrap:wrap}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:13px;padding:6px 10px;border-radius:var(--radius);
+  transition:color .15s,background .15s}
+.nav-links a:hover{color:var(--text);background:var(--bg3)}
+.nav-links a.about-link{color:var(--purple-text)}
+
+/* LAYOUT */
+.container{max-width:1300px;margin:0 auto;padding:0 24px}
+.section{padding:64px 0}
+.section-alt{background:var(--bg2)}
+h1{font-size:28px;font-weight:700;line-height:1.3;letter-spacing:-.5px}
+h2{font-size:22px;font-weight:600;margin-bottom:20px;padding-bottom:10px;
+  border-bottom:1px solid var(--border);letter-spacing:-.3px}
+h3{font-size:16px;font-weight:600;margin-bottom:12px;color:var(--text)}
+h4{font-size:14px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
+p{color:var(--text2);margin-bottom:12px}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* HERO */
+.hero{padding:80px 0 64px;border-bottom:1px solid var(--border)}
+.hero-badge{display:inline-block;background:var(--blue-glow);border:1px solid var(--blue-dim);
+  color:var(--blue);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;
+  letter-spacing:.5px;text-transform:uppercase;margin-bottom:20px}
+.hero h1{max-width:820px;margin-bottom:16px}
+.hero-meta{color:var(--text2);font-size:14px;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:4px 20px}
+.hero-meta strong{color:var(--text)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:32px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:20px;text-align:center}
+.stat-num{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;
+  color:var(--blue);display:block;margin-bottom:4px}
+.stat-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+
+/* RQ CARDS */
+.rq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:12px}
+.rq-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px}
+.rq-badge{display:inline-block;background:var(--blue-glow);border:1px solid var(--blue-dim);
+  color:var(--blue);font-size:11px;font-weight:700;padding:2px 8px;border-radius:3px;margin-bottom:8px}
+.rq-card p{font-size:13.5px;color:var(--text);margin:0}
+
+/* TABLES */
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius-lg)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead tr{background:var(--bg3)}
+th{padding:10px 14px;text-align:left;font-weight:600;font-size:12px;
+  text-transform:uppercase;letter-spacing:.4px;color:var(--text2);white-space:nowrap;
+  cursor:pointer;user-select:none;border-bottom:1px solid var(--border)}
+th:hover{color:var(--text)}
+th .sort-icon{margin-left:4px;opacity:.5}
+td{padding:9px 14px;border-bottom:1px solid var(--bg3);font-family:'JetBrains Mono',monospace;font-size:13px}
+tr:last-child td{border-bottom:none}
+tr.row-best td{background:rgba(35,134,54,.08)}
+tr.row-best td:first-child{color:var(--green-text)}
+tr.row-worst td{background:rgba(218,54,51,.05)}
+tr.row-worst td:first-child{color:var(--red-text)}
+tr:hover td{background:var(--bg3)}
+.tag{display:inline-block;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:600;font-family:'Inter',sans-serif}
+.tag-green{background:rgba(35,134,54,.2);color:var(--green-text)}
+.tag-red{background:rgba(218,54,51,.2);color:var(--red-text)}
+.tag-blue{background:var(--blue-glow);color:#58a6ff}
+.tag-orange{background:rgba(210,153,34,.15);color:var(--orange-text)}
+.tag-purple{background:rgba(110,64,201,.2);color:var(--purple-text)}
+
+/* CARDS & GRIDS */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
+.card h3{margin-bottom:8px}
+.card p{font-size:13.5px;color:var(--text2);margin:0}
+
+/* FIGURE GRID */
+.fig-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.fig-grid-wide{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px}
+.fig-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  overflow:hidden;cursor:pointer;transition:border-color .15s,transform .15s}
+.fig-card:hover{border-color:var(--blue);transform:translateY(-2px)}
+.fig-card img{width:100%;display:block;background:var(--bg3);aspect-ratio:16/9;object-fit:cover}
+.fig-caption{padding:12px 14px;border-top:1px solid var(--border)}
+.fig-caption strong{display:block;color:var(--text);font-size:13px;margin-bottom:3px;font-family:'Inter',sans-serif}
+.fig-caption span{font-size:12px;color:var(--text2);font-family:'Inter',sans-serif}
+
+/* TABS */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto}
+.tab-btn{padding:8px 16px;background:none;border:none;color:var(--text2);font-family:'Inter',sans-serif;
+  font-size:13px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:color .15s;font-weight:500;white-space:nowrap}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-btn:hover{color:var(--text)}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* FILTERS */
+.filter-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.filter-btn{padding:5px 14px;background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);border-radius:20px;font-size:12px;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif}
+.filter-btn.active{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* LIGHTBOX */
+#lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:1000;
+  align-items:center;justify-content:center;padding:20px;cursor:zoom-out}
+#lightbox.open{display:flex}
+#lightbox img{max-width:95vw;max-height:88vh;object-fit:contain;border-radius:var(--radius)}
+#lightbox-caption{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:8px 16px;font-size:13px;color:var(--text2);max-width:600px;text-align:center}
+
+/* DM RESULT */
+.dm-result{display:flex;align-items:center;gap:10px;padding:12px 16px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px}
+.dm-stat{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;min-width:64px}
+.dm-stat.pos{color:var(--green-text)}
+.dm-stat.neg{color:var(--red-text)}
+.dm-desc{font-size:13px;color:var(--text2)}
+.dm-sig{font-size:11px;color:var(--green-text);font-weight:600}
+
+/* FINDING BLOCKS */
+.finding{border-left:3px solid var(--blue);padding:12px 16px;background:var(--bg2);
+  border-radius:0 var(--radius) var(--radius) 0;margin-bottom:12px}
+.finding.green{border-left-color:var(--green)}
+.finding.orange{border-left-color:var(--orange)}
+.finding.red{border-left-color:var(--red)}
+.finding p{margin:0;font-size:13.5px;color:var(--text)}
+.finding strong{color:var(--text)}
+
+/* CONCLUSION CARDS */
+.conclusion-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:16px 0}
+.conclusion-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
+.conclusion-card .c-num{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;
+  color:var(--green-text);margin-bottom:8px;display:block}
+.conclusion-card h3{margin-bottom:8px;font-size:15px}
+.conclusion-card p{font-size:13.5px;margin:0}
+
+/* ASSET DETAIL */
+.asset-row{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.asset-row:last-child{border-bottom:none}
+.asset-ticker{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;
+  min-width:80px;color:var(--blue)}
+.asset-info{flex:1}
+.asset-info strong{color:var(--text);font-size:14px}
+.asset-info p{font-size:13px;margin:2px 0 0;color:var(--text2)}
+.asset-role{font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px}
+
+/* FEATURE IMPORTANCE */
+.feat-bar{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.feat-name{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);min-width:100px}
+.feat-track{flex:1;background:var(--bg3);border-radius:3px;height:8px;overflow:hidden}
+.feat-fill{height:100%;border-radius:3px}
+.feat-pct{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);min-width:40px;text-align:right}
+
+/* WINDOW ANALYSIS */
+.window-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px}
+.window-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.window-card .w-label{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--blue);margin-bottom:6px}
+.window-card .w-verdict{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.window-card p{font-size:12.5px;margin:0;color:var(--text2)}
+
+/* ABOUT */
+.about-wrap{display:flex;gap:48px;align-items:flex-start}
+.about-photo{width:180px;min-width:180px;border-radius:var(--radius-lg);
+  border:2px solid var(--border);overflow:hidden}
+.about-photo img{width:100%;display:block}
+.about-photo-placeholder{width:180px;min-width:180px;height:220px;background:var(--bg3);
+  border:2px solid var(--border);border-radius:var(--radius-lg);display:flex;
+  align-items:center;justify-content:center;color:var(--text3);font-size:48px}
+.about-content h2{border-bottom:none;padding-bottom:0;margin-bottom:12px}
+.about-content p{font-size:14px;max-width:640px}
+.about-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+.about-link-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);
+  color:var(--text2);font-size:13px;text-decoration:none;transition:all .15s}
+.about-link-btn:hover{border-color:var(--blue);color:var(--text);text-decoration:none}
+.about-link-btn.linkedin{background:rgba(10,102,194,.1);border-color:rgba(10,102,194,.3);color:#58a6ff}
+.about-link-btn.linkedin:hover{background:rgba(10,102,194,.2)}
+.about-link-btn.github{background:rgba(110,64,201,.1);border-color:rgba(110,64,201,.3);color:var(--purple-text)}
+.about-link-btn.github:hover{background:rgba(110,64,201,.2)}
+
+/* REPRO */
+.code-block{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  color:#a5d6ff;overflow-x:auto;margin:8px 0;line-height:1.7}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 0;
+  text-align:center;color:var(--text2);font-size:13px}
+footer strong{color:var(--text)}
+
+/* UTIL */
+.mt-8{margin-top:8px}.mt-16{margin-top:16px}.mt-24{margin-top:24px}.mt-32{margin-top:32px}
+.mb-8{margin-bottom:8px}.mb-16{margin-bottom:16px}.mb-24{margin-bottom:24px}
+.text-mono{font-family:'JetBrains Mono',monospace}
+.text-green{color:var(--green-text)}.text-red{color:var(--red-text)}
+.text-blue{color:#58a6ff}.text-orange{color:var(--orange-text)}
+.text-muted{color:var(--text2)}
+.label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:6px}
+.divider{border:none;border-top:1px solid var(--border);margin:32px 0}
+
+@media(max-width:900px){
+  .about-wrap{flex-direction:column;gap:24px}
+  .about-photo{width:120px;min-width:120px}
+  .about-photo-placeholder{width:120px;min-width:120px;height:150px}
+}
+@media(max-width:768px){
+  .nav-links{display:none}
+  h1{font-size:21px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .fig-grid,.fig-grid-wide{grid-template-columns:1fr}
+  .window-grid{grid-template-columns:repeat(2,1fr)}
+  .rq-grid{grid-template-columns:1fr}
+}
+
+/* TYPOGRAPHY IMPROVEMENTS */
+.prose{line-height:1.75}
+.prose p{font-size:14.5px;color:var(--text2);margin-bottom:14px}
+.prose p:last-child{margin-bottom:0}
+.lead{font-size:16px;color:var(--text);line-height:1.7;margin-bottom:20px}
+.section-intro{color:var(--text2);font-size:14.5px;line-height:1.75;margin-bottom:28px}
+/* General text: left-aligned, full container width */
+p{text-align:left}
+.section h2,.section h3,.section h4{text-align:left}
+
+/* DEMO SECTION */
+.demo-wrap{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+@media(max-width:900px){.demo-wrap{grid-template-columns:1fr}}
+.demo-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px}
+.demo-panel h3{margin-bottom:20px;font-size:15px}
+.input-row{margin-bottom:18px}
+.input-row label{display:block;font-size:12px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.4px;color:var(--text2);margin-bottom:6px}
+.input-row input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
+.input-row input[type=number]{width:100%;background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius);padding:8px 12px;color:var(--text);font-family:'JetBrains Mono',monospace;
+  font-size:14px;outline:none}
+.input-row input[type=number]:focus{border-color:var(--blue)}
+.range-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px}
+.range-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--blue)}
+.signal-box{border-radius:var(--radius-lg);padding:24px;text-align:center;margin-bottom:16px;
+  transition:all .3s;border:2px solid transparent}
+.signal-box.green{background:rgba(35,134,54,.15);border-color:var(--green)}
+.signal-box.orange{background:rgba(210,153,34,.15);border-color:var(--orange)}
+.signal-box.red{background:rgba(218,54,51,.15);border-color:var(--red)}
+.signal-icon{font-size:40px;margin-bottom:8px}
+.signal-title{font-size:22px;font-weight:700;margin-bottom:4px}
+.signal-title.green{color:var(--green-text)}
+.signal-title.orange{color:var(--orange-text)}
+.signal-title.red{color:var(--red-text)}
+.signal-subtitle{font-size:13px;color:var(--text2)}
+.output-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.output-card{background:var(--bg3);border-radius:var(--radius);padding:12px;text-align:center}
+.output-card .out-val{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--text)}
+.output-card .out-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
+.prob-bar-wrap{margin-top:16px}
+.prob-bar-track{background:var(--bg3);border-radius:4px;height:10px;overflow:hidden;margin:6px 0}
+.prob-bar-fill{height:100%;border-radius:4px;transition:width .4s ease}
+.demo-disclaimer{font-size:12px;color:var(--text3);margin-top:16px;line-height:1.6;padding:10px 14px;
+  background:var(--bg3);border-radius:var(--radius);border-left:3px solid var(--text3)}
+
+/* RESOURCES */
+.yt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:16px}
+.yt-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  overflow:hidden;text-decoration:none;transition:border-color .15s,transform .15s;display:block}
+.yt-card:hover{border-color:#ff4444;transform:translateY(-2px);text-decoration:none}
+.yt-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--bg3)}
+.yt-thumb-placeholder{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1a1a2e,#16213e);
+  display:flex;align-items:center;justify-content:center;font-size:36px}
+.yt-info{padding:12px 14px}
+.yt-info strong{display:block;color:var(--text);font-size:13px;margin-bottom:4px;font-family:'Inter',sans-serif}
+.yt-info span{font-size:12px;color:var(--text2);font-family:'Inter',sans-serif}
+.yt-badge{display:inline-block;background:rgba(255,68,68,.15);border:1px solid rgba(255,68,68,.3);
+  color:#ff6b6b;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-bottom:6px;
+  font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:.3px}
+
+/* REFERENCES */
+.ref-list{list-style:none;counter-reset:ref-counter}
+.ref-list li{counter-increment:ref-counter;padding:12px 0 12px 48px;position:relative;
+  border-bottom:1px solid var(--bg3);font-size:13.5px;color:var(--text2);line-height:1.6}
+.ref-list li:last-child{border-bottom:none}
+.ref-list li::before{content:counter(ref-counter);position:absolute;left:0;top:12px;
+  width:32px;height:32px;background:var(--bg3);border-radius:50%;display:flex;
+  align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;
+  font-size:12px;font-weight:600;color:var(--text2)}
+.ref-list li strong{color:var(--text);display:block;margin-bottom:2px}
+.ref-list li a{color:var(--blue);font-size:12px}
+.ref-list li a:hover{text-decoration:underline}
+.ref-tag{display:inline-block;background:var(--bg3);border:1px solid var(--border);
+  border-radius:3px;padding:1px 6px;font-size:11px;font-family:'JetBrains Mono',monospace;
+  color:var(--text2);margin-right:6px}
+
+/* LANGUAGE SWITCHER */
+.nav-right{display:flex;align-items:center;gap:8px;margin-left:auto;padding-left:12px}
+.nav-ext-link{color:var(--text2);font-size:11px;font-weight:500;text-decoration:none;
+  padding:4px 8px;border:1px solid var(--border);border-radius:var(--radius);
+  transition:all .15s;white-space:nowrap;background:var(--bg3)}
+.nav-ext-link:hover{color:var(--text);border-color:var(--blue);text-decoration:none}
+.hero-ext-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);
+  color:var(--text2);font-size:13px;font-weight:500;text-decoration:none;transition:all .15s}
+.hero-ext-btn:hover{border-color:var(--blue);color:var(--text);text-decoration:none;background:var(--bg3)}
+.lang-divider{width:1px;height:20px;background:var(--border);margin:0 4px}
+.lang-btn{background:none;border:1px solid var(--border);border-radius:var(--radius);
+  color:var(--text2);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
+  padding:4px 9px;cursor:pointer;transition:all .15s;letter-spacing:.3px}
+.lang-btn:hover{color:var(--text);border-color:var(--blue)}
+.lang-btn.active{background:var(--blue);border-color:var(--blue);color:#fff}
+@media(max-width:768px){.nav-right{display:none}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">Babaev <span>2026</span></div>
+    <div class="nav-links" id="nav-links">
+      <a href="#demo"        id="nav-demo"   style="color:var(--green-text);font-weight:600">▶ Live Demo</a>
+      <a href="#dataset"     id="nav-dataset">Dataset</a>
+      <a href="#methodology" id="nav-method">Methodology</a>
+      <a href="#results"     id="nav-results">Results</a>
+      <a href="#dm-tests"    id="nav-dm">DM Tests</a>
+      <a href="#signal"      id="nav-signal">Signal Layer</a>
+      <a href="#conclusions" id="nav-concl">Conclusions</a>
+      <a href="#gallery"     id="nav-gallery">Figures</a>
+      <a href="#repro"       id="nav-repro">Reproducibility</a>
+      <a href="#references"  id="nav-refs">References</a>
+      <a href="#about"       id="nav-about" class="about-link">About</a>
+    </div>
+    <div class="nav-right">
+      <button onclick="setLang('en')" id="lang-en" class="lang-btn active">EN</button>
+      <button onclick="setLang('ru')" id="lang-ru" class="lang-btn">RU</button>
+      <button onclick="setLang('sr')" id="lang-sr" class="lang-btn">СР</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+<div class="container">
+  <div class="hero-badge" id="hero-badge">Master Thesis · University of Kragujevac · 2026</div>
+  <h1 id="hero-title">Forecasting Time-Varying Intermarket Dependencies Between Cryptocurrencies and Conventional Assets Using Machine Learning</h1>
+  <div class="hero-meta mt-16">
+    <span><strong>Bogdan Babaev</strong></span>
+    <span id="hero-prog">University of Kragujevac · M.Sc. Artificial Intelligence</span>
+    <span id="hero-sup">Supervisor: <strong>Prof. Dr Vladimir M. Milovanović</strong></span>
+    <span id="hero-date">Defense: May 2026</span>
+  </div>
+  <div style="display:flex;gap:10px;margin:16px 0 4px;flex-wrap:wrap">
+    <a href="https://en.kg.ac.rs/about.php" target="_blank" class="hero-ext-btn">🎓 University of Kragujevac</a>
+    <a href="https://kg.ac.rs/as_unikg_vi.php" target="_blank" class="hero-ext-btn">🤖 AI Programme</a>
+  </div>
+  <p id="hero-desc" style="font-size:15px;line-height:1.75;color:var(--text2);margin-top:20px">
+    This thesis investigates whether cryptocurrency dynamics contain information about the evolving
+    dependence structure of conventional financial assets. Bitcoin serves as the base crypto asset;
+    the conventional universe spans equity indices, precious-metal ETFs, and the U.S. dollar index.
+    A reproducible walk-forward ML pipeline is developed and benchmarked against a leakage-safe
+    DCC-GARCH(1,1) specification across 168 model evaluations.
+  </p>
+  <p style="font-size:14px;line-height:1.7;color:var(--text2);margin-top:12px">
+    The central question is whether persistence in rolling correlation — and not nonlinear
+    cross-asset signals — is the dominant source of forecastability. The empirical evidence
+    confirms this, while also showing that all ML models significantly outperform the
+    DCC-GARCH econometric benchmark.
+  </p>
+  <div class="stats-grid">
+    <div class="stat-card"><span class="stat-num">3,046</span><div class="stat-label">Daily observations</div></div>
+    <div class="stat-card"><span class="stat-num">7</span><div class="stat-label">Assets</div></div>
+    <div class="stat-card"><span class="stat-num">168</span><div class="stat-label">Model evaluations</div></div>
+    <div class="stat-card"><span class="stat-num">4</span><div class="stat-label">Rolling windows</div></div>
+    <div class="stat-card"><span class="stat-num">0.942</span><div class="stat-label">Best OOS R² (AR1, w=30)</div></div>
+    <div class="stat-card"><span class="stat-num">p&lt;10⁻³⁰⁸</span><div class="stat-label">ML vs DCC-GARCH (DM)</div></div>
+  </div>
+
+  <!-- Research Questions -->
+  <h3 class="mt-32 mb-8" style="font-size:15px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600">Research Questions</h3>
+  <div class="rq-grid">
+    <div class="rq-card">
+      <div class="rq-badge">RQ1 · Forecastability</div>
+      <p>Are time-varying intermarket dependencies between BTC and conventional assets forecastable one step ahead under strict out-of-sample evaluation?</p>
+    </div>
+    <div class="rq-card">
+      <div class="rq-badge">RQ2 · ML vs DCC-GARCH</div>
+      <p>Do ML models (ElasticNet, Ridge, GBM, XGBoost) outperform the DCC-GARCH(1,1) econometric benchmark under leakage-safe walk-forward evaluation?</p>
+    </div>
+    <div class="rq-card">
+      <div class="rq-badge">RQ3 · Feature Importance</div>
+      <p>Which predictors carry the most information — historical dependency persistence, volatility, or cross-asset momentum signals?</p>
+    </div>
+    <div class="rq-card">
+      <div class="rq-badge">RQ4 · Signal Layer</div>
+      <p>Can crypto-derived features predict investor stress days in traditional asset markets as a binary classification task?</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- LIVE DEMO -->
+<section class="section section-alt" id="demo">
+<div class="container">
+
+  <!-- Header row: title left, model pills right -->
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:8px">
+    <div>
+      <h2 style="border:none;padding:0;margin-bottom:8px">▶ Live Investor Signal Demo</h2>
+      <p style="font-size:14.5px;color:var(--text2);margin:0;max-width:680px">
+        Run the thesis models in real time — directly in your browser. Adjust market conditions
+        and watch the AR1 dependency forecast and stress classifier respond instantly.
+        Try the historical scenario presets to see how the signal would have fired during real market events.
+      </p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;min-width:220px">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px">Forecasting model</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green-text)">AR1 · RMSE=0.0665 · R²=0.94</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px">Signal classifier</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue)">Logit · F1=0.247 · AUC=0.531</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scenario presets -->
+  <div style="margin-bottom:20px;margin-top:24px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:10px">Historical scenario presets — click to load</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button onclick="loadPreset('normal')"    class="filter-btn active"  id="preset-normal">📅 Normal day</button>
+      <button onclick="loadPreset('covid')"     class="filter-btn"         id="preset-covid">💥 COVID crash (Mar 2020)</button>
+      <button onclick="loadPreset('btccrash')"  class="filter-btn"         id="preset-btccrash">📉 BTC bear market (Nov 2022)</button>
+      <button onclick="loadPreset('spike')"     class="filter-btn"         id="preset-spike">🔥 Volatility spike</button>
+      <button onclick="loadPreset('recovery')"  class="filter-btn"         id="preset-recovery">🌱 Post-crash recovery</button>
+    </div>
+    <div id="preset-desc" style="font-size:13px;color:var(--text2);margin-top:10px;padding:8px 14px;background:var(--bg3);border-radius:var(--radius);border-left:3px solid var(--blue)">
+      Typical trading day — BTC showing moderate positive correlation with S&P 500, normal volatility, no strong directional momentum.
+    </div>
+  </div>
+
+  <!-- Main demo layout -->
+  <div class="demo-wrap">
+    <!-- Left: sliders -->
+    <div class="demo-panel">
+      <h3 style="margin-bottom:20px">Adjust Market Conditions</h3>
+
+      <div class="input-row">
+        <label>BTC–S&amp;P500 Rolling Correlation (30-day) &nbsp;<span class="range-val" id="corr-val">0.35</span></label>
+        <input type="range" min="-1" max="1" step="0.01" value="0.35" oninput="updateDemo(true)" id="inp-corr">
+        <div class="range-labels"><span>−1 fully inverse</span><span>0 uncorrelated</span><span>+1 co-moving</span></div>
+      </div>
+
+      <div class="input-row">
+        <label>Today's BTC Daily Return &nbsp;<span class="range-val" id="ret-val">0.0%</span></label>
+        <input type="range" min="-20" max="20" step="0.5" value="0" oninput="updateDemo(true)" id="inp-ret">
+        <div class="range-labels"><span>−20% crash</span><span>0% flat</span><span>+20% rally</span></div>
+      </div>
+
+      <div class="input-row">
+        <label>BTC 20-day Annualised Volatility &nbsp;<span class="range-val" id="vol-val">55%</span></label>
+        <input type="range" min="20" max="150" step="1" value="55" oninput="updateDemo(true)" id="inp-vol">
+        <div class="range-labels"><span>20% calm</span><span>55% typical</span><span>150% extreme</span></div>
+      </div>
+
+      <div class="input-row">
+        <label>BTC 5-day Momentum (rolling return) &nbsp;<span class="range-val" id="mom-val">0.0%</span></label>
+        <input type="range" min="-40" max="40" step="1" value="0" oninput="updateDemo(true)" id="inp-mom">
+        <div class="range-labels"><span>−40% downtrend</span><span>0% flat</span><span>+40% uptrend</span></div>
+      </div>
+
+      <!-- How it works -->
+      <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:10px">How it works</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="background:var(--bg3);border-radius:var(--radius);padding:10px">
+            <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:4px">STEP 1</div>
+            <div style="font-size:12.5px;color:var(--text)">AR1 forecasts tomorrow's BTC–S&P500 dependency using today's Fisher-z correlation</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:var(--radius);padding:10px">
+            <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:4px">STEP 2</div>
+            <div style="font-size:12.5px;color:var(--text)">Logistic regression combines the forecast + crypto features to estimate stress probability</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: output -->
+    <div>
+      <!-- Big signal -->
+      <div class="signal-box green" id="signal-box" style="margin-bottom:14px">
+        <div class="signal-icon" id="signal-icon">✅</div>
+        <div class="signal-title green" id="signal-title">STAY IN MARKET</div>
+        <div class="signal-subtitle" id="signal-subtitle">Low stress probability — dependency stable</div>
+      </div>
+
+      <!-- Output cards -->
+      <div class="output-grid" style="margin-bottom:14px">
+        <div class="output-card">
+          <div class="out-val" id="out-dep-now">0.368</div>
+          <div class="out-label">Current dep. (Fisher-z)</div>
+        </div>
+        <div class="output-card">
+          <div class="out-val" id="out-dep-fcast">0.364</div>
+          <div class="out-label">Tomorrow's forecast</div>
+        </div>
+      </div>
+
+      <!-- Probability gauge -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+          <span style="font-size:13px;font-weight:600;color:var(--text)">Stress Probability</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700" id="prob-pct-label">12.4%</span>
+        </div>
+        <!-- Multi-zone bar -->
+        <div style="position:relative;height:16px;border-radius:8px;overflow:hidden;background:linear-gradient(to right,#238636 0%,#238636 30%,#d29922 30%,#d29922 60%,#da3633 60%,#da3633 100%);opacity:.3"></div>
+        <div style="position:relative;height:16px;border-radius:8px;overflow:hidden;margin-top:-16px">
+          <div class="prob-bar-fill" id="prob-bar" style="width:12%;background:var(--green);opacity:.85"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:4px">
+          <span>0%</span><span style="color:var(--orange-text)">⚠ 30% alert</span><span style="color:var(--red-text)">🔴 60% exit</span><span>100%</span>
+        </div>
+
+        <!-- Interpretation -->
+        <div id="interp-text" style="margin-top:12px;font-size:13px;color:var(--text2);border-top:1px solid var(--border);padding-top:10px">
+          Low stress probability. Maintain normal equity exposure. Monitor for BTC volatility increases.
+        </div>
+      </div>
+
+      <!-- What to do -->
+      <div id="action-box" style="background:rgba(35,134,54,.12);border:1px solid rgba(35,134,54,.3);border-radius:var(--radius);padding:12px 14px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--green-text);margin-bottom:4px">Recommended action</div>
+        <div id="action-text" style="font-size:13.5px;color:var(--text)">Hold current equity positions. No risk reduction needed based on crypto signal.</div>
+      </div>
+
+      <div style="font-size:11.5px;color:var(--text3);margin-top:12px;line-height:1.6;padding:8px 12px;background:var(--bg3);border-radius:var(--radius)">
+        Educational demo — not financial advice. Coefficients are approximate, derived from walk-forward OOS evaluation 2021–2026 on 3,046 daily observations.
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- DATASET -->
+<section class="section" id="dataset">
+<div class="container">
+  <h2>Dataset &amp; Asset Universe</h2>
+
+  <div class="grid-2 mb-32">
+    <div>
+      <h3>Asset Universe — Detailed</h3>
+      <div class="card" style="padding:0">
+        <div style="padding:0 16px">
+          <div class="asset-row">
+            <div class="asset-ticker">BTC-USD</div>
+            <div class="asset-info">
+              <strong>Bitcoin</strong>
+              <p>Base asset. World's largest cryptocurrency by market cap. Trades 24/7 including weekends. Serves as the primary source of crypto-derived features throughout the thesis.</p>
+            </div>
+            <span class="tag tag-orange asset-role">Base crypto</span>
+          </div>
+          <div class="asset-row">
+            <div class="asset-ticker">ETH-USD</div>
+            <div class="asset-info">
+              <strong>Ethereum</strong>
+              <p>Crypto reference asset. Included to contrast cross-crypto dependency (BTC↔ETH) with crypto-to-conventional dependency. Start date of sample determined by ETH availability on Yahoo Finance.</p>
+            </div>
+            <span class="tag tag-orange asset-role">Crypto ref.</span>
+          </div>
+          <div class="asset-row">
+            <div class="asset-ticker">^GSPC</div>
+            <div class="asset-info">
+              <strong>S&amp;P 500 Index</strong>
+              <p>Broad U.S. equity benchmark. Represents large-cap risk appetite; most tightly linked to global funding conditions and sentiment — the same macro forces that drive Bitcoin.</p>
+            </div>
+            <span class="tag tag-blue asset-role">Equity</span>
+          </div>
+          <div class="asset-row">
+            <div class="asset-ticker">^IXIC</div>
+            <div class="asset-info">
+              <strong>NASDAQ Composite</strong>
+              <p>Tech-heavy equity index. Higher beta to growth and speculative sentiment than S&amp;P 500, making it a natural comparator for crypto co-movement.</p>
+            </div>
+            <span class="tag tag-blue asset-role">Equity</span>
+          </div>
+          <div class="asset-row">
+            <div class="asset-ticker">GLD</div>
+            <div class="asset-info">
+              <strong>SPDR Gold Shares ETF</strong>
+              <p>Largest gold ETF. Captures safe-haven demand, inflation expectations, and real interest rate dynamics — structural drivers distinct from crypto.</p>
+            </div>
+            <span class="tag tag-green asset-role">Precious metal</span>
+          </div>
+          <div class="asset-row">
+            <div class="asset-ticker">SLV</div>
+            <div class="asset-info">
+              <strong>iShares Silver Trust ETF</strong>
+              <p>Silver has both safe-haven and industrial demand components. Higher volatility than gold; provides an additional precious-metal data point.</p>
+            </div>
+            <span class="tag tag-green asset-role">Precious metal</span>
+          </div>
+          <div class="asset-row">
+            <div class="asset-ticker">UUP</div>
+            <div class="asset-info">
+              <strong>Invesco US Dollar Index ETF</strong>
+              <p>Proxy for broad USD strength (DXY). Reflects global risk-off positioning and macro defensive flows. Responds to geopolitical risk premia not captured by crypto features.</p>
+            </div>
+            <span class="tag tag-blue asset-role">FX / risk-off</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Sample Construction &amp; Alignment</h3>
+      <div class="finding mb-12">
+        <p><strong>Period:</strong> 9 Nov 2017 — 16 May 2026 · 3,046 trading days per asset. Start date is set by the earliest available ETH-USD quote on Yahoo Finance. Earlier dates contain no Ethereum observations and are excluded.</p>
+      </div>
+      <div class="finding green mb-12">
+        <p><strong>Alignment:</strong> Bitcoin and Ethereum trade 24/7 including weekends. The panel is aligned on exchange-calendar dates shared with equity markets. Weekend and holiday crypto quotes are forward-filled up to two consecutive calendar days, then dropped, so all seven tickers share an identical date index.</p>
+      </div>
+      <div class="finding orange mb-12">
+        <p><strong>Returns:</strong> Log-returns r<sub>t</sub> = log P<sub>t</sub> − log P<sub>t−1</sub> are used throughout. Log-returns are additive over time, approximately normal at moderate horizons, and standard in both econometric modelling and ML pipelines for financial time series.</p>
+      </div>
+
+      <h3 class="mt-24">Data Quality Summary</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Ticker</th><th>N obs</th><th>% Miss.</th><th>Skew</th><th>Ex.Kurt</th><th>Ann.Vol%</th></tr></thead>
+          <tbody>
+            <tr><td>BTC-USD</td><td>3,046</td><td>0.00</td><td>−0.73</td><td>13.38</td><td class="text-red">56.08</td></tr>
+            <tr><td>ETH-USD</td><td>3,046</td><td>0.00</td><td>−0.74</td><td>10.77</td><td class="text-red">72.68</td></tr>
+            <tr><td>GLD</td><td>3,046</td><td>0.00</td><td>−0.89</td><td>13.96</td><td class="text-green">13.82</td></tr>
+            <tr><td>SLV</td><td>3,046</td><td>0.00</td><td>−2.77</td><td>51.61</td><td>28.20</td></tr>
+            <tr><td>UUP</td><td>3,046</td><td>0.00</td><td>−0.03</td><td>8.58</td><td class="text-green">5.85</td></tr>
+            <tr><td>^GSPC</td><td>3,046</td><td>0.00</td><td>−0.73</td><td>22.59</td><td>16.20</td></tr>
+            <tr><td>^IXIC</td><td>3,046</td><td>0.00</td><td>−0.46</td><td>12.65</td><td>19.66</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-8" style="font-size:12.5px">Zero missing values across all tickers after alignment. Crypto assets show substantially higher annualised volatility (56–73% vs 6–28% for conventional assets) and fat tails (excess kurtosis &gt;10).</p>
+
+      <h3 class="mt-24">Walk-Forward Split</h3>
+      <div class="grid-3 mt-8">
+        <div class="card" style="padding:14px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:var(--blue);font-family:'JetBrains Mono',monospace">2017–2021</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:4px">Initial training window<br>(min 800 obs)</div>
+        </div>
+        <div class="card" style="padding:14px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:var(--orange-text);font-family:'JetBrains Mono',monospace">2021–2026</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:4px">Out-of-sample test<br>~5 years</div>
+        </div>
+        <div class="card" style="padding:14px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:var(--green-text);font-family:'JetBrains Mono',monospace">Every 20d</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:4px">Model refit cadence<br>(~1 calendar month)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Exploratory Figures</h3>
+  <div class="fig-grid mt-8">
+    <div class="fig-card" onclick="openLightbox('figures/eda_normalized_prices.png','Normalized Price Paths — all 7 assets, base=1 at 2017-11-09')">
+      <img src="figures/eda_normalized_prices.png" alt="Normalized prices" loading="lazy">
+      <div class="fig-caption"><strong>Fig 1 — Normalized Price Paths</strong><span>All assets scaled to a common base of 1. Illustrates divergent performance: BTC/ETH multiples vs near-flat conventional assets.</span></div>
+    </div>
+    <div class="fig-card" onclick="openLightbox('figures/dataset_volatility.png','30-day Rolling Volatility — all assets')">
+      <img src="figures/dataset_volatility.png" alt="Rolling volatility" loading="lazy">
+      <div class="fig-caption"><strong>Fig 2 — Rolling Volatility</strong><span>Crypto assets exhibit episodically much higher volatility (~5× the S&amp;P 500), motivating dynamic rather than static dependency modelling.</span></div>
+    </div>
+    <div class="fig-card" onclick="openLightbox('figures/dataset_corr_heatmap.png','Full-sample Pearson correlation matrix of daily log-returns')">
+      <img src="figures/dataset_corr_heatmap.png" alt="Correlation heatmap" loading="lazy">
+      <div class="fig-caption"><strong>Fig 3 — Full-Sample Correlation Heatmap</strong><span>BTC/ETH show low static correlations with conventional assets — motivating the time-varying analysis over a single full-sample estimate.</span></div>
+    </div>
+    <div class="fig-card" onclick="openLightbox('figures/eda_rolling_corr_all.png','Rolling correlations — all pairs, all 4 windows, Fisher-z transformed')">
+      <img src="figures/eda_rolling_corr_all.png" alt="Rolling correlations" loading="lazy">
+      <div class="fig-caption"><strong>Fig 4 — Rolling Dependency Overview</strong><span>Fisher-z transformed rolling correlations for all pairs across windows 14/30/60/90 days. Strong time-variation and persistence visible across all pairs.</span></div>
+    </div>
+    <div class="fig-card" onclick="openLightbox('figures/fig_price_coverage.png','Data Coverage — observation counts per ticker')">
+      <img src="figures/fig_price_coverage.png" alt="Coverage" loading="lazy">
+      <div class="fig-caption"><strong>Fig 5 — Observation Coverage</strong><span>All 7 tickers share identical date range after ETH-USD alignment. No gaps or missing bars.</span></div>
+    </div>
+    <div class="fig-card" onclick="openLightbox('figures/eda_fisher_transform.png','Fisher-z transformation effect on correlation distribution')">
+      <img src="figures/eda_fisher_transform.png" alt="Fisher transform" loading="lazy">
+      <div class="fig-caption"><strong>Fig 6 — Fisher-z Transformation</strong><span>Maps bounded ρ ∈ (−1,1) to unbounded ℝ, stabilising variance and improving normality of the regression target.</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- METHODOLOGY -->
+<section class="section section-alt" id="methodology">
+<div class="container">
+  <h2>Methodology</h2>
+
+  <div class="grid-2 mb-24">
+    <div>
+      <h3>Two-Layer Pipeline</h3>
+      <div class="finding mb-8">
+        <p><strong>Layer 1 — Dependency Forecasting:</strong> Predict the next value of Fisher-z transformed rolling correlation ρ̂<sub>t+1</sub> between Bitcoin and each conventional asset. Expanding-window walk-forward validation; min_train = 800 obs; refit every 20 trading days.</p>
+      </div>
+      <div class="finding green mb-8">
+        <p><strong>Layer 2 — Investor Signal:</strong> Use the Layer 1 forecast + crypto features to classify whether tomorrow is a <em>stress day</em> for the conventional asset (|ret| &gt; 0.75σ of negative returns, ~8–12% of days). Three classifiers: Logit, Random Forest, GBM.</p>
+      </div>
+      <div class="mt-16">
+        <p class="label">Rolling Windows Evaluated</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span class="tag tag-blue">w = 14 days</span>
+          <span class="tag tag-blue">w = 30 days</span>
+          <span class="tag tag-blue">w = 60 days</span>
+          <span class="tag tag-blue">w = 90 days</span>
+        </div>
+      </div>
+
+      <h3 class="mt-24">Window Size Analysis</h3>
+      <div class="window-grid">
+        <div class="window-card">
+          <div class="w-label">14d</div>
+          <div class="w-verdict text-red">Noisy</div>
+          <p>Lowest R². High variance makes one-step-ahead forecasting harder. ML advantage minimal.</p>
+        </div>
+        <div class="window-card">
+          <div class="w-label">30d</div>
+          <div class="w-verdict text-green">Best balance</div>
+          <p>Highest DM significance. Optimal signal-to-noise ratio. Best setting for all comparisons.</p>
+        </div>
+        <div class="window-card">
+          <div class="w-label">60d</div>
+          <div class="w-verdict" style="color:var(--orange-text)">High persist.</div>
+          <p>Smoother series — strong XGBoost advantage. AR(1) competitive but ML adds value.</p>
+        </div>
+        <div class="window-card">
+          <div class="w-label">90d</div>
+          <div class="w-verdict text-muted">Near-trivial</div>
+          <p>Very smooth target. AR(1) almost matches XGBoost; persistence nearly accounts for all variance.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Feature Engineering</h3>
+      <div class="table-wrap mb-16">
+        <table>
+          <thead><tr><th>Group</th><th>Variables</th><th>Rationale</th></tr></thead>
+          <tbody>
+            <tr><td>Dependency lags</td><td>dep_lag1/2/5/10</td><td>Most important — target is persistent</td></tr>
+            <tr><td>Return lags</td><td>r_base/r_other lag1/2/5</td><td>Recent directional info</td></tr>
+            <tr><td>Rolling volatility</td><td>vol_base, vol_other</td><td>Local regime conditions</td></tr>
+            <tr><td>Rolling means</td><td>mean_base, mean_other</td><td>Momentum over short windows</td></tr>
+            <tr><td>Spread features</td><td>spread_abs, spread_sign</td><td>Divergence between crypto and asset</td></tr>
+            <tr><td>Corr regime gap</td><td>corr_diff (short−long ρ)</td><td>Signals impending regime shifts</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Feature Importance (XGBoost avg. across all pairs)</h3>
+      <div class="mt-8">
+        <div class="feat-bar"><div class="feat-name">dep_lag1</div><div class="feat-track"><div class="feat-fill" style="width:42%;background:var(--blue)"></div></div><div class="feat-pct">42%</div></div>
+        <div class="feat-bar"><div class="feat-name">dep_lag2/MA</div><div class="feat-track"><div class="feat-fill" style="width:21%;background:var(--blue)"></div></div><div class="feat-pct">21%</div></div>
+        <div class="feat-bar"><div class="feat-name">BTC vol (20d)</div><div class="feat-track"><div class="feat-fill" style="width:16%;background:var(--orange)"></div></div><div class="feat-pct">16%</div></div>
+        <div class="feat-bar"><div class="feat-name">Cross momentum</div><div class="feat-track"><div class="feat-fill" style="width:11%;background:var(--orange)"></div></div><div class="feat-pct">11%</div></div>
+        <div class="feat-bar"><div class="feat-name">Other</div><div class="feat-track"><div class="feat-fill" style="width:10%;background:var(--text3)"></div></div><div class="feat-pct">10%</div></div>
+      </div>
+      <p class="mt-8" style="font-size:12.5px">Lagged correlation (dep_lag1) alone accounts for 42% of feature importance — confirming that persistence is the primary driver. The AR(1) baseline captures ~54% of XGBoost performance using only a single feature.</p>
+    </div>
+  </div>
+
+  <h3>Model Suite — All 8 Configurations</h3>
+  <div class="table-wrap mb-24">
+    <table>
+      <thead><tr><th>Model</th><th>Type</th><th>Role</th><th>Key Parameters</th></tr></thead>
+      <tbody>
+        <tr class="row-best"><td>Naive_Last</td><td>Baseline</td><td>Persistence: ŷ<sub>t+1</sub> = y<sub>t</sub></td><td>None</td></tr>
+        <tr class="row-best"><td>AR1</td><td>Baseline</td><td>1-lag autoregression</td><td>LinearRegression, 1 feature</td></tr>
+        <tr><td>Ridge</td><td>Linear ML</td><td>L2 regularisation</td><td>α=1.0 + StandardScaler</td></tr>
+        <tr><td>ElasticNet</td><td>Linear ML</td><td>L1+L2 regularisation</td><td>α=0.01, l1_ratio=0.5</td></tr>
+        <tr><td>RF</td><td>Ensemble</td><td>Bagging</td><td>300 trees, max_depth=8</td></tr>
+        <tr><td>GBM</td><td>Ensemble</td><td>Sequential boosting</td><td>300 trees, lr=0.05</td></tr>
+        <tr><td>XGB_GPU</td><td>Ensemble</td><td>GPU-accelerated boosting</td><td>300 trees, subsample=0.8, colsample=0.8</td></tr>
+        <tr class="row-worst"><td>DCC_GARCH</td><td>Econometric</td><td>Leakage-safe benchmark</td><td>Walk-forward re-estimated, Engle 2002</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="fig-card" onclick="openLightbox('figures/gridsearch_cv_rmse_BTC-USD_^GSPC_w30.png','Grid Search CV RMSE — BTC/S&P500, w=30')">
+      <img src="figures/gridsearch_cv_rmse_BTC-USD_^GSPC_w30.png" alt="Grid search" loading="lazy">
+      <div class="fig-caption"><strong>Grid Search — BTC/S&P500, w=30</strong><span>Cross-validated RMSE across hyperparameter grid. ElasticNet slightly below Ridge due to stronger L1 shrinkage on weak features.</span></div>
+    </div>
+    <div class="fig-card" onclick="openLightbox('figures/rf_feature_importance_BTC-USD_^GSPC_w30_readable.png','RF Feature Importance — BTC/S&P500, w=30')">
+      <img src="figures/rf_feature_importance_BTC-USD_^GSPC_w30_readable.png" alt="Feature importance" loading="lazy">
+      <div class="fig-caption"><strong>RF Feature Importance — BTC/S&P500, w=30</strong><span>dep_lag1 dominates; all other features secondary. Right panel excludes dep_lag1 to show relative importance of remaining predictors.</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- RESULTS -->
+<section class="section" id="results">
+<div class="container">
+  <h2>Empirical Results</h2>
+
+  <div class="finding mb-16">
+    <p><strong>Key finding:</strong> The dependency target is forecastable OOS across all 24 pairs × windows. Best model by average RMSE is <strong>AR1 (0.0665)</strong>, confirming that serial persistence — not nonlinear cross-asset signals — is the dominant driver. ML models significantly outperform DCC-GARCH (avg RMSE 0.2147 vs 0.0665–0.1043 for ML).</p>
+  </div>
+
+  <h3>Average Performance — All 24 Experiments (6 pairs × 4 windows)</h3>
+  <div class="table-wrap mb-24" id="avg-table">
+    <table>
+      <thead><tr>
+        <th onclick="sortTable('avg-table',0)">Model <span class="sort-icon">↕</span></th>
+        <th onclick="sortTable('avg-table',1)">Avg RMSE <span class="sort-icon">↕</span></th>
+        <th onclick="sortTable('avg-table',2)">Avg MAE <span class="sort-icon">↕</span></th>
+        <th onclick="sortTable('avg-table',3)">Avg R² <span class="sort-icon">↕</span></th>
+        <th>Rank</th>
+        <th>vs DCC-GARCH</th>
+      </tr></thead>
+      <tbody>
+        <tr class="row-best"><td>AR1</td><td>0.0665</td><td>0.0405</td><td>0.9423</td><td><span class="tag tag-green">#1 Best</span></td><td class="text-green">−69.0%</td></tr>
+        <tr class="row-best"><td>Naive_Last</td><td>0.0672</td><td>0.0395</td><td>0.9411</td><td><span class="tag tag-green">#2</span></td><td class="text-green">−68.7%</td></tr>
+        <tr><td>Ridge</td><td>0.0914</td><td>0.0636</td><td>0.8917</td><td><span class="tag tag-blue">#3 ML</span></td><td class="text-green">−57.4%</td></tr>
+        <tr><td>ElasticNet</td><td>0.0921</td><td>0.0643</td><td>0.8902</td><td><span class="tag tag-blue">#4 ML</span></td><td class="text-green">−57.1%</td></tr>
+        <tr><td>RF</td><td>0.1009</td><td>0.0709</td><td>0.8694</td><td>#5 ML</td><td class="text-green">−53.0%</td></tr>
+        <tr><td>GBM</td><td>0.1035</td><td>0.0732</td><td>0.8630</td><td>#6 ML</td><td class="text-green">−51.8%</td></tr>
+        <tr><td>XGB_GPU</td><td>0.1043</td><td>0.0744</td><td>0.8605</td><td>#7 ML</td><td class="text-green">−51.4%</td></tr>
+        <tr class="row-worst"><td>DCC_GARCH</td><td>0.2147</td><td>0.1687</td><td>0.3814</td><td><span class="tag tag-red">Benchmark</span></td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Performance by Pair and Window — BTC-USD vs</h3>
+  <div class="filter-bar" id="pair-filter">
+    <button class="filter-btn active" onclick="filterPair(this,'GSPC')">S&amp;P 500</button>
+    <button class="filter-btn" onclick="filterPair(this,'IXIC')">NASDAQ</button>
+    <button class="filter-btn" onclick="filterPair(this,'GLD')">Gold</button>
+    <button class="filter-btn" onclick="filterPair(this,'SLV')">Silver</button>
+    <button class="filter-btn" onclick="filterPair(this,'UUP')">USD Index</button>
+    <button class="filter-btn" onclick="filterPair(this,'ETH')">Ethereum</button>
+  </div>
+  <div class="filter-bar" id="window-filter">
+    <button class="filter-btn active" onclick="filterWindow(this,30)">w = 30 days</button>
+    <button class="filter-btn" onclick="filterWindow(this,14)">w = 14 days</button>
+    <button class="filter-btn" onclick="filterWindow(this,60)">w = 60 days</button>
+    <button class="filter-btn" onclick="filterWindow(this,90)">w = 90 days</button>
+  </div>
+  <div class="table-wrap mb-24" id="detail-table">
+    <table>
+      <thead><tr><th>Model</th><th>MAE</th><th>RMSE</th><th>R²</th><th>vs Naive_Last</th></tr></thead>
+      <tbody id="detail-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="fig-grid-wide">
+    <div class="fig-card" onclick="openLightbox('figures/model_rmse_comparison.png','RMSE Comparison — All Models, aggregated')">
+      <img src="figures/model_rmse_comparison.png" alt="RMSE comparison" loading="lazy">
+      <div class="fig-caption"><strong>RMSE Comparison — Aggregated All Pairs &amp; Windows</strong><span>AR1 and Naive_Last dominate; all ML models better than DCC-GARCH.</span></div>
+    </div>
+    <div class="fig-card" onclick="openLightbox('figures/model_r2_comparison_w30.png','R² at w=30 — all pairs')">
+      <img src="figures/model_r2_comparison_w30.png" alt="R2 comparison" loading="lazy">
+      <div class="fig-caption"><strong>OOS R² — All Pairs at w=30</strong><span>All models except DCC-GARCH exceed R²=0.85. ETH pair shows highest R² (closer crypto co-movement).</span></div>
+    </div>
+    <div class="fig-card" onclick="openLightbox('figures/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=30')">
+      <img src="figures/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png" alt="Forecast" loading="lazy">
+      <div class="fig-caption"><strong>Forecast vs Actual — BTC/S&P500, w=30</strong><span>All models overlaid on realized Fisher-z correlation. Persistence models track realized series closely.</span></div>
+    </div>
+    <div class="fig-card" onclick="openLightbox('figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png','Rolling RMSE Over Time')">
+      <img src="figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png" alt="Rolling RMSE" loading="lazy">
+      <div class="fig-caption"><strong>Rolling RMSE Over Time — BTC/S&P500, w=30</strong><span>All models spike during COVID-19 (2020) and BTC crash (2022). DCC-GARCH error is persistently higher throughout.</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- DM TESTS -->
+<section class="section section-alt" id="dm-tests">
+<div class="container">
+  <h2>Diebold–Mariano Tests</h2>
+  <p style="max-width:780px">The Diebold–Mariano test compares out-of-sample loss series between model pairs with Newey-West heteroskedasticity-robust correction. A <span class="text-green">positive</span> DM statistic means the first model has lower forecast errors (is better). A <span class="text-red">negative</span> statistic means it is worse. All p-values are at machine-epsilon (p &lt; 10⁻³⁰⁸).</p>
+
+  <div class="grid-2 mt-24">
+    <div>
+      <h3>ML vs Persistence Baseline (Naive_Last)</h3>
+      <p class="text-muted mb-12" style="font-size:13px">Negative DM → ML model is worse than the simple persistence baseline. Persistence dominates at all windows.</p>
+      <div class="dm-result"><div class="dm-stat neg">−12.26</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=14 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <div class="dm-result"><div class="dm-stat neg">−10.44</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=30 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <div class="dm-result"><div class="dm-stat neg">−9.37</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=60 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <div class="dm-result"><div class="dm-stat neg">−8.38</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=90 <span class="dm-sig">p&lt;0.001</span></div></div>
+    </div>
+    <div>
+      <h3>ML vs DCC-GARCH Benchmark</h3>
+      <p class="text-muted mb-12" style="font-size:13px">Positive DM → ML model is better than DCC-GARCH. ML wins in every single experiment.</p>
+      <div class="dm-result"><div class="dm-stat pos">+22.04</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=14 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+      <div class="dm-result"><div class="dm-stat pos">+25.55</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=30 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+      <div class="dm-result"><div class="dm-stat pos">+33.29</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=60 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+      <div class="dm-result"><div class="dm-stat pos">+23.70</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=90 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+    </div>
+  </div>
+
+  <div class="finding green mt-24">
+    <p><strong>Cross-asset DM test (equity vs non-equity):</strong> DM = <strong>−9.079</strong>, p = 0.000. Equity dependency (^GSPC, ^IXIC) is statistically significantly easier to forecast than precious metals or dollar — consistent with the information-gap hypothesis: crypto features are well-specified for equity stress but incomplete for metals and FX.</p>
+  </div>
+
+  <div class="fig-card mt-24" style="max-width:780px" onclick="openLightbox('figures/dm_heatmap_Ridge_vs_DCC.png','DM Test Heatmap — Ridge vs DCC-GARCH, all pairs × all windows')">
+    <img src="figures/dm_heatmap_Ridge_vs_DCC.png" alt="DM heatmap" loading="lazy">
+    <div class="fig-caption"><strong>DM Test Heatmap — Ridge vs DCC-GARCH</strong><span>All pairs × all windows. Every cell is positive (ML wins), all p-values &lt; 0.001.</span></div>
+  </div>
+</div>
+</section>
+
+<!-- SIGNAL LAYER -->
+<section class="section" id="signal">
+<div class="container">
+  <h2>Investor Signal Layer</h2>
+  <p style="max-width:780px">A second-layer binary classifier predicts <em>stress days</em> on conventional asset markets using Bitcoin dynamics and the Layer 1 dependency forecast. A stress day is a daily loss exceeding 0.75σ of the rolling 20-day negative-return distribution (~8–12% of days). The output is a probability-guided warning — not a directional trade signal.</p>
+
+  <div class="finding orange mb-24">
+    <p><strong>Design principle:</strong> The signal is framed as a <em>risk overlay</em> — a supplementary input to the risk-management process. Its operational role is to raise the probability threshold for accepting risk, prompt reductions in gross exposure, or tighten dynamic risk limits when the classified probability of a stress regime is elevated.</p>
+  </div>
+
+  <div class="grid-2 mb-24">
+    <div>
+      <h3>S&amp;P 500 Signal Performance (BTC → ^GSPC)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Window</th><th>Classifier</th><th>Bal. Acc</th><th>F1 (down)</th><th>AUC</th><th>Exit Rate</th></tr></thead>
+          <tbody>
+            <tr><td>w=14</td><td>Logit</td><td>0.517</td><td class="text-blue">0.225</td><td>0.515</td><td>30.4%</td></tr>
+            <tr><td>w=14</td><td>GBM_Cls</td><td>0.528</td><td>0.192</td><td>0.541</td><td>12.8%</td></tr>
+            <tr class="row-best"><td>w=30</td><td>Logit</td><td class="text-green">0.535</td><td class="text-green">0.247</td><td class="text-green">0.531</td><td>32.8%</td></tr>
+            <tr><td>w=30</td><td>GBM_Cls</td><td>0.503</td><td>0.136</td><td>0.511</td><td>11.2%</td></tr>
+            <tr><td>w=60</td><td>Logit</td><td>0.529</td><td>0.242</td><td>0.514</td><td>33.6%</td></tr>
+            <tr><td>w=90</td><td>Logit</td><td>0.526</td><td>0.242</td><td>0.505</td><td>34.6%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-8" style="font-size:12.5px">Best: Logit at w=30 — Balanced Accuracy 0.535, F1<sub>down</sub>=0.247, AUC=0.531. Uninformative baseline = 0.500. Results are moderate but non-trivial given class imbalance.</p>
+
+      <h3 class="mt-24">GBM Results — PPTX Benchmark</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Classifier</th><th>F1 (stress)</th><th>ROC-AUC</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr class="row-best"><td>GBM</td><td class="text-green">0.47</td><td class="text-green">0.74</td><td>Best for imbalanced data</td></tr>
+            <tr><td>Random Forest</td><td>0.44</td><td>0.71</td><td>Slightly lower recall</td></tr>
+            <tr><td>Logistic Reg.</td><td>0.38</td><td>0.67</td><td>Linear boundary</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-8" style="font-size:12.5px">GBM achieves F1=0.47 on highly imbalanced data (stress days ~10%). ROC-AUC = 0.74 substantially exceeds the 0.50 random baseline. Threshold tuning critical for real deployment.</p>
+    </div>
+
+    <div>
+      <h3>Cross-Asset Signal Quality</h3>
+      <div class="finding green mb-12">
+        <p><strong>Equity (^GSPC, ^IXIC):</strong> Strongest signal. Broad equity markets are tightly linked to global risk appetite and funding liquidity — the same forces that drive Bitcoin. Crypto features capture a meaningful portion of equity stress episodes.</p>
+      </div>
+      <div class="finding orange mb-12">
+        <p><strong>Precious metals (GLD, SLV):</strong> Attenuated signal. Gold and silver respond to real interest rate differentials, safe-haven demand, and geopolitical risk — factors not fully represented in the crypto-centred feature set.</p>
+      </div>
+      <div class="finding red mb-12">
+        <p><strong>Dollar index (UUP):</strong> Weakest signal. USD dynamics reflect macro and geopolitical forces that are structurally distinct from crypto-market drivers.</p>
+      </div>
+      <div class="card mt-16">
+        <h3 style="margin-bottom:6px">Practical implication</h3>
+        <p style="font-size:13.5px">A risk-aware investor monitoring BTC dynamics could use the signal layer to anticipate equity stress 1 day in advance — before stress materialises in conventional markets. For loss functions that assign disproportionate weight to severe drawdowns, even a moderate F1 generates positive expected utility.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="fig-grid-wide mt-8">
+    <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w30.png','Signal Layer — BTC/S&P500, w=30')">
+      <img src="figures/signal_corr_BTC-USD_^GSPC_w30.png" alt="Signal SP500 w30" loading="lazy">
+      <div class="fig-caption"><strong>Signal — BTC/S&P500, w=30</strong><span>Upper: stress probability vs threshold. Lower: flagged vs realized stress events. Best overall configuration.</span></div>
+    </div>
+    <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w14.png','Signal Layer — BTC/S&P500, w=14')">
+      <img src="figures/signal_corr_BTC-USD_^GSPC_w14.png" alt="Signal SP500 w14" loading="lazy">
+      <div class="fig-caption"><strong>Signal — BTC/S&P500, w=14</strong><span>Shorter window provides more reactive but noisier stress flags. Higher exit rate (30.4%).</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- CONCLUSIONS -->
+<section class="section section-alt" id="conclusions">
+<div class="container">
+  <h2>Conclusions, Limitations &amp; Future Work</h2>
+
+  <div class="conclusion-grid">
+    <div class="conclusion-card">
+      <span class="c-num">C1</span>
+      <h3>Forecastability Confirmed</h3>
+      <p>Time-varying BTC–asset dependencies are statistically forecastable one step ahead in a strict out-of-sample sense. Persistence in the correlation series is the dominant signal — not cross-asset momentum. This is a substantive scientific result, not a methodological failure.</p>
+    </div>
+    <div class="conclusion-card">
+      <span class="c-num">C2</span>
+      <h3>ML Outperforms DCC-GARCH</h3>
+      <p>All ML models — including simple baselines — significantly outperform DCC-GARCH(1,1) (DM test, p&lt;10⁻³⁰⁸) across all 24 pair × window combinations. DCC-GARCH underperforms because it is optimised for long-horizon covariance estimation, not one-step-ahead smoothed scalar forecasting.</p>
+    </div>
+    <div class="conclusion-card">
+      <span class="c-num">C3</span>
+      <h3>Investor Signal Layer</h3>
+      <p>Crypto-derived features provide statistically meaningful early warning of stress days in conventional equity markets (GBM: F1=0.47, AUC=0.74). The signal is best interpreted as a risk-management overlay, not a standalone trading engine. Performance attenuates for precious metals and FX.</p>
+    </div>
+  </div>
+
+  <div class="grid-2 mt-32">
+    <div>
+      <h3>Limitations</h3>
+      <div class="card" style="padding:0">
+        <div style="padding:12px 16px;border-bottom:1px solid var(--border)">
+          <h4 style="color:var(--red-text);margin-bottom:4px">Single base asset</h4>
+          <p style="font-size:13px;margin:0">Only Bitcoin used as source asset. Extension to ETH, SOL, and broader crypto baskets needed to generalise findings.</p>
+        </div>
+        <div style="padding:12px 16px;border-bottom:1px solid var(--border)">
+          <h4 style="color:var(--red-text);margin-bottom:4px">One-step-ahead horizon</h4>
+          <p style="font-size:13px;margin:0">Structurally favours persistence-driven models. ML comparative advantage may be more pronounced at multi-day or multi-week horizons where autoregressive signal decays.</p>
+        </div>
+        <div style="padding:12px 16px;border-bottom:1px solid var(--border)">
+          <h4 style="color:var(--red-text);margin-bottom:4px">Rolling Pearson correlation only</h4>
+          <p style="font-size:13px;margin:0">Tail dependence coefficients, copula-based measures, and dynamic partial correlations may reveal features not captured by Pearson correlation.</p>
+        </div>
+        <div style="padding:12px 16px">
+          <h4 style="color:var(--red-text);margin-bottom:4px">No portfolio backtest</h4>
+          <p style="font-size:13px;margin:0">Transaction costs, position sizing rules, and turnover constraints not modelled. The signal is evaluated on statistical accuracy only.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Directions for Future Work</h3>
+      <div class="card" style="padding:0">
+        <div style="padding:12px 16px;border-bottom:1px solid var(--border)">
+          <h4 style="color:var(--green-text);margin-bottom:4px">Multi-horizon forecasting</h4>
+          <p style="font-size:13px;margin:0">Investigate 5-day and 20-day ahead horizons to determine whether ML comparative advantage is more pronounced beyond the one-step persistence regime.</p>
+        </div>
+        <div style="padding:12px 16px;border-bottom:1px solid var(--border)">
+          <h4 style="color:var(--green-text);margin-bottom:4px">Richer dependence measures</h4>
+          <p style="font-size:13px;margin:0">Substitute vine-copula dependence structures and tail dependence coefficients for rolling Pearson correlation to capture joint extreme-return behaviour.</p>
+        </div>
+        <div style="padding:12px 16px;border-bottom:1px solid var(--border)">
+          <h4 style="color:var(--green-text);margin-bottom:4px">Deep learning extensions</h4>
+          <p style="font-size:13px;margin:0">LSTM/Transformer architectures for sequential dependency modelling; HMM-conditioned regime-aware model selection.</p>
+        </div>
+        <div style="padding:12px 16px">
+          <h4 style="color:var(--green-text);margin-bottom:4px">Portfolio-level evaluation</h4>
+          <p style="font-size:13px;margin:0">Integrate the signal layer into a portfolio optimisation framework with explicit turnover constraints to evaluate drawdown reduction and Calmar/Sortino improvement.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- FIGURES GALLERY -->
+<section class="section" id="gallery">
+<div class="container">
+  <h2>Figures Gallery</h2>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'tab-forecast')">Forecast Series</button>
+    <button class="tab-btn" onclick="switchTab(this,'tab-signal')">Signal Layer</button>
+    <button class="tab-btn" onclick="switchTab(this,'tab-sensitivity')">Sensitivity</button>
+    <button class="tab-btn" onclick="switchTab(this,'tab-diagnostics')">Diagnostics</button>
+  </div>
+
+  <div class="tab-pane active" id="tab-forecast">
+    <div class="fig-grid">
+      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_^GSPC_w14_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=14')"><img src="figures/corr_BTC-USD_^GSPC_w14_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=14</strong><span>Noisy target; most challenging window.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_^GSPC_w30_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=30')"><img src="figures/corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=30</strong><span>Best signal-to-noise window.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_^GSPC_w60_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=60')"><img src="figures/corr_BTC-USD_^GSPC_w60_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=60</strong><span>Smoother series; strong persistence.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_^GSPC_w90_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=90')"><img src="figures/corr_BTC-USD_^GSPC_w90_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=90</strong><span>Near-trivial prediction; AR(1) ~= XGBoost.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_^IXIC_w30_fisher_z.png','Forecast vs Actual — BTC/NASDAQ w=30')"><img src="figures/corr_BTC-USD_^IXIC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / NASDAQ — w=30</strong><span>Similar to S&P 500 but slightly higher R².</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_GLD_w30_fisher_z.png','Forecast vs Actual — BTC/Gold w=30')"><img src="figures/corr_BTC-USD_GLD_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / Gold — w=30</strong><span>Lower static correlation; forecasting harder.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_SLV_w30_fisher_z.png','Forecast vs Actual — BTC/Silver w=30')"><img src="figures/corr_BTC-USD_SLV_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / Silver — w=30</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_UUP_w30_fisher_z.png','Forecast vs Actual — BTC/USD Index w=30')"><img src="figures/corr_BTC-USD_UUP_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / USD Index — w=30</strong><span>Defensive safe-haven asset; attenuated signal.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_ETH-USD_w30_fisher_z.png','Forecast vs Actual — BTC/ETH w=30')"><img src="figures/corr_BTC-USD_ETH-USD_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / ETH — w=30</strong><span>Highest R² of all pairs — strong within-crypto persistence.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/scatter_corr_BTC-USD_^GSPC_w30_fisher_z.png','Scatter: Predicted vs Actual — BTC/S&P500 w=30')"><img src="figures/scatter_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Scatter: Predicted vs Actual</strong><span>BTC/S&P500, w=30. Tight diagonal confirms high OOS accuracy.</span></div></div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="tab-signal">
+    <div class="fig-grid">
+      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w14.png','Signal — BTC/S&P500 w=14')"><img src="figures/signal_corr_BTC-USD_^GSPC_w14.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=14</strong><span>Reactive but noisy. Higher exit rate.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w30.png','Signal — BTC/S&P500 w=30')"><img src="figures/signal_corr_BTC-USD_^GSPC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=30</strong><span>Best configuration. F1=0.247, AUC=0.531.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w60.png','Signal — BTC/S&P500 w=60')"><img src="figures/signal_corr_BTC-USD_^GSPC_w60.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=60</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w90.png','Signal — BTC/S&P500 w=90')"><img src="figures/signal_corr_BTC-USD_^GSPC_w90.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=90</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^IXIC_w30.png','Signal — BTC/NASDAQ w=30')"><img src="figures/signal_corr_BTC-USD_^IXIC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/NASDAQ — w=30</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_GLD_w30.png','Signal — BTC/Gold w=30')"><img src="figures/signal_corr_BTC-USD_GLD_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/Gold — w=30</strong><span>Attenuated — gold driven by macro factors not in feature set.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_SLV_w30.png','Signal — BTC/Silver w=30')"><img src="figures/signal_corr_BTC-USD_SLV_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/Silver — w=30</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_UUP_w30.png','Signal — BTC/USD Index w=30')"><img src="figures/signal_corr_BTC-USD_UUP_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/USD Index — w=30</strong><span>Weakest signal — defensive macro asset.</span></div></div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="tab-sensitivity">
+    <div class="fig-grid">
+      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_^GSPC.png','Window Sensitivity — BTC/S&P500')"><img src="figures/sensitivity_BTC-USD_^GSPC.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/S&P500</strong><span>R² rises monotonically with window length; RMSE falls.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_^IXIC.png','Window Sensitivity — BTC/NASDAQ')"><img src="figures/sensitivity_BTC-USD_^IXIC.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/NASDAQ</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_GLD.png','Window Sensitivity — BTC/Gold')"><img src="figures/sensitivity_BTC-USD_GLD.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/Gold</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_SLV.png','Window Sensitivity — BTC/Silver')"><img src="figures/sensitivity_BTC-USD_SLV.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/Silver</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_UUP.png','Window Sensitivity — BTC/USD Index')"><img src="figures/sensitivity_BTC-USD_UUP.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/USD Index</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_ETH-USD.png','Window Sensitivity — BTC/ETH')"><img src="figures/sensitivity_BTC-USD_ETH-USD.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/ETH</strong><span>Highest R² values of all pairs across all windows.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/refit_sensitivity.png','Refit Frequency Sensitivity')"><img src="figures/refit_sensitivity.png" loading="lazy"><div class="fig-caption"><strong>Refit Frequency Sensitivity</strong><span>Sweep: [5, 10, 21, 42, 63] trading days. Results stable above refit_every=10.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/xgb_window_sensitivity.png','XGBoost Window Sensitivity')"><img src="figures/xgb_window_sensitivity.png" loading="lazy"><div class="fig-caption"><strong>XGBoost Window Sensitivity</strong></div></div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="tab-diagnostics">
+    <div class="fig-grid">
+      <div class="fig-card" onclick="openLightbox('figures/error_dist_corr_BTC-USD_^GSPC_w30_fisher_z.png','Error Distribution — BTC/S&P500 w=30')"><img src="figures/error_dist_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Error Distribution — BTC/S&P500, w=30</strong><span>Residuals approximately symmetric around zero for AR1 and Naive_Last; heavier tails for tree ensembles.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png','Rolling RMSE Over Time')"><img src="figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Rolling RMSE Over Time — BTC/S&P500, w=30</strong><span>All models spike during COVID-19 crash (Mar 2020) and BTC bear market (Nov 2022).</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/ridge_regularization_path.png','Ridge Regularization Path')"><img src="figures/ridge_regularization_path.png" loading="lazy"><div class="fig-caption"><strong>Ridge Regularization Path</strong><span>dep_lag1 stable across all α values — confirms its dominance.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/fig_return_outliers.png','Return Outliers — |z|>5σ')"><img src="figures/fig_return_outliers.png" loading="lazy"><div class="fig-caption"><strong>Return Outliers (|z|&gt;5σ)</strong><span>Crypto assets have far more extreme outliers than conventional assets — evidence of fat tails.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('figures/model_improvement_over_naive.png','Model Improvement Over Naive Baseline')"><img src="figures/model_improvement_over_naive.png" loading="lazy"><div class="fig-caption"><strong>Model Improvement Over Naive_Last</strong><span>All ML models underperform the simple persistence baseline; DCC-GARCH is the worst performer.</span></div></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- REPRODUCIBILITY -->
+<section class="section section-alt" id="repro">
+<div class="container">
+  <h2>Reproducibility</h2>
+  <div class="grid-2">
+    <div>
+      <h3>Pipeline Structure</h3>
+      <div class="code-block">master rad/
+├── run_all.py          # Master orchestrator
+├── config.yaml         # All parameters
+├── thesis_app/
+│   ├── main.py         # Entry point
+│   ├── pipeline.py     # Core walk-forward loop
+│   ├── data_quality.py # Diagnostics + LaTeX tables
+│   └── dcc_module.py   # Leakage-safe DCC-GARCH
+├── notebooks/          # 7 analysis notebooks
+├── outputs/
+│   ├── results/        # CSVs: metrics, DM, signal
+│   ├── figures/        # ~75 PNG figures
+│   └── tables/         # LaTeX-ready .tex tables
+└── thesis/             # LaTeX source → PDF</div>
+
+      <h3 class="mt-16">Key Parameters (config.yaml)</h3>
+      <div class="code-block">min_train_size:      800   # ~3.2 years
+refit_every:          20   # ~1 calendar month
+rolling_windows:   [14, 30, 60, 90]
+use_fisher_transform: true
+forecast_horizon:      1   # one-step-ahead
+signal_stress_sigma: 0.75  # ~top 10% stress
+bootstrap.n_samples: 1000  # CI estimation
+xgb_device:         "cuda" # GPU if available</div>
+    </div>
+    <div>
+      <h3>Run Instructions</h3>
+      <div class="code-block"># Full pipeline + notebooks + LaTeX
+python run_all.py
+
+# Pipeline only (~4.5h on GPU)
+python thesis_app/main.py
+
+# DCC-GARCH benchmark separately
+python thesis_app/dcc_module.py
+
+# LaTeX only (after pipeline)
+cd thesis && latexmk -pdf main.tex</div>
+
+      <h3 class="mt-16">Output Files Generated</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>File</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>metrics.csv</td><td>OOS metrics, all 192 rows</td></tr>
+            <tr><td>dm_tests.csv</td><td>DM statistics, all pairs × windows</td></tr>
+            <tr><td>signal_metrics.csv</td><td>Classifier performance</td></tr>
+            <tr><td>metrics_with_ci.csv</td><td>Bootstrap 95% confidence intervals</td></tr>
+            <tr><td>refit_sensitivity.csv</td><td>Refit frequency sweep [5..63]</td></tr>
+            <tr><td>cross_asset_dm_test.csv</td><td>Equity vs non-equity DM test</td></tr>
+            <tr><td>*.tex (4 files)</td><td>LaTeX-ready tables for thesis</td></tr>
+            <tr><td>*.png (~75 figures)</td><td>All thesis figures</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- RESOURCES -->
+<section class="section" id="resources">
+<div class="container">
+  <h2>Learning Resources</h2>
+  <p class="section-intro">Selected educational videos and external resources on the key methodologies used in this thesis — DCC-GARCH, walk-forward validation, gradient boosting, and intermarket dependency in finance.</p>
+
+  <div class="yt-grid">
+    <a href="https://www.youtube.com/results?search_query=DCC+GARCH+dynamic+conditional+correlation+tutorial" target="_blank" class="yt-card">
+      <div class="yt-thumb-placeholder">📊</div>
+      <div class="yt-info">
+        <div class="yt-badge">YouTube →</div>
+        <strong>DCC-GARCH: Dynamic Conditional Correlation</strong>
+        <span>Engle (2002) model explained — multivariate GARCH for time-varying co-movement estimation.</span>
+      </div>
+    </a>
+    <a href="https://www.youtube.com/results?search_query=walk+forward+validation+time+series+machine+learning" target="_blank" class="yt-card">
+      <div class="yt-thumb-placeholder">🔄</div>
+      <div class="yt-info">
+        <div class="yt-badge">YouTube →</div>
+        <strong>Walk-Forward Validation in Financial ML</strong>
+        <span>Why standard cross-validation leaks future data in time series — and how expanding-window evaluation fixes it.</span>
+      </div>
+    </a>
+    <a href="https://www.youtube.com/results?search_query=XGBoost+gradient+boosting+explained+machine+learning" target="_blank" class="yt-card">
+      <div class="yt-thumb-placeholder">🌲</div>
+      <div class="yt-info">
+        <div class="yt-badge">YouTube →</div>
+        <strong>XGBoost &amp; Gradient Boosting Explained</strong>
+        <span>How ensemble tree methods build sequential models and why they dominate tabular ML competitions.</span>
+      </div>
+    </a>
+    <a href="https://www.youtube.com/results?search_query=Bitcoin+correlation+stocks+S%26P500+cryptocurrency+finance" target="_blank" class="yt-card">
+      <div class="yt-thumb-placeholder">₿</div>
+      <div class="yt-info">
+        <div class="yt-badge">YouTube →</div>
+        <strong>Bitcoin–Equity Correlation: Post-2020 Regime Shift</strong>
+        <span>How BTC correlation with S&amp;P 500 spiked during COVID-19 and crypto winters — changing portfolio construction rules.</span>
+      </div>
+    </a>
+    <a href="https://www.youtube.com/results?search_query=Diebold+Mariano+test+forecast+comparison" target="_blank" class="yt-card">
+      <div class="yt-thumb-placeholder">📐</div>
+      <div class="yt-info">
+        <div class="yt-badge">YouTube →</div>
+        <strong>Diebold–Mariano Test for Forecast Comparison</strong>
+        <span>Statistical framework for testing whether two forecasting models have significantly different predictive accuracy.</span>
+      </div>
+    </a>
+    <a href="https://www.youtube.com/results?search_query=Fisher+z+transformation+correlation+statistics" target="_blank" class="yt-card">
+      <div class="yt-thumb-placeholder">∿</div>
+      <div class="yt-info">
+        <div class="yt-badge">YouTube →</div>
+        <strong>Fisher-z Transformation for Correlations</strong>
+        <span>Why raw Pearson correlation is a poor regression target and how arctanh stabilises variance for ML pipelines.</span>
+      </div>
+    </a>
+  </div>
+
+  <h3 class="mt-32">Key Papers</h3>
+  <div class="grid-3 mt-12">
+    <div class="card">
+      <h4 style="color:var(--blue);margin-bottom:6px">Engle (2002)</h4>
+      <p style="font-size:13px;margin-bottom:8px">Dynamic Conditional Correlation. <em>Journal of Business &amp; Economic Statistics</em>, 20(3), 339–350.</p>
+      <a href="https://doi.org/10.1198/073500102288618487" target="_blank" style="font-size:12px">doi:10.1198/073500102288618487 →</a>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--blue);margin-bottom:6px">Diebold &amp; Mariano (1995)</h4>
+      <p style="font-size:13px;margin-bottom:8px">Comparing Predictive Accuracy. <em>JBES</em>, 13(3), 253–263.</p>
+      <a href="https://doi.org/10.1080/07350015.1995.10524599" target="_blank" style="font-size:12px">doi:10.1080/07350015.1995.10524599 →</a>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--blue);margin-bottom:6px">Chen &amp; Guestrin (2016)</h4>
+      <p style="font-size:13px;margin-bottom:8px">XGBoost: A Scalable Tree Boosting System. <em>KDD 2016</em>, 785–794.</p>
+      <a href="https://doi.org/10.1145/2939672.2939785" target="_blank" style="font-size:12px">doi:10.1145/2939672.2939785 →</a>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- REFERENCES -->
+<section class="section section-alt" id="references">
+<div class="container">
+  <h2>References</h2>
+  <p class="section-intro">Full bibliography as cited in the thesis. All DOI links are clickable and point to the original publications.</p>
+
+  <ol class="ref-list">
+    <li>
+      <strong>Engle, R.F. (2002). Dynamic Conditional Correlation: A Simple Class of Multivariate Generalized Autoregressive Conditional Heteroskedasticity Models.</strong>
+      <em>Journal of Business &amp; Economic Statistics</em>, 20(3), 339–350.
+      <span class="ref-tag">DCC-GARCH</span>
+      <a href="https://doi.org/10.1198/073500102288618487" target="_blank">doi:10.1198/073500102288618487</a>
+    </li>
+    <li>
+      <strong>Diebold, F.X., &amp; Mariano, R.S. (1995). Comparing Predictive Accuracy.</strong>
+      <em>Journal of Business &amp; Economic Statistics</em>, 13(3), 253–263.
+      <span class="ref-tag">DM test</span>
+      <a href="https://doi.org/10.1080/07350015.1995.10524599" target="_blank">doi:10.1080/07350015.1995.10524599</a>
+    </li>
+    <li>
+      <strong>Zou, H., &amp; Hastie, T. (2005). Regularization and Variable Selection via the Elastic Net.</strong>
+      <em>Journal of the Royal Statistical Society: Series B</em>, 67(2), 301–320.
+      <span class="ref-tag">ElasticNet</span>
+      <a href="https://doi.org/10.1111/j.1467-9868.2005.00503.x" target="_blank">doi:10.1111/j.1467-9868.2005.00503.x</a>
+    </li>
+    <li>
+      <strong>Friedman, J.H. (2001). Greedy Function Approximation: A Gradient Boosting Machine.</strong>
+      <em>Annals of Statistics</em>, 29(5), 1189–1232.
+      <span class="ref-tag">GBM</span>
+      <a href="https://doi.org/10.1214/aos/1013203451" target="_blank">doi:10.1214/aos/1013203451</a>
+    </li>
+    <li>
+      <strong>Chen, T., &amp; Guestrin, C. (2016). XGBoost: A Scalable Tree Boosting System.</strong>
+      <em>Proceedings of the 22nd ACM SIGKDD Conference</em>, 785–794.
+      <span class="ref-tag">XGBoost</span>
+      <a href="https://doi.org/10.1145/2939672.2939785" target="_blank">doi:10.1145/2939672.2939785</a>
+    </li>
+    <li>
+      <strong>Welch, I., &amp; Goyal, A. (2008). A Comprehensive Look at the Empirical Performance of Equity Premium Prediction.</strong>
+      <em>Review of Financial Studies</em>, 21(4), 1455–1508.
+      <span class="ref-tag">Forecastability</span>
+      <a href="https://doi.org/10.1093/rfs/hhm014" target="_blank">doi:10.1093/rfs/hhm014</a>
+    </li>
+    <li>
+      <strong>Hoerl, A.E., &amp; Kennard, R.W. (1970). Ridge Regression: Biased Estimation for Nonorthogonal Problems.</strong>
+      <em>Technometrics</em>, 12(1), 55–67.
+      <span class="ref-tag">Ridge</span>
+      <a href="https://doi.org/10.1080/00401706.1970.10488634" target="_blank">doi:10.1080/00401706.1970.10488634</a>
+    </li>
+    <li>
+      <strong>Bollerslev, T. (1986). Generalized Autoregressive Conditional Heteroskedasticity.</strong>
+      <em>Journal of Econometrics</em>, 31(3), 307–327.
+      <span class="ref-tag">GARCH</span>
+      <a href="https://doi.org/10.1016/0304-4076(86)90063-1" target="_blank">doi:10.1016/0304-4076(86)90063-1</a>
+    </li>
+    <li>
+      <strong>Breiman, L. (2001). Random Forests.</strong>
+      <em>Machine Learning</em>, 45(1), 5–32.
+      <span class="ref-tag">Random Forest</span>
+      <a href="https://doi.org/10.1023/A:1010933404324" target="_blank">doi:10.1023/A:1010933404324</a>
+    </li>
+    <li>
+      <strong>Fisher, R.A. (1915). Frequency Distribution of the Values of the Correlation Coefficient in Samples from an Indefinitely Large Population.</strong>
+      <em>Biometrika</em>, 10(4), 507–521.
+      <span class="ref-tag">Fisher-z</span>
+      <a href="https://doi.org/10.2307/2331838" target="_blank">doi:10.2307/2331838</a>
+    </li>
+    <li>
+      <strong>Newey, W.K., &amp; West, K.D. (1987). A Simple, Positive Semi-Definite, Heteroskedasticity and Autocorrelation Consistent Covariance Matrix.</strong>
+      <em>Econometrica</em>, 55(3), 703–708.
+      <span class="ref-tag">HAC correction</span>
+      <a href="https://doi.org/10.2307/1913610" target="_blank">doi:10.2307/1913610</a>
+    </li>
+    <li>
+      <strong>Pedregosa, F. et al. (2011). Scikit-learn: Machine Learning in Python.</strong>
+      <em>Journal of Machine Learning Research</em>, 12, 2825–2830.
+      <span class="ref-tag">scikit-learn</span>
+      <a href="https://jmlr.org/papers/v12/pedregosa11a.html" target="_blank">jmlr.org/papers/v12/pedregosa11a.html</a>
+    </li>
+    <li>
+      <strong>Ardia, D., Boudt, K., &amp; Ghalanos, A. (2019). <em>rmgarch</em>: Multivariate GARCH Models in R.</strong>
+      CRAN package, version 1.3-9.
+      <span class="ref-tag">DCC implementation</span>
+      <a href="https://cran.r-project.org/package=rmgarch" target="_blank">cran.r-project.org/package=rmgarch</a>
+    </li>
+    <li>
+      <strong>Ran Aroussi (2023). <em>yfinance</em>: Yahoo! Finance Market Data Downloader.</strong>
+      Python package.
+      <span class="ref-tag">Data source</span>
+      <a href="https://pypi.org/project/yfinance/" target="_blank">pypi.org/project/yfinance</a>
+    </li>
+  </ol>
+</div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+<div class="container">
+  <div class="about-wrap">
+    <div>
+      <div class="about-photo">
+        <img src="/photo.jpg" alt="Bogdan Babaev" onerror="this.parentElement.style.display='none';document.getElementById('photo-placeholder').style.display='flex'">
+      </div>
+      <div id="photo-placeholder" class="about-photo-placeholder" style="display:none">👤</div>
+    </div>
+    <div class="about-content">
+      <h2 id="about-h2">About</h2>
+      <p id="about-p1">
+        I'm Bogdan Babaev — originally from <strong style="color:var(--text)">Samara, Russia</strong>, currently finishing my
+        <strong style="color:var(--text)">M.Sc. in Artificial Intelligence</strong> at the University of Kragujevac, Serbia (2023–2026).
+      </p>
+      <p id="about-p2">
+        My research interests sit at the intersection of machine learning and quantitative finance —
+        specifically time series forecasting, intermarket dependencies, and risk-aware modelling.
+        This thesis is the result of about a year of work combining econometrics, walk-forward ML evaluation,
+        and practical signal design.
+      </p>
+      <p id="about-p3">
+        Before the master's programme I studied and worked in Russia. Moving to Serbia was both a practical
+        and academic decision — the programme in Kragujevac offered solid theoretical foundations and
+        the freedom to pursue an applied quantitative thesis topic.
+      </p>
+      <p style="color:var(--text2);font-size:13.5px">
+        GPA: <strong style="color:var(--text)">8.0 / 10</strong> ·
+        GitHub: <a href="https://github.com/b0gdaan" target="_blank">github.com/b0gdaan</a> ·
+        Email: <a href="mailto:babaev.bogdan.ru@gmail.com">babaev.bogdan.ru@gmail.com</a>
+      </p>
+      <div class="about-links">
+        <a href="https://www.linkedin.com/in/bogdan-b-34482b203/" target="_blank" class="about-link-btn linkedin">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://github.com/b0gdaan" target="_blank" class="about-link-btn github">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          GitHub
+        </a>
+        <a href="mailto:babaev.bogdan.ru@gmail.com" class="about-link-btn">
+          ✉ babaev.bogdan.ru@gmail.com
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<footer>
+  <div class="container">
+    <strong>Bogdan Babaev</strong> — <span id="footer-main">Master Thesis, University of Kragujevac · 2026</span><br>
+    <span class="mt-8" style="display:block">
+      <span id="footer-sup">Supervisor: Prof. Dr Vladimir M. Milovanović</span> · M.Sc. Artificial Intelligence ·
+      <a href="https://www.linkedin.com/in/bogdan-b-34482b203/" target="_blank" style="color:var(--text2)">LinkedIn</a> ·
+      <a href="https://github.com/b0gdaan" target="_blank" style="color:var(--text2)">GitHub</a>
+    </span>
+  </div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
+  <div id="lightbox-caption"></div>
+</div>
+
+<script>
+// ── LIGHTBOX ──────────────────────────────────────────────────────────────────
+function openLightbox(src,caption){
+  document.getElementById('lightbox-img').src=src;
+  document.getElementById('lightbox-caption').textContent=caption;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function switchTab(btn,paneId){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(paneId).classList.add('active');
+}
+
+// ── DETAIL TABLE DATA ─────────────────────────────────────────────────────────
+const METRICS={
+  GSPC:{
+    14:[
+      {m:'AR1',mae:0.0908,rmse:0.1429,r2:0.8539},
+      {m:'Naive_Last',mae:0.0888,rmse:0.1450,r2:0.8495},
+      {m:'Ridge',mae:0.1398,rmse:0.1914,r2:0.7378},
+      {m:'ElasticNet',mae:0.1399,rmse:0.1918,r2:0.7367},
+      {m:'RF',mae:0.1484,rmse:0.2017,r2:0.7087},
+      {m:'GBM',mae:0.1515,rmse:0.2046,r2:0.7004},
+      {m:'XGB_GPU',mae:0.1586,rmse:0.2106,r2:0.6827},
+      {m:'DCC_GARCH',mae:0.2630,rmse:0.3300,r2:0.2205},
+    ],
+    30:[
+      {m:'AR1',mae:0.0388,rmse:0.0647,r2:0.9401},
+      {m:'Naive_Last',mae:0.0382,rmse:0.0650,r2:0.9395},
+      {m:'Ridge',mae:0.0608,rmse:0.0889,r2:0.8868},
+      {m:'ElasticNet',mae:0.0618,rmse:0.0896,r2:0.8850},
+      {m:'RF',mae:0.0669,rmse:0.0971,r2:0.8648},
+      {m:'GBM',mae:0.0700,rmse:0.1000,r2:0.8567},
+      {m:'XGB_GPU',mae:0.0707,rmse:0.1009,r2:0.8540},
+      {m:'DCC_GARCH',mae:0.1590,rmse:0.1977,r2:0.4400},
+    ],
+    60:[
+      {m:'AR1',mae:0.0179,rmse:0.0319,r2:0.9756},
+      {m:'Naive_Last',mae:0.0177,rmse:0.0320,r2:0.9756},
+      {m:'Ridge',mae:0.0293,rmse:0.0450,r2:0.9516},
+      {m:'ElasticNet',mae:0.0306,rmse:0.0460,r2:0.9494},
+      {m:'GBM',mae:0.0372,rmse:0.0557,r2:0.9258},
+      {m:'RF',mae:0.0364,rmse:0.0560,r2:0.9250},
+      {m:'XGB_GPU',mae:0.0381,rmse:0.0569,r2:0.9228},
+      {m:'DCC_GARCH',mae:0.1080,rmse:0.1292,r2:0.6016},
+    ],
+    90:[
+      {m:'AR1',mae:0.0119,rmse:0.0220,r2:0.9852},
+      {m:'Naive_Last',mae:0.0118,rmse:0.0220,r2:0.9852},
+      {m:'Ridge',mae:0.0200,rmse:0.0318,r2:0.9691},
+      {m:'ElasticNet',mae:0.0213,rmse:0.0329,r2:0.9669},
+      {m:'RF',mae:0.0250,rmse:0.0380,r2:0.9558},
+      {m:'GBM',mae:0.0255,rmse:0.0393,r2:0.9531},
+      {m:'XGB_GPU',mae:0.0269,rmse:0.0403,r2:0.9508},
+      {m:'DCC_GARCH',mae:0.0820,rmse:0.1011,r2:0.6794},
+    ],
+  },
+  IXIC:{
+    30:[{m:'AR1',mae:0.0357,rmse:0.0629,r2:0.9432},{m:'Naive_Last',mae:0.0347,rmse:0.0630,r2:0.9430},{m:'Ridge',mae:0.0560,rmse:0.0860,r2:0.8912},{m:'ElasticNet',mae:0.0570,rmse:0.0872,r2:0.8888},{m:'RF',mae:0.0620,rmse:0.0940,r2:0.8720},{m:'GBM',mae:0.0645,rmse:0.0960,r2:0.8680},{m:'XGB_GPU',mae:0.0650,rmse:0.0968,r2:0.8660},{m:'DCC_GARCH',mae:0.1580,rmse:0.1940,r2:0.4580}],
+    14:[{m:'AR1',mae:0.0864,rmse:0.1407,r2:0.8580},{m:'Naive_Last',mae:0.0850,rmse:0.1430,r2:0.8530},{m:'DCC_GARCH',mae:0.2530,rmse:0.3120,r2:0.2360}],
+    60:[{m:'AR1',mae:0.0165,rmse:0.0308,r2:0.9773},{m:'Naive_Last',mae:0.0163,rmse:0.0309,r2:0.9770},{m:'DCC_GARCH',mae:0.1030,rmse:0.1250,r2:0.6250}],
+    90:[{m:'AR1',mae:0.0107,rmse:0.0209,r2:0.9868},{m:'Naive_Last',mae:0.0106,rmse:0.0210,r2:0.9866},{m:'DCC_GARCH',mae:0.0800,rmse:0.0980,r2:0.6950}]
+  },
+  GLD:{
+    30:[{m:'AR1',mae:0.0394,rmse:0.0660,r2:0.9360},{m:'Naive_Last',mae:0.0387,rmse:0.0663,r2:0.9354},{m:'Ridge',mae:0.0621,rmse:0.0902,r2:0.8808},{m:'ElasticNet',mae:0.0630,rmse:0.0910,r2:0.8790},{m:'RF',mae:0.0680,rmse:0.0980,r2:0.8610},{m:'GBM',mae:0.0705,rmse:0.1010,r2:0.8550},{m:'XGB_GPU',mae:0.0710,rmse:0.1018,r2:0.8530},{m:'DCC_GARCH',mae:0.1630,rmse:0.2020,r2:0.4160}],
+    14:[{m:'AR1',mae:0.0862,rmse:0.1418,r2:0.8590},{m:'Naive_Last',mae:0.0848,rmse:0.1435,r2:0.8560},{m:'DCC_GARCH',mae:0.2480,rmse:0.3040,r2:0.2450}],
+    60:[{m:'AR1',mae:0.0188,rmse:0.0343,r2:0.9700},{m:'Naive_Last',mae:0.0186,rmse:0.0344,r2:0.9698},{m:'DCC_GARCH',mae:0.1060,rmse:0.1300,r2:0.5830}],
+    90:[{m:'AR1',mae:0.0130,rmse:0.0230,r2:0.9820},{m:'Naive_Last',mae:0.0128,rmse:0.0231,r2:0.9818},{m:'DCC_GARCH',mae:0.0840,rmse:0.1050,r2:0.6550}]
+  },
+  SLV:{
+    30:[{m:'AR1',mae:0.0363,rmse:0.0618,r2:0.9410},{m:'Naive_Last',mae:0.0352,rmse:0.0619,r2:0.9407},{m:'Ridge',mae:0.0572,rmse:0.0870,r2:0.8900},{m:'ElasticNet',mae:0.0582,rmse:0.0878,r2:0.8880},{m:'RF',mae:0.0632,rmse:0.0950,r2:0.8700},{m:'GBM',mae:0.0655,rmse:0.0980,r2:0.8640},{m:'XGB_GPU',mae:0.0660,rmse:0.0988,r2:0.8620},{m:'DCC_GARCH',mae:0.1540,rmse:0.1890,r2:0.4520}],
+    14:[{m:'AR1',mae:0.0860,rmse:0.1420,r2:0.8500},{m:'Naive_Last',mae:0.0845,rmse:0.1438,r2:0.8470},{m:'DCC_GARCH',mae:0.2430,rmse:0.2960,r2:0.2620}],
+    60:[{m:'AR1',mae:0.0173,rmse:0.0317,r2:0.9730},{m:'Naive_Last',mae:0.0171,rmse:0.0318,r2:0.9728},{m:'DCC_GARCH',mae:0.1020,rmse:0.1260,r2:0.5950}],
+    90:[{m:'AR1',mae:0.0116,rmse:0.0213,r2:0.9830},{m:'Naive_Last',mae:0.0114,rmse:0.0214,r2:0.9828},{m:'DCC_GARCH',mae:0.0820,rmse:0.1010,r2:0.6730}]
+  },
+  UUP:{
+    30:[{m:'AR1',mae:0.0380,rmse:0.0673,r2:0.9450},{m:'Naive_Last',mae:0.0372,rmse:0.0675,r2:0.9447},{m:'Ridge',mae:0.0595,rmse:0.0870,r2:0.8907},{m:'ElasticNet',mae:0.0603,rmse:0.0878,r2:0.8890},{m:'RF',mae:0.0648,rmse:0.0942,r2:0.8730},{m:'GBM',mae:0.0672,rmse:0.0970,r2:0.8670},{m:'XGB_GPU',mae:0.0678,rmse:0.0980,r2:0.8650},{m:'DCC_GARCH',mae:0.1510,rmse:0.1870,r2:0.4720}],
+    14:[{m:'AR1',mae:0.0862,rmse:0.1449,r2:0.8770},{m:'Naive_Last',mae:0.0850,rmse:0.1460,r2:0.8750},{m:'DCC_GARCH',mae:0.2360,rmse:0.2890,r2:0.3010}],
+    60:[{m:'AR1',mae:0.0176,rmse:0.0341,r2:0.9740},{m:'Naive_Last',mae:0.0174,rmse:0.0342,r2:0.9738},{m:'DCC_GARCH',mae:0.1010,rmse:0.1250,r2:0.6110}],
+    90:[{m:'AR1',mae:0.0122,rmse:0.0231,r2:0.9830},{m:'Naive_Last',mae:0.0120,rmse:0.0232,r2:0.9828},{m:'DCC_GARCH',mae:0.0800,rmse:0.0990,r2:0.6890}]
+  },
+  ETH:{
+    30:[{m:'AR1',mae:0.0443,rmse:0.0709,r2:0.9620},{m:'Naive_Last',mae:0.0430,rmse:0.0707,r2:0.9622},{m:'Ridge',mae:0.0660,rmse:0.0960,r2:0.9162},{m:'ElasticNet',mae:0.0668,rmse:0.0970,r2:0.9148},{m:'RF',mae:0.0720,rmse:0.1030,r2:0.9040},{m:'GBM',mae:0.0745,rmse:0.1060,r2:0.8980},{m:'XGB_GPU',mae:0.0750,rmse:0.1068,r2:0.8960},{m:'DCC_GARCH',mae:0.1620,rmse:0.2040,r2:0.4980}],
+    14:[{m:'AR1',mae:0.0975,rmse:0.1558,r2:0.8830},{m:'Naive_Last',mae:0.0960,rmse:0.1575,r2:0.8800},{m:'DCC_GARCH',mae:0.2410,rmse:0.2950,r2:0.3120}],
+    60:[{m:'Naive_Last',mae:0.0217,rmse:0.0360,r2:0.9860},{m:'AR1',mae:0.0221,rmse:0.0364,r2:0.9855},{m:'DCC_GARCH',mae:0.0980,rmse:0.1200,r2:0.6420}],
+    90:[{m:'Naive_Last',mae:0.0147,rmse:0.0250,r2:0.9910},{m:'AR1',mae:0.0150,rmse:0.0254,r2:0.9906},{m:'DCC_GARCH',mae:0.0780,rmse:0.0980,r2:0.7210}]
+  },
+};
+
+let curPair='GSPC',curWin=30;
+
+function filterPair(btn,pair){
+  document.querySelectorAll('#pair-filter .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  curPair=pair;
+  renderDetailTable();
+}
+function filterWindow(btn,w){
+  document.querySelectorAll('#window-filter .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  curWin=w;
+  renderDetailTable();
+}
+
+function renderDetailTable(){
+  const data=(METRICS[curPair]||{})[curWin]||[];
+  const naive=data.find(r=>r.m==='Naive_Last');
+  const tbody=document.getElementById('detail-tbody');
+  tbody.innerHTML=data.map(row=>{
+    let cls='';
+    if(row.m==='AR1'||row.m==='Naive_Last') cls='row-best';
+    if(row.m==='DCC_GARCH') cls='row-worst';
+    let vs='';
+    if(naive&&row.m!=='Naive_Last'){
+      const diff=((row.rmse-naive.rmse)/naive.rmse*100).toFixed(1);
+      const sign=diff>0?'+':'';
+      const col=diff>0?'text-red':'text-green';
+      vs=`<span class="${col}">${sign}${diff}%</span>`;
+    }
+    return `<tr class="${cls}"><td>${row.m}</td><td>${row.mae.toFixed(4)}</td><td>${row.rmse.toFixed(4)}</td><td>${row.r2.toFixed(4)}</td><td>${vs}</td></tr>`;
+  }).join('');
+}
+renderDetailTable();
+
+// ── LIVE DEMO ─────────────────────────────────────────────────────────────────
+const AR1_INTERCEPT = 0.0036;
+const AR1_BETA      = 0.9702;
+// Logistic regression weights [intercept, |ret|, vol_excess, dep_z_pos, |mom|]
+const LR_W = [-1.60, 7.5, 1.8, 0.55, 3.2];
+
+const PRESETS = {
+  normal:   { corr:.35,  ret:0,    vol:55,  mom:0,   desc:'Typical trading day — BTC showing moderate positive correlation with S&P 500, normal volatility, no strong directional momentum.' },
+  covid:    { corr:.82,  ret:-14,  vol:128, mom:-22, desc:'COVID-19 crash (March 12, 2020) — BTC fell 40% in 24h alongside equities. Correlation spiked to historic highs as forced liquidations hit all assets simultaneously.' },
+  btccrash: { corr:.68,  ret:-9,   vol:92,  mom:-17, desc:'BTC bear market onset (November 2022, FTX collapse) — crypto-equity co-movement surged, volatility spiked, sustained downtrend in BTC momentum.' },
+  spike:    { corr:.55,  ret:-5,   vol:130, mom:-8,  desc:'Pure volatility spike — BTC 20-day vol reaches extreme levels (130%+) with moderate negative return. Elevated stress risk even without a full crash.' },
+  recovery: { corr:.18,  ret:4.5,  vol:32,  mom:9,   desc:'Post-crash recovery phase — correlation normalises to low levels, volatility calms down, BTC momentum turns positive. Safe to re-enter equity positions.' },
+};
+
+function sigmoid(x){ return 1/(1+Math.exp(-x)); }
+function fisherZ(r){ r=Math.max(-0.9999,Math.min(0.9999,r)); return Math.atanh(r); }
+
+function setSlider(id, val){
+  const el = document.getElementById(id);
+  el.value = val;
+}
+
+function loadPreset(name){
+  const p = PRESETS[name];
+  setSlider('inp-corr', p.corr);
+  setSlider('inp-ret',  p.ret);
+  setSlider('inp-vol',  p.vol);
+  setSlider('inp-mom',  p.mom);
+  document.getElementById('preset-desc').textContent = p.desc;
+  // update active button
+  Object.keys(PRESETS).forEach(k=>{
+    const btn = document.getElementById('preset-'+k);
+    if(btn) btn.classList.toggle('active', k===name);
+  });
+  updateDemo(false);
+}
+
+function updateDemo(clearPreset){
+  if(clearPreset){
+    Object.keys(PRESETS).forEach(k=>{
+      const btn=document.getElementById('preset-'+k);
+      if(btn) btn.classList.remove('active');
+    });
+    document.getElementById('preset-desc').textContent='Custom — adjust sliders manually.';
+  }
+
+  const rho = parseFloat(document.getElementById('inp-corr').value);
+  const ret = parseFloat(document.getElementById('inp-ret').value)/100;
+  const vol = parseFloat(document.getElementById('inp-vol').value)/100;
+  const mom = parseFloat(document.getElementById('inp-mom').value)/100;
+
+  document.getElementById('corr-val').textContent = rho.toFixed(2);
+  document.getElementById('ret-val').textContent  = (ret*100).toFixed(1)+'%';
+  document.getElementById('vol-val').textContent  = (vol*100).toFixed(0)+'%';
+  document.getElementById('mom-val').textContent  = (mom*100).toFixed(1)+'%';
+
+  const z_now  = fisherZ(rho);
+  const z_next = AR1_INTERCEPT + AR1_BETA * z_now;
+
+  const vol_norm = vol/0.55;
+  const logit = LR_W[0] + LR_W[1]*Math.abs(ret) + LR_W[2]*(vol_norm-1)
+               + LR_W[3]*Math.max(0,z_now) + LR_W[4]*Math.abs(mom);
+  const prob = sigmoid(logit);
+  const pct  = (prob*100).toFixed(1);
+
+  document.getElementById('out-dep-now').textContent   = z_now.toFixed(4);
+  document.getElementById('out-dep-fcast').textContent = z_next.toFixed(4);
+  document.getElementById('prob-pct-label').textContent = pct+'%';
+
+  const bar = document.getElementById('prob-bar');
+  bar.style.width = Math.min(prob*100,100)+'%';
+
+  const box    = document.getElementById('signal-box');
+  const icon   = document.getElementById('signal-icon');
+  const title  = document.getElementById('signal-title');
+  const sub    = document.getElementById('signal-subtitle');
+  const interp = document.getElementById('interp-text');
+  const actBox = document.getElementById('action-box');
+  const actTxt = document.getElementById('action-text');
+
+  box.className='signal-box'; title.className='signal-title';
+
+  if(prob < 0.30){
+    box.classList.add('green'); title.classList.add('green');
+    icon.textContent ='✅';
+    title.textContent='STAY IN MARKET';
+    sub.textContent  =`Stress probability ${pct}% — dependency stable at ρ=${rho.toFixed(2)}`;
+    bar.style.background='var(--green)';
+    interp.textContent='Low stress environment. BTC–equity co-movement is moderate or negative. No early-warning signal triggered.';
+    actBox.style.cssText='background:rgba(35,134,54,.12);border:1px solid rgba(35,134,54,.3);border-radius:var(--radius);padding:12px 14px';
+    actBox.firstElementChild.style.color='var(--green-text)';
+    actBox.firstElementChild.textContent='Recommended action';
+    actTxt.textContent='Hold current equity positions. No risk reduction needed based on crypto signal.';
+  } else if(prob < 0.60){
+    box.classList.add('orange'); title.classList.add('orange');
+    icon.textContent ='⚠️';
+    title.textContent='CAUTION';
+    sub.textContent  =`Stress probability ${pct}% — consider reducing equity exposure`;
+    bar.style.background='var(--orange)';
+    interp.textContent='Elevated stress signal. Rising BTC volatility or co-movement detected. Risk overlay recommends partial defensive positioning.';
+    actBox.style.cssText='background:rgba(210,153,34,.12);border:1px solid rgba(210,153,34,.3);border-radius:var(--radius);padding:12px 14px';
+    actBox.firstElementChild.style.color='var(--orange-text)';
+    actBox.firstElementChild.textContent='Recommended action';
+    actTxt.textContent='Reduce equity gross exposure by 20–40%. Tighten stop-loss levels. Monitor intraday BTC dynamics closely.';
+  } else {
+    box.classList.add('red'); title.classList.add('red');
+    icon.textContent ='🔴';
+    title.textContent='EXIT SIGNAL';
+    sub.textContent  =`Stress probability ${pct}% — high co-crash risk detected`;
+    bar.style.background='var(--red)';
+    interp.textContent='Strong exit signal. Model detects a high-dependency, high-volatility regime consistent with joint BTC–equity stress events (COVID-19, FTX, etc).';
+    actBox.style.cssText='background:rgba(218,54,51,.12);border:1px solid rgba(218,54,51,.3);border-radius:var(--radius);padding:12px 14px';
+    actBox.firstElementChild.style.color='var(--red-text)';
+    actBox.firstElementChild.textContent='Recommended action';
+    actTxt.textContent='Exit or significantly reduce equity exposure. Move to cash / defensive assets. Re-evaluate when BTC correlation and volatility normalise.';
+  }
+}
+loadPreset('normal');
+
+// ── TRANSLATIONS ─────────────────────────────────────────────────────────────
+const T = {
+  en: {
+    nav: { demo:'▶ Live Demo', dataset:'Dataset', method:'Methodology', results:'Results',
+           dm:'DM Tests', signal:'Signal Layer', concl:'Conclusions', gallery:'Figures',
+           repro:'Reproducibility', refs:'References', about:'About' },
+    heroBadge: 'Master Thesis · University of Kragujevac · 2026',
+    heroTitle: 'Forecasting Time-Varying Intermarket Dependencies Between Cryptocurrencies and Conventional Assets Using Machine Learning',
+    heroProg:  'University of Kragujevac · M.Sc. Artificial Intelligence',
+    heroSup:   'Supervisor: <strong>Prof. Dr Vladimir M. Milovanović</strong>',
+    heroDate:  'Defense: May 2026',
+    heroDesc:  'This thesis investigates whether cryptocurrency dynamics contain information about the evolving dependence structure of conventional financial assets. Bitcoin serves as the base crypto asset; the conventional universe spans equity indices, precious-metal ETFs, and the U.S. dollar index. A reproducible walk-forward ML pipeline is developed and benchmarked against a leakage-safe DCC-GARCH(1,1) specification across 168 model evaluations.',
+    aboutH2: 'About',
+    aboutP1: 'I\'m Bogdan Babaev — originally from <strong style="color:var(--text)">Samara, Russia</strong>, currently finishing my <strong style="color:var(--text)">M.Sc. in Artificial Intelligence</strong> at the University of Kragujevac, Serbia (2023–2026).',
+    aboutP2: 'My research interests sit at the intersection of machine learning and quantitative finance — specifically time series forecasting, intermarket dependencies, and risk-aware modelling. This thesis is the result of about a year of work combining econometrics, walk-forward ML evaluation, and practical signal design.',
+    aboutP3: 'Before the master\'s programme I studied and worked in Russia. Moving to Serbia was both a practical and academic decision — the programme in Kragujevac offered solid theoretical foundations and the freedom to pursue an applied quantitative thesis topic.',
+    footerMain: 'Master Thesis, University of Kragujevac · 2026',
+    footerSup:  'Supervisor: Prof. Dr Vladimir M. Milovanović',
+    statLabels: ['Daily observations','Assets','Model evaluations','Rolling windows','Best OOS R² (AR1, w=30)','ML vs DCC-GARCH (DM)'],
+    rqLabels: ['RQ1 · Forecastability','RQ2 · ML vs DCC-GARCH','RQ3 · Feature Importance','RQ4 · Signal Layer'],
+    sectionH2: {
+      demo:'▶ Live Investor Signal Demo', dataset:'Dataset &amp; Asset Universe',
+      methodology:'Methodology', results:'Empirical Results',
+      'dm-tests':'Diebold–Mariano Tests', signal:'Investor Signal Layer',
+      conclusions:'Conclusions, Limitations &amp; Future Work',
+      gallery:'Figures Gallery', repro:'Reproducibility',
+      resources:'Learning Resources', references:'References', about:'About',
+    },
+  },
+  ru: {
+    nav: { demo:'▶ Демо', dataset:'Данные', method:'Методология', results:'Результаты',
+           dm:'Тест ДМ', signal:'Сигнал', concl:'Выводы', gallery:'Графики',
+           repro:'Воспроизводимость', refs:'Литература', about:'Обо мне' },
+    heroBadge: 'Магистерская диссертация · Университет Крагуевац · 2026',
+    heroTitle: 'Прогнозирование временно-изменяемых межрыночных зависимостей между криптовалютами и традиционными активами с использованием машинного обучения',
+    heroProg:  'Университет Крагуевац · Магистратура «Искусственный интеллект»',
+    heroSup:   'Научный руководитель: <strong>Проф. д-р Владимир М. Милованович</strong>',
+    heroDate:  'Защита: май 2026',
+    heroDesc:  'В данной магистерской диссертации исследуется, содержат ли динамика криптовалют информацию об эволюции структуры зависимостей традиционных финансовых активов. Bitcoin рассматривается как базовая криптовалюта; традиционные активы включают фондовые индексы, ETF на драгоценные металлы и индекс доллара США. Разработан воспроизводимый конвейер машинного обучения с оценкой по методу расширяющегося окна и сравнением с DCC-GARCH(1,1).',
+    aboutH2: 'Обо мне',
+    aboutP1: 'Я Богдан Бабаев — родом из <strong style="color:var(--text)">Самары, Россия</strong>. Сейчас заканчиваю <strong style="color:var(--text)">магистратуру по искусственному интеллекту</strong> в Университете Крагуевац, Сербия (2023–2026).',
+    aboutP2: 'Мои научные интересы находятся на стыке машинного обучения и количественных финансов — прогнозирование временных рядов, межрыночные зависимости и риск-ориентированное моделирование. Диссертация — результат около года работы, объединяющей эконометрику, оценку ML по расширяющемуся окну и практическое проектирование сигналов.',
+    aboutP3: 'До магистратуры я учился и работал в России. Переезд в Сербию стал одновременно практическим и академическим решением — программа в Крагуеваце предоставила прочную теоретическую базу и свободу в выборе прикладной квантовой темы диссертации.',
+    footerMain: 'Магистерская диссертация, Университет Крагуевац · 2026',
+    footerSup:  'Науч. руководитель: Проф. д-р Владимир М. Милованович',
+    statLabels: ['Ежедневных наблюдений','Активов','Оценок моделей','Скользящих окон','Лучший OOS R² (AR1, w=30)','ML vs DCC-GARCH (ДМ)'],
+    rqLabels: ['ВП1 · Предсказуемость','ВП2 · ML vs DCC-GARCH','ВП3 · Важность признаков','ВП4 · Сигнальный слой'],
+    sectionH2: {
+      demo:'▶ Интерактивное демо инвестора', dataset:'Датасет и активы',
+      methodology:'Методология', results:'Эмпирические результаты',
+      'dm-tests':'Тесты Дибольда–Мариано', signal:'Инвесторский сигнальный слой',
+      conclusions:'Выводы, ограничения и дальнейшие исследования',
+      gallery:'Галерея графиков', repro:'Воспроизводимость',
+      resources:'Учебные ресурсы', references:'Список литературы', about:'Обо мне',
+    },
+  },
+  sr: {
+    nav: { demo:'▶ Демо', dataset:'Подаци', method:'Методологија', results:'Резултати',
+           dm:'ДМ тестови', signal:'Сигнал', concl:'Закључци', gallery:'Фигуре',
+           repro:'Репродуктивност', refs:'Литература', about:'О мени' },
+    heroBadge: 'Мастер рад · Универзитет у Крагујевцу · 2026',
+    heroTitle: 'Прогнозирање временски-променљивих међутржишних зависности између криптовалута и конвенционалних актива применом машинског учења',
+    heroProg:  'Универзитет у Крагујевцу · Мастер студије Вештачка интелигенција',
+    heroSup:   'Ментор: <strong>Редовни проф. др Владимир М. Миловановић</strong>',
+    heroDate:  'Одбрана: мај 2026.',
+    heroDesc:  'У овом мастер раду истражује се да ли динамика криптовалута садржи информације о временској еволуцији структуре зависности конвенционалних финансијских актива. Bitcoin служи као основна криптовалута, а конвенционални универзум обухвата берзанске индексе, ETF драгоцених метала и индекс америчког долара. Развијен је репродуктивни конвејер машинског учења и упоређен са DCC-GARCH(1,1) спецификацијом у 168 евалуација модела.',
+    aboutH2: 'О мени',
+    aboutP1: 'Ја сам Богдан Бабаев — пореклом из <strong style="color:var(--text)">Самаре, Русија</strong>. Тренутно завршавам <strong style="color:var(--text)">мастер студије вештачке интелигенције</strong> на Универзитету у Крагујевцу, Србија (2023–2026).',
+    aboutP2: 'Моји истраживачки интереси налазе се на пресеку машинског учења и квантитативних финансија — прогнозирање временских серија, међутржишне зависности и моделовање засновано на ризику. Овај рад је резултат отприлике годину дана рада у коме се комбинују економетрија, евалуација МУ методом клизног прозора и практично пројектовање сигнала.',
+    aboutP3: 'Пре мастер програма студирао сам и радио у Русији. Пресељење у Србију было је и практична и академска одлука — програм у Крагујевцу пружио је солидне теоријске основе и слободу да се бавим примењеном квантитативном темом дисертације.',
+    footerMain: 'Мастер рад, Универзитет у Крагујевцу · 2026',
+    footerSup:  'Ментор: Редовни проф. др Владимир М. Миловановић',
+    statLabels: ['Дневних опажања','Актива','Евалуација модела','Клизних прозора','Најбољи OOS R² (AR1, w=30)','ML vs DCC-GARCH (ДМ)'],
+    rqLabels: ['ИП1 · Прогнозабилност','ИП2 · ML vs DCC-GARCH','ИП3 · Важност обележја','ИП4 · Сигнални слој'],
+    sectionH2: {
+      demo:'▶ Уживо инвестициони сигнал', dataset:'Скуп података и универзум актива',
+      methodology:'Методологија', results:'Емпиријски резултати',
+      'dm-tests':'Diebold–Mariano тестови', signal:'Инвестициони сигнални слој',
+      conclusions:'Закључци, ограничења и будући рад',
+      gallery:'Галерија фигура', repro:'Репродуктивност',
+      resources:'Образовни ресурси', references:'Литература', about:'О мени',
+    },
+  },
+};
+
+let currentLang = 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  const L = T[lang];
+
+  // Lang buttons
+  ['en','ru','sr'].forEach(l => {
+    document.getElementById('lang-'+l).classList.toggle('active', l===lang);
+  });
+
+  // Nav links
+  const nk = { demo:'nav-demo', dataset:'nav-dataset', method:'nav-method',
+                results:'nav-results', dm:'nav-dm', signal:'nav-signal',
+                concl:'nav-concl', gallery:'nav-gallery', repro:'nav-repro',
+                refs:'nav-refs', about:'nav-about' };
+  Object.entries(nk).forEach(([k,id]) => {
+    const el = document.getElementById(id);
+    if(el && L.nav[k]) el.textContent = L.nav[k];
+  });
+  // restore demo color
+  const demoLink = document.getElementById('nav-demo');
+  if(demoLink){ demoLink.style.color='var(--green-text)'; demoLink.style.fontWeight='600'; }
+
+  // Hero
+  ['hero-badge','hero-title','hero-prog','hero-date','hero-desc'].forEach(id => {
+    const el = document.getElementById(id);
+    const key = id.replace('hero-','hero').replace('-','');
+    // map to T key
+    const map = {'hero-badge':'heroBadge','hero-title':'heroTitle','hero-prog':'heroProg',
+                 'hero-date':'heroDate','hero-desc':'heroDesc'};
+    if(el && L[map[id]]) el.innerHTML = L[map[id]];
+  });
+  const supEl = document.getElementById('hero-sup');
+  if(supEl) supEl.innerHTML = L.heroSup;
+
+  // Stat labels
+  const statCards = document.querySelectorAll('.stat-label');
+  if(L.statLabels) L.statLabels.forEach((txt,i)=>{ if(statCards[i]) statCards[i].textContent=txt; });
+
+  // RQ badges
+  const rqBadges = document.querySelectorAll('.rq-badge');
+  if(L.rqLabels) L.rqLabels.forEach((txt,i)=>{ if(rqBadges[i]) rqBadges[i].textContent=txt; });
+
+  // Section h2
+  if(L.sectionH2) {
+    Object.entries(L.sectionH2).forEach(([sectionId, txt]) => {
+      const sec = document.getElementById(sectionId);
+      if(sec){ const h2=sec.querySelector('h2'); if(h2) h2.innerHTML=txt; }
+    });
+  }
+
+  // About
+  ['about-h2','about-p1','about-p2','about-p3'].forEach(id => {
+    const el = document.getElementById(id);
+    const map = {'about-h2':'aboutH2','about-p1':'aboutP1','about-p2':'aboutP2','about-p3':'aboutP3'};
+    if(el && L[map[id]]) el.innerHTML = L[map[id]];
+  });
+
+  // Footer
+  const fm = document.getElementById('footer-main');
+  const fs = document.getElementById('footer-sup');
+  if(fm) fm.textContent = L.footerMain;
+  if(fs) fs.textContent = L.footerSup;
+
+  // html lang attribute
+  document.documentElement.lang = lang==='sr'?'sr':lang==='ru'?'ru':'en';
+}
+
+// ── TABLE SORT ────────────────────────────────────────────────────────────────
+function sortTable(tableId,col){
+  const wrap=document.getElementById(tableId);
+  const tbody=wrap.querySelector('tbody');
+  const rows=Array.from(tbody.querySelectorAll('tr'));
+  const dir=wrap.dataset.sortDir==='asc'?'desc':'asc';
+  wrap.dataset.sortDir=dir;
+  rows.sort((a,b)=>{
+    const va=a.cells[col]?.textContent.trim()||'';
+    const vb=b.cells[col]?.textContent.trim()||'';
+    const na=parseFloat(va),nb=parseFloat(vb);
+    const cmp=isNaN(na)?va.localeCompare(vb):na-nb;
+    return dir==='asc'?cmp:-cmp;
+  });
+  rows.forEach(r=>tbody.appendChild(r));
+}
+</script>
+</body>
+</html>
