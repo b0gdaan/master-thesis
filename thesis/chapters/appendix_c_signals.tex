@@ -34,7 +34,7 @@ This appendix presents additional material for the investor-oriented warning lay
 
 \subsection{Cross-market warning interpretation}
 
-The supplementary signal figures show that the practical layer behaves differently across markets. Equity-related targets display somewhat clearer warning episodes, while the metal and dollar-linked targets are noisier and weaker. This asymmetry is economically sensible and supports the interpretation that the investor layer should be used selectively rather than uniformly.
+The supplementary signal figures show that the practical layer behaves differently across markets. The S\&P~500 target displays the clearest warning episodes; the NASDAQ target is notably weaker, with several configurations falling below chance, likely because NASDAQ's sector concentration introduces idiosyncratic noise that Bitcoin's crypto-market information channel does not capture. Metal and dollar-linked targets are generally noisier but not uniformly uninformative. This heterogeneity supports the interpretation that the investor layer should be used selectively rather than uniformly.
 
 \subsection{Summary table}
 
@@ -46,9 +46,9 @@ The supplementary signal figures show that the practical layer behaves different
         \toprule
         Signal model & Balanced Accuracy & F1\_down & AUC \\
         \midrule
-        Logit & 0.506 & 0.209 & 0.509 \\
-        GBM\_Cls & 0.504 & 0.141 & 0.512 \\
-        RF\_Cls & 0.500 & 0.030 & 0.517 \\
+        Logit & 0.506 & 0.207 & 0.510 \\
+        GBM\_Cls & 0.513 & 0.178 & 0.517 \\
+        RF\_Cls & 0.502 & 0.041 & 0.516 \\
         \bottomrule
     \end{tabular}
 \end{table}
