@@ -19,20 +19,20 @@ Table~\ref{tab:model_ranking_summary} reports the average out-of-sample performa
         \toprule
         Model & Average RMSE & Average MAE & Average $R^2$ \\
         \midrule
-        AR1 & 0.0665 & 0.0405 & 0.9423 \\
-        Naive\_Last & 0.0672 & 0.0395 & 0.9411 \\
-        Ridge & 0.0914 & 0.0636 & 0.8917 \\
-        ElasticNet & 0.0921 & 0.0643 & 0.8902 \\
-        RF & 0.1009 & 0.0709 & 0.8694 \\
-        GBM & 0.1035 & 0.0732 & 0.8630 \\
-        XGB\_GPU & 0.1043 & 0.0744 & 0.8605 \\
-        DCC\_GARCH & 0.2147 & 0.1687 & 0.3814 \\
+        AR1 & 0.0664 & 0.0404 & 0.9420 \\
+        Naive\_Last & 0.0670 & 0.0395 & 0.9408 \\
+        Ridge & 0.0912 & 0.0634 & 0.8912 \\
+        ElasticNet & 0.0919 & 0.0642 & 0.8897 \\
+        RF & 0.1008 & 0.0709 & 0.8683 \\
+        GBM & 0.1015 & 0.0712 & 0.8668 \\
+        XGB\_GPU & 0.1031 & 0.0733 & 0.8621 \\
+        DCC\_GARCH & 0.2141 & 0.1682 & 0.3803 \\
         \bottomrule
     \end{tabular}
     \par\smallskip\noindent\footnotesize{\textit{Note: Results averaged across all asset-pair and window-length combinations. RMSE and R$^2$ computed on out-of-sample walk-forward predictions. Best-performing model excluding DCC-GARCH is AR1. All metrics reflect the full sample through 17 May 2026 (3{,}053 observations); minor numerical differences from earlier pipeline runs are attributable to the expanded dataset.}}
 \end{table}
 
-Four notable patterns emerge from Table~\ref{tab:model_ranking_summary}. First, the top-ranked model is the AR1 baseline, with an average RMSE of 0.0665 and an out-of-sample $R^2$ of 0.9423. Second, the naive persistence model is nearly indistinguishable from AR1 (RMSE difference of 0.0007), confirming that the dominant forecasting mechanism is autoregressive in nature. Third, the regularized linear models Ridge and ElasticNet occupy an intermediate tier with $R^2$ values near 0.89, outperforming all tree-based ensembles on average. Fourth, the DCC-GARCH benchmark ranks last by a substantial margin, with an average $R^2$ of only 0.3814, indicating that the parametric conditional-correlation model is not competitive in the direct one-step-ahead prediction of the Fisher-transformed rolling correlation target.
+Four notable patterns emerge from Table~\ref{tab:model_ranking_summary}. First, the top-ranked model is the AR1 baseline, with an average RMSE of 0.0664 and an out-of-sample $R^2$ of 0.9420. Second, the naive persistence model is nearly indistinguishable from AR1 (RMSE difference of 0.0006), confirming that the dominant forecasting mechanism is autoregressive in nature. Third, the regularized linear models Ridge and ElasticNet occupy an intermediate tier with $R^2$ values near 0.89, outperforming all tree-based ensembles on average. Fourth, the DCC-GARCH benchmark ranks last by a substantial margin, with an average $R^2$ of only 0.3803, indicating that the parametric conditional-correlation model is not competitive in the direct one-step-ahead prediction of the Fisher-transformed rolling correlation target.
 
 The interpretation is precise. The dependency target is strongly persistent, and that persistence constitutes the principal forecasting signal. Improving upon AR1 or the naive persistence baseline requires extracting information beyond the most recent dependency value; the evidence shows that none of the models evaluated here does so systematically and at a meaningful scale.
 
@@ -75,8 +75,8 @@ Despite the dominance of persistence baselines in the unconditional ranking, mac
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.82\textwidth]{../outputs/figures/dm_heatmap_XGB_GPU_vs_DCC.png}
-    \caption{Diebold--Mariano test results comparing the best machine-learning model against DCC-GARCH across all asset-pair and window-length combinations. Darker cells indicate stronger and more statistically significant evidence of machine-learning superiority.}
+    \includegraphics[width=0.82\textwidth]{../outputs/figures/dm_heatmap_Ridge_vs_DCC.png}
+    \caption{Diebold--Mariano test results comparing Ridge (lowest RMSE among ML models) against DCC-GARCH across all asset-pair and window-length combinations. Darker cells indicate stronger and more statistically significant evidence of machine-learning superiority.}
     \label{fig:dm_heatmap}
 \end{figure}
 
@@ -113,23 +113,23 @@ The second empirical layer reformulates the dependency forecasting output as a s
         \toprule
         Signal model & Balanced Accuracy & F1\_down & AUC \\
         \midrule
-        Logit & 0.506 & 0.209 & 0.509 \\
-        GBM\_Cls & 0.504 & 0.141 & 0.512 \\
-        RF\_Cls & 0.500 & 0.030 & 0.517 \\
+        Logit & 0.506 & 0.207 & 0.510 \\
+        GBM\_Cls & 0.513 & 0.178 & 0.517 \\
+        RF\_Cls & 0.502 & 0.041 & 0.516 \\
         \bottomrule
     \end{tabular}
     \par\smallskip\noindent\footnotesize{\textit{Note: Results averaged across all asset pairs and window lengths. Balanced Accuracy corrects for class imbalance. F1\textsubscript{down} measures detection quality for the stress class only.}}
 \end{table}
 
-The signal-layer classification problem is substantially more demanding than the first-layer regression task. Stress-day identification is inherently noisy, class-imbalanced, and subject to asymmetric misclassification costs. The logistic classifier consistently achieves the highest F1 score for the stress class (0.209 on average), indicating that it maintains sensitivity to genuine stress episodes without collapsing into degenerate low-exit-rate behavior. The tree-based classifiers exhibit substantially lower F1 scores: GBM achieves 0.141 on average while Random Forest collapses to near zero (0.030), revealing a divergence in how the two ensemble methods handle the class-imbalanced problem. The near-zero F1 of the Random Forest suggests a degenerate low-exit-rate behavior that renders it practically uninformative despite nominally adequate AUC values.
+The signal-layer classification problem is substantially more demanding than the first-layer regression task. Stress-day identification is inherently noisy, class-imbalanced, and subject to asymmetric misclassification costs. The logistic classifier consistently achieves the highest F1 score for the stress class (0.207 on average), indicating that it maintains sensitivity to genuine stress episodes without collapsing into degenerate low-exit-rate behavior. GBM achieves a higher Balanced Accuracy (0.513) than Logit, but substantially lower F1 (0.178), reflecting a tendency to concentrate probability mass and fire the signal less often. Random Forest collapses to near-zero F1 (0.041), revealing a degenerate low-exit-rate behavior that renders it practically uninformative despite nominally adequate AUC values.
 
-The near-zero F1 score for Random Forest warrants closer diagnostic examination. Analysis of the predicted probability distributions reveals that Random Forest produces outputs concentrated in a narrow range, rendering the classifier insensitive to threshold variation, while GBM achieves moderate but non-trivial F1 (0.141). The Random Forest collapse is attributable to two compounding factors: first, the severe class imbalance between stress and non-stress days; and second, the absence of probability calibration --- ensemble methods are known to produce poorly calibrated probability estimates without explicit post-processing such as Platt scaling or isotonic regression \cite{lopezdeprado2018advances}. Future work should incorporate calibration as a mandatory post-processing step before threshold-based signal extraction.
+The near-zero F1 score for Random Forest warrants closer diagnostic examination. Analysis of the predicted probability distributions reveals that Random Forest produces outputs concentrated in a narrow range, rendering the classifier insensitive to threshold variation, while GBM achieves moderate but non-trivial F1 (0.178). The Random Forest collapse is attributable to two compounding factors: first, the severe class imbalance between stress and non-stress days; and second, the absence of probability calibration --- ensemble methods are known to produce poorly calibrated probability estimates without explicit post-processing such as Platt scaling or isotonic regression \cite{lopezdeprado2018advances}. Future work should incorporate calibration as a mandatory post-processing step before threshold-based signal extraction.
 
 The logistic model's relative advantage is consistent with the theoretical expectation that, in low-signal-to-noise binary classification with correlated predictors, a regularized linear decision boundary offers better out-of-sample generalization than high-capacity ensemble methods subject to variance inflation.
 
 \subsection{Best signal configurations}
 
-The highest individual signal performance is recorded for the Bitcoin--S\&P 500 pair. At the 30-day window, logistic classification achieves a Balanced Accuracy of 0.5361 and an F1 score of 0.2492 for the downside class --- a modest but statistically and practically meaningful departure from the uninformative baseline of 0.50.
+The highest individual Logit signal performance is recorded for the Bitcoin--S\&P 500 pair. At the 30-day window, logistic classification achieves a Balanced Accuracy of 0.5339 and an F1 score of 0.2441 for the downside class --- a modest but statistically and practically meaningful departure from the uninformative baseline of 0.50.
 
 Figure~\ref{fig:signal_sp500} presents the signal output for this configuration, illustrating the temporal distribution of predicted stress flags relative to realized stress events.
 
@@ -140,7 +140,7 @@ Figure~\ref{fig:signal_sp500} presents the signal output for this configuration,
     \label{fig:signal_sp500}
 \end{figure}
 
-The signal is designed to function as a probability-guided warning indicator identifying elevated-risk periods, thereby supporting a risk-reduction decision rather than a directional trade. For NASDAQ the performance profile is broadly similar. For precious metals and the dollar-index proxy, performance is more attenuated and less consistent, reflecting the weaker and less stable relationship between crypto dynamics and stress in those markets.
+The signal is designed to function as a probability-guided warning indicator identifying elevated-risk periods, thereby supporting a risk-reduction decision rather than a directional trade. For NASDAQ the signal is notably weaker: averaged across windows, Logit Balanced Accuracy for the Bitcoin--NASDAQ pair falls below 0.50 at three of four window lengths, making it the worst-performing pair in the signal layer. This divergence from the Bitcoin--S\&P~500 result is economically interpretable: the NASDAQ Composite is more concentrated in growth-sensitive technology names whose stress dynamics are less tightly linked to global risk appetite than the broader S\&P~500. For precious metals and the dollar-index proxy, performance is mixed but generally above chance at shorter windows, reflecting the presence of some but weaker dependence channels between crypto dynamics and stress in those markets.
 
 \subsection{Practical interpretation of signal-layer performance}
 
