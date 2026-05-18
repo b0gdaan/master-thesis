@@ -2,6 +2,7 @@
 Investor-facing signal layer built on top of dependency forecasts.
 """
 import os
+import threading
 import warnings
 from typing import Dict, List, Optional, Tuple
 
@@ -23,6 +24,10 @@ from sklearn.metrics import (
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.utils.class_weight import compute_sample_weight
+
+# Locks for shared output files written by all parallel signal experiments.
+_DIAG_FILE_LOCK = threading.Lock()
+_SENS_FILE_LOCK = threading.Lock()
 
 
 def build_signal_target(
@@ -125,6 +130,7 @@ def fit_predict_signal_walk_forward(
     min_train: int,
     refit_every: int,
     random_state: int,
+    rf_n_jobs: int = -1,
 ) -> pd.DataFrame:
     X_values = X.values
     idx = X.index
@@ -133,10 +139,10 @@ def fit_predict_signal_walk_forward(
 
     model_specs: Dict[str, object] = {
         "Logit": make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000, class_weight="balanced", random_state=random_state)),
-        "RF_Cls": RandomForestClassifier(n_estimators=300, max_depth=6, random_state=random_state, n_jobs=-1, class_weight="balanced_subsample"),
+        "RF_Cls": RandomForestClassifier(n_estimators=100, max_depth=6, random_state=random_state, n_jobs=rf_n_jobs, class_weight="balanced_subsample"),
         # GradientBoostingClassifier does not support class_weight directly;
         # we pass sample_weight="balanced" at fit time (see training loop below).
-        "GBM_Cls": GradientBoostingClassifier(n_estimators=300, learning_rate=0.05, max_depth=3, random_state=random_state, subsample=0.8),
+        "GBM_Cls": GradientBoostingClassifier(n_estimators=100, learning_rate=0.05, max_depth=3, random_state=random_state, subsample=0.8),
     }
 
     # Minimum number of samples required for each class before fitting classifiers.
@@ -399,7 +405,6 @@ def run_stress_threshold_sensitivity(
             if len(yt) < 50 or yt.sum() < 5:
                 continue
             signal = (yp >= classification_threshold).astype(int)
-            from sklearn.metrics import balanced_accuracy_score, f1_score, roc_auc_score
             rows.append({
                 "dependency":    dependency_name,
                 "window":        window,
@@ -467,6 +472,7 @@ def run_signal_experiment(
     dependency_name: str,
     out_df: pd.DataFrame,
     dependency_metrics: pd.DataFrame,
+    rf_n_jobs: int = -1,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     threshold = float(cfg.get("signal_probability_threshold", 0.55))
     dependency_model = dependency_metrics.iloc[0]["model"] if not dependency_metrics.empty else "Naive_Last"
@@ -493,6 +499,7 @@ def run_signal_experiment(
         min_train=int(cfg.get("signal_min_train_size", cfg.get("min_train_size", 800))),
         refit_every=int(cfg.get("signal_refit_every", cfg.get("refit_every", 20))),
         random_state=int(cfg.get("random_state", 42)),
+        rf_n_jobs=rf_n_jobs,
     )
     metrics_df = compute_signal_metrics(y_signal, signal_data["next_return"], prob_df, threshold)
     if metrics_df.empty:
@@ -532,10 +539,15 @@ def run_signal_experiment(
             threshold=threshold,
             out_path=diag_path,
         )
-        # Append to existing file if present
-        if os.path.exists(diag_path) and not new_diag.empty:
-            existing = pd.read_csv(diag_path)
-            pd.concat([existing, new_diag], ignore_index=True).to_csv(diag_path, index=False)
+        # Append to existing file if present — lock guards against concurrent writes
+        # when n_parallel_workers > 1
+        if not new_diag.empty:
+            with _DIAG_FILE_LOCK:
+                if os.path.exists(diag_path):
+                    existing = pd.read_csv(diag_path)
+                    pd.concat([existing, new_diag], ignore_index=True).to_csv(diag_path, index=False)
+                else:
+                    new_diag.to_csv(diag_path, index=False)
     except Exception as _d_exc:
         warnings.warn(f"Signal diagnostics skipped for {dependency_name} w={window}: {_d_exc}")
 
@@ -553,11 +565,12 @@ def run_signal_experiment(
         )
         if not sens_df.empty:
             sens_path = os.path.join(paths.results, "stress_threshold_sensitivity.csv")
-            if os.path.exists(sens_path):
-                existing_s = pd.read_csv(sens_path)
-                pd.concat([existing_s, sens_df], ignore_index=True).to_csv(sens_path, index=False)
-            else:
-                sens_df.to_csv(sens_path, index=False)
+            with _SENS_FILE_LOCK:
+                if os.path.exists(sens_path):
+                    existing_s = pd.read_csv(sens_path)
+                    pd.concat([existing_s, sens_df], ignore_index=True).to_csv(sens_path, index=False)
+                else:
+                    sens_df.to_csv(sens_path, index=False)
     except Exception as _s_exc:
         warnings.warn(f"Stress threshold sensitivity skipped for {dependency_name} w={window}: {_s_exc}")
 

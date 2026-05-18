@@ -1,0 +1,12 @@
+regime,description,start,end,n_obs,mean_corr,median_corr,std_corr,min_corr,max_corr,ann_vol_pct
+Crypto Bull 2017,Initial crypto bull run,2017-01-01,2017-12-17,25,0.146,0.206,0.146,-0.109,0.413,103.9
+Crypto Bear 2018,Post-ATH bear market,2018-01-01,2018-12-31,359,0.093,0.054,0.296,-0.4,0.806,68.1
+Calm 2019,Low-volatility recovery,2019-01-01,2019-12-31,360,0.006,0.035,0.3,-0.784,0.754,56.7
+COVID Crash,Global pandemic shock,2020-02-20,2020-03-23,33,0.256,0.231,0.309,-0.31,0.638,152.7
+COVID Recovery,Central bank liquidity surge,2020-03-24,2020-12-31,278,0.33,0.398,0.299,-0.525,0.938,47.0
+Crypto Bull 2021,"All-time highs, institutional entry",2021-01-01,2021-11-10,307,0.274,0.293,0.273,-0.536,0.77,69.0
+Rate Hike Cycle,"Fed tightening, risk-off",2022-01-01,2022-06-15,162,0.546,0.533,0.255,-0.226,0.915,58.9
+Terra/Luna Collapse,Algorithmic stablecoin failure,2022-05-01,2022-06-30,59,0.546,0.697,0.323,-0.226,0.872,72.0
+FTX Collapse,Centralised exchange failure,2022-11-01,2022-11-30,30,0.562,0.592,0.166,0.048,0.802,69.2
+Crypto Recovery 2023,Gradual market normalisation,2023-01-01,2023-12-31,357,0.203,0.265,0.289,-0.576,0.712,36.6
+BTC ETF / Halving 2024,Spot ETF approval + halving,2024-01-01,2024-06-30,177,0.241,0.209,0.279,-0.532,0.748,46.2

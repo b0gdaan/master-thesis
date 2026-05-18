@@ -5,10 +5,14 @@ DCC benchmark evaluation, metrics, DM tests, and figures.
 """
 import json
 import math
+import multiprocessing
 import os
+import shutil
 import sys
+import threading
 import traceback
 import warnings
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import matplotlib
 matplotlib.use("Agg")
@@ -65,7 +69,7 @@ class Paths:
 
 
 def build_paths(base_dir: str) -> Paths:
-    return Paths(
+    paths = Paths(
         base_dir=base_dir,
         data_raw=os.path.join(base_dir, "data", "raw"),
         data_processed=os.path.join(base_dir, "data", "processed"),
@@ -77,6 +81,8 @@ def build_paths(base_dir: str) -> Paths:
         models=os.path.join(base_dir, "models"),
         notebooks=os.path.join(base_dir, "notebooks"),
     )
+    ensure_dirs(paths)
+    return paths
 
 
 def ensure_dirs(paths: Paths) -> None:
@@ -134,6 +140,7 @@ def fetch_prices(paths: Paths, tickers: List[str], start: str, end: Optional[str
     )
     prices = _pick_close(downloaded)
     prices = prices.dropna(how="all").ffill(limit=2).dropna().sort_index()
+    os.makedirs(os.path.dirname(prices_path), exist_ok=True)
     prices.to_csv(prices_path, encoding="utf-8")
     print(f"Saved prices: {prices_path} shape={prices.shape}")
     return prices
@@ -151,6 +158,7 @@ def compute_returns(paths: Paths, prices: pd.DataFrame) -> pd.DataFrame:
             return cached
         print("Recomputing returns.csv because cache does not match current prices.csv")
 
+    os.makedirs(os.path.dirname(ret_path), exist_ok=True)
     returns.to_csv(ret_path, encoding="utf-8")
     return returns
 
@@ -218,7 +226,7 @@ def _make_xgb(device: str, random_state: int):
         return None
 
     common = dict(
-        n_estimators=300,
+        n_estimators=200,
         max_depth=5,
         learning_rate=0.05,
         subsample=0.8,
@@ -236,33 +244,50 @@ def _make_xgb(device: str, random_state: int):
         return xgb.XGBRegressor(tree_method=tree_method, **common)
 
 
+# Cache the XGB device probe result so it only runs once per process even in
+# parallel mode (ThreadPoolExecutor shares module-level state).
+_XGB_DEVICE_CACHE: Optional[str] = None
+_XGB_DEVICE_LOCK = threading.Lock()
+
+
 def _probe_xgb_device(device: str, random_state: int) -> str:
     """Pre-flight test for XGBoost device availability.
 
     Trains a tiny model before the main walk-forward loop so that a CUDA
     failure is caught once and cleanly, rather than mid-loop with a noisy
     traceback. Returns the effective device string ('cuda' or 'cpu').
+
+    Result is cached at module level so parallel workers never repeat the test.
     """
-    if not XGB_AVAILABLE or device != "cuda":
-        return device
-    try:
-        _X = np.random.default_rng(0).random((30, 3)).astype("float32")
-        _y = np.random.default_rng(0).random(30).astype("float32")
-        _probe = _make_xgb("cuda", random_state)
-        if _probe is not None:
-            _probe.fit(_X, _y)
-        warnings.warn(
-            "Note: XGBoost GPU mode may produce non-bit-identical results across "
-            "different hardware. For fully reproducible results set xgb_device: 'cpu' "
-            "in config.yaml."
-        )
-        return "cuda"
-    except Exception as _exc:
-        warnings.warn(
-            f"XGBoost CUDA pre-flight test failed — falling back to CPU for all XGB models. "
-            f"Reason: {_exc}"
-        )
-        return "cpu"
+    global _XGB_DEVICE_CACHE
+    if _XGB_DEVICE_CACHE is not None:
+        return _XGB_DEVICE_CACHE
+    with _XGB_DEVICE_LOCK:
+        # Double-checked locking: re-test after acquiring lock
+        if _XGB_DEVICE_CACHE is not None:
+            return _XGB_DEVICE_CACHE
+        if not XGB_AVAILABLE or device != "cuda":
+            _XGB_DEVICE_CACHE = device
+            return device
+        try:
+            _X = np.random.default_rng(0).random((30, 3)).astype("float32")
+            _y = np.random.default_rng(0).random(30).astype("float32")
+            _probe = _make_xgb("cuda", random_state)
+            if _probe is not None:
+                _probe.fit(_X, _y)
+            warnings.warn(
+                "Note: XGBoost GPU mode may produce non-bit-identical results across "
+                "different hardware. For fully reproducible results set xgb_device: 'cpu' "
+                "in config.yaml."
+            )
+            _XGB_DEVICE_CACHE = "cuda"
+        except Exception as _exc:
+            warnings.warn(
+                f"XGBoost CUDA pre-flight test failed — falling back to CPU for all XGB models. "
+                f"Reason: {_exc}"
+            )
+            _XGB_DEVICE_CACHE = "cpu"
+    return _XGB_DEVICE_CACHE
 
 
 def compute_prediction_metrics(y_true: pd.Series, pred_df: pd.DataFrame) -> pd.DataFrame:
@@ -299,16 +324,28 @@ def compute_bootstrap_ci(
     Resamples (y_true, y_pred) pairs with replacement `n_bootstrap` times and
     computes the empirical percentile interval.  The result quantifies sampling
     uncertainty in the OOS metric estimate, not predictive uncertainty.
+
+    Vectorised implementation: all bootstrap samples are drawn at once as a
+    (n_bootstrap × n) index matrix, then RMSE and R² are computed with batched
+    NumPy operations.  This is typically 20-50× faster than a Python loop.
     """
     rng = np.random.default_rng(random_state)
     n = len(y_true)
-    rmse_samples = np.empty(n_bootstrap)
-    r2_samples = np.empty(n_bootstrap)
-    for i in range(n_bootstrap):
-        idx = rng.integers(0, n, size=n)
-        yt, yp = y_true[idx], y_pred[idx]
-        rmse_samples[i] = float(np.sqrt(mean_squared_error(yt, yp)))
-        r2_samples[i] = float(r2_score(yt, yp))
+
+    # Draw all bootstrap indices at once: shape (n_bootstrap, n)
+    boot_idx = rng.integers(0, n, size=(n_bootstrap, n))
+    yt_b = y_true[boot_idx]   # (n_bootstrap, n)
+    yp_b = y_pred[boot_idx]   # (n_bootstrap, n)
+
+    residuals = yt_b - yp_b
+    rmse_samples = np.sqrt(np.mean(residuals ** 2, axis=1))
+
+    yt_mean = yt_b.mean(axis=1, keepdims=True)
+    ss_res = np.sum(residuals ** 2, axis=1)
+    ss_tot = np.sum((yt_b - yt_mean) ** 2, axis=1)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        r2_samples = np.where(ss_tot > 0, 1.0 - ss_res / ss_tot, 0.0)
+
     alpha = (1.0 - ci) / 2.0
     return {
         "rmse_mean":     float(np.mean(rmse_samples)),
@@ -493,6 +530,7 @@ def fit_predict_walk_forward(
     random_state: int,
     use_xgb: bool,
     xgb_device: str = "cuda",
+    rf_n_jobs: int = -1,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     X_values = X.values
     idx = X.index
@@ -507,8 +545,8 @@ def fit_predict_walk_forward(
         "AR1": LinearRegression(),
         "ElasticNet": make_pipeline(StandardScaler(), ElasticNet(alpha=0.01, l1_ratio=0.5, random_state=random_state, max_iter=5000)),
         "Ridge": make_pipeline(StandardScaler(), Ridge(alpha=1.0)),
-        "RF": RandomForestRegressor(n_estimators=300, max_depth=8, random_state=random_state, n_jobs=-1),
-        "GBM": GradientBoostingRegressor(n_estimators=300, max_depth=4, learning_rate=0.05, random_state=random_state),
+        "RF": RandomForestRegressor(n_estimators=100, max_depth=8, random_state=random_state, n_jobs=rf_n_jobs),
+        "GBM": GradientBoostingRegressor(n_estimators=100, max_depth=4, learning_rate=0.05, random_state=random_state),
     }
 
     if use_xgb and XGB_AVAILABLE:
@@ -790,6 +828,7 @@ def run_experiment(
     window: int,
     horizon: int,
     use_fisher: bool,
+    rf_n_jobs: int = -1,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     dependency_name = f"corr_{base}_{other}"
     target_space = "fisher_z" if use_fisher else "raw_corr"
@@ -806,6 +845,7 @@ def run_experiment(
         random_state=int(cfg["random_state"]),
         use_xgb=bool(cfg.get("use_xgboost", True)),
         xgb_device=str(cfg.get("xgb_device", "cuda")),
+        rf_n_jobs=rf_n_jobs,
     )
 
     out_df = pd.concat([y_aligned.rename("y_true"), pred_df], axis=1)
@@ -878,6 +918,7 @@ def run_experiment(
             dependency_name=dependency_name,
             out_df=out_df,
             dependency_metrics=metrics_df,
+            rf_n_jobs=rf_n_jobs,
         )
 
     if not metrics_df.empty:
@@ -901,8 +942,9 @@ def run_pipeline(config_path: str = "config.yaml") -> None:
     write_metadata(paths, cfg)
 
     # ── Data quality report ──────────────────────────────────────────────────
-    # Uses a dedicated subdirectory so that PNG figures and CSV/TEX tables
-    # do not pollute outputs/tables/ or outputs/figures/ directly.
+    # Full diagnostics are saved in outputs/quality/; key figures and the
+    # LaTeX table are also copied to outputs/figures/ and outputs/tables/ so
+    # the thesis chapters can reference them directly.
     try:
         try:
             from thesis_app.data_quality import run_data_quality_report
@@ -911,6 +953,16 @@ def run_pipeline(config_path: str = "config.yaml") -> None:
         _dq_dir = os.path.join(paths.outputs, "quality")
         run_data_quality_report(prices, output_dir=_dq_dir)
         print(f"Data quality report saved → {_dq_dir}")
+
+        # Export key artefacts to canonical output directories
+        for _fig_name in ["fig_missing_heatmap.png", "fig_price_coverage.png", "fig_return_outliers.png"]:
+            _src = os.path.join(_dq_dir, _fig_name)
+            if os.path.exists(_src):
+                shutil.copy2(_src, os.path.join(paths.figures, _fig_name))
+        _tex_src = os.path.join(_dq_dir, "data_quality_table.tex")
+        if os.path.exists(_tex_src):
+            shutil.copy2(_tex_src, os.path.join(paths.tables, "data_quality_table.tex"))
+        print(f"Data quality figures/table copied → {paths.figures} / {paths.tables}")
     except Exception as _dq_exc:
         warnings.warn(f"Data quality report skipped: {_dq_exc}")
 
@@ -925,11 +977,13 @@ def run_pipeline(config_path: str = "config.yaml") -> None:
     all_dm = []
     all_signal_metrics = []
 
-    for other in others:
-        if other not in returns.columns:
-            print(f"Skip {other}: not in returns data.")
-            continue
+    valid_others = [o for o in others if o in returns.columns]
+    skipped = [o for o in others if o not in returns.columns]
+    for o in skipped:
+        print(f"Skip {o}: not in returns data.")
 
+    # ── Sensitivity plots (fast, serial — all windows per pair together) ─────
+    for other in valid_others:
         sensitivity = {f"w={window}": rolling_corr(returns[base], returns[other], window).dropna() for window in windows}
         plot_series(
             os.path.join(paths.figures, f"sensitivity_{base}_{other}.png"),
@@ -937,32 +991,70 @@ def run_pipeline(config_path: str = "config.yaml") -> None:
             sensitivity,
         )
 
-        for window in windows:
-            print(f"\n> {base} vs {other} | w={window} | fisher={use_fisher}")
-            try:
-                _, metrics_df, dm_df, signal_metrics_df = run_experiment(
-                    returns=returns,
-                    paths=paths,
-                    cfg=cfg,
-                    base=base,
-                    other=other,
-                    window=window,
-                    horizon=horizon,
-                    use_fisher=use_fisher,
-                )
-                if not metrics_df.empty:
-                    all_metrics.append(metrics_df)
-                    best_row = metrics_df.iloc[0]
-                    print(f"  Best dependency model: {best_row['model']} RMSE={best_row['RMSE']:.4f} R2={best_row['R2']:.3f}")
-                if not dm_df.empty:
-                    all_dm.append(dm_df)
-                if not signal_metrics_df.empty:
-                    all_signal_metrics.append(signal_metrics_df)
-                    best_signal = signal_metrics_df.iloc[0]
-                    print(f"  Best investor signal: {best_signal['signal_model']} F1_down={best_signal['F1Down']:.3f} BalAcc={best_signal['BalancedAccuracy']:.3f}")
-            except Exception as exc:
-                warnings.warn(f"Experiment failed for {base} vs {other} w={window}: {exc}")
-                traceback.print_exc()
+    # ── Experiments (optionally parallel) ────────────────────────────────────
+    # n_workers=1 → fully serial (safe, default).
+    # Set n_parallel_workers in config.yaml to use multiple threads.
+    # ThreadPoolExecutor is used (not ProcessPoolExecutor) because sklearn and
+    # numpy release the GIL, giving real concurrency without pickling overhead.
+    n_workers = int(cfg.get("n_parallel_workers", 1))
+    if n_workers < 1:
+        n_workers = max(1, multiprocessing.cpu_count() // 2)
+
+    # Scale RF n_jobs to avoid CPU over-subscription when experiments run in parallel.
+    # Serial mode: n_jobs=-1 (RF uses all cores for one experiment at a time).
+    # Parallel mode: divide cores evenly among concurrent experiments.
+    rf_n_jobs = max(1, multiprocessing.cpu_count() // n_workers) if n_workers > 1 else -1
+
+    experiment_tasks = [
+        (other, window)
+        for other in valid_others
+        for window in windows
+    ]
+
+    def _run_one_experiment(args):
+        _other, _window = args
+        print(f"\n> {base} vs {_other} | w={_window} | fisher={use_fisher}")
+        try:
+            _, m_df, d_df, s_df = run_experiment(
+                returns=returns, paths=paths, cfg=cfg,
+                base=base, other=_other, window=_window,
+                horizon=horizon, use_fisher=use_fisher,
+                rf_n_jobs=rf_n_jobs,
+            )
+            if not m_df.empty:
+                best_row = m_df.iloc[0]
+                print(f"  [{_other} w={_window}] Best: {best_row['model']} RMSE={best_row['RMSE']:.4f} R²={best_row['R2']:.3f}")
+            if not s_df.empty:
+                best_sig = s_df.iloc[0]
+                print(f"  [{_other} w={_window}] Signal: {best_sig['signal_model']} F1={best_sig['F1Down']:.3f} BalAcc={best_sig['BalancedAccuracy']:.3f}")
+            return m_df, d_df, s_df
+        except Exception as exc:
+            warnings.warn(f"Experiment failed for {base} vs {_other} w={_window}: {exc}")
+            traceback.print_exc()
+            return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
+
+    if n_workers == 1:
+        # Serial path — simpler and always safe
+        for task in experiment_tasks:
+            m_df, d_df, s_df = _run_one_experiment(task)
+            if not m_df.empty:
+                all_metrics.append(m_df)
+            if not d_df.empty:
+                all_dm.append(d_df)
+            if not s_df.empty:
+                all_signal_metrics.append(s_df)
+    else:
+        print(f"\n[pipeline] Running {len(experiment_tasks)} experiments with {n_workers} parallel workers…")
+        with ThreadPoolExecutor(max_workers=n_workers) as executor:
+            future_map = {executor.submit(_run_one_experiment, task): task for task in experiment_tasks}
+            for future in as_completed(future_map):
+                m_df, d_df, s_df = future.result()
+                if not m_df.empty:
+                    all_metrics.append(m_df)
+                if not d_df.empty:
+                    all_dm.append(d_df)
+                if not s_df.empty:
+                    all_signal_metrics.append(s_df)
 
     if all_metrics:
         metrics_all = pd.concat(all_metrics).reset_index(drop=True)

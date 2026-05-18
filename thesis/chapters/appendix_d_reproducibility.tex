@@ -1,0 +1,184 @@
+\section{Appendix D: Reproducibility and Code Structure}
+
+\subsection{Project organization}
+
+The computational part of the thesis is structured as a reproducible research project rather than a collection of disconnected scripts. The main directories are organized as follows:
+
+\begin{lstlisting}[language={}, caption={Top-level project directory structure.}, label=lst:dirstructure]
+clode9/
+|-- main.py                  # main pipeline entry point
+|-- run_all.py               # full automation: pipeline + notebooks + LaTeX
+|-- config.yaml              # experiment configuration
+|-- requirements.txt         # Python dependencies
+|-- thesis_app/              # core Python modules
+|   |-- pipeline.py          # data, features, walk-forward, metrics
+|   |-- dcc_walk.py          # leakage-safe DCC-GARCH benchmark
+|   |-- signal_layer.py      # investor stress-warning layer
+|   |-- notebook_helpers.py  # shared plotting and styling
+|   |-- data_quality.py      # missing-value and outlier diagnostics
+|   `-- regime_analysis.py   # historical regime catalogue
+|-- notebooks/               # seven Jupyter notebooks (01-07)
+|-- data/raw/                # cached downloaded price data
+|-- data/processed/          # derived returns
+|-- outputs/results/         # CSV summaries of experiments
+|-- outputs/tables/          # LaTeX-exported tables
+|-- outputs/figures/         # all generated figures
+`-- thesis/                  # this document
+\end{lstlisting}
+
+\subsection{Main implementation modules}
+
+The following modules constitute the core of the forecasting system:
+
+\begin{itemize}
+    \item \texttt{pipeline.py}: orchestrates the full dependency-forecasting and signal-generation workflow.
+    \item \texttt{dcc\_walk.py}: contains the leakage-safe walk-forward DCC-GARCH implementation.
+    \item \texttt{signal\_layer.py}: defines the investor warning layer and associated classification metrics.
+    \item \texttt{notebook\_helpers.py}: shared plotting helpers, consistent styling, and analysis utilities used across all notebooks.
+    \item \texttt{data\_quality.py}: performs missing-value, outlier, and coverage diagnostics on the raw dataset.
+    \item \texttt{regime\_analysis.py}: implements the historical regime catalogue and regime-conditional statistics.
+\end{itemize}
+
+This separation of concerns is useful both scientifically and practically. Scientifically, it makes the logic of the workflow easier to audit. Practically, it allows individual modules to be tested or improved without rewriting the entire system.
+
+\subsection{Analysis notebooks}
+
+Seven Jupyter notebooks in the \texttt{notebooks/} directory supplement the main pipeline with interactive diagnostics, publication-quality visualizations, and robustness analyses. Each notebook is self-contained and can be executed either from the command line or interactively inside Jupyter.
+
+\begin{enumerate}
+    \item \textbf{\texttt{01\_EDA\_Dataset.ipynb}} --- Exploratory data analysis. Produces normalized price trajectories, rolling volatility profiles, a pairwise correlation heatmap, rolling pairwise correlation time series, and the Fisher-transformation comparison plot. These figures appear in Appendix~A.
+
+    \item \textbf{\texttt{02\_GridSearch.ipynb}} --- Hyperparameter search diagnostics. Reports leave-one-out cross-validation RMSE surfaces for the representative Bitcoin--S\&P~500 experiment, regularization-path plots for Ridge and ElasticNet, and Random Forest feature-importance charts. Results support the model-selection discussion in Chapter~3.
+
+    \item \textbf{\texttt{03\_Model\_Comparison.ipynb}} --- Model-ranking summary. Generates the average RMSE comparison bar chart, the $R^2$ comparison across window lengths, and the improvement-over-naive baseline figure across all asset pairs. These figures provide a visual complement to Table~\ref{tab:model_ranking_summary} in Chapter~4.
+
+    \item \textbf{\texttt{04\_DM\_Tests\_Visuals.ipynb}} --- Diebold--Mariano test visualization. Produces the DM heatmap comparing the best machine-learning model against DCC-GARCH (Figure~\ref{fig:dm_heatmap}) and the representative out-of-sample forecast panel for the Bitcoin--S\&P~500 pair (Figure~\ref{fig:sp500_forecast}).
+
+    \item \textbf{\texttt{05\_XGB\_vs\_DCC.ipynb}} --- Error-profile diagnostics. Generates the rolling RMSE time series (Figure~\ref{fig:rolling_rmse}), forecast-error scatter plots, and error-distribution comparison histograms for the representative experiment.
+
+    \item \textbf{\texttt{06\_Regime\_Analysis.ipynb}} --- Regime-conditional analysis. Produces the regime catalogue statistics table, regime-conditional RMSE bar charts, and data-quality summary figures. Provides the empirical basis for the regime-sensitivity discussion in Chapter~4.
+
+    \item \textbf{\texttt{07\_Robustness\_Checks.ipynb}} --- Robustness and sensitivity analyses. Contains refit-frequency sensitivity sweeps, stress-threshold sensitivity curves, bootstrap confidence intervals for key metrics, signal-layer diagnostics, and the cross-asset Diebold--Mariano test comparing equity against non-equity pair performance.
+\end{enumerate}
+
+All notebooks use a shared ROOT-detection routine that locates the project root by searching upward for \texttt{config.yaml}. This ensures correct path resolution whether a notebook is launched interactively from within the \texttt{notebooks/} directory or executed programmatically via \texttt{run\_all.py} from the project root.
+
+\subsection{Execution flow}
+
+The full pipeline is launched through a single entry point that coordinates data acquisition, model training, notebook execution, and document compilation:
+
+\begin{lstlisting}[language=Python, caption={Automated full-pipeline runner (\texttt{run\_all.py}), simplified for readability.}, label=lst:runall]
+import argparse, subprocess, sys, os
+
+BASE = os.path.dirname(os.path.abspath(__file__))
+PYTHON = sys.executable
+
+# Step 1: main pipeline (data, models, tables, figures)
+subprocess.run([PYTHON, "main.py"], cwd=BASE, check=True)
+
+# Step 2: execute each notebook with cwd set to project root
+for nb in ["01_EDA_Dataset.ipynb", ..., "07_Robustness_Checks.ipynb"]:
+    subprocess.run(
+        [PYTHON, "-m", "jupyter", "nbconvert",
+         "--to", "notebook", "--execute", "--inplace",
+         f"--ExecutePreprocessor.cwd={BASE}",
+         os.path.join(BASE, "notebooks", nb)],
+        cwd=BASE
+    )
+
+# Step 3: compile the thesis PDF
+subprocess.run(
+    ["latexmk", "-pdf", "-interaction=nonstopmode", "main.tex"],
+    cwd=os.path.join(BASE, "thesis"), check=True
+)
+\end{lstlisting}
+
+At a high level, the execution flow can be summarized as follows:
+
+\begin{enumerate}
+    \item Load configuration and path settings.
+    \item Load or refresh raw price data from Yahoo Finance.
+    \item Compute synchronized log returns.
+    \item Generate rolling-correlation targets for each asset pair and window.
+    \item Build lagged and volatility-based feature matrices.
+    \item Fit all models in walk-forward mode and save predictions.
+    \item Compute metrics, DM tests, and export tables and figures.
+    \item Run the investor signal layer and export signal figures.
+    \item Execute seven Jupyter notebooks to produce supplementary diagnostics.
+    \item Compile the \LaTeX\ thesis document.
+\end{enumerate}
+
+The main advantage of this design is that every figure and summary reported in the thesis can be traced back to a consistent computational procedure.
+
+\subsection{Configuration}
+
+Experiment parameters are stored in \texttt{config.yaml} and are read once at pipeline startup. This makes it straightforward to change the date range, asset universe, or window set without touching the source code:
+
+\begin{lstlisting}[language={}, caption={Excerpt from \texttt{config.yaml} showing key experiment parameters.}, label=lst:config]
+start_date: "2016-01-01"   # effective start: 2017-11-09 (ETH availability)
+end_date:   null           # null = download up to today
+
+assets:
+  crypto:      ["BTC-USD", "ETH-USD"]
+  traditional: ["^GSPC", "^IXIC", "GLD", "SLV", "UUP"]
+
+base_asset:          "BTC-USD"
+rolling_windows:     [14, 30, 60, 90]
+forecast_horizon:    1
+use_fisher_transform: true
+min_train_size:      800
+refit_every:         20
+xgb_device:          "cuda"
+random_state:        42
+\end{lstlisting}
+
+\subsection{Verification performed during the project cleanup}
+
+During the refinement of the project, several implementation issues were corrected in order to align the code with thesis-level standards.
+
+\begin{itemize}
+    \item A leakage-safe walk-forward DCC benchmark was introduced to avoid full-sample look-ahead contamination.
+    \item The metrics pipeline was made consistent so that all relevant models, including DCC, are evaluated through the same summary path.
+    \item Feature scaling was added for the regularized linear models.
+    \item The XGBoost block was made robust to GPU failure through CPU fallback.
+    \item The investor signal layer was integrated into the main pipeline and exported to dedicated tables and figures.
+    \item Notebook imports and notebook-specific plotting logic were stabilized for presentation and interpretation.
+\end{itemize}
+
+These improvements matter because a thesis is evaluated not only by its conceptual idea but also by whether its empirical implementation is reliable, reproducible, and internally coherent.
+
+\subsection{How to rebuild the thesis artifacts}
+
+A practical benefit of the current project state is that the full workflow can be rerun from scratch with a single command from the project root:
+
+\begin{lstlisting}[language={}, caption={Full rebuild from the project root directory.}, label=lst:rebuild]
+python run_all.py
+\end{lstlisting}
+
+Alternatively, the three stages can be executed individually:
+
+\begin{enumerate}
+    \item Run the main pipeline:\\
+          \texttt{python main.py}\\
+          This generates prediction CSVs, metrics, DM-test results, and the majority of figures.
+    \item Execute the notebooks in order:
+    \begin{enumerate}
+        \item \texttt{01\_EDA\_Dataset.ipynb} --- dataset overview and EDA figures.
+        \item \texttt{02\_GridSearch.ipynb} --- cross-validated hyperparameter search.
+        \item \texttt{03\_Model\_Comparison.ipynb} --- model-ranking table and heatmaps.
+        \item \texttt{04\_DM\_Tests\_Visuals.ipynb} --- DM-test heatmap and key forecast figure.
+        \item \texttt{05\_XGB\_vs\_DCC.ipynb} --- rolling-RMSE, scatter, and error-distribution figures.
+        \item \texttt{06\_Regime\_Analysis.ipynb} --- regime catalogue and data-quality diagnostics.
+        \item \texttt{07\_Robustness\_Checks.ipynb} --- refit sensitivity, stress threshold sensitivity, bootstrap confidence intervals, signal diagnostics, and cross-asset DM test.
+    \end{enumerate}
+    \item Rebuild the PDF document from the \texttt{thesis/} directory:
+\begin{lstlisting}[language={}]
+pdflatex main.tex && biber main && pdflatex main.tex && pdflatex main.tex
+\end{lstlisting}
+\end{enumerate}
+
+Steps 1 and 2 must be completed before step 3 because several figures used in the thesis are produced by the notebooks. This makes the written work maintainable even if the underlying market data are refreshed.
+
+\subsection{Final reproducibility note}
+
+The value of reproducibility in this thesis is not merely technical. Because the subject concerns financial forecasting, where accidental leakage and selective reporting are constant risks, a transparent and rerunnable codebase directly strengthens the credibility of the empirical conclusions.
