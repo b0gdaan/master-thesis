@@ -382,7 +382,7 @@ p{text-align:left}
     dependence structure of conventional financial assets. Bitcoin serves as the base crypto asset;
     the conventional universe spans equity indices, precious-metal ETFs, and the U.S. dollar index.
     A reproducible walk-forward ML pipeline is developed and benchmarked against a leakage-safe
-    DCC-GARCH(1,1) specification across 168 model evaluations.
+    DCC-GARCH(1,1) specification across 192 model evaluations.
   </p>
   <p style="font-size:14px;line-height:1.7;color:var(--text2);margin-top:12px">
     The central question is whether persistence in rolling correlation — and not nonlinear
@@ -391,9 +391,9 @@ p{text-align:left}
     DCC-GARCH econometric benchmark.
   </p>
   <div class="stats-grid">
-    <div class="stat-card"><span class="stat-num">3,046</span><div class="stat-label">Daily observations</div></div>
+    <div class="stat-card"><span class="stat-num">3,053</span><div class="stat-label">Daily observations</div></div>
     <div class="stat-card"><span class="stat-num">7</span><div class="stat-label">Assets</div></div>
-    <div class="stat-card"><span class="stat-num">168</span><div class="stat-label">Model evaluations</div></div>
+    <div class="stat-card"><span class="stat-num">192</span><div class="stat-label">Model evaluations</div></div>
     <div class="stat-card"><span class="stat-num">4</span><div class="stat-label">Rolling windows</div></div>
     <div class="stat-card"><span class="stat-num">0.942</span><div class="stat-label">Best OOS R² (AR1, w=30)</div></div>
     <div class="stat-card"><span class="stat-num">p&lt;10⁻³⁰⁸</span><div class="stat-label">ML vs DCC-GARCH (DM)</div></div>
@@ -443,7 +443,7 @@ p{text-align:left}
       </div>
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px">Signal classifier</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue)">Logit · F1=0.226 · AUC=0.528</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue)">Logit · F1=0.244 · AUC=0.531</div>
       </div>
     </div>
   </div>
@@ -558,7 +558,7 @@ p{text-align:left}
       </div>
 
       <div style="font-size:11.5px;color:var(--text3);margin-top:12px;line-height:1.6;padding:8px 12px;background:var(--bg3);border-radius:var(--radius)">
-        Educational demo — not financial advice. AR1 coefficients (μ=0.0119, φ=0.9687) are fitted on the full OOS sample. The browser uses a simplified 4-feature logistic regression; the full production model (<code>signal_logit_GSPC_w30.joblib</code>, 27 features) achieves AUC=0.528, F1=0.226 in walk-forward OOS evaluation on 2,206 observations (2017–2026).
+        Educational demo — not financial advice. AR1 coefficients (μ=0.0119, φ=0.9687) are fitted on the full OOS sample. The browser uses a simplified 4-feature logistic regression; the full production model (<code>signal_logit_GSPC_w30.joblib</code>, 27 features) achieves AUC=0.531, F1=0.244 in walk-forward OOS evaluation on 2,206 observations (2017–2026).
       </div>
     </div>
   </div>
@@ -639,7 +639,7 @@ p{text-align:left}
     <div>
       <h3>Sample Construction &amp; Alignment</h3>
       <div class="finding mb-12">
-        <p><strong>Period:</strong> 9 Nov 2017 — 16 May 2026 · 3,046 trading days per asset. Start date is set by the earliest available ETH-USD quote on Yahoo Finance. Earlier dates contain no Ethereum observations and are excluded.</p>
+        <p><strong>Period:</strong> 9 Nov 2017 — 17 May 2026 · 3,053 trading days per asset. Start date is set by the earliest available ETH-USD quote on Yahoo Finance. Earlier dates contain no Ethereum observations and are excluded.</p>
       </div>
       <div class="finding green mb-12">
         <p><strong>Alignment:</strong> Bitcoin and Ethereum trade 24/7 including weekends. The panel is aligned on exchange-calendar dates shared with equity markets. Weekend and holiday crypto quotes are forward-filled up to two consecutive calendar days, then dropped, so all seven tickers share an identical date index.</p>
@@ -653,13 +653,13 @@ p{text-align:left}
         <table>
           <thead><tr><th>Ticker</th><th>N obs</th><th>% Miss.</th><th>Skew</th><th>Ex.Kurt</th><th>Ann.Vol%</th></tr></thead>
           <tbody>
-            <tr><td>BTC-USD</td><td>3,046</td><td>0.00</td><td>−0.73</td><td>13.38</td><td class="text-red">56.08</td></tr>
-            <tr><td>ETH-USD</td><td>3,046</td><td>0.00</td><td>−0.74</td><td>10.77</td><td class="text-red">72.68</td></tr>
-            <tr><td>GLD</td><td>3,046</td><td>0.00</td><td>−0.89</td><td>13.96</td><td class="text-green">13.82</td></tr>
-            <tr><td>SLV</td><td>3,046</td><td>0.00</td><td>−2.77</td><td>51.61</td><td>28.20</td></tr>
-            <tr><td>UUP</td><td>3,046</td><td>0.00</td><td>−0.03</td><td>8.58</td><td class="text-green">5.85</td></tr>
-            <tr><td>^GSPC</td><td>3,046</td><td>0.00</td><td>−0.73</td><td>22.59</td><td>16.20</td></tr>
-            <tr><td>^IXIC</td><td>3,046</td><td>0.00</td><td>−0.46</td><td>12.65</td><td>19.66</td></tr>
+            <tr><td>BTC-USD</td><td>3,053</td><td>0.00</td><td>−0.73</td><td>13.38</td><td class="text-red">56.08</td></tr>
+            <tr><td>ETH-USD</td><td>3,053</td><td>0.00</td><td>−0.74</td><td>10.77</td><td class="text-red">72.68</td></tr>
+            <tr><td>GLD</td><td>3,053</td><td>0.00</td><td>−0.89</td><td>13.96</td><td class="text-green">13.82</td></tr>
+            <tr><td>SLV</td><td>3,053</td><td>0.00</td><td>−2.77</td><td>51.61</td><td>28.20</td></tr>
+            <tr><td>UUP</td><td>3,053</td><td>0.00</td><td>−0.03</td><td>8.58</td><td class="text-green">5.85</td></tr>
+            <tr><td>^GSPC</td><td>3,053</td><td>0.00</td><td>−0.73</td><td>22.59</td><td>16.20</td></tr>
+            <tr><td>^IXIC</td><td>3,053</td><td>0.00</td><td>−0.46</td><td>12.65</td><td>19.66</td></tr>
           </tbody>
         </table>
       </div>
@@ -725,7 +725,7 @@ p{text-align:left}
         <p><strong>Layer 1 — Dependency Forecasting:</strong> Predict the next value of Fisher-z transformed rolling correlation ρ̂<sub>t+1</sub> between Bitcoin and each conventional asset. Expanding-window walk-forward validation; min_train = 800 obs; refit every 20 trading days.</p>
       </div>
       <div class="finding green mb-8">
-        <p><strong>Layer 2 — Investor Signal:</strong> Use the Layer 1 forecast + crypto features to classify whether tomorrow is a <em>stress day</em> for the conventional asset (|ret| &gt; 0.75σ of negative returns, ~15–20% of days). Three classifiers: Logit, Random Forest, GBM. The best model (Logit, 27 features, C=0.01) is serialised and available at <code>outputs/models/signal_logit_GSPC_w30.joblib</code> (AUC=0.528, F1=0.226 OOS).</p>
+        <p><strong>Layer 2 — Investor Signal:</strong> Use the Layer 1 forecast + crypto features to classify whether tomorrow is a <em>stress day</em> for the conventional asset (|ret| &gt; 0.75σ of negative returns, ~15–20% of days). Three classifiers: Logit, Random Forest, GBM. The best model (Logit, 27 features, C=0.01) is serialised and available at <code>outputs/models/signal_logit_GSPC_w30.joblib</code> (AUC=0.531, F1=0.244 OOS).</p>
       </div>
       <div class="mt-16">
         <p class="label">Rolling Windows Evaluated</p>
@@ -826,7 +826,7 @@ p{text-align:left}
   <h2>Empirical Results</h2>
 
   <div class="finding mb-16">
-    <p><strong>Key finding:</strong> The dependency target is forecastable OOS across all 24 pairs × windows. Best model by average RMSE is <strong>AR1 (0.0665)</strong>, confirming that serial persistence — not nonlinear cross-asset signals — is the dominant driver. ML models significantly outperform DCC-GARCH (avg RMSE 0.2147 vs 0.0665–0.1043 for ML).</p>
+    <p><strong>Key finding:</strong> The dependency target is forecastable OOS across all 24 pairs × windows. Best model by average RMSE is <strong>AR1 (0.0664)</strong>, confirming that serial persistence — not nonlinear cross-asset signals — is the dominant driver. ML models significantly outperform DCC-GARCH (avg RMSE 0.2141 vs 0.0664–0.1031 for ML).</p>
   </div>
 
   <h3>Average Performance — All 24 Experiments (6 pairs × 4 windows)</h3>
@@ -841,14 +841,14 @@ p{text-align:left}
         <th>vs DCC-GARCH</th>
       </tr></thead>
       <tbody>
-        <tr class="row-best"><td>AR1</td><td>0.0665</td><td>0.0405</td><td>0.9423</td><td><span class="tag tag-green">#1 Best</span></td><td class="text-green">−69.0%</td></tr>
+        <tr class="row-best"><td>AR1</td><td>0.0664</td><td>0.0404</td><td>0.9420</td><td><span class="tag tag-green">#1 Best</span></td><td class="text-green">−69.0%</td></tr>
         <tr class="row-best"><td>Naive_Last</td><td>0.0672</td><td>0.0395</td><td>0.9411</td><td><span class="tag tag-green">#2</span></td><td class="text-green">−68.7%</td></tr>
         <tr><td>Ridge</td><td>0.0914</td><td>0.0636</td><td>0.8917</td><td><span class="tag tag-blue">#3 ML</span></td><td class="text-green">−57.4%</td></tr>
         <tr><td>ElasticNet</td><td>0.0921</td><td>0.0643</td><td>0.8902</td><td><span class="tag tag-blue">#4 ML</span></td><td class="text-green">−57.1%</td></tr>
         <tr><td>RF</td><td>0.1009</td><td>0.0709</td><td>0.8694</td><td>#5 ML</td><td class="text-green">−53.0%</td></tr>
-        <tr><td>GBM</td><td>0.1035</td><td>0.0732</td><td>0.8630</td><td>#6 ML</td><td class="text-green">−51.8%</td></tr>
-        <tr><td>XGB_GPU</td><td>0.1043</td><td>0.0744</td><td>0.8605</td><td>#7 ML</td><td class="text-green">−51.4%</td></tr>
-        <tr class="row-worst"><td>DCC_GARCH</td><td>0.2147</td><td>0.1687</td><td>0.3814</td><td><span class="tag tag-red">Benchmark</span></td><td>—</td></tr>
+        <tr><td>GBM</td><td>0.1014</td><td>0.0712</td><td>0.8669</td><td>#6 ML</td><td class="text-green">−52.7%</td></tr>
+        <tr><td>XGB_GPU</td><td>0.1031</td><td>0.0733</td><td>0.8621</td><td>#7 ML</td><td class="text-green">−51.9%</td></tr>
+        <tr class="row-worst"><td>DCC_GARCH</td><td>0.2141</td><td>0.1681</td><td>0.3804</td><td><span class="tag tag-red">Benchmark</span></td><td>—</td></tr>
       </tbody>
     </table>
   </div>
@@ -1202,6 +1202,19 @@ cd thesis && latexmk -pdf main.tex</div>
           </tbody>
         </table>
       </div>
+
+      <h3 class="mt-16">Environment</h3>
+      <div class="code-block">Python       3.14.0
+numpy        2.4.2
+pandas       3.0.1
+scikit-learn 1.8.0
+xgboost      3.2.0
+arch         8.0.0
+scipy        1.17.1
+yfinance     1.2.0
+matplotlib   3.x
+seaborn      0.x
+jupyter      (notebook execution)</div>
     </div>
   </div>
 </div>
@@ -1676,7 +1689,7 @@ const T = {
     heroProg:  'University of Kragujevac · M.Sc. Artificial Intelligence',
     heroSup:   'Supervisor: <strong>Prof. Dr Vladimir M. Milovanović</strong>',
     heroDate:  'Defense: May 2026',
-    heroDesc:  'This thesis investigates whether cryptocurrency dynamics contain information about the evolving dependence structure of conventional financial assets. Bitcoin serves as the base crypto asset; the conventional universe spans equity indices, precious-metal ETFs, and the U.S. dollar index. A reproducible walk-forward ML pipeline is developed and benchmarked against a leakage-safe DCC-GARCH(1,1) specification across 168 model evaluations.',
+    heroDesc:  'This thesis investigates whether cryptocurrency dynamics contain information about the evolving dependence structure of conventional financial assets. Bitcoin serves as the base crypto asset; the conventional universe spans equity indices, precious-metal ETFs, and the U.S. dollar index. A reproducible walk-forward ML pipeline is developed and benchmarked against a leakage-safe DCC-GARCH(1,1) specification across 192 model evaluations.',
     aboutH2: 'About',
     aboutP1: 'I\'m Bogdan Babaev — originally from <strong style="color:var(--text)">Samara, Russia</strong>, currently finishing my <strong style="color:var(--text)">M.Sc. in Artificial Intelligence</strong> at the University of Kragujevac, Serbia (2023–2026).',
     aboutP2: 'My research interests sit at the intersection of machine learning and quantitative finance — specifically time series forecasting, intermarket dependencies, and risk-aware modelling. This thesis is the result of about a year of work combining econometrics, walk-forward ML evaluation, and practical signal design.',
@@ -1730,7 +1743,7 @@ const T = {
     heroProg:  'Универзитет у Крагујевцу · Мастер студије Вештачка интелигенција',
     heroSup:   'Ментор: <strong>Редовни проф. др Владимир М. Миловановић</strong>',
     heroDate:  'Одбрана: мај 2026.',
-    heroDesc:  'У овом мастер раду истражује се да ли динамика криптовалута садржи информације о временској еволуцији структуре зависности конвенционалних финансијских актива. Bitcoin служи као основна криптовалута, а конвенционални универзум обухвата берзанске индексе, ETF драгоцених метала и индекс америчког долара. Развијен је репродуктивни конвејер машинског учења и упоређен са DCC-GARCH(1,1) спецификацијом у 168 евалуација модела.',
+    heroDesc:  'У овом мастер раду истражује се да ли динамика криптовалута садржи информације о временској еволуцији структуре зависности конвенционалних финансијских актива. Bitcoin служи као основна криптовалута, а конвенционални универзум обухвата берзанске индексе, ETF драгоцених метала и индекс америчког долара. Развијен је репродуктивни конвејер машинског учења и упоређен са DCC-GARCH(1,1) спецификацијом у 192 евалуације модела.',
     aboutH2: 'О мени',
     aboutP1: 'Ја сам Богдан Бабаев — пореклом из <strong style="color:var(--text)">Самаре, Русија</strong>. Тренутно завршавам <strong style="color:var(--text)">мастер студије вештачке интелигенције</strong> на Универзитету у Крагујевцу, Србија (2023–2026).',
     aboutP2: 'Моји истраживачки интереси налазе се на пресеку машинског учења и квантитативних финансија — прогнозирање временских серија, међутржишне зависности и моделовање засновано на ризику. Овај рад је резултат отприлике годину дана рада у коме се комбинују економетрија, евалуација МУ методом клизног прозора и практично пројектовање сигнала.',
