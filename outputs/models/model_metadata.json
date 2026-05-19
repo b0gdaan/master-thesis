@@ -1,0 +1,131 @@
+{
+  "GSPC_w30": {
+    "model_type": "CalibratedLogisticRegression",
+    "pair": "BTC-USD vs ^GSPC",
+    "window": 30,
+    "features": [
+      "dep_pred",
+      "dep_pred_lag1",
+      "dep_pred_change_1",
+      "dep_pred_change_5",
+      "dep_pred_abs",
+      "btcusd_ret_lag1",
+      "btcusd_ret_lag2",
+      "btcusd_ret_lag5",
+      "btcusd_ret_lag10",
+      "btcusd_vol_5",
+      "btcusd_vol_20",
+      "btcusd_mom_5",
+      "btcusd_mom_20",
+      "btcusd_down_streak_5",
+      "eth_ret_lag1",
+      "eth_ret_lag5",
+      "btcusd_eth_spread_1",
+      "btcusd_eth_corr_14",
+      "btcusd_other_corr_14",
+      "btcusd_other_spread_5",
+      "btcusd_ret_abs",
+      "btcusd_vol_20_norm",
+      "btcusd_mom_5_abs",
+      "dep_pred_pos",
+      "dep_pred_neg",
+      "dep_x_vol",
+      "ret_x_dep"
+    ],
+    "best_C": 0.01,
+    "metrics_oos": {
+      "BalancedAccuracy": 0.5287,
+      "F1_down": 0.2257,
+      "AUC": 0.5276,
+      "n_test": 1406,
+      "n_pos": 213,
+      "best_C": 0.01
+    },
+    "web_features": [
+      "dep_pred",
+      "btcusd_ret_abs",
+      "btcusd_vol_20_norm",
+      "btcusd_mom_5_abs",
+      "dep_pred_change_1"
+    ],
+    "web_metrics_oos": {
+      "BalancedAccuracy": 0.5194,
+      "F1_down": 0.1693,
+      "AUC": 0.5013,
+      "n_test": 1406,
+      "n_pos": 213,
+      "best_C": 0.1
+    },
+    "web_coefficients": {
+      "intercept": 0.14389,
+      "coefficients": {
+        "dep_pred": 0.0552,
+        "btcusd_ret_abs": -0.56706,
+        "btcusd_vol_20_norm": -4.02013,
+        "btcusd_mom_5_abs": 1.10483,
+        "dep_pred_change_1": -0.90865
+      },
+      "scaler_mean": {
+        "dep_pred": 0.374747,
+        "btcusd_ret_abs": 0.021044,
+        "btcusd_vol_20_norm": 0.052766,
+        "btcusd_mom_5_abs": 0.049573,
+        "dep_pred_change_1": -8.7e-05
+      },
+      "scaler_std": {
+        "dep_pred": 0.257263,
+        "btcusd_ret_abs": 0.022488,
+        "btcusd_vol_20_norm": 0.024513,
+        "btcusd_mom_5_abs": 0.047056,
+        "dep_pred_change_1": 0.063499
+      },
+      "in_sample_auc": 0.5353
+    },
+    "trained_on": "2026-05-19",
+    "n_obs": 2206,
+    "web_features_final": [
+      "dep_pred",
+      "dep_pred_change_1",
+      "btcusd_vol_20_norm",
+      "btcusd_mom_5_abs"
+    ],
+    "web_coefficients_final": {
+      "intercept": 0.14441,
+      "coeff": {
+        "dep_pred": 0.05795,
+        "dep_pred_change_1": -0.93582,
+        "btcusd_vol_20_norm": -4.25669,
+        "btcusd_mom_5_abs": 1.08316
+      }
+    },
+    "web_metrics_final": {
+      "AUC": 0.5022,
+      "C": 1.0
+    },
+    "ar1": {
+      "mu": 0.0119,
+      "phi": 0.9687
+    },
+    "full_metrics_oos": {
+      "AUC": 0.5276,
+      "BalAcc": 0.5287,
+      "F1": 0.2257
+    },
+    "web_LR_W": [
+      0.0921,
+      0.3719,
+      -0.8268,
+      -2.1277,
+      -0.1251,
+      -3.931
+    ],
+    "web_features_order": [
+      "intercept",
+      "dep_pred",
+      "btcusd_ret_abs",
+      "btcusd_vol_20_norm",
+      "btcusd_mom_5_abs",
+      "dep_x_vol"
+    ]
+  }
+}

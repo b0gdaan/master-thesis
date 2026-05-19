@@ -439,11 +439,11 @@ p{text-align:left}
     <div style="display:flex;flex-direction:column;gap:6px;min-width:220px">
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px">Forecasting model</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green-text)">AR1 · RMSE=0.0665 · R²=0.94</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green-text)">AR1 · RMSE=0.0664 · R²=0.94</div>
       </div>
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px">Signal classifier</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue)">Logit · F1=0.247 · AUC=0.531</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue)">Logit · F1=0.226 · AUC=0.528</div>
       </div>
     </div>
   </div>
@@ -558,7 +558,7 @@ p{text-align:left}
       </div>
 
       <div style="font-size:11.5px;color:var(--text3);margin-top:12px;line-height:1.6;padding:8px 12px;background:var(--bg3);border-radius:var(--radius)">
-        Educational demo — not financial advice. Coefficients are approximate, derived from walk-forward OOS evaluation 2021–2026 on 3,046 daily observations.
+        Educational demo — not financial advice. AR1 coefficients (μ=0.0119, φ=0.9687) are fitted on the full OOS sample. The browser uses a simplified 4-feature logistic regression; the full production model (<code>signal_logit_GSPC_w30.joblib</code>, 27 features) achieves AUC=0.528, F1=0.226 in walk-forward OOS evaluation on 2,206 observations (2017–2026).
       </div>
     </div>
   </div>
@@ -725,7 +725,7 @@ p{text-align:left}
         <p><strong>Layer 1 — Dependency Forecasting:</strong> Predict the next value of Fisher-z transformed rolling correlation ρ̂<sub>t+1</sub> between Bitcoin and each conventional asset. Expanding-window walk-forward validation; min_train = 800 obs; refit every 20 trading days.</p>
       </div>
       <div class="finding green mb-8">
-        <p><strong>Layer 2 — Investor Signal:</strong> Use the Layer 1 forecast + crypto features to classify whether tomorrow is a <em>stress day</em> for the conventional asset (|ret| &gt; 0.75σ of negative returns, ~8–12% of days). Three classifiers: Logit, Random Forest, GBM.</p>
+        <p><strong>Layer 2 — Investor Signal:</strong> Use the Layer 1 forecast + crypto features to classify whether tomorrow is a <em>stress day</em> for the conventional asset (|ret| &gt; 0.75σ of negative returns, ~15–20% of days). Three classifiers: Logit, Random Forest, GBM. The best model (Logit, 27 features, C=0.01) is serialised and available at <code>outputs/models/signal_logit_GSPC_w30.joblib</code> (AUC=0.528, F1=0.226 OOS).</p>
       </div>
       <div class="mt-16">
         <p class="label">Rolling Windows Evaluated</p>
@@ -1577,10 +1577,16 @@ function renderDetailTable(){
 renderDetailTable();
 
 // ── LIVE DEMO ─────────────────────────────────────────────────────────────────
-const AR1_INTERCEPT = 0.0036;
-const AR1_BETA      = 0.9702;
-// Logistic regression weights [intercept, |ret|, vol_excess, dep_z_pos, |mom|]
-const LR_W = [-1.60, 7.5, 1.8, 0.55, 3.2];
+// AR1 coefficients: fit on full OOS sample (BTC-USD vs ^GSPC, w=30, n=2206)
+const AR1_INTERCEPT = 0.0119;   // mu  — walk-forward OLS estimate
+const AR1_BETA      = 0.9687;   // phi — walk-forward OLS estimate
+
+// Simplified 4-feature Logistic Regression for the browser demo.
+// Full stored model (outputs/models/signal_logit_GSPC_w30.joblib) uses 27 features
+// and achieves AUC=0.528, BalAcc=0.529, F1=0.226 in OOS walk-forward evaluation.
+// Web version uses the 4 slider-computable features; dep_pred dominates (per full model).
+// Weights: [intercept, |ret|, (vol/0.55 − 1), max(0, fisher_z(rho)), |mom_5d|]
+const LR_W = [-1.72, 7.00, 1.80, 0.80, 3.00];
 
 const PRESETS = {
   normal:   { corr:.35,  ret:0,    vol:55,  mom:0,   desc:'Typical trading day — BTC showing moderate positive correlation with S&P 500, normal volatility, no strong directional momentum.' },
