@@ -19,7 +19,7 @@ env/
 .vscode/
 *.iml
 
-# Claude / AI tool traces
+# Local development tool traces
 .claude/
 .claire/
 
