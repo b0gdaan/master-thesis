@@ -157,5 +157,5 @@ Python 3.14 · pandas 3.0 · numpy 2.4 · scikit-learn 1.8 · XGBoost 3.2 · arc
 ## Author
 
 **Bogdan Babaev**
-M.Sc. Artificial Intelligence — University of Kragujevac, Serbia
+M.Sc. student · Artificial Intelligence — University of Kragujevac, Serbia (2023–2026)
 [github.com/b0gdaan](https://github.com/b0gdaan) · [linkedin.com/in/b0gdaan](https://www.linkedin.com/in/b0gdaan/)
