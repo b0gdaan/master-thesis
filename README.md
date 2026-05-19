@@ -34,7 +34,7 @@ meaningful improvements over the DCC-GARCH econometric benchmark.
 | SLV | iShares Silver Trust ETF | Precious metal |
 | UUP | Invesco US Dollar Index | Currency |
 
-Daily prices 2016–2026 · source: Yahoo Finance
+Daily prices 2017–2026 · source: Yahoo Finance
 
 ---
 
@@ -90,7 +90,7 @@ Daily prices 2016–2026 · source: Yahoo Finance
 git clone https://github.com/b0gdaan/master-thesis.git
 cd master-thesis
 
-# 2. Create virtual environment (Python 3.11 recommended)
+# 2. Create virtual environment (Python 3.14 recommended)
 python -m venv .venv
 .venv\Scripts\activate       # Windows
 # source .venv/bin/activate   # Linux / macOS
@@ -150,7 +150,7 @@ All parameters are in `config.yaml`:
 
 ## Tech Stack
 
-Python 3.11 · pandas · numpy · scikit-learn · XGBoost · statsmodels · arch · matplotlib · seaborn · Jupyter
+Python 3.14 · pandas 3.0 · numpy 2.4 · scikit-learn 1.8 · XGBoost 3.2 · arch 8.0 · scipy 1.17 · yfinance 1.2 · matplotlib · seaborn · Jupyter
 
 ---
 
@@ -158,4 +158,4 @@ Python 3.11 · pandas · numpy · scikit-learn · XGBoost · statsmodels · arch
 
 **Bogdan Babaev**
 M.Sc. Artificial Intelligence — University of Kragujevac, Serbia
-[github.com/b0gdaan](https://github.com/b0gdaan) · [linkedin.com/in/bogdan-b-34482b203](https://www.linkedin.com/in/bogdan-b-34482b203)
+[github.com/b0gdaan](https://github.com/b0gdaan) · [linkedin.com/in/b0gdaan](https://www.linkedin.com/in/b0gdaan/)
