@@ -288,7 +288,7 @@
     \centering
 
     {\fontsize{16pt}{16pt}\selectfont
-    Универзитета у Крагујевцу\par}
+    Универзитет у Крагујевцу\par}
 
     \vfill
 
@@ -308,7 +308,7 @@
 
     \begin{center}
         \fontsize{15pt}{15pt}\selectfont
-        Универзитета у Крагујевцу\par\medskip
+        Универзитет у Крагујевцу\par\medskip
         \includegraphics[height=22mm]{finthesis_assets/unikg_logo}\par\smallskip
     \end{center}
 
