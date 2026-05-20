@@ -4,397 +4,535 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Babaev — Forecasting Intermarket Dependencies · Master Thesis 2026</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* Backgrounds */
-  --bg:#05090f;--bg2:#0c1220;--bg3:#111b2e;
-  --border:#1e2d45;--border-light:#243650;
-  /* Text */
-  --text:#e2eaf5;--text2:#7a9ab8;--text3:#3a5470;
-  /* Accents */
-  --accent:#0ea5e9;--accent-dim:#0369a1;
-  --accent-glow:rgba(14,165,233,.12);--accent-glow-strong:rgba(14,165,233,.25);
-  /* Semantic */
-  --green:#10b981;--green-dim:#064e3b;--green-text:#34d399;
-  --red:#ef4444;--red-dim:#7f1d1d;--red-text:#f87171;
-  --orange:#f59e0b;--orange-text:#fbbf24;
-  --purple:#8b5cf6;--purple-text:#a78bfa;
-  /* Compat aliases */
-  --blue:var(--accent);--blue-dim:var(--accent-dim);--blue-glow:var(--accent-glow);
-  --radius:6px;--radius-lg:12px;
-  --shadow:0 1px 3px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03);
+  --bg:#080c10;
+  --bg2:#0e1318;
+  --bg3:#151c23;
+  --border:#1e2830;
+  --border-light:#28333d;
+  --text:#e8edf2;
+  --text2:#7a8694;
+  --text3:#4a5663;
+  --accent:#38bdf8;
+  --accent2:#818cf8;
+  --accent-dim:#0284c7;
+  --accent-glow:rgba(56,189,248,.12);
+  --accent-glow-strong:rgba(56,189,248,.28);
+  --green:#22c55e;
+  --green-text:#34d399;
+  --green-dim:#15803d;
+  --red:#ef4444;
+  --red-text:#f87171;
+  --red-dim:#991b1b;
+  --orange:#f59e0b;
+  --orange-text:#fbbf24;
+  --purple:#a78bfa;
+  --purple-text:#c4b5fd;
+  --blue:var(--accent);
+  --blue-dim:var(--accent-dim);
+  --blue-glow:var(--accent-glow);
+  --radius:6px;
+  --radius-lg:12px;
+  --shadow:0 1px 2px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.02);
+  --font-head:'Space Grotesk','Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-body:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono','SF Mono',Monaco,monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6}
-
-/* NAV */
-nav{position:sticky;top:0;z-index:100;background:rgba(5,9,15,.97);backdrop-filter:blur(12px);
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--font-body);font-size:15px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  position:relative;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;right:0;height:1px;z-index:200;pointer-events:none;
+  background:linear-gradient(90deg, transparent, var(--accent) 30%, var(--accent2) 70%, transparent);
+  opacity:.7;
+}
+h1,h2,h3,h4{font-family:var(--font-head);color:var(--text)}
+h1{font-size:32px;font-weight:700;line-height:1.15;letter-spacing:-0.8px}
+h2{
+  font-size:20px;font-weight:600;letter-spacing:-0.3px;
+  margin-bottom:24px;padding-left:14px;position:relative;border:none;
+}
+h2::before{
+  content:'';position:absolute;left:0;top:6px;bottom:6px;width:2px;
+  background:var(--accent);border-radius:2px;
+  box-shadow:0 0 8px var(--accent-glow-strong);
+}
+h2::after{display:none}
+h3{font-size:15px;font-weight:600;margin-bottom:12px;letter-spacing:-0.1px}
+h4{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.6px;font-family:var(--font-head)}
+p{color:var(--text2);margin-bottom:12px;text-wrap:pretty}
+a{color:var(--accent);text-decoration:none;transition:color .15s}
+a:hover{color:var(--accent2);text-decoration:underline}
+code{font-family:var(--font-mono);font-size:.9em;background:var(--bg3);padding:1px 5px;border-radius:3px;color:var(--accent)}
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(8,12,16,.78);
+  backdrop-filter:blur(16px) saturate(180%);
+  -webkit-backdrop-filter:blur(16px) saturate(180%);
   border-bottom:1px solid var(--border);padding:0 24px;
-  box-shadow:0 1px 0 0 rgba(14,165,233,.08);overflow:hidden}
-nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,var(--accent),transparent 60%);pointer-events:none}
+}
 .nav-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;height:52px;gap:4px}
-.nav-brand{font-weight:700;font-size:14px;margin-right:16px;white-space:nowrap;
-  background:linear-gradient(90deg,#fff 40%,var(--accent));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-brand{
+  font-family:var(--font-head);font-weight:700;font-size:14px;letter-spacing:-0.2px;
+  margin-right:18px;white-space:nowrap;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
 .nav-links{display:flex;gap:2px;flex-wrap:wrap}
-.nav-links a{color:var(--text2);text-decoration:none;font-size:13px;padding:6px 10px;border-radius:var(--radius);
-  transition:color .15s,background .15s;position:relative}
-.nav-links a:hover{color:var(--text);background:var(--bg3)}
-.nav-links a.nav-active{background:var(--accent-glow);color:var(--accent);border:1px solid var(--accent-dim)}
+.nav-links a{
+  color:var(--text2);text-decoration:none;font-size:13px;
+  padding:6px 12px;border-radius:999px;
+  transition:color .15s, background .15s;
+}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,.03);text-decoration:none}
+.nav-links a.nav-active{
+  background:rgba(56,189,248,.12);
+  color:var(--accent);border:none;
+}
 .nav-links a.about-link{color:var(--purple-text)}
-
-/* LAYOUT */
 .container{max-width:1300px;margin:0 auto;padding:0 24px}
-.section{padding:64px 0}
+.section{padding:64px 0;position:relative}
 .section-alt{background:var(--bg2)}
-h1{font-size:28px;font-weight:700;line-height:1.3;letter-spacing:-.5px}
-h2{font-size:22px;font-weight:600;margin-bottom:20px;padding-bottom:10px;
-  border-bottom:none;letter-spacing:-.3px;position:relative}
-h2::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,var(--accent),transparent 70%)}
-h3{font-size:16px;font-weight:600;margin-bottom:12px;color:var(--text)}
-h4{font-size:14px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
-p{color:var(--text2);margin-bottom:12px}
-a{color:var(--blue);text-decoration:none}
-a:hover{text-decoration:underline}
-
-/* HERO */
-.hero{padding:80px 0 64px;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(14,165,233,.18),transparent),
-             radial-gradient(ellipse 40% 40% at 80% 50%,rgba(99,102,241,.08),transparent),
-             radial-gradient(ellipse 30% 30% at 10% 80%,rgba(14,165,233,.06),transparent);
-  animation:heroBg 8s ease-in-out infinite alternate}
-@keyframes heroBg{0%{opacity:.7}100%{opacity:1}}
-.hero-badge{display:inline-block;background:var(--accent-glow);border:1px solid var(--accent-dim);
-  color:var(--accent);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;
-  letter-spacing:.5px;text-transform:uppercase;margin-bottom:20px}
-.hero h1{max-width:820px;margin-bottom:16px;
-  background:linear-gradient(135deg,#fff 50%,var(--accent));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-meta{color:var(--text2);font-size:14px;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:4px 20px}
-.hero-meta strong{color:var(--text)}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:32px}
-.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
-  padding:20px;text-align:center;border-left:3px solid var(--accent-dim);
-  box-shadow:var(--shadow);transition:border-color .2s,transform .2s,box-shadow .2s}
-.stat-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 20px var(--accent-glow)}
-.stat-num{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;
-  color:var(--accent);display:block;margin-bottom:4px;animation:statPulse .5s ease-out both}
-@keyframes statPulse{0%{transform:scale(.92);opacity:0}80%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
-.stat-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
-
-/* RQ CARDS */
-.rq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:12px}
-.rq-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;
-  box-shadow:var(--shadow);transition:border-color .2s,transform .2s;
-  border-top:3px solid var(--accent-dim)}
-.rq-card:hover{border-color:var(--accent);transform:translateY(-2px)}
-.rq-badge{display:inline-block;background:var(--accent-glow);border:1px solid var(--accent-dim);
-  color:var(--accent);font-size:11px;font-weight:700;padding:2px 8px;border-radius:3px;margin-bottom:8px}
-.rq-card p{font-size:13.5px;color:var(--text);margin:0}
-
-/* TABLES */
-.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius-lg)}
+.section-alt::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:1px;pointer-events:none;
+  background:linear-gradient(180deg, transparent, var(--accent-glow-strong) 40%, transparent);
+}
+.hero{padding:96px 0 72px;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{
+  content:'';position:absolute;inset:-25%;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 55% 45% at 18% 22%, rgba(56,189,248,.10), transparent 60%),
+    radial-gradient(ellipse 50% 50% at 82% 78%, rgba(129,140,248,.10), transparent 60%);
+  animation:heroDrift 60s ease-in-out infinite alternate;
+}
+@keyframes heroDrift{
+  0%{transform:translate(0,0) scale(1);opacity:.85}
+  50%{transform:translate(2%,-1%) scale(1.04);opacity:1}
+  100%{transform:translate(-2%,1%) scale(1);opacity:.9}
+}
+.hero > *{position:relative;z-index:1}
+.hero-badge{
+  display:inline-block;background:rgba(56,189,248,.10);border:1px solid rgba(56,189,248,.28);
+  color:var(--accent);font-family:var(--font-mono);font-size:11px;font-weight:500;
+  padding:4px 12px;border-radius:999px;letter-spacing:.3px;margin-bottom:22px;
+}
+.hero h1{
+  max-width:880px;margin-bottom:18px;
+  background:linear-gradient(135deg, #ffffff 0%, #ffffff 50%, var(--accent) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-meta{color:var(--text2);font-size:14px;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:6px 22px;align-items:center}
+.hero-meta strong{color:var(--text);font-weight:500}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-top:36px}
+.stat-card{
+  background:rgba(14,19,24,.55);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:22px 18px;text-align:left;box-shadow:var(--shadow);
+  transition:border-color .25s, transform .25s, box-shadow .25s, background .25s;
+  position:relative;overflow:hidden;
+}
+.stat-card::after{
+  content:'';position:absolute;inset:0;border-radius:var(--radius-lg);pointer-events:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.stat-card:hover{
+  border-color:rgba(56,189,248,.42);transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(56,189,248,.12), inset 0 1px 0 rgba(255,255,255,.06);
+  background:rgba(20,28,38,.6);
+}
+.stat-num{
+  font-family:var(--font-mono);font-size:28px;font-weight:500;letter-spacing:-0.5px;
+  color:var(--accent);display:block;margin-bottom:6px;
+  text-shadow:0 0 24px rgba(56,189,248,.4);
+}
+.stat-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;font-weight:500;font-family:var(--font-head)}
+.rq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:14px}
+.rq-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;
+  box-shadow:var(--shadow);transition:border-color .2s, transform .2s, box-shadow .2s;
+  border-top:3px solid var(--accent);
+}
+.rq-grid .rq-card:nth-child(1){border-top-color:var(--accent)}
+.rq-grid .rq-card:nth-child(2){border-top-color:var(--accent2)}
+.rq-grid .rq-card:nth-child(3){border-top-color:var(--orange)}
+.rq-grid .rq-card:nth-child(4){border-top-color:var(--green)}
+.rq-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.4), 0 0 0 1px var(--accent-glow)}
+.rq-badge{
+  display:inline-block;background:rgba(56,189,248,.10);border:1px solid rgba(56,189,248,.28);
+  color:var(--accent);font-family:var(--font-mono);
+  font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px;margin-bottom:10px;letter-spacing:.3px;
+}
+.rq-grid .rq-card:nth-child(2) .rq-badge{background:rgba(129,140,248,.10);border-color:rgba(129,140,248,.28);color:var(--accent2)}
+.rq-grid .rq-card:nth-child(3) .rq-badge{background:rgba(245,158,11,.10);border-color:rgba(245,158,11,.28);color:var(--orange-text)}
+.rq-grid .rq-card:nth-child(4) .rq-badge{background:rgba(34,197,94,.10);border-color:rgba(34,197,94,.28);color:var(--green-text)}
+.rq-card p{font-size:13.5px;color:var(--text);margin:0;line-height:1.55}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg2)}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
-thead tr{background:rgba(14,165,233,.06);position:sticky;top:52px;z-index:5}
-th{padding:10px 14px;text-align:left;font-weight:600;font-size:12px;
-  text-transform:uppercase;letter-spacing:.4px;color:var(--text2);white-space:nowrap;
-  cursor:pointer;user-select:none;border-bottom:1px solid var(--border)}
+thead tr{background:rgba(14,19,24,.95);backdrop-filter:blur(8px);position:sticky;top:52px;z-index:5}
+th{
+  padding:11px 14px;text-align:left;font-family:var(--font-head);
+  font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.6px;
+  color:var(--text2);white-space:nowrap;cursor:pointer;user-select:none;
+  border-bottom:1px solid var(--border);
+}
 th:hover{color:var(--accent)}
-th .sort-icon{margin-left:4px;opacity:.5;transition:transform .15s}
-td{padding:9px 14px;border-bottom:1px solid var(--bg3);font-family:'JetBrains Mono',monospace;font-size:13px}
+th .sort-icon{margin-left:4px;opacity:.5;font-size:9px}
+td{padding:10px 14px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:13px;color:var(--text)}
 tr:last-child td{border-bottom:none}
-tr.row-best td{background:rgba(16,185,129,.08)}
-tr.row-best td:first-child{color:var(--green-text);border-left:3px solid var(--green)}
+tr.row-best td{background:rgba(34,197,94,.06)}
+tr.row-best td:first-child{color:var(--green-text);font-weight:500;box-shadow:inset 3px 0 0 var(--green)}
 tr.row-worst td{background:rgba(239,68,68,.05)}
-tr.row-worst td:first-child{color:var(--red-text);border-left:3px solid var(--red)}
-tr:hover td{background:var(--accent-glow)}
-.tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;font-family:'Inter',sans-serif}
-.tag-green{background:rgba(16,185,129,.2);color:var(--green-text)}
-.tag-red{background:rgba(239,68,68,.2);color:var(--red-text)}
-.tag-blue{background:var(--accent-glow);color:var(--accent)}
-.tag-orange{background:rgba(245,158,11,.15);color:var(--orange-text)}
-.tag-purple{background:rgba(139,92,246,.2);color:var(--purple-text)}
-
-/* CARDS & GRIDS */
+tr.row-worst td:first-child{color:var(--red-text);font-weight:500;box-shadow:inset 3px 0 0 var(--red)}
+tr:hover td{background:var(--bg3)}
+tr:hover td:first-child{box-shadow:inset 1px 0 0 var(--accent)}
+tr.row-best:hover td:first-child{box-shadow:inset 3px 0 0 var(--green)}
+tr.row-worst:hover td:first-child{box-shadow:inset 3px 0 0 var(--red)}
+.tag{display:inline-block;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;font-family:var(--font-head);letter-spacing:.2px}
+.tag-green{background:rgba(34,197,94,.15);color:var(--green-text);border:1px solid rgba(34,197,94,.3)}
+.tag-red{background:rgba(239,68,68,.15);color:var(--red-text);border:1px solid rgba(239,68,68,.3)}
+.tag-blue{background:rgba(56,189,248,.12);color:var(--accent);border:1px solid rgba(56,189,248,.3)}
+.tag-orange{background:rgba(245,158,11,.12);color:var(--orange-text);border:1px solid rgba(245,158,11,.3)}
+.tag-purple{background:rgba(167,139,250,.15);color:var(--purple-text);border:1px solid rgba(167,139,250,.3)}
 .grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px}
 .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
 .grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;
-  box-shadow:var(--shadow);transition:border-color .2s,transform .2s}
-.card:hover{border-color:var(--accent-dim);transform:translateY(-2px)}
+.card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:20px;box-shadow:var(--shadow);
+  transition:border-color .2s, transform .2s, box-shadow .2s;
+}
+.card:hover{border-color:rgba(56,189,248,.3);transform:translateY(-2px);box-shadow:0 6px 22px rgba(0,0,0,.35), 0 0 0 1px var(--accent-glow)}
 .card h3{margin-bottom:8px}
-.card p{font-size:13.5px;color:var(--text2);margin:0}
-
-/* FIGURE GRID */
+.card p{font-size:13.5px;color:var(--text2);margin:0;line-height:1.6}
 .fig-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
 .fig-grid-wide{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px}
-.fig-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
-  overflow:hidden;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative}
-.fig-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(14,165,233,.12)}
-.fig-card img{width:100%;display:block;background:var(--bg3);aspect-ratio:16/9;object-fit:cover;transition:transform .3s}
-.fig-card:hover img{transform:scale(1.03)}
-.fig-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:50%;
-  background:linear-gradient(to top,rgba(5,9,15,.8),transparent);
-  opacity:0;transition:opacity .25s;pointer-events:none}
-.fig-card:hover::after{opacity:1}
+.fig-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  overflow:hidden;cursor:pointer;
+  transition:border-color .25s, transform .25s, box-shadow .25s;position:relative;
+}
+.fig-card:hover{border-color:rgba(56,189,248,.4);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.4), 0 0 24px rgba(56,189,248,.12)}
+.fig-card img{width:100%;display:block;background:var(--bg3);aspect-ratio:16/9;object-fit:cover;transition:transform .4s ease}
+.fig-card:hover img{transform:scale(1.04)}
+.fig-card .fig-overlay{
+  position:absolute;left:0;right:0;top:0;
+  padding:14px 16px 28px;
+  background:linear-gradient(to bottom, rgba(8,12,16,.92), rgba(8,12,16,.55) 60%, transparent);
+  color:var(--text);font-family:var(--font-head);font-size:13px;font-weight:600;letter-spacing:-0.1px;
+  transform:translateY(-6px);opacity:0;
+  transition:opacity .25s ease, transform .25s ease;
+  pointer-events:none;
+}
+.fig-card:hover .fig-overlay{opacity:1;transform:translateY(0)}
 .fig-caption{padding:12px 14px;border-top:1px solid var(--border)}
-.fig-caption strong{display:block;color:var(--text);font-size:13px;margin-bottom:3px;font-family:'Inter',sans-serif}
-.fig-caption span{font-size:12px;color:var(--text2);font-family:'Inter',sans-serif}
-
-/* TABS */
+.fig-caption strong{display:block;color:var(--text);font-size:13px;margin-bottom:3px;font-family:var(--font-head);font-weight:600;letter-spacing:-.1px}
+.fig-caption span{font-size:12px;color:var(--text2);font-family:var(--font-body);line-height:1.5}
 .tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto}
-.tab-btn{padding:8px 16px;background:none;border:none;color:var(--text2);font-family:'Inter',sans-serif;
-  font-size:13px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;
-  transition:color .15s;font-weight:500;white-space:nowrap}
+.tab-btn{
+  padding:9px 16px;background:none;border:none;color:var(--text2);
+  font-family:var(--font-head);font-size:13px;font-weight:500;cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:color .15s, border-color .15s;white-space:nowrap;
+}
 .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
 .tab-btn:hover{color:var(--text)}
 .tab-pane{display:none}
-.tab-pane.active{display:block}
-
-/* FILTERS */
+.tab-pane.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 .filter-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-.filter-btn{padding:5px 14px;background:var(--bg3);border:1px solid var(--border);
-  color:var(--text2);border-radius:20px;font-size:12px;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif}
-.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
-
-/* LIGHTBOX */
-#lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:1000;
-  align-items:center;justify-content:center;padding:20px;cursor:zoom-out}
-#lightbox.open{display:flex}
-#lightbox img{max-width:95vw;max-height:88vh;object-fit:contain;border-radius:var(--radius);
-  animation:lbIn .2s ease both}
-@keyframes lbIn{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
-#lightbox-caption{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+.filter-btn{
+  padding:6px 14px;background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);border-radius:999px;font-family:var(--font-head);
+  font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;
+}
+.filter-btn:hover{color:var(--text);border-color:var(--border-light)}
+.filter-btn.active{background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.4);color:var(--accent)}
+#lightbox{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);
+  backdrop-filter:blur(8px);z-index:1000;
+  align-items:center;justify-content:center;padding:20px;cursor:zoom-out;
+}
+#lightbox.open{display:flex;animation:lbFade .2s ease}
+@keyframes lbFade{from{opacity:0}to{opacity:1}}
+#lightbox img{max-width:95vw;max-height:88vh;object-fit:contain;border-radius:var(--radius);animation:lbScale .2s ease both;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+@keyframes lbScale{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+#lightbox-caption{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:rgba(14,19,24,.95);border:1px solid var(--border);border-radius:var(--radius);
+  padding:8px 16px;font-size:13px;color:var(--text2);max-width:600px;text-align:center;
+  backdrop-filter:blur(8px);
+}
+.dm-result{
+  display:flex;align-items:center;gap:14px;padding:12px 16px;
   background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
-  padding:8px 16px;font-size:13px;color:var(--text2);max-width:600px;text-align:center}
-
-/* DM RESULT */
-.dm-result{display:flex;align-items:center;gap:10px;padding:12px 16px;
-  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px}
-.dm-stat{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;min-width:64px}
-.dm-stat.pos{color:var(--green-text)}
-.dm-stat.neg{color:var(--red-text)}
-.dm-desc{font-size:13px;color:var(--text2)}
-.dm-sig{font-size:11px;color:var(--green-text);font-weight:600}
-
-/* FINDING BLOCKS */
-.finding{border-left:4px solid var(--accent);padding:13px 16px;
-  background:linear-gradient(90deg,var(--accent-glow),transparent);
-  border-radius:0 var(--radius) var(--radius) 0;margin-bottom:12px}
-.finding.green{border-left-color:var(--green);background:linear-gradient(90deg,rgba(16,185,129,.08),transparent)}
-.finding.orange{border-left-color:var(--orange);background:linear-gradient(90deg,rgba(245,158,11,.08),transparent)}
-.finding.red{border-left-color:var(--red);background:linear-gradient(90deg,rgba(239,68,68,.08),transparent)}
-.finding p{margin:0;font-size:13.5px;color:var(--text)}
-.finding strong{color:var(--text)}
-
-/* CONCLUSION CARDS */
-.conclusion-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:16px 0}
-.conclusion-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;
-  box-shadow:var(--shadow);transition:border-color .2s,transform .2s}
-.conclusion-card:hover{border-color:var(--accent-dim);transform:translateY(-2px)}
-.conclusion-card .c-num{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;
-  margin-bottom:8px;display:block;
-  background:linear-gradient(90deg,var(--green-text),var(--accent));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.conclusion-card h3{margin-bottom:8px;font-size:15px}
-.conclusion-card p{font-size:13.5px;margin:0}
-
-/* SCROLL REVEAL */
-.reveal{opacity:0;transform:translateY(18px);transition:opacity .45s ease,transform .45s ease}
+  margin-bottom:8px;transition:border-color .15s;
+}
+.dm-result:hover{border-color:var(--border-light)}
+.dm-stat{font-family:var(--font-mono);font-size:16px;font-weight:600;min-width:68px;letter-spacing:-0.3px}
+.dm-stat.pos{color:var(--green-text);text-shadow:0 0 12px rgba(34,197,94,.3)}
+.dm-stat.neg{color:var(--red-text);text-shadow:0 0 12px rgba(239,68,68,.3)}
+.dm-desc{font-size:13px;color:var(--text2);flex:1}
+.dm-sig{font-family:var(--font-mono);font-size:11px;color:var(--green-text);font-weight:600;margin-left:4px}
+.finding{
+  border-left:4px solid var(--accent);padding:13px 16px;
+  background:linear-gradient(90deg, rgba(56,189,248,.06), transparent 80%);
+  border-radius:0 var(--radius) var(--radius) 0;margin-bottom:12px;
+}
+.finding.green{border-left-color:var(--green);background:linear-gradient(90deg, rgba(34,197,94,.06), transparent 80%)}
+.finding.orange{border-left-color:var(--orange);background:linear-gradient(90deg, rgba(245,158,11,.06), transparent 80%)}
+.finding.red{border-left-color:var(--red);background:linear-gradient(90deg, rgba(239,68,68,.06), transparent 80%)}
+.finding p{margin:0;font-size:13.5px;color:var(--text);line-height:1.6}
+.finding strong{color:var(--text);font-weight:600}
+.conclusion-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:16px 0}
+.conclusion-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:22px;box-shadow:var(--shadow);
+  transition:border-color .2s, transform .2s, box-shadow .2s;
+}
+.conclusion-card:hover{border-color:rgba(56,189,248,.3);transform:translateY(-2px);box-shadow:0 6px 22px rgba(0,0,0,.35), 0 0 0 1px var(--accent-glow)}
+.conclusion-card .c-num{
+  font-family:var(--font-mono);font-size:28px;font-weight:600;letter-spacing:-0.5px;
+  margin-bottom:10px;display:block;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.conclusion-card h3{margin-bottom:8px;font-size:15px;letter-spacing:-0.1px}
+.conclusion-card p{font-size:13.5px;margin:0;color:var(--text2);line-height:1.6}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .5s ease, transform .5s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
-
-/* ASSET DETAIL */
 .asset-row{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
 .asset-row:last-child{border-bottom:none}
-.asset-ticker{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;
-  min-width:80px;color:var(--blue)}
+.asset-ticker{font-family:var(--font-mono);font-size:13px;font-weight:500;min-width:80px;color:var(--accent);letter-spacing:-0.2px}
 .asset-info{flex:1}
-.asset-info strong{color:var(--text);font-size:14px}
-.asset-info p{font-size:13px;margin:2px 0 0;color:var(--text2)}
-.asset-role{font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px}
-
-/* FEATURE IMPORTANCE */
+.asset-info strong{color:var(--text);font-size:14px;font-family:var(--font-head);font-weight:600}
+.asset-info p{font-size:13px;margin:3px 0 0;color:var(--text2);line-height:1.55}
+.asset-role{font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px}
 .feat-bar{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.feat-name{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);min-width:100px}
-.feat-track{flex:1;background:var(--bg3);border-radius:3px;height:8px;overflow:hidden}
-.feat-fill{height:100%;border-radius:3px}
-.feat-pct{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);min-width:40px;text-align:right}
-
-/* WINDOW ANALYSIS */
-.window-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px}
-.window-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
-.window-card .w-label{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--accent);margin-bottom:6px}
-.window-card .w-verdict{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
-.window-card p{font-size:12.5px;margin:0;color:var(--text2)}
-
-/* ABOUT */
+.feat-name{font-family:var(--font-mono);font-size:12px;color:var(--text2);min-width:120px}
+.feat-track{flex:1;background:var(--bg3);border-radius:99px;height:8px;overflow:hidden}
+.feat-fill{height:100%;border-radius:99px;transition:width .8s ease}
+.feat-pct{font-family:var(--font-mono);font-size:12px;color:var(--text);min-width:40px;text-align:right;font-weight:500}
+.window-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:14px}
+.window-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:border-color .2s, transform .2s}
+.window-card:hover{border-color:var(--border-light);transform:translateY(-2px)}
+.window-card .w-label{font-family:var(--font-mono);font-size:20px;font-weight:600;color:var(--accent);margin-bottom:6px;letter-spacing:-0.5px}
+.window-card .w-verdict{font-family:var(--font-head);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.window-card p{font-size:12.5px;margin:0;color:var(--text2);line-height:1.55}
 .about-wrap{display:flex;gap:48px;align-items:flex-start}
-.about-photo{width:180px;min-width:180px;border-radius:var(--radius-lg);
-  border:2px solid var(--border);overflow:hidden}
+.about-photo{width:180px;min-width:180px;border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden}
 .about-photo img{width:100%;display:block}
-.about-photo-placeholder{width:180px;min-width:180px;height:220px;background:var(--bg3);
-  border:2px solid var(--border);border-radius:var(--radius-lg);display:flex;
-  align-items:center;justify-content:center;color:var(--text3);font-size:48px}
-.about-content h2{border-bottom:none;padding-bottom:0;margin-bottom:12px}
-.about-content p{font-size:14px;max-width:640px}
-.about-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
-.about-link-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;
+.about-photo-placeholder{
+  width:180px;min-width:180px;height:220px;
+  background:linear-gradient(135deg, var(--bg3), var(--bg2));
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+  display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:48px;
+}
+.about-content h2{border-bottom:none;padding-bottom:0;margin-bottom:14px}
+.about-content p{font-size:14px;max-width:680px;line-height:1.7;color:var(--text2)}
+.about-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.about-link-btn{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 14px;
   background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);
-  color:var(--text2);font-size:13px;text-decoration:none;transition:all .15s}
-.about-link-btn:hover{border-color:var(--accent);color:var(--text);text-decoration:none}
-.about-link-btn.linkedin{background:rgba(10,102,194,.1);border-color:rgba(10,102,194,.3);color:var(--accent)}
-.about-link-btn.linkedin:hover{background:rgba(14,165,233,.15);border-color:var(--accent)}
-.about-link-btn.github{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.3);color:var(--purple-text)}
-.about-link-btn.github:hover{background:rgba(139,92,246,.2)}
-
-/* REPRO */
+  color:var(--text2);font-size:13px;text-decoration:none;transition:all .15s;
+}
+.about-link-btn:hover{border-color:var(--accent);color:var(--text);text-decoration:none;background:var(--bg2)}
+.about-link-btn.linkedin{color:var(--accent)}
+.about-link-btn.linkedin:hover{box-shadow:0 0 12px var(--accent-glow)}
+.about-link-btn.github{color:var(--accent2)}
+.about-link-btn.github:hover{border-color:var(--accent2);box-shadow:0 0 12px rgba(129,140,248,.18)}
 .code-block-wrap{position:relative;margin:8px 0}
-.code-block{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);
-  border-left:3px solid var(--accent);
-  padding:14px 40px 14px 16px;font-family:'JetBrains Mono',monospace;font-size:12.5px;
-  color:#7dd3fc;overflow-x:auto;line-height:1.7}
-.copy-btn{position:absolute;top:8px;right:8px;background:var(--bg2);border:1px solid var(--border);
-  border-radius:4px;color:var(--text2);font-family:'Inter',sans-serif;font-size:11px;
-  padding:3px 8px;cursor:pointer;transition:all .15s;z-index:2}
+.code-block{
+  background:linear-gradient(180deg, rgba(56,189,248,.03), rgba(56,189,248,.01)), var(--bg3);
+  border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--radius);
+  padding:14px 52px 14px 18px;font-family:var(--font-mono);font-size:12.5px;
+  color:#a5d8ff;overflow-x:auto;line-height:1.7;
+}
+.copy-btn{
+  position:absolute;top:8px;right:8px;
+  background:rgba(8,12,16,.7);backdrop-filter:blur(4px);
+  border:1px solid var(--border);border-radius:4px;
+  color:var(--text2);font-family:var(--font-head);font-size:11px;font-weight:500;
+  padding:4px 10px;cursor:pointer;transition:all .15s;z-index:2;opacity:0;
+}
+.code-block-wrap:hover .copy-btn{opacity:1}
 .copy-btn:hover{border-color:var(--accent);color:var(--accent)}
-.copy-btn.copied{border-color:var(--green);color:var(--green-text)}
-
-/* FOOTER */
-footer{background:var(--bg2);border-top:1px solid var(--border);padding:40px 0 32px;
-  text-align:center;color:var(--text2);font-size:13px;position:relative}
-footer::before{content:'';position:absolute;top:-40px;left:0;right:0;height:40px;
-  background:linear-gradient(to top,var(--bg2),transparent);pointer-events:none}
-footer strong{color:var(--text)}
-
-/* UTIL */
+.copy-btn.copied{border-color:var(--green);color:var(--green-text);opacity:1}
+footer{
+  background:linear-gradient(180deg, var(--bg2), #11171e);
+  border-top:1px solid var(--border);padding:48px 0 36px;text-align:center;color:var(--text2);font-size:13px;
+  position:relative;
+}
+footer strong{color:var(--text);font-weight:600}
+.footer-icon-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:40px;height:40px;border-radius:10px;
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);transition:all .2s;text-decoration:none;
+}
+.footer-icon-btn:hover{
+  border-color:var(--accent);color:var(--accent);
+  box-shadow:0 0 16px var(--accent-glow);
+  transform:translateY(-2px);
+}
 .mt-8{margin-top:8px}.mt-16{margin-top:16px}.mt-24{margin-top:24px}.mt-32{margin-top:32px}
-.mb-8{margin-bottom:8px}.mb-16{margin-bottom:16px}.mb-24{margin-bottom:24px}
-.text-mono{font-family:'JetBrains Mono',monospace}
+.mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}.mb-16{margin-bottom:16px}.mb-24{margin-bottom:24px}
+.text-mono{font-family:var(--font-mono)}
 .text-green{color:var(--green-text)}.text-red{color:var(--red-text)}
-.text-blue{color:#58a6ff}.text-orange{color:var(--orange-text)}
+.text-blue{color:var(--accent)}.text-orange{color:var(--orange-text)}
 .text-muted{color:var(--text2)}
-.label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:6px}
+.label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-bottom:6px;font-family:var(--font-head)}
 .divider{border:none;border-top:1px solid var(--border);margin:32px 0}
-
-@media(max-width:900px){
-  .about-wrap{flex-direction:column;gap:24px}
-  .about-photo{width:120px;min-width:120px}
-  .about-photo-placeholder{width:120px;min-width:120px;height:150px}
-}
-@media(max-width:768px){
-  .nav-links{display:none}
-  h1{font-size:21px}
-  .stats-grid{grid-template-columns:repeat(2,1fr)}
-  .fig-grid,.fig-grid-wide{grid-template-columns:1fr}
-  .window-grid{grid-template-columns:repeat(2,1fr)}
-  .rq-grid{grid-template-columns:1fr}
-}
-
-/* TYPOGRAPHY IMPROVEMENTS */
 .prose{line-height:1.75}
 .prose p{font-size:14.5px;color:var(--text2);margin-bottom:14px}
 .prose p:last-child{margin-bottom:0}
 .lead{font-size:16px;color:var(--text);line-height:1.7;margin-bottom:20px}
-.section-intro{color:var(--text2);font-size:14.5px;line-height:1.75;margin-bottom:28px}
-/* General text: left-aligned, full container width */
+.section-intro{color:var(--text2);font-size:14.5px;line-height:1.75;margin-bottom:28px;max-width:720px}
 p{text-align:left}
-.section h2,.section h3,.section h4{text-align:left}
-
-/* DEMO SECTION */
-.demo-wrap{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+.section h2, .section h3, .section h4{text-align:left}
+.demo-wrap{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
 @media(max-width:900px){.demo-wrap{grid-template-columns:1fr}}
-.demo-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;
-  box-shadow:var(--shadow)}
-.demo-panel h3{margin-bottom:20px;font-size:15px}
-.input-row{margin-bottom:18px}
-.input-row label{display:block;font-size:12px;font-weight:600;text-transform:uppercase;
-  letter-spacing:.4px;color:var(--text2);margin-bottom:6px}
-.input-row input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
-.input-row input[type=number]{width:100%;background:var(--bg3);border:1px solid var(--border);
-  border-radius:var(--radius);padding:8px 12px;color:var(--text);font-family:'JetBrains Mono',monospace;
-  font-size:14px;outline:none}
-.input-row input[type=number]:focus{border-color:var(--blue)}
-.range-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px}
-.range-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--blue)}
-.signal-box{border-radius:var(--radius-lg);padding:24px;text-align:center;margin-bottom:16px;
-  transition:all .3s;border:2px solid transparent}
-.signal-box.green{background:rgba(16,185,129,.12);border-color:var(--green);
-  box-shadow:0 0 20px rgba(16,185,129,.15),0 0 0 1px rgba(16,185,129,.2);
-  animation:signalPulse 2s ease-in-out infinite}
-@keyframes signalPulse{0%,100%{box-shadow:0 0 20px rgba(16,185,129,.15),0 0 0 1px rgba(16,185,129,.2)}
-  50%{box-shadow:0 0 30px rgba(16,185,129,.28),0 0 0 1px rgba(16,185,129,.35)}}
-.signal-box.orange{background:rgba(245,158,11,.12);border-color:var(--orange)}
-.signal-box.red{background:rgba(239,68,68,.12);border-color:var(--red)}
-.signal-icon{font-size:40px;margin-bottom:8px}
-.signal-title{font-size:22px;font-weight:700;margin-bottom:4px}
+.demo-panel{
+  background:rgba(14,19,24,.6);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(56,189,248,.18);border-radius:var(--radius-lg);
+  padding:24px;box-shadow:var(--shadow), 0 0 32px rgba(56,189,248,.04);
+  position:relative;overflow:hidden;
+}
+.demo-panel::before{
+  content:'';position:absolute;inset:0;border-radius:var(--radius-lg);pointer-events:none;
+  background:linear-gradient(135deg, rgba(56,189,248,.04), transparent 50%);
+}
+.demo-panel > *{position:relative;z-index:1}
+.demo-panel h3{margin-bottom:20px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);font-weight:600}
+.input-row{margin-bottom:22px}
+.input-row label{
+  display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+  font-family:var(--font-head);font-size:12px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px;
+}
+.input-row input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;height:6px}
+.input-row input[type=number]{
+  width:100%;background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius);padding:8px 12px;color:var(--text);
+  font-family:var(--font-mono);font-size:14px;outline:none;
+}
+.input-row input[type=number]:focus{border-color:var(--accent)}
+.range-labels{display:flex;justify-content:space-between;font-size:10.5px;color:var(--text3);margin-top:4px;font-family:var(--font-mono)}
+.range-val{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--accent);background:rgba(56,189,248,.12);padding:1px 8px;border-radius:4px}
+.signal-box{
+  border-radius:var(--radius-lg);padding:24px;text-align:center;margin-bottom:16px;
+  transition:all .3s;border:1px solid transparent;position:relative;overflow:hidden;
+}
+.signal-box.green{
+  background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.45);
+  box-shadow:0 0 28px rgba(34,197,94,.18), inset 0 0 0 1px rgba(34,197,94,.14);
+  animation:signalPulse 2.4s ease-in-out infinite;
+}
+@keyframes signalPulse{
+  0%,100%{box-shadow:0 0 28px rgba(34,197,94,.18), inset 0 0 0 1px rgba(34,197,94,.14)}
+  50%{box-shadow:0 0 48px rgba(34,197,94,.4), inset 0 0 0 1px rgba(34,197,94,.28)}
+}
+.signal-box.orange{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.45);box-shadow:0 0 20px rgba(245,158,11,.14)}
+.signal-box.red{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.45);box-shadow:0 0 24px rgba(239,68,68,.2)}
+.signal-icon{font-size:40px;margin-bottom:10px;line-height:1}
+.signal-title{font-family:var(--font-head);font-size:22px;font-weight:700;margin-bottom:6px;letter-spacing:-0.4px}
 .signal-title.green{color:var(--green-text)}
 .signal-title.orange{color:var(--orange-text)}
 .signal-title.red{color:var(--red-text)}
 .signal-subtitle{font-size:13px;color:var(--text2)}
 .output-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.output-card{background:var(--bg3);border-radius:var(--radius);padding:12px;text-align:center}
-.output-card .out-val{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--text)}
-.output-card .out-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
+.output-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center}
+.output-card .out-val{font-family:var(--font-mono);font-size:20px;font-weight:600;color:var(--text);letter-spacing:-0.3px}
+.output-card .out-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-top:4px;font-family:var(--font-head);font-weight:500}
 .prob-bar-wrap{margin-top:16px}
 .prob-bar-track{background:var(--bg3);border-radius:4px;height:10px;overflow:hidden;margin:6px 0}
 .prob-bar-fill{height:100%;border-radius:4px;transition:width .4s ease}
-.demo-disclaimer{font-size:12px;color:var(--text3);margin-top:16px;line-height:1.6;padding:10px 14px;
-  background:var(--bg3);border-radius:var(--radius);border-left:3px solid var(--text3)}
-
-/* RESOURCES */
+.demo-disclaimer{font-size:12px;color:var(--text3);margin-top:16px;line-height:1.6;padding:10px 14px;background:var(--bg3);border-radius:var(--radius);border-left:3px solid var(--text3)}
 .yt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:16px}
-.yt-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
-  overflow:hidden;text-decoration:none;transition:border-color .15s,transform .15s;display:block}
-.yt-card:hover{border-color:#ff4444;transform:translateY(-2px);text-decoration:none}
+.yt-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  overflow:hidden;text-decoration:none;
+  transition:border-color .2s, transform .2s, box-shadow .2s;display:block;
+}
+.yt-card:hover{border-color:#ff4444;transform:translateY(-2px);text-decoration:none;box-shadow:0 8px 20px rgba(255,68,68,.1)}
 .yt-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--bg3)}
-.yt-thumb-placeholder{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1a1a2e,#16213e);
-  display:flex;align-items:center;justify-content:center;font-size:36px}
-.yt-info{padding:12px 14px}
-.yt-info strong{display:block;color:var(--text);font-size:13px;margin-bottom:4px;font-family:'Inter',sans-serif}
-.yt-info span{font-size:12px;color:var(--text2);font-family:'Inter',sans-serif}
-.yt-badge{display:inline-block;background:rgba(255,68,68,.15);border:1px solid rgba(255,68,68,.3);
-  color:#ff6b6b;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-bottom:6px;
-  font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:.3px}
-
-/* REFERENCES */
+.yt-thumb-placeholder{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg, var(--bg3), var(--bg2));display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--text3)}
+.yt-info{padding:13px 14px}
+.yt-info strong{display:block;color:var(--text);font-size:13.5px;margin-bottom:4px;font-family:var(--font-head);font-weight:600;letter-spacing:-0.1px}
+.yt-info span{font-size:12px;color:var(--text2);font-family:var(--font-body);line-height:1.5}
+.yt-badge{
+  display:inline-block;background:rgba(255,68,68,.12);border:1px solid rgba(255,68,68,.3);
+  color:#ff8080;font-size:10px;font-weight:700;padding:1.5px 7px;border-radius:4px;margin-bottom:8px;
+  font-family:var(--font-head);text-transform:uppercase;letter-spacing:.4px;
+}
 .ref-list{list-style:none;counter-reset:ref-counter}
-.ref-list li{counter-increment:ref-counter;padding:12px 0 12px 48px;position:relative;
-  border-bottom:1px solid var(--bg3);font-size:13.5px;color:var(--text2);line-height:1.6}
+.ref-list li{counter-increment:ref-counter;padding:14px 0 14px 52px;position:relative;border-bottom:1px solid var(--border);font-size:13.5px;color:var(--text2);line-height:1.65}
 .ref-list li:last-child{border-bottom:none}
-.ref-list li::before{content:counter(ref-counter);position:absolute;left:0;top:12px;
-  width:32px;height:32px;background:var(--bg3);border-radius:50%;display:flex;
-  align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;
-  font-size:12px;font-weight:600;color:var(--text2)}
-.ref-list li strong{color:var(--text);display:block;margin-bottom:2px}
-.ref-list li a{color:var(--blue);font-size:12px}
+.ref-list li::before{
+  content:counter(ref-counter);position:absolute;left:0;top:14px;
+  width:34px;height:34px;background:var(--bg3);border:1px solid var(--border);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--accent);
+}
+.ref-list li strong{color:var(--text);display:block;margin-bottom:3px;font-weight:600}
+.ref-list li a{color:var(--accent);font-size:12px;font-family:var(--font-mono)}
 .ref-list li a:hover{text-decoration:underline}
-.ref-tag{display:inline-block;background:var(--bg3);border:1px solid var(--border);
-  border-radius:3px;padding:1px 6px;font-size:11px;font-family:'JetBrains Mono',monospace;
-  color:var(--text2);margin-right:6px}
-
-/* LANGUAGE SWITCHER */
+.ref-tag{display:inline-block;background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:1px 7px;font-size:11px;font-family:var(--font-mono);color:var(--text2);margin-right:6px}
 .nav-right{display:flex;align-items:center;gap:8px;margin-left:auto;padding-left:12px}
-.nav-ext-link{color:var(--text2);font-size:11px;font-weight:500;text-decoration:none;
-  padding:4px 8px;border:1px solid var(--border);border-radius:var(--radius);
-  transition:all .15s;white-space:nowrap;background:var(--bg3)}
-.nav-ext-link:hover{color:var(--text);border-color:var(--blue);text-decoration:none}
-.hero-ext-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;
-  border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);
-  color:var(--text2);font-size:13px;font-weight:500;text-decoration:none;transition:all .15s}
-.hero-ext-btn:hover{border-color:var(--blue);color:var(--text);text-decoration:none;background:var(--bg3)}
-.lang-divider{width:1px;height:20px;background:var(--border);margin:0 4px}
-.lang-btn{background:none;border:1px solid var(--border);border-radius:var(--radius);
-  color:var(--text2);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
-  padding:4px 9px;cursor:pointer;transition:all .15s;letter-spacing:.3px}
-.lang-btn:hover{color:var(--text);border-color:var(--blue)}
-.lang-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
-@media(max-width:768px){.nav-right{display:none}}
+.nav-ext-link{color:var(--text2);font-size:11px;font-weight:500;text-decoration:none;padding:4px 8px;border:1px solid var(--border);border-radius:var(--radius);transition:all .15s;white-space:nowrap;background:var(--bg3)}
+.nav-ext-link:hover{color:var(--text);border-color:var(--accent);text-decoration:none}
+.hero-ext-btn{
+  display:inline-flex;align-items:center;gap:6px;padding:7px 14px;
+  border:1px solid var(--border);border-radius:var(--radius);
+  background:rgba(14,19,24,.6);backdrop-filter:blur(8px);
+  color:var(--text2);font-size:13px;font-weight:500;text-decoration:none;transition:all .15s;
+}
+.hero-ext-btn:hover{border-color:var(--accent);color:var(--text);text-decoration:none;background:var(--bg3);box-shadow:0 0 12px var(--accent-glow)}
+.lang-btn{
+  background:transparent;border:1px solid var(--border);border-radius:var(--radius);
+  color:var(--text2);font-family:var(--font-head);font-size:11.5px;font-weight:600;
+  padding:5px 10px;cursor:pointer;transition:all .15s;letter-spacing:.3px;
+}
+.lang-btn:hover{color:var(--text);border-color:var(--border-light)}
+.lang-btn.active{background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.4);color:var(--accent)}
+@media(max-width:900px){
+  .about-wrap{flex-direction:column;gap:24px}
+  .about-photo, .about-photo-placeholder{width:140px;min-width:140px}
+  .about-photo-placeholder{height:170px}
+}
+@media(max-width:768px){
+  .nav-links{display:none}
+  .nav-right{display:none}
+  h1{font-size:24px;letter-spacing:-0.4px}
+  h2{font-size:18px}
+  .hero{padding:64px 0 48px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .fig-grid,.fig-grid-wide{grid-template-columns:1fr}
+  .window-grid{grid-template-columns:repeat(2,1fr)}
+  .rq-grid{grid-template-columns:1fr}
+  .stat-num{font-size:22px}
+}
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  .reveal{opacity:1 !important;transform:none !important}
+  .hero::before{animation:none !important}
+  .signal-box.green{animation:none !important}
+}
 </style>
 </head>
 <body>
@@ -403,22 +541,22 @@ p{text-align:left}
   <div class="nav-inner">
     <div class="nav-brand">Babaev <span>2026</span></div>
     <div class="nav-links" id="nav-links">
-      <a href="#demo"        id="nav-demo"   style="color:var(--green-text);font-weight:600">▶ Live Demo</a>
-      <a href="#dataset"     id="nav-dataset">Dataset</a>
+      <a href="#demo" id="nav-demo" style="color:var(--green-text);font-weight:600" class="nav-active">▶ Live Demo</a>
+      <a href="#dataset" id="nav-dataset">Dataset</a>
       <a href="#methodology" id="nav-method">Methodology</a>
-      <a href="#results"     id="nav-results">Results</a>
-      <a href="#dm-tests"    id="nav-dm">DM Tests</a>
-      <a href="#signal"      id="nav-signal">Signal Layer</a>
+      <a href="#results" id="nav-results">Results</a>
+      <a href="#dm-tests" id="nav-dm">DM Tests</a>
+      <a href="#signal" id="nav-signal">Signal Layer</a>
       <a href="#conclusions" id="nav-concl">Conclusions</a>
-      <a href="#gallery"     id="nav-gallery">Figures</a>
-      <a href="#repro"       id="nav-repro">Reproducibility</a>
-      <a href="#references"  id="nav-refs">References</a>
-      <a href="#about"       id="nav-about" class="about-link">About</a>
+      <a href="#gallery" id="nav-gallery">Figures</a>
+      <a href="#repro" id="nav-repro">Reproducibility</a>
+      <a href="#references" id="nav-refs">References</a>
+      <a href="#about" id="nav-about" class="about-link">About</a>
     </div>
     <div class="nav-right">
-      <button onclick="setLang('en')" id="lang-en" class="lang-btn active">EN</button>
-      <button onclick="setLang('ru')" id="lang-ru" class="lang-btn">RU</button>
-      <button onclick="setLang('sr')" id="lang-sr" class="lang-btn">СР</button>
+      <button onclick="setLang(&#39;en&#39;)" id="lang-en" class="lang-btn active">EN</button>
+      <button onclick="setLang(&#39;ru&#39;)" id="lang-ru" class="lang-btn">RU</button>
+      <button onclick="setLang(&#39;sr&#39;)" id="lang-sr" class="lang-btn">СР</button>
     </div>
   </div>
 </nav>
@@ -452,30 +590,30 @@ p{text-align:left}
     DCC-GARCH econometric benchmark.
   </p>
   <div class="stats-grid">
-    <div class="stat-card"><span class="stat-num">3,053</span><div class="stat-label">Daily observations</div></div>
-    <div class="stat-card"><span class="stat-num">7</span><div class="stat-label">Assets</div></div>
-    <div class="stat-card"><span class="stat-num">192</span><div class="stat-label">Model evaluations</div></div>
-    <div class="stat-card"><span class="stat-num">4</span><div class="stat-label">Rolling windows</div></div>
-    <div class="stat-card"><span class="stat-num">0.942</span><div class="stat-label">Best OOS R² (AR1, w=30)</div></div>
-    <div class="stat-card"><span class="stat-num">p&lt;10⁻³⁰⁸</span><div class="stat-label">ML vs DCC-GARCH (DM)</div></div>
+    <div class="stat-card reveal visible"><span class="stat-num">3&nbsp;053</span><div class="stat-label">Daily observations</div></div>
+    <div class="stat-card reveal visible"><span class="stat-num">7</span><div class="stat-label">Assets</div></div>
+    <div class="stat-card reveal visible"><span class="stat-num">192</span><div class="stat-label">Model evaluations</div></div>
+    <div class="stat-card reveal visible"><span class="stat-num">4</span><div class="stat-label">Rolling windows</div></div>
+    <div class="stat-card reveal visible"><span class="stat-num">0,942</span><div class="stat-label">Best OOS R² (AR1, w=30)</div></div>
+    <div class="stat-card reveal visible"><span class="stat-num">p&lt;10⁻³⁰⁸</span><div class="stat-label">ML vs DCC-GARCH (DM)</div></div>
   </div>
 
   <!-- Research Questions -->
   <h3 class="mt-32 mb-8" style="font-size:15px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600">Research Questions</h3>
   <div class="rq-grid">
-    <div class="rq-card">
+    <div class="rq-card reveal visible">
       <div class="rq-badge">RQ1 · Forecastability</div>
       <p>Are time-varying intermarket dependencies between BTC and conventional assets forecastable one step ahead under strict out-of-sample evaluation?</p>
     </div>
-    <div class="rq-card">
+    <div class="rq-card reveal visible">
       <div class="rq-badge">RQ2 · ML vs DCC-GARCH</div>
       <p>Do ML models (ElasticNet, Ridge, GBM, XGBoost) outperform the DCC-GARCH(1,1) econometric benchmark under leakage-safe walk-forward evaluation?</p>
     </div>
-    <div class="rq-card">
+    <div class="rq-card reveal visible">
       <div class="rq-badge">RQ3 · Feature Importance</div>
       <p>Which predictors carry the most information — historical dependency persistence, volatility, or cross-asset momentum signals?</p>
     </div>
-    <div class="rq-card">
+    <div class="rq-card reveal visible">
       <div class="rq-badge">RQ4 · Signal Layer</div>
       <p>Can crypto-derived features predict investor stress days in traditional asset markets as a binary classification task?</p>
     </div>
@@ -500,11 +638,11 @@ p{text-align:left}
     <div style="display:flex;flex-direction:column;gap:6px;min-width:220px">
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px">Forecasting model</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green-text)">AR1 · RMSE=0.0664 · R²=0.94</div>
+        <div style="font-family:&#39;JetBrains Mono&#39;,monospace;font-size:13px;color:var(--green-text)">AR1 · RMSE=0.0664 · R²=0.94</div>
       </div>
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px">Signal classifier</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue)">Logit · F1=0.244 · AUC=0.531</div>
+        <div style="font-family:&#39;JetBrains Mono&#39;,monospace;font-size:13px;color:var(--blue)">Logit · F1=0.244 · AUC=0.531</div>
       </div>
     </div>
   </div>
@@ -513,15 +651,13 @@ p{text-align:left}
   <div style="margin-bottom:20px;margin-top:24px">
     <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:10px">Historical scenario presets — click to load</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button onclick="loadPreset('normal')"    class="filter-btn active"  id="preset-normal">📅 Normal day</button>
-      <button onclick="loadPreset('covid')"     class="filter-btn"         id="preset-covid">💥 COVID crash (Mar 2020)</button>
-      <button onclick="loadPreset('btccrash')"  class="filter-btn"         id="preset-btccrash">📉 BTC bear market (Nov 2022)</button>
-      <button onclick="loadPreset('spike')"     class="filter-btn"         id="preset-spike">🔥 Volatility spike</button>
-      <button onclick="loadPreset('recovery')"  class="filter-btn"         id="preset-recovery">🌱 Post-crash recovery</button>
+      <button onclick="loadPreset(&#39;normal&#39;)" class="filter-btn active" id="preset-normal">📅 Normal day</button>
+      <button onclick="loadPreset(&#39;covid&#39;)" class="filter-btn" id="preset-covid">💥 COVID crash (Mar 2020)</button>
+      <button onclick="loadPreset(&#39;btccrash&#39;)" class="filter-btn" id="preset-btccrash">📉 BTC bear market (Nov 2022)</button>
+      <button onclick="loadPreset(&#39;spike&#39;)" class="filter-btn" id="preset-spike">🔥 Volatility spike</button>
+      <button onclick="loadPreset(&#39;recovery&#39;)" class="filter-btn" id="preset-recovery">🌱 Post-crash recovery</button>
     </div>
-    <div id="preset-desc" style="font-size:13px;color:var(--text2);margin-top:10px;padding:8px 14px;background:var(--bg3);border-radius:var(--radius);border-left:3px solid var(--blue)">
-      Typical trading day — BTC showing moderate positive correlation with S&P 500, normal volatility, no strong directional momentum.
-    </div>
+    <div id="preset-desc" style="font-size:13px;color:var(--text2);margin-top:10px;padding:8px 14px;background:var(--bg3);border-radius:var(--radius);border-left:3px solid var(--blue)">Typical trading day — BTC showing moderate positive correlation with S&amp;P 500, normal volatility, no strong directional momentum.</div>
   </div>
 
   <!-- Main demo layout -->
@@ -560,7 +696,7 @@ p{text-align:left}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div style="background:var(--bg3);border-radius:var(--radius);padding:10px">
             <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:4px">STEP 1</div>
-            <div style="font-size:12.5px;color:var(--text)">AR1 forecasts tomorrow's BTC–S&P500 dependency using today's Fisher-z correlation</div>
+            <div style="font-size:12.5px;color:var(--text)">AR1 forecasts tomorrow's BTC–S&amp;P500 dependency using today's Fisher-z correlation</div>
           </div>
           <div style="background:var(--bg3);border-radius:var(--radius);padding:10px">
             <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:4px">STEP 2</div>
@@ -576,17 +712,17 @@ p{text-align:left}
       <div class="signal-box green" id="signal-box" style="margin-bottom:14px">
         <div class="signal-icon" id="signal-icon">✅</div>
         <div class="signal-title green" id="signal-title">STAY IN MARKET</div>
-        <div class="signal-subtitle" id="signal-subtitle">Low stress probability — dependency stable</div>
+        <div class="signal-subtitle" id="signal-subtitle">Stress probability 19.8% — dependency stable at ρ=0.35</div>
       </div>
 
       <!-- Output cards -->
       <div class="output-grid" style="margin-bottom:14px">
         <div class="output-card">
-          <div class="out-val" id="out-dep-now">0.368</div>
+          <div class="out-val" id="out-dep-now">0.3654</div>
           <div class="out-label">Current dep. (Fisher-z)</div>
         </div>
         <div class="output-card">
-          <div class="out-val" id="out-dep-fcast">0.364</div>
+          <div class="out-val" id="out-dep-fcast">0.3582</div>
           <div class="out-label">Tomorrow's forecast</div>
         </div>
       </div>
@@ -595,25 +731,23 @@ p{text-align:left}
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:14px">
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
           <span style="font-size:13px;font-weight:600;color:var(--text)">Stress Probability</span>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700" id="prob-pct-label">12.4%</span>
+          <span style="font-family:&#39;JetBrains Mono&#39;,monospace;font-size:22px;font-weight:700" id="prob-pct-label">19.8%</span>
         </div>
         <!-- Multi-zone bar -->
         <div style="position:relative;height:16px;border-radius:8px;overflow:hidden;background:linear-gradient(to right,#10b981 0%,#10b981 30%,#f59e0b 30%,#f59e0b 60%,#ef4444 60%,#ef4444 100%);opacity:.3"></div>
         <div style="position:relative;height:16px;border-radius:8px;overflow:hidden;margin-top:-16px">
-          <div class="prob-bar-fill" id="prob-bar" style="width:12%;background:var(--green);opacity:.85"></div>
+          <div class="prob-bar-fill" id="prob-bar" style="width: 19.7974%; background: var(--green); opacity: 0.85;"></div>
         </div>
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:4px">
           <span>0%</span><span style="color:var(--orange-text)">⚠ 30% alert</span><span style="color:var(--red-text)">🔴 60% exit</span><span>100%</span>
         </div>
 
         <!-- Interpretation -->
-        <div id="interp-text" style="margin-top:12px;font-size:13px;color:var(--text2);border-top:1px solid var(--border);padding-top:10px">
-          Low stress probability. Maintain normal equity exposure. Monitor for BTC volatility increases.
-        </div>
+        <div id="interp-text" style="margin-top:12px;font-size:13px;color:var(--text2);border-top:1px solid var(--border);padding-top:10px">Low stress environment. BTC–equity co-movement is moderate or negative. No early-warning signal triggered.</div>
       </div>
 
       <!-- What to do -->
-      <div id="action-box" style="background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.28);border-radius:var(--radius);padding:12px 14px">
+      <div id="action-box" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.28); border-radius: var(--radius); padding: 12px 14px;">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--green-text);margin-bottom:4px">Recommended action</div>
         <div id="action-text" style="font-size:13.5px;color:var(--text)">Hold current equity positions. No risk reduction needed based on crypto signal.</div>
       </div>
@@ -635,7 +769,7 @@ p{text-align:left}
   <div class="grid-2 mb-32">
     <div>
       <h3>Asset Universe — Detailed</h3>
-      <div class="card" style="padding:0">
+      <div class="card reveal" style="padding:0">
         <div style="padding:0 16px">
           <div class="asset-row">
             <div class="asset-ticker">BTC-USD</div>
@@ -699,13 +833,13 @@ p{text-align:left}
 
     <div>
       <h3>Sample Construction &amp; Alignment</h3>
-      <div class="finding mb-12">
+      <div class="finding mb-12 reveal">
         <p><strong>Period:</strong> 9 Nov 2017 — 17 May 2026 · 3,053 trading days per asset. Start date is set by the earliest available ETH-USD quote on Yahoo Finance. Earlier dates contain no Ethereum observations and are excluded.</p>
       </div>
-      <div class="finding green mb-12">
+      <div class="finding green mb-12 reveal">
         <p><strong>Alignment:</strong> Bitcoin and Ethereum trade 24/7 including weekends. The panel is aligned on exchange-calendar dates shared with equity markets. Weekend and holiday crypto quotes are forward-filled up to two consecutive calendar days, then dropped, so all seven tickers share an identical date index.</p>
       </div>
-      <div class="finding orange mb-12">
+      <div class="finding orange mb-12 reveal">
         <p><strong>Returns:</strong> Log-returns r<sub>t</sub> = log P<sub>t</sub> − log P<sub>t−1</sub> are used throughout. Log-returns are additive over time, approximately normal at moderate horizons, and standard in both econometric modelling and ML pipelines for financial time series.</p>
       </div>
 
@@ -728,16 +862,16 @@ p{text-align:left}
 
       <h3 class="mt-24">Walk-Forward Split</h3>
       <div class="grid-3 mt-8">
-        <div class="card" style="padding:14px;text-align:center">
-          <div style="font-size:22px;font-weight:700;color:var(--blue);font-family:'JetBrains Mono',monospace">2017–2021</div>
+        <div class="card reveal" style="padding:14px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:var(--blue);font-family:&#39;JetBrains Mono&#39;,monospace">2017–2021</div>
           <div style="font-size:12px;color:var(--text2);margin-top:4px">Initial training window<br>(min 800 obs)</div>
         </div>
-        <div class="card" style="padding:14px;text-align:center">
-          <div style="font-size:22px;font-weight:700;color:var(--orange-text);font-family:'JetBrains Mono',monospace">2021–2026</div>
+        <div class="card reveal" style="padding:14px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:var(--orange-text);font-family:&#39;JetBrains Mono&#39;,monospace">2021–2026</div>
           <div style="font-size:12px;color:var(--text2);margin-top:4px">Out-of-sample test<br>~5 years</div>
         </div>
-        <div class="card" style="padding:14px;text-align:center">
-          <div style="font-size:22px;font-weight:700;color:var(--green-text);font-family:'JetBrains Mono',monospace">Every 20d</div>
+        <div class="card reveal" style="padding:14px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:var(--green-text);font-family:&#39;JetBrains Mono&#39;,monospace">Every 20d</div>
           <div style="font-size:12px;color:var(--text2);margin-top:4px">Model refit cadence<br>(~1 calendar month)</div>
         </div>
       </div>
@@ -746,27 +880,27 @@ p{text-align:left}
 
   <h3>Exploratory Figures</h3>
   <div class="fig-grid mt-8">
-    <div class="fig-card" onclick="openLightbox('figures/eda_normalized_prices.png','Normalized Price Paths — all 7 assets, base=1 at 2017-11-09')">
+    <div class="fig-card reveal" onclick="openLightbox(&#39;figures/eda_normalized_prices.png&#39;,&#39;Normalized Price Paths — all 7 assets, base=1 at 2017-11-09&#39;)">
       <img src="figures/eda_normalized_prices.png" alt="Normalized prices" loading="lazy">
       <div class="fig-caption"><strong>Fig 1 — Normalized Price Paths</strong><span>All assets scaled to a common base of 1. Illustrates divergent performance: BTC/ETH multiples vs near-flat conventional assets.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/dataset_volatility.png','30-day Rolling Volatility — all assets')">
+    <div class="fig-card reveal" onclick="openLightbox(&#39;figures/dataset_volatility.png&#39;,&#39;30-day Rolling Volatility — all assets&#39;)">
       <img src="figures/dataset_volatility.png" alt="Rolling volatility" loading="lazy">
       <div class="fig-caption"><strong>Fig 2 — Rolling Volatility</strong><span>Crypto assets exhibit episodically much higher volatility (~5× the S&amp;P 500), motivating dynamic rather than static dependency modelling.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/dataset_corr_heatmap.png','Full-sample Pearson correlation matrix of daily log-returns')">
+    <div class="fig-card reveal" onclick="openLightbox(&#39;figures/dataset_corr_heatmap.png&#39;,&#39;Full-sample Pearson correlation matrix of daily log-returns&#39;)">
       <img src="figures/dataset_corr_heatmap.png" alt="Correlation heatmap" loading="lazy">
       <div class="fig-caption"><strong>Fig 3 — Full-Sample Correlation Heatmap</strong><span>BTC/ETH show low static correlations with conventional assets — motivating the time-varying analysis over a single full-sample estimate.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/eda_rolling_corr_all.png','Rolling correlations — all pairs, all 4 windows, Fisher-z transformed')">
+    <div class="fig-card reveal" onclick="openLightbox(&#39;figures/eda_rolling_corr_all.png&#39;,&#39;Rolling correlations — all pairs, all 4 windows, Fisher-z transformed&#39;)">
       <img src="figures/eda_rolling_corr_all.png" alt="Rolling correlations" loading="lazy">
       <div class="fig-caption"><strong>Fig 4 — Rolling Dependency Overview</strong><span>Fisher-z transformed rolling correlations for all pairs across windows 14/30/60/90 days. Strong time-variation and persistence visible across all pairs.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/fig_price_coverage.png','Data Coverage — observation counts per ticker')">
+    <div class="fig-card reveal" onclick="openLightbox(&#39;figures/fig_price_coverage.png&#39;,&#39;Data Coverage — observation counts per ticker&#39;)">
       <img src="figures/fig_price_coverage.png" alt="Coverage" loading="lazy">
       <div class="fig-caption"><strong>Fig 5 — Observation Coverage</strong><span>All 7 tickers share identical date range after ETH-USD alignment. No gaps or missing bars.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/eda_fisher_transform.png','Fisher-z transformation effect on correlation distribution')">
+    <div class="fig-card reveal" onclick="openLightbox(&#39;figures/eda_fisher_transform.png&#39;,&#39;Fisher-z transformation effect on correlation distribution&#39;)">
       <img src="figures/eda_fisher_transform.png" alt="Fisher transform" loading="lazy">
       <div class="fig-caption"><strong>Fig 6 — Fisher-z Transformation</strong><span>Maps bounded ρ ∈ (−1,1) to unbounded ℝ, stabilising variance and improving normality of the regression target.</span></div>
     </div>
@@ -782,10 +916,10 @@ p{text-align:left}
   <div class="grid-2 mb-24">
     <div>
       <h3>Two-Layer Pipeline</h3>
-      <div class="finding mb-8">
+      <div class="finding mb-8 reveal">
         <p><strong>Layer 1 — Dependency Forecasting:</strong> Predict the next value of Fisher-z transformed rolling correlation ρ̂<sub>t+1</sub> between Bitcoin and each conventional asset. Expanding-window walk-forward validation; min_train = 800 obs; refit every 20 trading days.</p>
       </div>
-      <div class="finding green mb-8">
+      <div class="finding green mb-8 reveal">
         <p><strong>Layer 2 — Investor Signal:</strong> Use the Layer 1 forecast + crypto features to classify whether tomorrow is a <em>stress day</em> for the conventional asset (|ret| &gt; 0.75σ of negative returns, ~15–20% of days). Three classifiers: Logit, Random Forest, GBM. The best model (Logit, 27 features, C=0.01) is serialised and available at <code>outputs/models/signal_logit_GSPC_w30.joblib</code> (AUC=0.531, F1=0.244 OOS).</p>
       </div>
       <div class="mt-16">
@@ -800,22 +934,22 @@ p{text-align:left}
 
       <h3 class="mt-24">Window Size Analysis</h3>
       <div class="window-grid">
-        <div class="window-card">
+        <div class="window-card reveal">
           <div class="w-label">14d</div>
           <div class="w-verdict text-red">Noisy</div>
           <p>Lowest R². High variance makes one-step-ahead forecasting harder. ML advantage minimal.</p>
         </div>
-        <div class="window-card">
+        <div class="window-card reveal">
           <div class="w-label">30d</div>
           <div class="w-verdict text-green">Best balance</div>
           <p>Highest DM significance. Optimal signal-to-noise ratio. Best setting for all comparisons.</p>
         </div>
-        <div class="window-card">
+        <div class="window-card reveal">
           <div class="w-label">60d</div>
           <div class="w-verdict" style="color:var(--orange-text)">High persist.</div>
           <p>Smoother series — strong XGBoost advantage. AR(1) competitive but ML adds value.</p>
         </div>
-        <div class="window-card">
+        <div class="window-card reveal">
           <div class="w-label">90d</div>
           <div class="w-verdict text-muted">Near-trivial</div>
           <p>Very smooth target. AR(1) almost matches XGBoost; persistence nearly accounts for all variance.</p>
@@ -869,13 +1003,13 @@ p{text-align:left}
   </div>
 
   <div class="grid-2">
-    <div class="fig-card" onclick="openLightbox('figures/gridsearch_cv_rmse_BTC-USD_^GSPC_w30.png','Grid Search CV RMSE — BTC/S&P500, w=30')">
+    <div class="fig-card reveal" onclick="openLightbox(&#39;figures/gridsearch_cv_rmse_BTC-USD_^GSPC_w30.png&#39;,&#39;Grid Search CV RMSE — BTC/S&amp;P500, w=30&#39;)">
       <img src="figures/gridsearch_cv_rmse_BTC-USD_^GSPC_w30.png" alt="Grid search" loading="lazy">
-      <div class="fig-caption"><strong>Grid Search — BTC/S&P500, w=30</strong><span>Cross-validated RMSE across hyperparameter grid. ElasticNet slightly below Ridge due to stronger L1 shrinkage on weak features.</span></div>
+      <div class="fig-caption"><strong>Grid Search — BTC/S&amp;P500, w=30</strong><span>Cross-validated RMSE across hyperparameter grid. ElasticNet slightly below Ridge due to stronger L1 shrinkage on weak features.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/rf_feature_importance_BTC-USD_^GSPC_w30_readable.png','RF Feature Importance — BTC/S&P500, w=30')">
+    <div class="fig-card reveal" onclick="openLightbox(&#39;figures/rf_feature_importance_BTC-USD_^GSPC_w30_readable.png&#39;,&#39;RF Feature Importance — BTC/S&amp;P500, w=30&#39;)">
       <img src="figures/rf_feature_importance_BTC-USD_^GSPC_w30_readable.png" alt="Feature importance" loading="lazy">
-      <div class="fig-caption"><strong>RF Feature Importance — BTC/S&P500, w=30</strong><span>dep_lag1 dominates; all other features secondary. Right panel excludes dep_lag1 to show relative importance of remaining predictors.</span></div>
+      <div class="fig-caption"><strong>RF Feature Importance — BTC/S&amp;P500, w=30</strong><span>dep_lag1 dominates; all other features secondary. Right panel excludes dep_lag1 to show relative importance of remaining predictors.</span></div>
     </div>
   </div>
 </div>
@@ -886,7 +1020,7 @@ p{text-align:left}
 <div class="container">
   <h2>Empirical Results</h2>
 
-  <div class="finding mb-16">
+  <div class="finding mb-16 reveal">
     <p><strong>Key finding:</strong> The dependency target is forecastable OOS across all 24 pairs × windows. Best model by average RMSE is <strong>AR1 (0.0664)</strong>, confirming that serial persistence — not nonlinear cross-asset signals — is the dominant driver. ML models significantly outperform DCC-GARCH (avg RMSE 0.2141 vs 0.0664–0.1031 for ML).</p>
   </div>
 
@@ -894,10 +1028,10 @@ p{text-align:left}
   <div class="table-wrap mb-24" id="avg-table">
     <table>
       <thead><tr>
-        <th onclick="sortTable('avg-table',0)">Model <span class="sort-icon">↕</span></th>
-        <th onclick="sortTable('avg-table',1)">Avg RMSE <span class="sort-icon">↕</span></th>
-        <th onclick="sortTable('avg-table',2)">Avg MAE <span class="sort-icon">↕</span></th>
-        <th onclick="sortTable('avg-table',3)">Avg R² <span class="sort-icon">↕</span></th>
+        <th onclick="sortTable(&#39;avg-table&#39;,0)">Model <span class="sort-icon">↕</span></th>
+        <th onclick="sortTable(&#39;avg-table&#39;,1)">Avg RMSE <span class="sort-icon">↕</span></th>
+        <th onclick="sortTable(&#39;avg-table&#39;,2)">Avg MAE <span class="sort-icon">↕</span></th>
+        <th onclick="sortTable(&#39;avg-table&#39;,3)">Avg R² <span class="sort-icon">↕</span></th>
         <th>Rank</th>
         <th>vs DCC-GARCH</th>
       </tr></thead>
@@ -916,12 +1050,12 @@ p{text-align:left}
 
   <h3>Performance by Pair and Window — BTC-USD vs</h3>
   <div class="filter-bar" id="pair-filter">
-    <button class="filter-btn active" onclick="filterPair(this,'GSPC')">S&amp;P 500</button>
-    <button class="filter-btn" onclick="filterPair(this,'IXIC')">NASDAQ</button>
-    <button class="filter-btn" onclick="filterPair(this,'GLD')">Gold</button>
-    <button class="filter-btn" onclick="filterPair(this,'SLV')">Silver</button>
-    <button class="filter-btn" onclick="filterPair(this,'UUP')">USD Index</button>
-    <button class="filter-btn" onclick="filterPair(this,'ETH')">Ethereum</button>
+    <button class="filter-btn active" onclick="filterPair(this,&#39;GSPC&#39;)">S&amp;P 500</button>
+    <button class="filter-btn" onclick="filterPair(this,&#39;IXIC&#39;)">NASDAQ</button>
+    <button class="filter-btn" onclick="filterPair(this,&#39;GLD&#39;)">Gold</button>
+    <button class="filter-btn" onclick="filterPair(this,&#39;SLV&#39;)">Silver</button>
+    <button class="filter-btn" onclick="filterPair(this,&#39;UUP&#39;)">USD Index</button>
+    <button class="filter-btn" onclick="filterPair(this,&#39;ETH&#39;)">Ethereum</button>
   </div>
   <div class="filter-bar" id="window-filter">
     <button class="filter-btn active" onclick="filterWindow(this,30)">w = 30 days</button>
@@ -932,26 +1066,26 @@ p{text-align:left}
   <div class="table-wrap mb-24" id="detail-table">
     <table>
       <thead><tr><th>Model</th><th>MAE</th><th>RMSE</th><th>R²</th><th>vs Naive_Last</th></tr></thead>
-      <tbody id="detail-tbody"></tbody>
+      <tbody id="detail-tbody"><tr class="row-best"><td>AR1</td><td>0.0388</td><td>0.0647</td><td>0.9401</td><td><span class="text-green">-0.5%</span></td></tr><tr class="row-best"><td>Naive_Last</td><td>0.0382</td><td>0.0650</td><td>0.9395</td><td></td></tr><tr class=""><td>Ridge</td><td>0.0608</td><td>0.0889</td><td>0.8868</td><td><span class="text-red">+36.8%</span></td></tr><tr class=""><td>ElasticNet</td><td>0.0618</td><td>0.0896</td><td>0.8850</td><td><span class="text-red">+37.8%</span></td></tr><tr class=""><td>RF</td><td>0.0669</td><td>0.0971</td><td>0.8648</td><td><span class="text-red">+49.4%</span></td></tr><tr class=""><td>GBM</td><td>0.0700</td><td>0.1000</td><td>0.8567</td><td><span class="text-red">+53.8%</span></td></tr><tr class=""><td>XGB_GPU</td><td>0.0707</td><td>0.1009</td><td>0.8540</td><td><span class="text-red">+55.2%</span></td></tr><tr class="row-worst"><td>DCC_GARCH</td><td>0.1590</td><td>0.1977</td><td>0.4400</td><td><span class="text-red">+204.2%</span></td></tr></tbody>
     </table>
   </div>
 
   <div class="fig-grid-wide">
-    <div class="fig-card" onclick="openLightbox('figures/model_rmse_comparison.png','RMSE Comparison — All Models, aggregated')">
+    <div class="fig-card reveal" onclick="openLightbox(&#39;figures/model_rmse_comparison.png&#39;,&#39;RMSE Comparison — All Models, aggregated&#39;)">
       <img src="figures/model_rmse_comparison.png" alt="RMSE comparison" loading="lazy">
       <div class="fig-caption"><strong>RMSE Comparison — Aggregated All Pairs &amp; Windows</strong><span>AR1 and Naive_Last dominate; all ML models better than DCC-GARCH.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/model_r2_comparison_w30.png','R² at w=30 — all pairs')">
+    <div class="fig-card reveal" onclick="openLightbox(&#39;figures/model_r2_comparison_w30.png&#39;,&#39;R² at w=30 — all pairs&#39;)">
       <img src="figures/model_r2_comparison_w30.png" alt="R2 comparison" loading="lazy">
       <div class="fig-caption"><strong>OOS R² — All Pairs at w=30</strong><span>All models except DCC-GARCH exceed R²=0.85. ETH pair shows highest R² (closer crypto co-movement).</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=30')">
+    <div class="fig-card reveal" onclick="openLightbox(&#39;figures/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png&#39;,&#39;Forecast vs Actual — BTC/S&amp;P500 w=30&#39;)">
       <img src="figures/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png" alt="Forecast" loading="lazy">
-      <div class="fig-caption"><strong>Forecast vs Actual — BTC/S&P500, w=30</strong><span>All models overlaid on realized Fisher-z correlation. Persistence models track realized series closely.</span></div>
+      <div class="fig-caption"><strong>Forecast vs Actual — BTC/S&amp;P500, w=30</strong><span>All models overlaid on realized Fisher-z correlation. Persistence models track realized series closely.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png','Rolling RMSE Over Time')">
+    <div class="fig-card reveal" onclick="openLightbox(&#39;figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png&#39;,&#39;Rolling RMSE Over Time&#39;)">
       <img src="figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png" alt="Rolling RMSE" loading="lazy">
-      <div class="fig-caption"><strong>Rolling RMSE Over Time — BTC/S&P500, w=30</strong><span>All models spike during COVID-19 (2020) and BTC crash (2022). DCC-GARCH error is persistently higher throughout.</span></div>
+      <div class="fig-caption"><strong>Rolling RMSE Over Time — BTC/S&amp;P500, w=30</strong><span>All models spike during COVID-19 (2020) and BTC crash (2022). DCC-GARCH error is persistently higher throughout.</span></div>
     </div>
   </div>
 </div>
@@ -967,26 +1101,26 @@ p{text-align:left}
     <div>
       <h3>ML vs Persistence Baseline (Naive_Last)</h3>
       <p class="text-muted mb-12" style="font-size:13px">Negative DM → ML model is worse than the simple persistence baseline. Persistence dominates at all windows.</p>
-      <div class="dm-result"><div class="dm-stat neg">−12.26</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=14 <span class="dm-sig">p&lt;0.001</span></div></div>
-      <div class="dm-result"><div class="dm-stat neg">−10.44</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=30 <span class="dm-sig">p&lt;0.001</span></div></div>
-      <div class="dm-result"><div class="dm-stat neg">−9.37</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=60 <span class="dm-sig">p&lt;0.001</span></div></div>
-      <div class="dm-result"><div class="dm-stat neg">−8.38</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=90 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <div class="dm-result reveal"><div class="dm-stat neg">−12.26</div><div class="dm-desc">Ridge vs Naive · BTC/S&amp;P500 · w=14 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <div class="dm-result reveal"><div class="dm-stat neg">−10.44</div><div class="dm-desc">Ridge vs Naive · BTC/S&amp;P500 · w=30 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <div class="dm-result reveal"><div class="dm-stat neg">−9.37</div><div class="dm-desc">Ridge vs Naive · BTC/S&amp;P500 · w=60 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <div class="dm-result reveal"><div class="dm-stat neg">−8.38</div><div class="dm-desc">Ridge vs Naive · BTC/S&amp;P500 · w=90 <span class="dm-sig">p&lt;0.001</span></div></div>
     </div>
     <div>
       <h3>ML vs DCC-GARCH Benchmark</h3>
       <p class="text-muted mb-12" style="font-size:13px">Positive DM → ML model is better than DCC-GARCH. ML wins in every single experiment.</p>
-      <div class="dm-result"><div class="dm-stat pos">+22.04</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=14 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
-      <div class="dm-result"><div class="dm-stat pos">+25.55</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=30 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
-      <div class="dm-result"><div class="dm-stat pos">+33.29</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=60 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
-      <div class="dm-result"><div class="dm-stat pos">+23.70</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=90 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+      <div class="dm-result reveal"><div class="dm-stat pos">+22.04</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=14 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+      <div class="dm-result reveal"><div class="dm-stat pos">+25.55</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=30 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+      <div class="dm-result reveal"><div class="dm-stat pos">+33.29</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=60 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+      <div class="dm-result reveal"><div class="dm-stat pos">+23.70</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=90 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
     </div>
   </div>
 
-  <div class="finding green mt-24">
+  <div class="finding green mt-24 reveal">
     <p><strong>Cross-asset DM test (equity vs non-equity):</strong> DM = <strong>−9.079</strong>, p = 0.000. Equity dependency (^GSPC, ^IXIC) is statistically significantly easier to forecast than precious metals or dollar — consistent with the information-gap hypothesis: crypto features are well-specified for equity stress but incomplete for metals and FX.</p>
   </div>
 
-  <div class="fig-card mt-24" style="max-width:780px" onclick="openLightbox('figures/dm_heatmap_Ridge_vs_DCC.png','DM Test Heatmap — Ridge vs DCC-GARCH, all pairs × all windows')">
+  <div class="fig-card mt-24 reveal" style="max-width:780px" onclick="openLightbox(&#39;figures/dm_heatmap_Ridge_vs_DCC.png&#39;,&#39;DM Test Heatmap — Ridge vs DCC-GARCH, all pairs × all windows&#39;)">
     <img src="figures/dm_heatmap_Ridge_vs_DCC.png" alt="DM heatmap" loading="lazy">
     <div class="fig-caption"><strong>DM Test Heatmap — Ridge vs DCC-GARCH</strong><span>All pairs × all windows. Every cell is positive (ML wins), all p-values &lt; 0.001.</span></div>
   </div>
@@ -999,7 +1133,7 @@ p{text-align:left}
   <h2>Investor Signal Layer</h2>
   <p style="max-width:780px">A second-layer binary classifier predicts <em>stress days</em> on conventional asset markets using Bitcoin dynamics and the Layer 1 dependency forecast. A stress day is a daily loss exceeding 0.75σ of the rolling 20-day negative-return distribution (~8–12% of days). The output is a probability-guided warning — not a directional trade signal.</p>
 
-  <div class="finding orange mb-24">
+  <div class="finding orange mb-24 reveal">
     <p><strong>Design principle:</strong> The signal is framed as a <em>risk overlay</em> — a supplementary input to the risk-management process. Its operational role is to raise the probability threshold for accepting risk, prompt reductions in gross exposure, or tighten dynamic risk limits when the classified probability of a stress regime is elevated.</p>
   </div>
 
@@ -1037,16 +1171,16 @@ p{text-align:left}
 
     <div>
       <h3>Cross-Asset Signal Quality</h3>
-      <div class="finding green mb-12">
+      <div class="finding green mb-12 reveal">
         <p><strong>Equity (^GSPC, ^IXIC):</strong> Strongest signal. Broad equity markets are tightly linked to global risk appetite and funding liquidity — the same forces that drive Bitcoin. Crypto features capture a meaningful portion of equity stress episodes.</p>
       </div>
-      <div class="finding orange mb-12">
+      <div class="finding orange mb-12 reveal">
         <p><strong>Precious metals (GLD, SLV):</strong> Attenuated signal. Gold and silver respond to real interest rate differentials, safe-haven demand, and geopolitical risk — factors not fully represented in the crypto-centred feature set.</p>
       </div>
-      <div class="finding red mb-12">
+      <div class="finding red mb-12 reveal">
         <p><strong>Dollar index (UUP):</strong> Weakest signal. USD dynamics reflect macro and geopolitical forces that are structurally distinct from crypto-market drivers.</p>
       </div>
-      <div class="card mt-16">
+      <div class="card mt-16 reveal">
         <h3 style="margin-bottom:6px">Practical implication</h3>
         <p style="font-size:13.5px">A risk-aware investor monitoring BTC dynamics could use the signal layer to anticipate equity stress 1 day in advance — before stress materialises in conventional markets. For loss functions that assign disproportionate weight to severe drawdowns, even a moderate F1 generates positive expected utility.</p>
       </div>
@@ -1054,13 +1188,13 @@ p{text-align:left}
   </div>
 
   <div class="fig-grid-wide mt-8">
-    <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w30.png','Signal Layer — BTC/S&P500, w=30')">
+    <div class="fig-card reveal" onclick="openLightbox(&#39;figures/signal_corr_BTC-USD_^GSPC_w30.png&#39;,&#39;Signal Layer — BTC/S&amp;P500, w=30&#39;)">
       <img src="figures/signal_corr_BTC-USD_^GSPC_w30.png" alt="Signal SP500 w30" loading="lazy">
-      <div class="fig-caption"><strong>Signal — BTC/S&P500, w=30</strong><span>Upper: stress probability vs threshold. Lower: flagged vs realized stress events. Best overall configuration.</span></div>
+      <div class="fig-caption"><strong>Signal — BTC/S&amp;P500, w=30</strong><span>Upper: stress probability vs threshold. Lower: flagged vs realized stress events. Best overall configuration.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w14.png','Signal Layer — BTC/S&P500, w=14')">
+    <div class="fig-card reveal" onclick="openLightbox(&#39;figures/signal_corr_BTC-USD_^GSPC_w14.png&#39;,&#39;Signal Layer — BTC/S&amp;P500, w=14&#39;)">
       <img src="figures/signal_corr_BTC-USD_^GSPC_w14.png" alt="Signal SP500 w14" loading="lazy">
-      <div class="fig-caption"><strong>Signal — BTC/S&P500, w=14</strong><span>Shorter window provides more reactive but noisier stress flags. Higher exit rate (30.4%).</span></div>
+      <div class="fig-caption"><strong>Signal — BTC/S&amp;P500, w=14</strong><span>Shorter window provides more reactive but noisier stress flags. Higher exit rate (30.4%).</span></div>
     </div>
   </div>
 </div>
@@ -1072,17 +1206,17 @@ p{text-align:left}
   <h2>Conclusions, Limitations &amp; Future Work</h2>
 
   <div class="conclusion-grid">
-    <div class="conclusion-card">
+    <div class="conclusion-card reveal">
       <span class="c-num">C1</span>
       <h3>Forecastability Confirmed</h3>
       <p>Time-varying BTC–asset dependencies are statistically forecastable one step ahead in a strict out-of-sample sense. Persistence in the correlation series is the dominant signal — not cross-asset momentum. This is a substantive scientific result, not a methodological failure.</p>
     </div>
-    <div class="conclusion-card">
+    <div class="conclusion-card reveal">
       <span class="c-num">C2</span>
       <h3>ML Outperforms DCC-GARCH</h3>
       <p>All ML models — including simple baselines — significantly outperform DCC-GARCH(1,1) (DM test, p&lt;10⁻³⁰⁸) across all 24 pair × window combinations. DCC-GARCH underperforms because it is optimised for long-horizon covariance estimation, not one-step-ahead smoothed scalar forecasting.</p>
     </div>
-    <div class="conclusion-card">
+    <div class="conclusion-card reveal">
       <span class="c-num">C3</span>
       <h3>Investor Signal Layer</h3>
       <p>Crypto-derived features provide statistically meaningful early warning of stress days in conventional equity markets (best: Logit F1=0.244, AUC=0.531 on BTC→S&amp;P 500). The signal is best interpreted as a risk-management overlay, not a standalone trading engine. Performance attenuates for precious metals and FX.</p>
@@ -1092,7 +1226,7 @@ p{text-align:left}
   <div class="grid-2 mt-32">
     <div>
       <h3>Limitations</h3>
-      <div class="card" style="padding:0">
+      <div class="card reveal" style="padding:0">
         <div style="padding:12px 16px;border-bottom:1px solid var(--border)">
           <h4 style="color:var(--red-text);margin-bottom:4px">Single base asset</h4>
           <p style="font-size:13px;margin:0">Only Bitcoin used as source asset. Extension to ETH, SOL, and broader crypto baskets needed to generalise findings.</p>
@@ -1114,7 +1248,7 @@ p{text-align:left}
 
     <div>
       <h3>Directions for Future Work</h3>
-      <div class="card" style="padding:0">
+      <div class="card reveal" style="padding:0">
         <div style="padding:12px 16px;border-bottom:1px solid var(--border)">
           <h4 style="color:var(--green-text);margin-bottom:4px">Multi-horizon forecasting</h4>
           <p style="font-size:13px;margin:0">Investigate 5-day and 20-day ahead horizons to determine whether ML comparative advantage is more pronounced beyond the one-step persistence regime.</p>
@@ -1142,60 +1276,60 @@ p{text-align:left}
 <div class="container">
   <h2>Figures Gallery</h2>
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab(this,'tab-forecast')">Forecast Series</button>
-    <button class="tab-btn" onclick="switchTab(this,'tab-signal')">Signal Layer</button>
-    <button class="tab-btn" onclick="switchTab(this,'tab-sensitivity')">Sensitivity</button>
-    <button class="tab-btn" onclick="switchTab(this,'tab-diagnostics')">Diagnostics</button>
+    <button class="tab-btn active" onclick="switchTab(this,&#39;tab-forecast&#39;)">Forecast Series</button>
+    <button class="tab-btn" onclick="switchTab(this,&#39;tab-signal&#39;)">Signal Layer</button>
+    <button class="tab-btn" onclick="switchTab(this,&#39;tab-sensitivity&#39;)">Sensitivity</button>
+    <button class="tab-btn" onclick="switchTab(this,&#39;tab-diagnostics&#39;)">Diagnostics</button>
   </div>
 
   <div class="tab-pane active" id="tab-forecast">
     <div class="fig-grid">
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_^GSPC_w14_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=14')"><img src="figures/corr_BTC-USD_^GSPC_w14_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=14</strong><span>Noisy target; most challenging window.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_^GSPC_w30_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=30')"><img src="figures/corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=30</strong><span>Best signal-to-noise window.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_^GSPC_w60_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=60')"><img src="figures/corr_BTC-USD_^GSPC_w60_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=60</strong><span>Smoother series; strong persistence.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_^GSPC_w90_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=90')"><img src="figures/corr_BTC-USD_^GSPC_w90_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=90</strong><span>Near-trivial prediction; AR(1) ~= XGBoost.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_^IXIC_w30_fisher_z.png','Forecast vs Actual — BTC/NASDAQ w=30')"><img src="figures/corr_BTC-USD_^IXIC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / NASDAQ — w=30</strong><span>Similar to S&P 500 but slightly higher R².</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_GLD_w30_fisher_z.png','Forecast vs Actual — BTC/Gold w=30')"><img src="figures/corr_BTC-USD_GLD_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / Gold — w=30</strong><span>Lower static correlation; forecasting harder.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_SLV_w30_fisher_z.png','Forecast vs Actual — BTC/Silver w=30')"><img src="figures/corr_BTC-USD_SLV_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / Silver — w=30</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_UUP_w30_fisher_z.png','Forecast vs Actual — BTC/USD Index w=30')"><img src="figures/corr_BTC-USD_UUP_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / USD Index — w=30</strong><span>Defensive safe-haven asset; attenuated signal.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_ETH-USD_w30_fisher_z.png','Forecast vs Actual — BTC/ETH w=30')"><img src="figures/corr_BTC-USD_ETH-USD_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / ETH — w=30</strong><span>Highest R² of all pairs — strong within-crypto persistence.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/scatter_corr_BTC-USD_^GSPC_w30_fisher_z.png','Scatter: Predicted vs Actual — BTC/S&P500 w=30')"><img src="figures/scatter_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Scatter: Predicted vs Actual</strong><span>BTC/S&P500, w=30. Tight diagonal confirms high OOS accuracy.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/corr_BTC-USD_^GSPC_w14_fisher_z.png&#39;,&#39;Forecast vs Actual — BTC/S&amp;P500 w=14&#39;)"><img src="figures/corr_BTC-USD_^GSPC_w14_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&amp;P500 — w=14</strong><span>Noisy target; most challenging window.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/corr_BTC-USD_^GSPC_w30_fisher_z.png&#39;,&#39;Forecast vs Actual — BTC/S&amp;P500 w=30&#39;)"><img src="figures/corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&amp;P500 — w=30</strong><span>Best signal-to-noise window.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/corr_BTC-USD_^GSPC_w60_fisher_z.png&#39;,&#39;Forecast vs Actual — BTC/S&amp;P500 w=60&#39;)"><img src="figures/corr_BTC-USD_^GSPC_w60_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&amp;P500 — w=60</strong><span>Smoother series; strong persistence.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/corr_BTC-USD_^GSPC_w90_fisher_z.png&#39;,&#39;Forecast vs Actual — BTC/S&amp;P500 w=90&#39;)"><img src="figures/corr_BTC-USD_^GSPC_w90_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&amp;P500 — w=90</strong><span>Near-trivial prediction; AR(1) ~= XGBoost.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/corr_BTC-USD_^IXIC_w30_fisher_z.png&#39;,&#39;Forecast vs Actual — BTC/NASDAQ w=30&#39;)"><img src="figures/corr_BTC-USD_^IXIC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / NASDAQ — w=30</strong><span>Similar to S&amp;P 500 but slightly higher R².</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/corr_BTC-USD_GLD_w30_fisher_z.png&#39;,&#39;Forecast vs Actual — BTC/Gold w=30&#39;)"><img src="figures/corr_BTC-USD_GLD_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / Gold — w=30</strong><span>Lower static correlation; forecasting harder.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/corr_BTC-USD_SLV_w30_fisher_z.png&#39;,&#39;Forecast vs Actual — BTC/Silver w=30&#39;)"><img src="figures/corr_BTC-USD_SLV_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / Silver — w=30</strong></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/corr_BTC-USD_UUP_w30_fisher_z.png&#39;,&#39;Forecast vs Actual — BTC/USD Index w=30&#39;)"><img src="figures/corr_BTC-USD_UUP_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / USD Index — w=30</strong><span>Defensive safe-haven asset; attenuated signal.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/corr_BTC-USD_ETH-USD_w30_fisher_z.png&#39;,&#39;Forecast vs Actual — BTC/ETH w=30&#39;)"><img src="figures/corr_BTC-USD_ETH-USD_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / ETH — w=30</strong><span>Highest R² of all pairs — strong within-crypto persistence.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/scatter_corr_BTC-USD_^GSPC_w30_fisher_z.png&#39;,&#39;Scatter: Predicted vs Actual — BTC/S&amp;P500 w=30&#39;)"><img src="figures/scatter_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Scatter: Predicted vs Actual</strong><span>BTC/S&amp;P500, w=30. Tight diagonal confirms high OOS accuracy.</span></div></div>
     </div>
   </div>
 
   <div class="tab-pane" id="tab-signal">
     <div class="fig-grid">
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w14.png','Signal — BTC/S&P500 w=14')"><img src="figures/signal_corr_BTC-USD_^GSPC_w14.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=14</strong><span>Reactive but noisy. Higher exit rate.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w30.png','Signal — BTC/S&P500 w=30')"><img src="figures/signal_corr_BTC-USD_^GSPC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=30</strong><span>Best configuration. F1=0.244, AUC=0.531.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w60.png','Signal — BTC/S&P500 w=60')"><img src="figures/signal_corr_BTC-USD_^GSPC_w60.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=60</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w90.png','Signal — BTC/S&P500 w=90')"><img src="figures/signal_corr_BTC-USD_^GSPC_w90.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=90</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^IXIC_w30.png','Signal — BTC/NASDAQ w=30')"><img src="figures/signal_corr_BTC-USD_^IXIC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/NASDAQ — w=30</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_GLD_w30.png','Signal — BTC/Gold w=30')"><img src="figures/signal_corr_BTC-USD_GLD_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/Gold — w=30</strong><span>Attenuated — gold driven by macro factors not in feature set.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_SLV_w30.png','Signal — BTC/Silver w=30')"><img src="figures/signal_corr_BTC-USD_SLV_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/Silver — w=30</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_UUP_w30.png','Signal — BTC/USD Index w=30')"><img src="figures/signal_corr_BTC-USD_UUP_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/USD Index — w=30</strong><span>Weakest signal — defensive macro asset.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/signal_corr_BTC-USD_^GSPC_w14.png&#39;,&#39;Signal — BTC/S&amp;P500 w=14&#39;)"><img src="figures/signal_corr_BTC-USD_^GSPC_w14.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&amp;P500 — w=14</strong><span>Reactive but noisy. Higher exit rate.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/signal_corr_BTC-USD_^GSPC_w30.png&#39;,&#39;Signal — BTC/S&amp;P500 w=30&#39;)"><img src="figures/signal_corr_BTC-USD_^GSPC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&amp;P500 — w=30</strong><span>Best configuration. F1=0.244, AUC=0.531.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/signal_corr_BTC-USD_^GSPC_w60.png&#39;,&#39;Signal — BTC/S&amp;P500 w=60&#39;)"><img src="figures/signal_corr_BTC-USD_^GSPC_w60.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&amp;P500 — w=60</strong></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/signal_corr_BTC-USD_^GSPC_w90.png&#39;,&#39;Signal — BTC/S&amp;P500 w=90&#39;)"><img src="figures/signal_corr_BTC-USD_^GSPC_w90.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&amp;P500 — w=90</strong></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/signal_corr_BTC-USD_^IXIC_w30.png&#39;,&#39;Signal — BTC/NASDAQ w=30&#39;)"><img src="figures/signal_corr_BTC-USD_^IXIC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/NASDAQ — w=30</strong></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/signal_corr_BTC-USD_GLD_w30.png&#39;,&#39;Signal — BTC/Gold w=30&#39;)"><img src="figures/signal_corr_BTC-USD_GLD_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/Gold — w=30</strong><span>Attenuated — gold driven by macro factors not in feature set.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/signal_corr_BTC-USD_SLV_w30.png&#39;,&#39;Signal — BTC/Silver w=30&#39;)"><img src="figures/signal_corr_BTC-USD_SLV_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/Silver — w=30</strong></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/signal_corr_BTC-USD_UUP_w30.png&#39;,&#39;Signal — BTC/USD Index w=30&#39;)"><img src="figures/signal_corr_BTC-USD_UUP_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/USD Index — w=30</strong><span>Weakest signal — defensive macro asset.</span></div></div>
     </div>
   </div>
 
   <div class="tab-pane" id="tab-sensitivity">
     <div class="fig-grid">
-      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_^GSPC.png','Window Sensitivity — BTC/S&P500')"><img src="figures/sensitivity_BTC-USD_^GSPC.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/S&P500</strong><span>R² rises monotonically with window length; RMSE falls.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_^IXIC.png','Window Sensitivity — BTC/NASDAQ')"><img src="figures/sensitivity_BTC-USD_^IXIC.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/NASDAQ</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_GLD.png','Window Sensitivity — BTC/Gold')"><img src="figures/sensitivity_BTC-USD_GLD.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/Gold</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_SLV.png','Window Sensitivity — BTC/Silver')"><img src="figures/sensitivity_BTC-USD_SLV.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/Silver</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_UUP.png','Window Sensitivity — BTC/USD Index')"><img src="figures/sensitivity_BTC-USD_UUP.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/USD Index</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_ETH-USD.png','Window Sensitivity — BTC/ETH')"><img src="figures/sensitivity_BTC-USD_ETH-USD.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/ETH</strong><span>Highest R² values of all pairs across all windows.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/refit_sensitivity.png','Refit Frequency Sensitivity')"><img src="figures/refit_sensitivity.png" loading="lazy"><div class="fig-caption"><strong>Refit Frequency Sensitivity</strong><span>Sweep: [5, 10, 21, 42, 63] trading days. Results stable above refit_every=10.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/xgb_window_sensitivity.png','XGBoost Window Sensitivity')"><img src="figures/xgb_window_sensitivity.png" loading="lazy"><div class="fig-caption"><strong>XGBoost Window Sensitivity</strong></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/sensitivity_BTC-USD_^GSPC.png&#39;,&#39;Window Sensitivity — BTC/S&amp;P500&#39;)"><img src="figures/sensitivity_BTC-USD_^GSPC.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/S&amp;P500</strong><span>R² rises monotonically with window length; RMSE falls.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/sensitivity_BTC-USD_^IXIC.png&#39;,&#39;Window Sensitivity — BTC/NASDAQ&#39;)"><img src="figures/sensitivity_BTC-USD_^IXIC.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/NASDAQ</strong></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/sensitivity_BTC-USD_GLD.png&#39;,&#39;Window Sensitivity — BTC/Gold&#39;)"><img src="figures/sensitivity_BTC-USD_GLD.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/Gold</strong></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/sensitivity_BTC-USD_SLV.png&#39;,&#39;Window Sensitivity — BTC/Silver&#39;)"><img src="figures/sensitivity_BTC-USD_SLV.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/Silver</strong></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/sensitivity_BTC-USD_UUP.png&#39;,&#39;Window Sensitivity — BTC/USD Index&#39;)"><img src="figures/sensitivity_BTC-USD_UUP.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/USD Index</strong></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/sensitivity_BTC-USD_ETH-USD.png&#39;,&#39;Window Sensitivity — BTC/ETH&#39;)"><img src="figures/sensitivity_BTC-USD_ETH-USD.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/ETH</strong><span>Highest R² values of all pairs across all windows.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/refit_sensitivity.png&#39;,&#39;Refit Frequency Sensitivity&#39;)"><img src="figures/refit_sensitivity.png" loading="lazy"><div class="fig-caption"><strong>Refit Frequency Sensitivity</strong><span>Sweep: [5, 10, 21, 42, 63] trading days. Results stable above refit_every=10.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/xgb_window_sensitivity.png&#39;,&#39;XGBoost Window Sensitivity&#39;)"><img src="figures/xgb_window_sensitivity.png" loading="lazy"><div class="fig-caption"><strong>XGBoost Window Sensitivity</strong></div></div>
     </div>
   </div>
 
   <div class="tab-pane" id="tab-diagnostics">
     <div class="fig-grid">
-      <div class="fig-card" onclick="openLightbox('figures/error_dist_corr_BTC-USD_^GSPC_w30_fisher_z.png','Error Distribution — BTC/S&P500 w=30')"><img src="figures/error_dist_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Error Distribution — BTC/S&P500, w=30</strong><span>Residuals approximately symmetric around zero for AR1 and Naive_Last; heavier tails for tree ensembles.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png','Rolling RMSE Over Time')"><img src="figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Rolling RMSE Over Time — BTC/S&P500, w=30</strong><span>All models spike during COVID-19 crash (Mar 2020) and BTC bear market (Nov 2022).</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/ridge_regularization_path.png','Ridge Regularization Path')"><img src="figures/ridge_regularization_path.png" loading="lazy"><div class="fig-caption"><strong>Ridge Regularization Path</strong><span>dep_lag1 stable across all α values — confirms its dominance.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/fig_return_outliers.png','Return Outliers — |z|>5σ')"><img src="figures/fig_return_outliers.png" loading="lazy"><div class="fig-caption"><strong>Return Outliers (|z|&gt;5σ)</strong><span>Crypto assets have far more extreme outliers than conventional assets — evidence of fat tails.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/model_improvement_over_naive.png','Model Improvement Over Naive Baseline')"><img src="figures/model_improvement_over_naive.png" loading="lazy"><div class="fig-caption"><strong>Model Improvement Over Naive_Last</strong><span>All ML models underperform the simple persistence baseline; DCC-GARCH is the worst performer.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/error_dist_corr_BTC-USD_^GSPC_w30_fisher_z.png&#39;,&#39;Error Distribution — BTC/S&amp;P500 w=30&#39;)"><img src="figures/error_dist_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Error Distribution — BTC/S&amp;P500, w=30</strong><span>Residuals approximately symmetric around zero for AR1 and Naive_Last; heavier tails for tree ensembles.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png&#39;,&#39;Rolling RMSE Over Time&#39;)"><img src="figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Rolling RMSE Over Time — BTC/S&amp;P500, w=30</strong><span>All models spike during COVID-19 crash (Mar 2020) and BTC bear market (Nov 2022).</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/ridge_regularization_path.png&#39;,&#39;Ridge Regularization Path&#39;)"><img src="figures/ridge_regularization_path.png" loading="lazy"><div class="fig-caption"><strong>Ridge Regularization Path</strong><span>dep_lag1 stable across all α values — confirms its dominance.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/fig_return_outliers.png&#39;,&#39;Return Outliers — |z|&gt;5σ&#39;)"><img src="figures/fig_return_outliers.png" loading="lazy"><div class="fig-caption"><strong>Return Outliers (|z|&gt;5σ)</strong><span>Crypto assets have far more extreme outliers than conventional assets — evidence of fat tails.</span></div></div>
+      <div class="fig-card reveal" onclick="openLightbox(&#39;figures/model_improvement_over_naive.png&#39;,&#39;Model Improvement Over Naive Baseline&#39;)"><img src="figures/model_improvement_over_naive.png" loading="lazy"><div class="fig-caption"><strong>Model Improvement Over Naive_Last</strong><span>All ML models underperform the simple persistence baseline; DCC-GARCH is the worst performer.</span></div></div>
     </div>
   </div>
 </div>
@@ -1253,7 +1387,7 @@ python thesis_app/main.py
 python thesis_app/dcc_module.py
 
 # LaTeX only (after pipeline)
-cd thesis && latexmk -pdf main.tex</div>
+cd thesis &amp;&amp; latexmk -pdf main.tex</div>
       </div>
 
       <h3 class="mt-16">Output Files Generated</h3>
@@ -1272,6 +1406,22 @@ cd thesis && latexmk -pdf main.tex</div>
           </tbody>
         </table>
       </div>
+
+  <h3 class="mt-24">Environment</h3>
+  <div class="code-block-wrap">
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    <div class="code-block">Python         3.14.0
+pandas         3.0.2
+numpy          2.4.1
+scikit-learn   1.8.1
+xgboost        3.2.1
+arch           8.0.0
+scipy          1.17.0
+yfinance       1.2.2
+matplotlib     3.10.3
+seaborn        0.13.2
+jupyter        1.1.1</div>
+  </div>
     </div>
   </div>
 </div>
@@ -1336,17 +1486,17 @@ cd thesis && latexmk -pdf main.tex</div>
 
   <h3 class="mt-32">Key Papers</h3>
   <div class="grid-3 mt-12">
-    <div class="card">
+    <div class="card reveal">
       <h4 style="color:var(--blue);margin-bottom:6px">Engle (2002)</h4>
       <p style="font-size:13px;margin-bottom:8px">Dynamic Conditional Correlation. <em>Journal of Business &amp; Economic Statistics</em>, 20(3), 339–350.</p>
       <a href="https://doi.org/10.1198/073500102288618487" target="_blank" style="font-size:12px">doi:10.1198/073500102288618487 →</a>
     </div>
-    <div class="card">
+    <div class="card reveal">
       <h4 style="color:var(--blue);margin-bottom:6px">Diebold &amp; Mariano (1995)</h4>
       <p style="font-size:13px;margin-bottom:8px">Comparing Predictive Accuracy. <em>JBES</em>, 13(3), 253–263.</p>
       <a href="https://doi.org/10.1080/07350015.1995.10524599" target="_blank" style="font-size:12px">doi:10.1080/07350015.1995.10524599 →</a>
     </div>
-    <div class="card">
+    <div class="card reveal">
       <h4 style="color:var(--blue);margin-bottom:6px">Chen &amp; Guestrin (2016)</h4>
       <p style="font-size:13px;margin-bottom:8px">XGBoost: A Scalable Tree Boosting System. <em>KDD 2016</em>, 785–794.</p>
       <a href="https://doi.org/10.1145/2939672.2939785" target="_blank" style="font-size:12px">doi:10.1145/2939672.2939785 →</a>
@@ -1455,10 +1605,10 @@ cd thesis && latexmk -pdf main.tex</div>
 <div class="container">
   <div class="about-wrap">
     <div>
-      <div class="about-photo">
-        <img src="/photo.jpg" alt="Bogdan Babaev" onerror="this.parentElement.style.display='none';document.getElementById('photo-placeholder').style.display='flex'">
+      <div class="about-photo" style="display: none;">
+        <img src="figures/photo.jpg" alt="Bogdan Babaev" onerror="this.parentElement.style.display=&#39;none&#39;;document.getElementById(&#39;photo-placeholder&#39;).style.display=&#39;flex&#39;">
       </div>
-      <div id="photo-placeholder" class="about-photo-placeholder" style="display:none">👤</div>
+      <div id="photo-placeholder" class="about-photo-placeholder" style="display: flex;">👤</div>
     </div>
     <div class="about-content">
       <h2 id="about-h2">About</h2>
@@ -1484,11 +1634,11 @@ cd thesis && latexmk -pdf main.tex</div>
       </p>
       <div class="about-links">
         <a href="https://www.linkedin.com/in/b0gdaan/" target="_blank" class="about-link-btn linkedin">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>
           LinkedIn
         </a>
         <a href="https://github.com/b0gdaan" target="_blank" class="about-link-btn github">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>
           GitHub
         </a>
         <a href="mailto:babaev.bogdan.ru@gmail.com" class="about-link-btn">
@@ -1512,22 +1662,16 @@ cd thesis && latexmk -pdf main.tex</div>
       <span id="footer-sup">Supervisor: Prof. Dr Vladimir M. Milovanović</span> · M.Sc. Artificial Intelligence
     </div>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-      <a href="https://www.linkedin.com/in/b0gdaan/" target="_blank"
-         style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;
+      <a href="https://www.linkedin.com/in/b0gdaan/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;
                 background:rgba(10,102,194,.1);border:1px solid rgba(10,102,194,.3);
                 border-radius:var(--radius);color:var(--accent);font-size:13px;text-decoration:none;
-                transition:all .15s"
-         onmouseover="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 12px var(--accent-glow)'"
-         onmouseout="this.style.borderColor='rgba(10,102,194,.3)';this.style.boxShadow='none'">
+                transition:all .15s" onmouseover="this.style.borderColor=&#39;var(--accent)&#39;;this.style.boxShadow=&#39;0 0 12px var(--accent-glow)&#39;" onmouseout="this.style.borderColor=&#39;rgba(10,102,194,.3)&#39;;this.style.boxShadow=&#39;none&#39;">
         🔗 LinkedIn
       </a>
-      <a href="https://github.com/b0gdaan" target="_blank"
-         style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;
+      <a href="https://github.com/b0gdaan" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;
                 background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.3);
                 border-radius:var(--radius);color:var(--purple-text);font-size:13px;text-decoration:none;
-                transition:all .15s"
-         onmouseover="this.style.borderColor='var(--purple)';this.style.boxShadow='0 0 12px rgba(139,92,246,.2)'"
-         onmouseout="this.style.borderColor='rgba(139,92,246,.3)';this.style.boxShadow='none'">
+                transition:all .15s" onmouseover="this.style.borderColor=&#39;var(--purple)&#39;;this.style.boxShadow=&#39;0 0 12px rgba(139,92,246,.2)&#39;" onmouseout="this.style.borderColor=&#39;rgba(139,92,246,.3)&#39;;this.style.boxShadow=&#39;none&#39;">
         ⚡ GitHub
       </a>
     </div>
@@ -2036,6 +2180,20 @@ function copyCode(btn){
   },{threshold:0.25});
   sections.forEach(s=>obs.observe(s));
 })();
+
+
+// ── FIG OVERLAYS ─────────────────────────────────────────────────────────────
+(function(){
+  document.querySelectorAll('.fig-card').forEach(card=>{
+    const t = card.querySelector('.fig-caption strong');
+    if(!t || card.querySelector('.fig-overlay')) return;
+    const ov = document.createElement('div');
+    ov.className = 'fig-overlay';
+    ov.textContent = t.textContent;
+    card.insertBefore(ov, card.firstChild.nextSibling);
+  });
+})();
 </script>
-</body>
-</html>
+
+
+</body></html>
