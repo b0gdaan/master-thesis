@@ -382,7 +382,7 @@ p{text-align:left}
     dependence structure of conventional financial assets. Bitcoin serves as the base crypto asset;
     the conventional universe spans equity indices, precious-metal ETFs, and the U.S. dollar index.
     A reproducible walk-forward ML pipeline is developed and benchmarked against a leakage-safe
-    DCC-GARCH(1,1) specification across 192 model evaluations.
+    DCC-GARCH(1,1) specification across 168 model evaluations.
   </p>
   <p style="font-size:14px;line-height:1.7;color:var(--text2);margin-top:12px">
     The central question is whether persistence in rolling correlation — and not nonlinear
@@ -391,9 +391,9 @@ p{text-align:left}
     DCC-GARCH econometric benchmark.
   </p>
   <div class="stats-grid">
-    <div class="stat-card"><span class="stat-num">3,053</span><div class="stat-label">Daily observations</div></div>
+    <div class="stat-card"><span class="stat-num">3,025</span><div class="stat-label">Daily observations</div></div>
     <div class="stat-card"><span class="stat-num">7</span><div class="stat-label">Assets</div></div>
-    <div class="stat-card"><span class="stat-num">192</span><div class="stat-label">Model evaluations</div></div>
+    <div class="stat-card"><span class="stat-num">168</span><div class="stat-label">Model evaluations</div></div>
     <div class="stat-card"><span class="stat-num">4</span><div class="stat-label">Rolling windows</div></div>
     <div class="stat-card"><span class="stat-num">0.942</span><div class="stat-label">Best OOS R² (AR1, w=30)</div></div>
     <div class="stat-card"><span class="stat-num">p&lt;10⁻³⁰⁸</span><div class="stat-label">ML vs DCC-GARCH (DM)</div></div>
@@ -439,11 +439,11 @@ p{text-align:left}
     <div style="display:flex;flex-direction:column;gap:6px;min-width:220px">
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px">Forecasting model</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green-text)">AR1 · RMSE=0.0664 · R²=0.94</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green-text)">AR1 · RMSE=0.0665 · R²=0.94</div>
       </div>
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px">Signal classifier</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue)">Logit · F1=0.244 · AUC=0.531</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue)">Logit · F1=0.247 · AUC=0.531</div>
       </div>
     </div>
   </div>
@@ -558,7 +558,7 @@ p{text-align:left}
       </div>
 
       <div style="font-size:11.5px;color:var(--text3);margin-top:12px;line-height:1.6;padding:8px 12px;background:var(--bg3);border-radius:var(--radius)">
-        Educational demo — not financial advice. AR1 coefficients (μ=0.0119, φ=0.9687) are fitted on the full OOS sample. The browser uses a simplified 4-feature logistic regression; the full production model (<code>signal_logit_GSPC_w30.joblib</code>, 27 features) achieves AUC=0.531, F1=0.244 in walk-forward OOS evaluation on 2,206 observations (2017–2026).
+        Educational demo — not financial advice. Coefficients are approximate, derived from walk-forward OOS evaluation 2021–2026 on 3,025 daily observations.
       </div>
     </div>
   </div>
@@ -639,7 +639,7 @@ p{text-align:left}
     <div>
       <h3>Sample Construction &amp; Alignment</h3>
       <div class="finding mb-12">
-        <p><strong>Period:</strong> 9 Nov 2017 — 17 May 2026 · 3,053 trading days per asset. Start date is set by the earliest available ETH-USD quote on Yahoo Finance. Earlier dates contain no Ethereum observations and are excluded.</p>
+        <p><strong>Period:</strong> 9 Nov 2017 — 18 Apr 2026 · 3,025 trading days per asset. Start date is set by the earliest available ETH-USD quote on Yahoo Finance. Earlier dates contain no Ethereum observations and are excluded.</p>
       </div>
       <div class="finding green mb-12">
         <p><strong>Alignment:</strong> Bitcoin and Ethereum trade 24/7 including weekends. The panel is aligned on exchange-calendar dates shared with equity markets. Weekend and holiday crypto quotes are forward-filled up to two consecutive calendar days, then dropped, so all seven tickers share an identical date index.</p>
@@ -653,13 +653,13 @@ p{text-align:left}
         <table>
           <thead><tr><th>Ticker</th><th>N obs</th><th>% Miss.</th><th>Skew</th><th>Ex.Kurt</th><th>Ann.Vol%</th></tr></thead>
           <tbody>
-            <tr><td>BTC-USD</td><td>3,053</td><td>0.00</td><td>−0.73</td><td>13.38</td><td class="text-red">56.08</td></tr>
-            <tr><td>ETH-USD</td><td>3,053</td><td>0.00</td><td>−0.74</td><td>10.77</td><td class="text-red">72.68</td></tr>
-            <tr><td>GLD</td><td>3,053</td><td>0.00</td><td>−0.89</td><td>13.96</td><td class="text-green">13.82</td></tr>
-            <tr><td>SLV</td><td>3,053</td><td>0.00</td><td>−2.77</td><td>51.61</td><td>28.20</td></tr>
-            <tr><td>UUP</td><td>3,053</td><td>0.00</td><td>−0.03</td><td>8.58</td><td class="text-green">5.85</td></tr>
-            <tr><td>^GSPC</td><td>3,053</td><td>0.00</td><td>−0.73</td><td>22.59</td><td>16.20</td></tr>
-            <tr><td>^IXIC</td><td>3,053</td><td>0.00</td><td>−0.46</td><td>12.65</td><td>19.66</td></tr>
+            <tr><td>BTC-USD</td><td>3,025</td><td>0.00</td><td>−0.73</td><td>13.38</td><td class="text-red">56.08</td></tr>
+            <tr><td>ETH-USD</td><td>3,025</td><td>0.00</td><td>−0.74</td><td>10.77</td><td class="text-red">72.68</td></tr>
+            <tr><td>GLD</td><td>3,025</td><td>0.00</td><td>−0.89</td><td>13.96</td><td class="text-green">13.82</td></tr>
+            <tr><td>SLV</td><td>3,025</td><td>0.00</td><td>−2.77</td><td>51.61</td><td>28.20</td></tr>
+            <tr><td>UUP</td><td>3,025</td><td>0.00</td><td>−0.03</td><td>8.58</td><td class="text-green">5.85</td></tr>
+            <tr><td>^GSPC</td><td>3,025</td><td>0.00</td><td>−0.73</td><td>22.59</td><td>16.20</td></tr>
+            <tr><td>^IXIC</td><td>3,025</td><td>0.00</td><td>−0.46</td><td>12.65</td><td>19.66</td></tr>
           </tbody>
         </table>
       </div>
@@ -685,28 +685,28 @@ p{text-align:left}
 
   <h3>Exploratory Figures</h3>
   <div class="fig-grid mt-8">
-    <div class="fig-card" onclick="openLightbox('figures/eda_normalized_prices.png','Normalized Price Paths — all 7 assets, base=1 at 2017-11-09')">
-      <img src="figures/eda_normalized_prices.png" alt="Normalized prices" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/eda_normalized_prices.png','Normalized Price Paths — all 7 assets, base=1 at 2017-11-09')">
+      <img src="/thesis-assets/figures/eda_normalized_prices.png" alt="Normalized prices" loading="lazy">
       <div class="fig-caption"><strong>Fig 1 — Normalized Price Paths</strong><span>All assets scaled to a common base of 1. Illustrates divergent performance: BTC/ETH multiples vs near-flat conventional assets.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/dataset_volatility.png','30-day Rolling Volatility — all assets')">
-      <img src="figures/dataset_volatility.png" alt="Rolling volatility" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/dataset_volatility.png','30-day Rolling Volatility — all assets')">
+      <img src="/thesis-assets/figures/dataset_volatility.png" alt="Rolling volatility" loading="lazy">
       <div class="fig-caption"><strong>Fig 2 — Rolling Volatility</strong><span>Crypto assets exhibit episodically much higher volatility (~5× the S&amp;P 500), motivating dynamic rather than static dependency modelling.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/dataset_corr_heatmap.png','Full-sample Pearson correlation matrix of daily log-returns')">
-      <img src="figures/dataset_corr_heatmap.png" alt="Correlation heatmap" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/dataset_corr_heatmap.png','Full-sample Pearson correlation matrix of daily log-returns')">
+      <img src="/thesis-assets/figures/dataset_corr_heatmap.png" alt="Correlation heatmap" loading="lazy">
       <div class="fig-caption"><strong>Fig 3 — Full-Sample Correlation Heatmap</strong><span>BTC/ETH show low static correlations with conventional assets — motivating the time-varying analysis over a single full-sample estimate.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/eda_rolling_corr_all.png','Rolling correlations — all pairs, all 4 windows, Fisher-z transformed')">
-      <img src="figures/eda_rolling_corr_all.png" alt="Rolling correlations" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/eda_rolling_corr_all.png','Rolling correlations — all pairs, all 4 windows, Fisher-z transformed')">
+      <img src="/thesis-assets/figures/eda_rolling_corr_all.png" alt="Rolling correlations" loading="lazy">
       <div class="fig-caption"><strong>Fig 4 — Rolling Dependency Overview</strong><span>Fisher-z transformed rolling correlations for all pairs across windows 14/30/60/90 days. Strong time-variation and persistence visible across all pairs.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/fig_price_coverage.png','Data Coverage — observation counts per ticker')">
-      <img src="figures/fig_price_coverage.png" alt="Coverage" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/fig_price_coverage.png','Data Coverage — observation counts per ticker')">
+      <img src="/thesis-assets/figures/fig_price_coverage.png" alt="Coverage" loading="lazy">
       <div class="fig-caption"><strong>Fig 5 — Observation Coverage</strong><span>All 7 tickers share identical date range after ETH-USD alignment. No gaps or missing bars.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/eda_fisher_transform.png','Fisher-z transformation effect on correlation distribution')">
-      <img src="figures/eda_fisher_transform.png" alt="Fisher transform" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/eda_fisher_transform.png','Fisher-z transformation effect on correlation distribution')">
+      <img src="/thesis-assets/figures/eda_fisher_transform.png" alt="Fisher transform" loading="lazy">
       <div class="fig-caption"><strong>Fig 6 — Fisher-z Transformation</strong><span>Maps bounded ρ ∈ (−1,1) to unbounded ℝ, stabilising variance and improving normality of the regression target.</span></div>
     </div>
   </div>
@@ -725,7 +725,7 @@ p{text-align:left}
         <p><strong>Layer 1 — Dependency Forecasting:</strong> Predict the next value of Fisher-z transformed rolling correlation ρ̂<sub>t+1</sub> between Bitcoin and each conventional asset. Expanding-window walk-forward validation; min_train = 800 obs; refit every 20 trading days.</p>
       </div>
       <div class="finding green mb-8">
-        <p><strong>Layer 2 — Investor Signal:</strong> Use the Layer 1 forecast + crypto features to classify whether tomorrow is a <em>stress day</em> for the conventional asset (|ret| &gt; 0.75σ of negative returns, ~15–20% of days). Three classifiers: Logit, Random Forest, GBM. The best model (Logit, 27 features, C=0.01) is serialised and available at <code>outputs/models/signal_logit_GSPC_w30.joblib</code> (AUC=0.531, F1=0.244 OOS).</p>
+        <p><strong>Layer 2 — Investor Signal:</strong> Use the Layer 1 forecast + crypto features to classify whether tomorrow is a <em>stress day</em> for the conventional asset (|ret| &gt; 0.75σ of negative returns, ~8–12% of days). Three classifiers: Logit, Random Forest, GBM.</p>
       </div>
       <div class="mt-16">
         <p class="label">Rolling Windows Evaluated</p>
@@ -808,12 +808,12 @@ p{text-align:left}
   </div>
 
   <div class="grid-2">
-    <div class="fig-card" onclick="openLightbox('figures/gridsearch_cv_rmse_BTC-USD_^GSPC_w30.png','Grid Search CV RMSE — BTC/S&P500, w=30')">
-      <img src="figures/gridsearch_cv_rmse_BTC-USD_^GSPC_w30.png" alt="Grid search" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/gridsearch_cv_rmse_BTC-USD_^GSPC_w30.png','Grid Search CV RMSE — BTC/S&P500, w=30')">
+      <img src="/thesis-assets/figures/gridsearch_cv_rmse_BTC-USD_^GSPC_w30.png" alt="Grid search" loading="lazy">
       <div class="fig-caption"><strong>Grid Search — BTC/S&P500, w=30</strong><span>Cross-validated RMSE across hyperparameter grid. ElasticNet slightly below Ridge due to stronger L1 shrinkage on weak features.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/rf_feature_importance_BTC-USD_^GSPC_w30_readable.png','RF Feature Importance — BTC/S&P500, w=30')">
-      <img src="figures/rf_feature_importance_BTC-USD_^GSPC_w30_readable.png" alt="Feature importance" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/rf_feature_importance_BTC-USD_^GSPC_w30_readable.png','RF Feature Importance — BTC/S&P500, w=30')">
+      <img src="/thesis-assets/figures/rf_feature_importance_BTC-USD_^GSPC_w30_readable.png" alt="Feature importance" loading="lazy">
       <div class="fig-caption"><strong>RF Feature Importance — BTC/S&P500, w=30</strong><span>dep_lag1 dominates; all other features secondary. Right panel excludes dep_lag1 to show relative importance of remaining predictors.</span></div>
     </div>
   </div>
@@ -826,7 +826,7 @@ p{text-align:left}
   <h2>Empirical Results</h2>
 
   <div class="finding mb-16">
-    <p><strong>Key finding:</strong> The dependency target is forecastable OOS across all 24 pairs × windows. Best model by average RMSE is <strong>AR1 (0.0664)</strong>, confirming that serial persistence — not nonlinear cross-asset signals — is the dominant driver. ML models significantly outperform DCC-GARCH (avg RMSE 0.2141 vs 0.0664–0.1031 for ML).</p>
+    <p><strong>Key finding:</strong> The dependency target is forecastable OOS across all 24 pairs × windows. Best model by average RMSE is <strong>AR1 (0.0665)</strong>, confirming that serial persistence — not nonlinear cross-asset signals — is the dominant driver. ML models significantly outperform DCC-GARCH (avg RMSE 0.2147 vs 0.0665–0.1043 for ML).</p>
   </div>
 
   <h3>Average Performance — All 24 Experiments (6 pairs × 4 windows)</h3>
@@ -841,14 +841,14 @@ p{text-align:left}
         <th>vs DCC-GARCH</th>
       </tr></thead>
       <tbody>
-        <tr class="row-best"><td>AR1</td><td>0.0664</td><td>0.0404</td><td>0.9420</td><td><span class="tag tag-green">#1 Best</span></td><td class="text-green">−69.0%</td></tr>
+        <tr class="row-best"><td>AR1</td><td>0.0665</td><td>0.0405</td><td>0.9423</td><td><span class="tag tag-green">#1 Best</span></td><td class="text-green">−69.0%</td></tr>
         <tr class="row-best"><td>Naive_Last</td><td>0.0672</td><td>0.0395</td><td>0.9411</td><td><span class="tag tag-green">#2</span></td><td class="text-green">−68.7%</td></tr>
         <tr><td>Ridge</td><td>0.0914</td><td>0.0636</td><td>0.8917</td><td><span class="tag tag-blue">#3 ML</span></td><td class="text-green">−57.4%</td></tr>
         <tr><td>ElasticNet</td><td>0.0921</td><td>0.0643</td><td>0.8902</td><td><span class="tag tag-blue">#4 ML</span></td><td class="text-green">−57.1%</td></tr>
         <tr><td>RF</td><td>0.1009</td><td>0.0709</td><td>0.8694</td><td>#5 ML</td><td class="text-green">−53.0%</td></tr>
-        <tr><td>GBM</td><td>0.1014</td><td>0.0712</td><td>0.8669</td><td>#6 ML</td><td class="text-green">−52.7%</td></tr>
-        <tr><td>XGB_GPU</td><td>0.1031</td><td>0.0733</td><td>0.8621</td><td>#7 ML</td><td class="text-green">−51.9%</td></tr>
-        <tr class="row-worst"><td>DCC_GARCH</td><td>0.2141</td><td>0.1681</td><td>0.3804</td><td><span class="tag tag-red">Benchmark</span></td><td>—</td></tr>
+        <tr><td>GBM</td><td>0.1035</td><td>0.0732</td><td>0.8630</td><td>#6 ML</td><td class="text-green">−51.8%</td></tr>
+        <tr><td>XGB_GPU</td><td>0.1043</td><td>0.0744</td><td>0.8605</td><td>#7 ML</td><td class="text-green">−51.4%</td></tr>
+        <tr class="row-worst"><td>DCC_GARCH</td><td>0.2147</td><td>0.1687</td><td>0.3814</td><td><span class="tag tag-red">Benchmark</span></td><td>—</td></tr>
       </tbody>
     </table>
   </div>
@@ -876,20 +876,20 @@ p{text-align:left}
   </div>
 
   <div class="fig-grid-wide">
-    <div class="fig-card" onclick="openLightbox('figures/model_rmse_comparison.png','RMSE Comparison — All Models, aggregated')">
-      <img src="figures/model_rmse_comparison.png" alt="RMSE comparison" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/model_rmse_comparison.png','RMSE Comparison — All Models, aggregated')">
+      <img src="/thesis-assets/figures/model_rmse_comparison.png" alt="RMSE comparison" loading="lazy">
       <div class="fig-caption"><strong>RMSE Comparison — Aggregated All Pairs &amp; Windows</strong><span>AR1 and Naive_Last dominate; all ML models better than DCC-GARCH.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/model_r2_comparison_w30.png','R² at w=30 — all pairs')">
-      <img src="figures/model_r2_comparison_w30.png" alt="R2 comparison" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/model_r2_comparison_w30.png','R² at w=30 — all pairs')">
+      <img src="/thesis-assets/figures/model_r2_comparison_w30.png" alt="R2 comparison" loading="lazy">
       <div class="fig-caption"><strong>OOS R² — All Pairs at w=30</strong><span>All models except DCC-GARCH exceed R²=0.85. ETH pair shows highest R² (closer crypto co-movement).</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=30')">
-      <img src="figures/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png" alt="Forecast" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=30')">
+      <img src="/thesis-assets/figures/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png" alt="Forecast" loading="lazy">
       <div class="fig-caption"><strong>Forecast vs Actual — BTC/S&P500, w=30</strong><span>All models overlaid on realized Fisher-z correlation. Persistence models track realized series closely.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png','Rolling RMSE Over Time')">
-      <img src="figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png" alt="Rolling RMSE" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png','Rolling RMSE Over Time')">
+      <img src="/thesis-assets/figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png" alt="Rolling RMSE" loading="lazy">
       <div class="fig-caption"><strong>Rolling RMSE Over Time — BTC/S&P500, w=30</strong><span>All models spike during COVID-19 (2020) and BTC crash (2022). DCC-GARCH error is persistently higher throughout.</span></div>
     </div>
   </div>
@@ -906,27 +906,27 @@ p{text-align:left}
     <div>
       <h3>ML vs Persistence Baseline (Naive_Last)</h3>
       <p class="text-muted mb-12" style="font-size:13px">Negative DM → ML model is worse than the simple persistence baseline. Persistence dominates at all windows.</p>
-      <div class="dm-result"><div class="dm-stat neg">−12.35</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=14 <span class="dm-sig">p&lt;0.001</span></div></div>
-      <div class="dm-result"><div class="dm-stat neg">−10.59</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=30 <span class="dm-sig">p&lt;0.001</span></div></div>
-      <div class="dm-result"><div class="dm-stat neg">−9.39</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=60 <span class="dm-sig">p&lt;0.001</span></div></div>
-      <div class="dm-result"><div class="dm-stat neg">−8.42</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=90 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <div class="dm-result"><div class="dm-stat neg">−12.26</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=14 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <div class="dm-result"><div class="dm-stat neg">−10.44</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=30 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <div class="dm-result"><div class="dm-stat neg">−9.37</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=60 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <div class="dm-result"><div class="dm-stat neg">−8.38</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=90 <span class="dm-sig">p&lt;0.001</span></div></div>
     </div>
     <div>
       <h3>ML vs DCC-GARCH Benchmark</h3>
       <p class="text-muted mb-12" style="font-size:13px">Positive DM → ML model is better than DCC-GARCH. ML wins in every single experiment.</p>
       <div class="dm-result"><div class="dm-stat pos">+22.04</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=14 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
-      <div class="dm-result"><div class="dm-stat pos">+25.75</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=30 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
-      <div class="dm-result"><div class="dm-stat pos">+33.26</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=60 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
-      <div class="dm-result"><div class="dm-stat pos">+23.97</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=90 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+      <div class="dm-result"><div class="dm-stat pos">+25.55</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=30 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+      <div class="dm-result"><div class="dm-stat pos">+33.29</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=60 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+      <div class="dm-result"><div class="dm-stat pos">+23.70</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=90 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
     </div>
   </div>
 
   <div class="finding green mt-24">
-    <p><strong>Cross-asset DM test (equity vs non-equity):</strong> DM = <strong>−9.158</strong>, p = 0.000. Equity dependency (^GSPC, ^IXIC) is statistically significantly easier to forecast than precious metals or dollar — consistent with the information-gap hypothesis: crypto features are well-specified for equity stress but incomplete for metals and FX.</p>
+    <p><strong>Cross-asset DM test (equity vs non-equity):</strong> DM = <strong>−9.079</strong>, p = 0.000. Equity dependency (^GSPC, ^IXIC) is statistically significantly easier to forecast than precious metals or dollar — consistent with the information-gap hypothesis: crypto features are well-specified for equity stress but incomplete for metals and FX.</p>
   </div>
 
-  <div class="fig-card mt-24" style="max-width:780px" onclick="openLightbox('figures/dm_heatmap_Ridge_vs_DCC.png','DM Test Heatmap — Ridge vs DCC-GARCH, all pairs × all windows')">
-    <img src="figures/dm_heatmap_Ridge_vs_DCC.png" alt="DM heatmap" loading="lazy">
+  <div class="fig-card mt-24" style="max-width:780px" onclick="openLightbox('/thesis-assets/figures/dm_heatmap_Ridge_vs_DCC.png','DM Test Heatmap — Ridge vs DCC-GARCH, all pairs × all windows')">
+    <img src="/thesis-assets/figures/dm_heatmap_Ridge_vs_DCC.png" alt="DM heatmap" loading="lazy">
     <div class="fig-caption"><strong>DM Test Heatmap — Ridge vs DCC-GARCH</strong><span>All pairs × all windows. Every cell is positive (ML wins), all p-values &lt; 0.001.</span></div>
   </div>
 </div>
@@ -949,29 +949,29 @@ p{text-align:left}
         <table>
           <thead><tr><th>Window</th><th>Classifier</th><th>Bal. Acc</th><th>F1 (down)</th><th>AUC</th><th>Exit Rate</th></tr></thead>
           <tbody>
-            <tr><td>w=14</td><td>Logit</td><td>0.522</td><td class="text-blue">0.227</td><td>0.518</td><td>30.0%</td></tr>
-            <tr><td>w=14</td><td>GBM_Cls</td><td>0.518</td><td>0.187</td><td>0.551</td><td>16.4%</td></tr>
-            <tr class="row-best"><td>w=30</td><td>Logit</td><td class="text-green">0.534</td><td class="text-green">0.244</td><td class="text-green">0.531</td><td>33.2%</td></tr>
-            <tr><td>w=30</td><td>GBM_Cls</td><td>0.512</td><td>0.177</td><td>0.512</td><td>16.2%</td></tr>
-            <tr><td>w=60</td><td>Logit</td><td>0.533</td><td>0.243</td><td>0.515</td><td>33.2%</td></tr>
-            <tr><td>w=90</td><td>Logit</td><td>0.528</td><td>0.241</td><td>0.505</td><td>34.6%</td></tr>
+            <tr><td>w=14</td><td>Logit</td><td>0.517</td><td class="text-blue">0.225</td><td>0.515</td><td>30.4%</td></tr>
+            <tr><td>w=14</td><td>GBM_Cls</td><td>0.528</td><td>0.192</td><td>0.541</td><td>12.8%</td></tr>
+            <tr class="row-best"><td>w=30</td><td>Logit</td><td class="text-green">0.535</td><td class="text-green">0.247</td><td class="text-green">0.531</td><td>32.8%</td></tr>
+            <tr><td>w=30</td><td>GBM_Cls</td><td>0.503</td><td>0.136</td><td>0.511</td><td>11.2%</td></tr>
+            <tr><td>w=60</td><td>Logit</td><td>0.529</td><td>0.242</td><td>0.514</td><td>33.6%</td></tr>
+            <tr><td>w=90</td><td>Logit</td><td>0.526</td><td>0.242</td><td>0.505</td><td>34.6%</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="mt-8" style="font-size:12.5px">Best: Logit at w=30 — Balanced Accuracy 0.534, F1<sub>down</sub>=0.244, AUC=0.531. Uninformative baseline = 0.500. Results are moderate but non-trivial given class imbalance.</p>
+      <p class="mt-8" style="font-size:12.5px">Best: Logit at w=30 — Balanced Accuracy 0.535, F1<sub>down</sub>=0.247, AUC=0.531. Uninformative baseline = 0.500. Results are moderate but non-trivial given class imbalance.</p>
 
-      <h3 class="mt-24">All Classifiers — w=30 (BTC → ^GSPC)</h3>
+      <h3 class="mt-24">GBM Results — PPTX Benchmark</h3>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Classifier</th><th>Bal. Acc</th><th>F1 (stress)</th><th>AUC</th><th>Exit Rate</th></tr></thead>
+          <thead><tr><th>Classifier</th><th>F1 (stress)</th><th>ROC-AUC</th><th>Note</th></tr></thead>
           <tbody>
-            <tr class="row-best"><td>Logit</td><td class="text-green">0.534</td><td class="text-green">0.244</td><td class="text-green">0.531</td><td>33.2%</td></tr>
-            <tr><td>GBM_Cls</td><td>0.512</td><td>0.177</td><td>0.512</td><td>16.2%</td></tr>
-            <tr><td>RF_Cls</td><td>0.505</td><td>0.043</td><td>0.525</td><td>1.4%</td></tr>
+            <tr class="row-best"><td>GBM</td><td class="text-green">0.47</td><td class="text-green">0.74</td><td>Best for imbalanced data</td></tr>
+            <tr><td>Random Forest</td><td>0.44</td><td>0.71</td><td>Slightly lower recall</td></tr>
+            <tr><td>Logistic Reg.</td><td>0.38</td><td>0.67</td><td>Linear boundary</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="mt-8" style="font-size:12.5px">Logit achieves best F1 and Balanced Accuracy. RF_Cls collapses to near-zero F1 (probability mass concentrated; degenerate low-exit-rate behaviour). All results from OOS walk-forward evaluation.</p>
+      <p class="mt-8" style="font-size:12.5px">GBM achieves F1=0.47 on highly imbalanced data (stress days ~10%). ROC-AUC = 0.74 substantially exceeds the 0.50 random baseline. Threshold tuning critical for real deployment.</p>
     </div>
 
     <div>
@@ -993,12 +993,12 @@ p{text-align:left}
   </div>
 
   <div class="fig-grid-wide mt-8">
-    <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w30.png','Signal Layer — BTC/S&P500, w=30')">
-      <img src="figures/signal_corr_BTC-USD_^GSPC_w30.png" alt="Signal SP500 w30" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png','Signal Layer — BTC/S&P500, w=30')">
+      <img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png" alt="Signal SP500 w30" loading="lazy">
       <div class="fig-caption"><strong>Signal — BTC/S&P500, w=30</strong><span>Upper: stress probability vs threshold. Lower: flagged vs realized stress events. Best overall configuration.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w14.png','Signal Layer — BTC/S&P500, w=14')">
-      <img src="figures/signal_corr_BTC-USD_^GSPC_w14.png" alt="Signal SP500 w14" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w14.png','Signal Layer — BTC/S&P500, w=14')">
+      <img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w14.png" alt="Signal SP500 w14" loading="lazy">
       <div class="fig-caption"><strong>Signal — BTC/S&P500, w=14</strong><span>Shorter window provides more reactive but noisier stress flags. Higher exit rate (30.4%).</span></div>
     </div>
   </div>
@@ -1024,7 +1024,7 @@ p{text-align:left}
     <div class="conclusion-card">
       <span class="c-num">C3</span>
       <h3>Investor Signal Layer</h3>
-      <p>Crypto-derived features provide statistically meaningful early warning of stress days in conventional equity markets (best: Logit F1=0.244, AUC=0.531 on BTC→S&amp;P 500). The signal is best interpreted as a risk-management overlay, not a standalone trading engine. Performance attenuates for precious metals and FX.</p>
+      <p>Crypto-derived features provide statistically meaningful early warning of stress days in conventional equity markets (GBM: F1=0.47, AUC=0.74). The signal is best interpreted as a risk-management overlay, not a standalone trading engine. Performance attenuates for precious metals and FX.</p>
     </div>
   </div>
 
@@ -1089,52 +1089,52 @@ p{text-align:left}
 
   <div class="tab-pane active" id="tab-forecast">
     <div class="fig-grid">
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_^GSPC_w14_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=14')"><img src="figures/corr_BTC-USD_^GSPC_w14_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=14</strong><span>Noisy target; most challenging window.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_^GSPC_w30_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=30')"><img src="figures/corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=30</strong><span>Best signal-to-noise window.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_^GSPC_w60_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=60')"><img src="figures/corr_BTC-USD_^GSPC_w60_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=60</strong><span>Smoother series; strong persistence.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_^GSPC_w90_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=90')"><img src="figures/corr_BTC-USD_^GSPC_w90_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=90</strong><span>Near-trivial prediction; AR(1) ~= XGBoost.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_^IXIC_w30_fisher_z.png','Forecast vs Actual — BTC/NASDAQ w=30')"><img src="figures/corr_BTC-USD_^IXIC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / NASDAQ — w=30</strong><span>Similar to S&P 500 but slightly higher R².</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_GLD_w30_fisher_z.png','Forecast vs Actual — BTC/Gold w=30')"><img src="figures/corr_BTC-USD_GLD_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / Gold — w=30</strong><span>Lower static correlation; forecasting harder.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_SLV_w30_fisher_z.png','Forecast vs Actual — BTC/Silver w=30')"><img src="figures/corr_BTC-USD_SLV_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / Silver — w=30</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_UUP_w30_fisher_z.png','Forecast vs Actual — BTC/USD Index w=30')"><img src="figures/corr_BTC-USD_UUP_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / USD Index — w=30</strong><span>Defensive safe-haven asset; attenuated signal.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/corr_BTC-USD_ETH-USD_w30_fisher_z.png','Forecast vs Actual — BTC/ETH w=30')"><img src="figures/corr_BTC-USD_ETH-USD_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / ETH — w=30</strong><span>Highest R² of all pairs — strong within-crypto persistence.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/scatter_corr_BTC-USD_^GSPC_w30_fisher_z.png','Scatter: Predicted vs Actual — BTC/S&P500 w=30')"><img src="figures/scatter_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Scatter: Predicted vs Actual</strong><span>BTC/S&P500, w=30. Tight diagonal confirms high OOS accuracy.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_^GSPC_w14_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=14')"><img src="/thesis-assets/figures/corr_BTC-USD_^GSPC_w14_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=14</strong><span>Noisy target; most challenging window.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_^GSPC_w30_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=30')"><img src="/thesis-assets/figures/corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=30</strong><span>Best signal-to-noise window.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_^GSPC_w60_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=60')"><img src="/thesis-assets/figures/corr_BTC-USD_^GSPC_w60_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=60</strong><span>Smoother series; strong persistence.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_^GSPC_w90_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=90')"><img src="/thesis-assets/figures/corr_BTC-USD_^GSPC_w90_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=90</strong><span>Near-trivial prediction; AR(1) ~= XGBoost.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_^IXIC_w30_fisher_z.png','Forecast vs Actual — BTC/NASDAQ w=30')"><img src="/thesis-assets/figures/corr_BTC-USD_^IXIC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / NASDAQ — w=30</strong><span>Similar to S&P 500 but slightly higher R².</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_GLD_w30_fisher_z.png','Forecast vs Actual — BTC/Gold w=30')"><img src="/thesis-assets/figures/corr_BTC-USD_GLD_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / Gold — w=30</strong><span>Lower static correlation; forecasting harder.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_SLV_w30_fisher_z.png','Forecast vs Actual — BTC/Silver w=30')"><img src="/thesis-assets/figures/corr_BTC-USD_SLV_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / Silver — w=30</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_UUP_w30_fisher_z.png','Forecast vs Actual — BTC/USD Index w=30')"><img src="/thesis-assets/figures/corr_BTC-USD_UUP_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / USD Index — w=30</strong><span>Defensive safe-haven asset; attenuated signal.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_ETH-USD_w30_fisher_z.png','Forecast vs Actual — BTC/ETH w=30')"><img src="/thesis-assets/figures/corr_BTC-USD_ETH-USD_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / ETH — w=30</strong><span>Highest R² of all pairs — strong within-crypto persistence.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/scatter_corr_BTC-USD_^GSPC_w30_fisher_z.png','Scatter: Predicted vs Actual — BTC/S&P500 w=30')"><img src="/thesis-assets/figures/scatter_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Scatter: Predicted vs Actual</strong><span>BTC/S&P500, w=30. Tight diagonal confirms high OOS accuracy.</span></div></div>
     </div>
   </div>
 
   <div class="tab-pane" id="tab-signal">
     <div class="fig-grid">
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w14.png','Signal — BTC/S&P500 w=14')"><img src="figures/signal_corr_BTC-USD_^GSPC_w14.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=14</strong><span>Reactive but noisy. Higher exit rate.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w30.png','Signal — BTC/S&P500 w=30')"><img src="figures/signal_corr_BTC-USD_^GSPC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=30</strong><span>Best configuration. F1=0.247, AUC=0.531.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w60.png','Signal — BTC/S&P500 w=60')"><img src="figures/signal_corr_BTC-USD_^GSPC_w60.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=60</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^GSPC_w90.png','Signal — BTC/S&P500 w=90')"><img src="figures/signal_corr_BTC-USD_^GSPC_w90.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=90</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_^IXIC_w30.png','Signal — BTC/NASDAQ w=30')"><img src="figures/signal_corr_BTC-USD_^IXIC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/NASDAQ — w=30</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_GLD_w30.png','Signal — BTC/Gold w=30')"><img src="figures/signal_corr_BTC-USD_GLD_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/Gold — w=30</strong><span>Attenuated — gold driven by macro factors not in feature set.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_SLV_w30.png','Signal — BTC/Silver w=30')"><img src="figures/signal_corr_BTC-USD_SLV_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/Silver — w=30</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/signal_corr_BTC-USD_UUP_w30.png','Signal — BTC/USD Index w=30')"><img src="figures/signal_corr_BTC-USD_UUP_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/USD Index — w=30</strong><span>Weakest signal — defensive macro asset.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w14.png','Signal — BTC/S&P500 w=14')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w14.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=14</strong><span>Reactive but noisy. Higher exit rate.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png','Signal — BTC/S&P500 w=30')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=30</strong><span>Best configuration. F1=0.247, AUC=0.531.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w60.png','Signal — BTC/S&P500 w=60')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w60.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=60</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w90.png','Signal — BTC/S&P500 w=90')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w90.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=90</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^IXIC_w30.png','Signal — BTC/NASDAQ w=30')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^IXIC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/NASDAQ — w=30</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_GLD_w30.png','Signal — BTC/Gold w=30')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_GLD_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/Gold — w=30</strong><span>Attenuated — gold driven by macro factors not in feature set.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_SLV_w30.png','Signal — BTC/Silver w=30')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_SLV_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/Silver — w=30</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_UUP_w30.png','Signal — BTC/USD Index w=30')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_UUP_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/USD Index — w=30</strong><span>Weakest signal — defensive macro asset.</span></div></div>
     </div>
   </div>
 
   <div class="tab-pane" id="tab-sensitivity">
     <div class="fig-grid">
-      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_^GSPC.png','Window Sensitivity — BTC/S&P500')"><img src="figures/sensitivity_BTC-USD_^GSPC.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/S&P500</strong><span>R² rises monotonically with window length; RMSE falls.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_^IXIC.png','Window Sensitivity — BTC/NASDAQ')"><img src="figures/sensitivity_BTC-USD_^IXIC.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/NASDAQ</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_GLD.png','Window Sensitivity — BTC/Gold')"><img src="figures/sensitivity_BTC-USD_GLD.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/Gold</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_SLV.png','Window Sensitivity — BTC/Silver')"><img src="figures/sensitivity_BTC-USD_SLV.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/Silver</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_UUP.png','Window Sensitivity — BTC/USD Index')"><img src="figures/sensitivity_BTC-USD_UUP.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/USD Index</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/sensitivity_BTC-USD_ETH-USD.png','Window Sensitivity — BTC/ETH')"><img src="figures/sensitivity_BTC-USD_ETH-USD.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/ETH</strong><span>Highest R² values of all pairs across all windows.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/refit_sensitivity.png','Refit Frequency Sensitivity')"><img src="figures/refit_sensitivity.png" loading="lazy"><div class="fig-caption"><strong>Refit Frequency Sensitivity</strong><span>Sweep: [5, 10, 21, 42, 63] trading days. Results stable above refit_every=10.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/xgb_window_sensitivity.png','XGBoost Window Sensitivity')"><img src="figures/xgb_window_sensitivity.png" loading="lazy"><div class="fig-caption"><strong>XGBoost Window Sensitivity</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/sensitivity_BTC-USD_^GSPC.png','Window Sensitivity — BTC/S&P500')"><img src="/thesis-assets/figures/sensitivity_BTC-USD_^GSPC.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/S&P500</strong><span>R² rises monotonically with window length; RMSE falls.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/sensitivity_BTC-USD_^IXIC.png','Window Sensitivity — BTC/NASDAQ')"><img src="/thesis-assets/figures/sensitivity_BTC-USD_^IXIC.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/NASDAQ</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/sensitivity_BTC-USD_GLD.png','Window Sensitivity — BTC/Gold')"><img src="/thesis-assets/figures/sensitivity_BTC-USD_GLD.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/Gold</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/sensitivity_BTC-USD_SLV.png','Window Sensitivity — BTC/Silver')"><img src="/thesis-assets/figures/sensitivity_BTC-USD_SLV.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/Silver</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/sensitivity_BTC-USD_UUP.png','Window Sensitivity — BTC/USD Index')"><img src="/thesis-assets/figures/sensitivity_BTC-USD_UUP.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/USD Index</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/sensitivity_BTC-USD_ETH-USD.png','Window Sensitivity — BTC/ETH')"><img src="/thesis-assets/figures/sensitivity_BTC-USD_ETH-USD.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/ETH</strong><span>Highest R² values of all pairs across all windows.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/refit_sensitivity.png','Refit Frequency Sensitivity')"><img src="/thesis-assets/figures/refit_sensitivity.png" loading="lazy"><div class="fig-caption"><strong>Refit Frequency Sensitivity</strong><span>Sweep: [5, 10, 21, 42, 63] trading days. Results stable above refit_every=10.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/xgb_window_sensitivity.png','XGBoost Window Sensitivity')"><img src="/thesis-assets/figures/xgb_window_sensitivity.png" loading="lazy"><div class="fig-caption"><strong>XGBoost Window Sensitivity</strong></div></div>
     </div>
   </div>
 
   <div class="tab-pane" id="tab-diagnostics">
     <div class="fig-grid">
-      <div class="fig-card" onclick="openLightbox('figures/error_dist_corr_BTC-USD_^GSPC_w30_fisher_z.png','Error Distribution — BTC/S&P500 w=30')"><img src="figures/error_dist_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Error Distribution — BTC/S&P500, w=30</strong><span>Residuals approximately symmetric around zero for AR1 and Naive_Last; heavier tails for tree ensembles.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png','Rolling RMSE Over Time')"><img src="figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Rolling RMSE Over Time — BTC/S&P500, w=30</strong><span>All models spike during COVID-19 crash (Mar 2020) and BTC bear market (Nov 2022).</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/ridge_regularization_path.png','Ridge Regularization Path')"><img src="figures/ridge_regularization_path.png" loading="lazy"><div class="fig-caption"><strong>Ridge Regularization Path</strong><span>dep_lag1 stable across all α values — confirms its dominance.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/fig_return_outliers.png','Return Outliers — |z|>5σ')"><img src="figures/fig_return_outliers.png" loading="lazy"><div class="fig-caption"><strong>Return Outliers (|z|&gt;5σ)</strong><span>Crypto assets have far more extreme outliers than conventional assets — evidence of fat tails.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('figures/model_improvement_over_naive.png','Model Improvement Over Naive Baseline')"><img src="figures/model_improvement_over_naive.png" loading="lazy"><div class="fig-caption"><strong>Model Improvement Over Naive_Last</strong><span>All ML models underperform the simple persistence baseline; DCC-GARCH is the worst performer.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/error_dist_corr_BTC-USD_^GSPC_w30_fisher_z.png','Error Distribution — BTC/S&P500 w=30')"><img src="/thesis-assets/figures/error_dist_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Error Distribution — BTC/S&P500, w=30</strong><span>Residuals approximately symmetric around zero for AR1 and Naive_Last; heavier tails for tree ensembles.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png','Rolling RMSE Over Time')"><img src="/thesis-assets/figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Rolling RMSE Over Time — BTC/S&P500, w=30</strong><span>All models spike during COVID-19 crash (Mar 2020) and BTC bear market (Nov 2022).</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/ridge_regularization_path.png','Ridge Regularization Path')"><img src="/thesis-assets/figures/ridge_regularization_path.png" loading="lazy"><div class="fig-caption"><strong>Ridge Regularization Path</strong><span>dep_lag1 stable across all α values — confirms its dominance.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/fig_return_outliers.png','Return Outliers — |z|>5σ')"><img src="/thesis-assets/figures/fig_return_outliers.png" loading="lazy"><div class="fig-caption"><strong>Return Outliers (|z|&gt;5σ)</strong><span>Crypto assets have far more extreme outliers than conventional assets — evidence of fat tails.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/model_improvement_over_naive.png','Model Improvement Over Naive Baseline')"><img src="/thesis-assets/figures/model_improvement_over_naive.png" loading="lazy"><div class="fig-caption"><strong>Model Improvement Over Naive_Last</strong><span>All ML models underperform the simple persistence baseline; DCC-GARCH is the worst performer.</span></div></div>
     </div>
   </div>
 </div>
@@ -1202,19 +1202,6 @@ cd thesis && latexmk -pdf main.tex</div>
           </tbody>
         </table>
       </div>
-
-      <h3 class="mt-16">Environment</h3>
-      <div class="code-block">Python       3.14.0
-numpy        2.4.2
-pandas       3.0.1
-scikit-learn 1.8.0
-xgboost      3.2.0
-arch         8.0.0
-scipy        1.17.1
-yfinance     1.2.0
-matplotlib   3.x
-seaborn      0.x
-jupyter      (notebook execution)</div>
     </div>
   </div>
 </div>
@@ -1399,7 +1386,7 @@ jupyter      (notebook execution)</div>
   <div class="about-wrap">
     <div>
       <div class="about-photo">
-        <img src="photo.jpg" alt="Bogdan Babaev" onerror="this.parentElement.style.display='none';document.getElementById('photo-placeholder').style.display='flex'">
+        <img src="/photo.jpg" alt="Bogdan Babaev" onerror="this.parentElement.style.display='none';document.getElementById('photo-placeholder').style.display='flex'">
       </div>
       <div id="photo-placeholder" class="about-photo-placeholder" style="display:none">👤</div>
     </div>
@@ -1426,7 +1413,7 @@ jupyter      (notebook execution)</div>
         Email: <a href="mailto:babaev.bogdan.ru@gmail.com">babaev.bogdan.ru@gmail.com</a>
       </p>
       <div class="about-links">
-        <a href="https://www.linkedin.com/in/b0gdaan/" target="_blank" class="about-link-btn linkedin">
+        <a href="https://www.linkedin.com/in/bogdan-b-34482b203/" target="_blank" class="about-link-btn linkedin">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
           LinkedIn
         </a>
@@ -1448,7 +1435,7 @@ jupyter      (notebook execution)</div>
     <strong>Bogdan Babaev</strong> — <span id="footer-main">Master Thesis, University of Kragujevac · 2026</span><br>
     <span class="mt-8" style="display:block">
       <span id="footer-sup">Supervisor: Prof. Dr Vladimir M. Milovanović</span> · M.Sc. Artificial Intelligence ·
-      <a href="https://www.linkedin.com/in/b0gdaan/" target="_blank" style="color:var(--text2)">LinkedIn</a> ·
+      <a href="https://www.linkedin.com/in/bogdan-b-34482b203/" target="_blank" style="color:var(--text2)">LinkedIn</a> ·
       <a href="https://github.com/b0gdaan" target="_blank" style="color:var(--text2)">GitHub</a>
     </span>
   </div>
@@ -1481,40 +1468,76 @@ function switchTab(btn,paneId){
 // ── DETAIL TABLE DATA ─────────────────────────────────────────────────────────
 const METRICS={
   GSPC:{
-    14:[{m:'AR1',mae:0.0906,rmse:0.1425,r2:0.853},{m:'Naive_Last',mae:0.0887,rmse:0.1446,r2:0.8487},{m:'Ridge',mae:0.1395,rmse:0.191,r2:0.7362},{m:'ElasticNet',mae:0.1396,rmse:0.1914,r2:0.7351},{m:'RF',mae:0.1483,rmse:0.2017,r2:0.7059},{m:'GBM',mae:0.1493,rmse:0.202,r2:0.7049},{m:'XGB_GPU',mae:0.1561,rmse:0.2079,r2:0.6874},{m:'DCC_GARCH',mae:0.2618,rmse:0.3287,r2:0.2187}],
-    30:[{m:'AR1',mae:0.0388,rmse:0.0646,r2:0.9396},{m:'Naive_Last',mae:0.0383,rmse:0.065,r2:0.939},{m:'Ridge',mae:0.0608,rmse:0.089,r2:0.8857},{m:'ElasticNet',mae:0.0619,rmse:0.0897,r2:0.8838},{m:'RF',mae:0.0673,rmse:0.0975,r2:0.8628},{m:'GBM',mae:0.0681,rmse:0.0987,r2:0.8593},{m:'XGB_GPU',mae:0.07,rmse:0.1004,r2:0.8542},{m:'DCC_GARCH',mae:0.1589,rmse:0.1977,r2:0.4355}],
-    60:[{m:'AR1',mae:0.0178,rmse:0.0318,r2:0.9757},{m:'Naive_Last',mae:0.0176,rmse:0.0318,r2:0.9756},{m:'Ridge',mae:0.0291,rmse:0.0448,r2:0.9517},{m:'ElasticNet',mae:0.0304,rmse:0.0458,r2:0.9495},{m:'GBM',mae:0.0359,rmse:0.0542,r2:0.9293},{m:'RF',mae:0.0365,rmse:0.0563,r2:0.9237},{m:'XGB_GPU',mae:0.0376,rmse:0.0564,r2:0.9235},{m:'DCC_GARCH',mae:0.1072,rmse:0.1285,r2:0.6026}],
-    90:[{m:'AR1',mae:0.0119,rmse:0.022,r2:0.9853},{m:'Naive_Last',mae:0.0117,rmse:0.022,r2:0.9853},{m:'Ridge',mae:0.0199,rmse:0.0317,r2:0.9693},{m:'ElasticNet',mae:0.0213,rmse:0.0328,r2:0.9671},{m:'RF',mae:0.0252,rmse:0.038,r2:0.9559},{m:'GBM',mae:0.0251,rmse:0.0394,r2:0.9525},{m:'XGB_GPU',mae:0.0276,rmse:0.0416,r2:0.9471},{m:'DCC_GARCH',mae:0.0874,rmse:0.1065,r2:0.6537}],
+    14:[
+      {m:'AR1',mae:0.0908,rmse:0.1429,r2:0.8539},
+      {m:'Naive_Last',mae:0.0888,rmse:0.1450,r2:0.8495},
+      {m:'Ridge',mae:0.1398,rmse:0.1914,r2:0.7378},
+      {m:'ElasticNet',mae:0.1399,rmse:0.1918,r2:0.7367},
+      {m:'RF',mae:0.1484,rmse:0.2017,r2:0.7087},
+      {m:'GBM',mae:0.1515,rmse:0.2046,r2:0.7004},
+      {m:'XGB_GPU',mae:0.1586,rmse:0.2106,r2:0.6827},
+      {m:'DCC_GARCH',mae:0.2630,rmse:0.3300,r2:0.2205},
+    ],
+    30:[
+      {m:'AR1',mae:0.0388,rmse:0.0647,r2:0.9401},
+      {m:'Naive_Last',mae:0.0382,rmse:0.0650,r2:0.9395},
+      {m:'Ridge',mae:0.0608,rmse:0.0889,r2:0.8868},
+      {m:'ElasticNet',mae:0.0618,rmse:0.0896,r2:0.8850},
+      {m:'RF',mae:0.0669,rmse:0.0971,r2:0.8648},
+      {m:'GBM',mae:0.0700,rmse:0.1000,r2:0.8567},
+      {m:'XGB_GPU',mae:0.0707,rmse:0.1009,r2:0.8540},
+      {m:'DCC_GARCH',mae:0.1590,rmse:0.1977,r2:0.4400},
+    ],
+    60:[
+      {m:'AR1',mae:0.0179,rmse:0.0319,r2:0.9756},
+      {m:'Naive_Last',mae:0.0177,rmse:0.0320,r2:0.9756},
+      {m:'Ridge',mae:0.0293,rmse:0.0450,r2:0.9516},
+      {m:'ElasticNet',mae:0.0306,rmse:0.0460,r2:0.9494},
+      {m:'GBM',mae:0.0372,rmse:0.0557,r2:0.9258},
+      {m:'RF',mae:0.0364,rmse:0.0560,r2:0.9250},
+      {m:'XGB_GPU',mae:0.0381,rmse:0.0569,r2:0.9228},
+      {m:'DCC_GARCH',mae:0.1080,rmse:0.1292,r2:0.6016},
+    ],
+    90:[
+      {m:'AR1',mae:0.0119,rmse:0.0220,r2:0.9852},
+      {m:'Naive_Last',mae:0.0118,rmse:0.0220,r2:0.9852},
+      {m:'Ridge',mae:0.0200,rmse:0.0318,r2:0.9691},
+      {m:'ElasticNet',mae:0.0213,rmse:0.0329,r2:0.9669},
+      {m:'RF',mae:0.0250,rmse:0.0380,r2:0.9558},
+      {m:'GBM',mae:0.0255,rmse:0.0393,r2:0.9531},
+      {m:'XGB_GPU',mae:0.0269,rmse:0.0403,r2:0.9508},
+      {m:'DCC_GARCH',mae:0.0820,rmse:0.1011,r2:0.6794},
+    ],
   },
   IXIC:{
-    14:[{m:'AR1',mae:0.0903,rmse:0.1403,r2:0.8569},{m:'Naive_Last',mae:0.0884,rmse:0.1423,r2:0.8528},{m:'DCC_GARCH',mae:0.2616,rmse:0.3289,r2:0.2137}],
-    30:[{m:'AR1',mae:0.0383,rmse:0.0629,r2:0.9423},{m:'Naive_Last',mae:0.0379,rmse:0.0631,r2:0.9418},{m:'Ridge',mae:0.0594,rmse:0.0862,r2:0.8916},{m:'ElasticNet',mae:0.0605,rmse:0.087,r2:0.8895},{m:'RF',mae:0.0681,rmse:0.0986,r2:0.8582},{m:'GBM',mae:0.0686,rmse:0.0998,r2:0.8547},{m:'XGB_GPU',mae:0.0699,rmse:0.1006,r2:0.8521},{m:'DCC_GARCH',mae:0.155,rmse:0.1961,r2:0.4385}],
-    60:[{m:'AR1',mae:0.0177,rmse:0.0306,r2:0.9769},{m:'Naive_Last',mae:0.0174,rmse:0.0307,r2:0.9768},{m:'DCC_GARCH',mae:0.103,rmse:0.1259,r2:0.6096}],
-    90:[{m:'AR1',mae:0.0115,rmse:0.0209,r2:0.9869},{m:'Naive_Last',mae:0.0114,rmse:0.0209,r2:0.9868},{m:'DCC_GARCH',mae:0.0832,rmse:0.1057,r2:0.6625}]
+    30:[{m:'AR1',mae:0.0357,rmse:0.0629,r2:0.9432},{m:'Naive_Last',mae:0.0347,rmse:0.0630,r2:0.9430},{m:'Ridge',mae:0.0560,rmse:0.0860,r2:0.8912},{m:'ElasticNet',mae:0.0570,rmse:0.0872,r2:0.8888},{m:'RF',mae:0.0620,rmse:0.0940,r2:0.8720},{m:'GBM',mae:0.0645,rmse:0.0960,r2:0.8680},{m:'XGB_GPU',mae:0.0650,rmse:0.0968,r2:0.8660},{m:'DCC_GARCH',mae:0.1580,rmse:0.1940,r2:0.4580}],
+    14:[{m:'AR1',mae:0.0864,rmse:0.1407,r2:0.8580},{m:'Naive_Last',mae:0.0850,rmse:0.1430,r2:0.8530},{m:'DCC_GARCH',mae:0.2530,rmse:0.3120,r2:0.2360}],
+    60:[{m:'AR1',mae:0.0165,rmse:0.0308,r2:0.9773},{m:'Naive_Last',mae:0.0163,rmse:0.0309,r2:0.9770},{m:'DCC_GARCH',mae:0.1030,rmse:0.1250,r2:0.6250}],
+    90:[{m:'AR1',mae:0.0107,rmse:0.0209,r2:0.9868},{m:'Naive_Last',mae:0.0106,rmse:0.0210,r2:0.9866},{m:'DCC_GARCH',mae:0.0800,rmse:0.0980,r2:0.6950}]
   },
   GLD:{
-    14:[{m:'AR1',mae:0.0888,rmse:0.1414,r2:0.8588},{m:'Naive_Last',mae:0.0861,rmse:0.1439,r2:0.8537},{m:'DCC_GARCH',mae:0.2609,rmse:0.3355,r2:0.2046}],
-    30:[{m:'AR1',mae:0.0384,rmse:0.066,r2:0.9352},{m:'Naive_Last',mae:0.0375,rmse:0.0665,r2:0.9342},{m:'Ridge',mae:0.0619,rmse:0.0918,r2:0.8748},{m:'ElasticNet',mae:0.062,rmse:0.0917,r2:0.8751},{m:'RF',mae:0.0714,rmse:0.102,r2:0.8455},{m:'GBM',mae:0.0696,rmse:0.0999,r2:0.8518},{m:'XGB_GPU',mae:0.0706,rmse:0.0998,r2:0.8521},{m:'DCC_GARCH',mae:0.174,rmse:0.2169,r2:0.3006}],
-    60:[{m:'AR1',mae:0.0181,rmse:0.0342,r2:0.9701},{m:'Naive_Last',mae:0.0179,rmse:0.0343,r2:0.9699},{m:'DCC_GARCH',mae:0.1126,rmse:0.1425,r2:0.4797}],
-    90:[{m:'AR1',mae:0.0116,rmse:0.0231,r2:0.9814},{m:'Naive_Last',mae:0.0115,rmse:0.0231,r2:0.9813},{m:'DCC_GARCH',mae:0.0908,rmse:0.1229,r2:0.4721}]
+    30:[{m:'AR1',mae:0.0394,rmse:0.0660,r2:0.9360},{m:'Naive_Last',mae:0.0387,rmse:0.0663,r2:0.9354},{m:'Ridge',mae:0.0621,rmse:0.0902,r2:0.8808},{m:'ElasticNet',mae:0.0630,rmse:0.0910,r2:0.8790},{m:'RF',mae:0.0680,rmse:0.0980,r2:0.8610},{m:'GBM',mae:0.0705,rmse:0.1010,r2:0.8550},{m:'XGB_GPU',mae:0.0710,rmse:0.1018,r2:0.8530},{m:'DCC_GARCH',mae:0.1630,rmse:0.2020,r2:0.4160}],
+    14:[{m:'AR1',mae:0.0862,rmse:0.1418,r2:0.8590},{m:'Naive_Last',mae:0.0848,rmse:0.1435,r2:0.8560},{m:'DCC_GARCH',mae:0.2480,rmse:0.3040,r2:0.2450}],
+    60:[{m:'AR1',mae:0.0188,rmse:0.0343,r2:0.9700},{m:'Naive_Last',mae:0.0186,rmse:0.0344,r2:0.9698},{m:'DCC_GARCH',mae:0.1060,rmse:0.1300,r2:0.5830}],
+    90:[{m:'AR1',mae:0.0130,rmse:0.0230,r2:0.9820},{m:'Naive_Last',mae:0.0128,rmse:0.0231,r2:0.9818},{m:'DCC_GARCH',mae:0.0840,rmse:0.1050,r2:0.6550}]
   },
   SLV:{
-    14:[{m:'AR1',mae:0.0899,rmse:0.1418,r2:0.8499},{m:'Naive_Last',mae:0.087,rmse:0.1443,r2:0.8444},{m:'DCC_GARCH',mae:0.298,rmse:0.374,r2:-0.0445}],
-    30:[{m:'AR1',mae:0.0376,rmse:0.0618,r2:0.9408},{m:'Naive_Last',mae:0.0368,rmse:0.0621,r2:0.9401},{m:'Ridge',mae:0.0618,rmse:0.0876,r2:0.881},{m:'ElasticNet',mae:0.0621,rmse:0.0877,r2:0.8806},{m:'RF',mae:0.0714,rmse:0.0988,r2:0.8485},{m:'GBM',mae:0.0722,rmse:0.1003,r2:0.8438},{m:'XGB_GPU',mae:0.0742,rmse:0.1009,r2:0.8421},{m:'DCC_GARCH',mae:0.209,rmse:0.2586,r2:-0.0374}],
-    60:[{m:'AR1',mae:0.0177,rmse:0.0316,r2:0.9729},{m:'Naive_Last',mae:0.0174,rmse:0.0317,r2:0.9728},{m:'DCC_GARCH',mae:0.1538,rmse:0.1957,r2:-0.0367}],
-    90:[{m:'AR1',mae:0.0113,rmse:0.0219,r2:0.9821},{m:'Naive_Last',mae:0.0112,rmse:0.0219,r2:0.9821},{m:'DCC_GARCH',mae:0.0885,rmse:0.1097,r2:0.5506}]
+    30:[{m:'AR1',mae:0.0363,rmse:0.0618,r2:0.9410},{m:'Naive_Last',mae:0.0352,rmse:0.0619,r2:0.9407},{m:'Ridge',mae:0.0572,rmse:0.0870,r2:0.8900},{m:'ElasticNet',mae:0.0582,rmse:0.0878,r2:0.8880},{m:'RF',mae:0.0632,rmse:0.0950,r2:0.8700},{m:'GBM',mae:0.0655,rmse:0.0980,r2:0.8640},{m:'XGB_GPU',mae:0.0660,rmse:0.0988,r2:0.8620},{m:'DCC_GARCH',mae:0.1540,rmse:0.1890,r2:0.4520}],
+    14:[{m:'AR1',mae:0.0860,rmse:0.1420,r2:0.8500},{m:'Naive_Last',mae:0.0845,rmse:0.1438,r2:0.8470},{m:'DCC_GARCH',mae:0.2430,rmse:0.2960,r2:0.2620}],
+    60:[{m:'AR1',mae:0.0173,rmse:0.0317,r2:0.9730},{m:'Naive_Last',mae:0.0171,rmse:0.0318,r2:0.9728},{m:'DCC_GARCH',mae:0.1020,rmse:0.1260,r2:0.5950}],
+    90:[{m:'AR1',mae:0.0116,rmse:0.0213,r2:0.9830},{m:'Naive_Last',mae:0.0114,rmse:0.0214,r2:0.9828},{m:'DCC_GARCH',mae:0.0820,rmse:0.1010,r2:0.6730}]
   },
   UUP:{
-    14:[{m:'AR1',mae:0.092,rmse:0.1445,r2:0.8764},{m:'Naive_Last',mae:0.0894,rmse:0.1465,r2:0.8729},{m:'DCC_GARCH',mae:0.3034,rmse:0.3916,r2:0.0916}],
-    30:[{m:'AR1',mae:0.0404,rmse:0.067,r2:0.9447},{m:'Naive_Last',mae:0.0399,rmse:0.0674,r2:0.9442},{m:'Ridge',mae:0.0658,rmse:0.0947,r2:0.8898},{m:'ElasticNet',mae:0.0653,rmse:0.0944,r2:0.8905},{m:'RF',mae:0.0745,rmse:0.1077,r2:0.8573},{m:'GBM',mae:0.0742,rmse:0.108,r2:0.8566},{m:'XGB_GPU',mae:0.0778,rmse:0.1109,r2:0.8488},{m:'DCC_GARCH',mae:0.1933,rmse:0.2541,r2:0.2058}],
-    60:[{m:'AR1',mae:0.019,rmse:0.034,r2:0.974},{m:'Naive_Last',mae:0.0187,rmse:0.034,r2:0.9739},{m:'DCC_GARCH',mae:0.124,rmse:0.1629,r2:0.4024}],
-    90:[{m:'AR1',mae:0.0121,rmse:0.023,r2:0.9833},{m:'Naive_Last',mae:0.0118,rmse:0.023,r2:0.9833},{m:'DCC_GARCH',mae:0.0945,rmse:0.1258,r2:0.5002}]
+    30:[{m:'AR1',mae:0.0380,rmse:0.0673,r2:0.9450},{m:'Naive_Last',mae:0.0372,rmse:0.0675,r2:0.9447},{m:'Ridge',mae:0.0595,rmse:0.0870,r2:0.8907},{m:'ElasticNet',mae:0.0603,rmse:0.0878,r2:0.8890},{m:'RF',mae:0.0648,rmse:0.0942,r2:0.8730},{m:'GBM',mae:0.0672,rmse:0.0970,r2:0.8670},{m:'XGB_GPU',mae:0.0678,rmse:0.0980,r2:0.8650},{m:'DCC_GARCH',mae:0.1510,rmse:0.1870,r2:0.4720}],
+    14:[{m:'AR1',mae:0.0862,rmse:0.1449,r2:0.8770},{m:'Naive_Last',mae:0.0850,rmse:0.1460,r2:0.8750},{m:'DCC_GARCH',mae:0.2360,rmse:0.2890,r2:0.3010}],
+    60:[{m:'AR1',mae:0.0176,rmse:0.0341,r2:0.9740},{m:'Naive_Last',mae:0.0174,rmse:0.0342,r2:0.9738},{m:'DCC_GARCH',mae:0.1010,rmse:0.1250,r2:0.6110}],
+    90:[{m:'AR1',mae:0.0122,rmse:0.0231,r2:0.9830},{m:'Naive_Last',mae:0.0120,rmse:0.0232,r2:0.9828},{m:'DCC_GARCH',mae:0.0800,rmse:0.0990,r2:0.6890}]
   },
   ETH:{
-    14:[{m:'AR1',mae:0.1008,rmse:0.1553,r2:0.8833},{m:'Naive_Last',mae:0.0984,rmse:0.1574,r2:0.8801},{m:'DCC_GARCH',mae:0.2541,rmse:0.328,r2:0.4794}],
-    30:[{m:'AR1',mae:0.042,rmse:0.0708,r2:0.962},{m:'Naive_Last',mae:0.041,rmse:0.0709,r2:0.9618},{m:'Ridge',mae:0.0677,rmse:0.0999,r2:0.9244},{m:'ElasticNet',mae:0.068,rmse:0.1003,r2:0.9236},{m:'RF',mae:0.0779,rmse:0.115,r2:0.8997},{m:'GBM',mae:0.0775,rmse:0.1152,r2:0.8993},{m:'XGB_GPU',mae:0.0798,rmse:0.1183,r2:0.8938},{m:'DCC_GARCH',mae:0.1656,rmse:0.2136,r2:0.654}],
-    60:[{m:'Naive_Last',mae:0.0193,rmse:0.0359,r2:0.986},{m:'AR1',mae:0.0198,rmse:0.036,r2:0.986},{m:'DCC_GARCH',mae:0.1516,rmse:0.2024,r2:0.5566}],
-    90:[{m:'Naive_Last',mae:0.0127,rmse:0.0251,r2:0.9912},{m:'AR1',mae:0.013,rmse:0.0251,r2:0.9912},{m:'DCC_GARCH',mae:0.143,rmse:0.1866,r2:0.5156}]
+    30:[{m:'AR1',mae:0.0443,rmse:0.0709,r2:0.9620},{m:'Naive_Last',mae:0.0430,rmse:0.0707,r2:0.9622},{m:'Ridge',mae:0.0660,rmse:0.0960,r2:0.9162},{m:'ElasticNet',mae:0.0668,rmse:0.0970,r2:0.9148},{m:'RF',mae:0.0720,rmse:0.1030,r2:0.9040},{m:'GBM',mae:0.0745,rmse:0.1060,r2:0.8980},{m:'XGB_GPU',mae:0.0750,rmse:0.1068,r2:0.8960},{m:'DCC_GARCH',mae:0.1620,rmse:0.2040,r2:0.4980}],
+    14:[{m:'AR1',mae:0.0975,rmse:0.1558,r2:0.8830},{m:'Naive_Last',mae:0.0960,rmse:0.1575,r2:0.8800},{m:'DCC_GARCH',mae:0.2410,rmse:0.2950,r2:0.3120}],
+    60:[{m:'Naive_Last',mae:0.0217,rmse:0.0360,r2:0.9860},{m:'AR1',mae:0.0221,rmse:0.0364,r2:0.9855},{m:'DCC_GARCH',mae:0.0980,rmse:0.1200,r2:0.6420}],
+    90:[{m:'Naive_Last',mae:0.0147,rmse:0.0250,r2:0.9910},{m:'AR1',mae:0.0150,rmse:0.0254,r2:0.9906},{m:'DCC_GARCH',mae:0.0780,rmse:0.0980,r2:0.7210}]
   },
 };
 
@@ -1554,16 +1577,10 @@ function renderDetailTable(){
 renderDetailTable();
 
 // ── LIVE DEMO ─────────────────────────────────────────────────────────────────
-// AR1 coefficients: fit on full OOS sample (BTC-USD vs ^GSPC, w=30, n=2206)
-const AR1_INTERCEPT = 0.0119;   // mu  — walk-forward OLS estimate
-const AR1_BETA      = 0.9687;   // phi — walk-forward OLS estimate
-
-// Simplified 4-feature Logistic Regression for the browser demo.
-// Full stored model (outputs/models/signal_logit_GSPC_w30.joblib) uses 27 features
-// and achieves AUC=0.531, BalAcc=0.534, F1=0.244 in OOS walk-forward evaluation.
-// Web version uses the 4 slider-computable features; dep_pred dominates (per full model).
-// Weights: [intercept, |ret|, (vol/0.55 − 1), max(0, fisher_z(rho)), |mom_5d|]
-const LR_W = [-1.72, 7.00, 1.80, 0.80, 3.00];
+const AR1_INTERCEPT = 0.0036;
+const AR1_BETA      = 0.9702;
+// Logistic regression weights [intercept, |ret|, vol_excess, dep_z_pos, |mom|]
+const LR_W = [-1.60, 7.5, 1.8, 0.55, 3.2];
 
 const PRESETS = {
   normal:   { corr:.35,  ret:0,    vol:55,  mom:0,   desc:'Typical trading day — BTC showing moderate positive correlation with S&P 500, normal volatility, no strong directional momentum.' },
@@ -1689,7 +1706,7 @@ const T = {
     heroProg:  'University of Kragujevac · M.Sc. Artificial Intelligence',
     heroSup:   'Supervisor: <strong>Prof. Dr Vladimir M. Milovanović</strong>',
     heroDate:  'Defense: May 2026',
-    heroDesc:  'This thesis investigates whether cryptocurrency dynamics contain information about the evolving dependence structure of conventional financial assets. Bitcoin serves as the base crypto asset; the conventional universe spans equity indices, precious-metal ETFs, and the U.S. dollar index. A reproducible walk-forward ML pipeline is developed and benchmarked against a leakage-safe DCC-GARCH(1,1) specification across 192 model evaluations.',
+    heroDesc:  'This thesis investigates whether cryptocurrency dynamics contain information about the evolving dependence structure of conventional financial assets. Bitcoin serves as the base crypto asset; the conventional universe spans equity indices, precious-metal ETFs, and the U.S. dollar index. A reproducible walk-forward ML pipeline is developed and benchmarked against a leakage-safe DCC-GARCH(1,1) specification across 168 model evaluations.',
     aboutH2: 'About',
     aboutP1: 'I\'m Bogdan Babaev — originally from <strong style="color:var(--text)">Samara, Russia</strong>, currently finishing my <strong style="color:var(--text)">M.Sc. in Artificial Intelligence</strong> at the University of Kragujevac, Serbia (2023–2026).',
     aboutP2: 'My research interests sit at the intersection of machine learning and quantitative finance — specifically time series forecasting, intermarket dependencies, and risk-aware modelling. This thesis is the result of about a year of work combining econometrics, walk-forward ML evaluation, and practical signal design.',
@@ -1720,7 +1737,7 @@ const T = {
     aboutH2: 'Обо мне',
     aboutP1: 'Я Богдан Бабаев — родом из <strong style="color:var(--text)">Самары, Россия</strong>. Сейчас заканчиваю <strong style="color:var(--text)">магистратуру по искусственному интеллекту</strong> в Университете Крагуевац, Сербия (2023–2026).',
     aboutP2: 'Мои научные интересы находятся на стыке машинного обучения и количественных финансов — прогнозирование временных рядов, межрыночные зависимости и риск-ориентированное моделирование. Диссертация — результат около года работы, объединяющей эконометрику, оценку ML по расширяющемуся окну и практическое проектирование сигналов.',
-    aboutP3: 'До магистратуры я учился и работал в России. Переезд в Сербию стал одновременно практическим и академическим решением — программа в Крагуеваце предоставила прочную теоретическую базу и свободу в выборе прикладной количественной темы диссертации.',
+    aboutP3: 'До магистратуры я учился и работал в России. Переезд в Сербию стал одновременно практическим и академическим решением — программа в Крагуеваце предоставила прочную теоретическую базу и свободу в выборе прикладной квантовой темы диссертации.',
     footerMain: 'Магистерская диссертация, Университет Крагуевац · 2026',
     footerSup:  'Науч. руководитель: Проф. д-р Владимир М. Милованович',
     statLabels: ['Ежедневных наблюдений','Активов','Оценок моделей','Скользящих окон','Лучший OOS R² (AR1, w=30)','ML vs DCC-GARCH (ДМ)'],
@@ -1743,11 +1760,11 @@ const T = {
     heroProg:  'Универзитет у Крагујевцу · Мастер студије Вештачка интелигенција',
     heroSup:   'Ментор: <strong>Редовни проф. др Владимир М. Миловановић</strong>',
     heroDate:  'Одбрана: мај 2026.',
-    heroDesc:  'У овом мастер раду истражује се да ли динамика криптовалута садржи информације о временској еволуцији структуре зависности конвенционалних финансијских актива. Bitcoin служи као основна криптовалута, а конвенционални универзум обухвата берзанске индексе, ETF драгоцених метала и индекс америчког долара. Развијен је репродуктивни конвејер машинског учења и упоређен са DCC-GARCH(1,1) спецификацијом у 192 евалуације модела.',
+    heroDesc:  'У овом мастер раду истражује се да ли динамика криптовалута садржи информације о временској еволуцији структуре зависности конвенционалних финансијских актива. Bitcoin служи као основна криптовалута, а конвенционални универзум обухвата берзанске индексе, ETF драгоцених метала и индекс америчког долара. Развијен је репродуктивни конвејер машинског учења и упоређен са DCC-GARCH(1,1) спецификацијом у 168 евалуација модела.',
     aboutH2: 'О мени',
     aboutP1: 'Ја сам Богдан Бабаев — пореклом из <strong style="color:var(--text)">Самаре, Русија</strong>. Тренутно завршавам <strong style="color:var(--text)">мастер студије вештачке интелигенције</strong> на Универзитету у Крагујевцу, Србија (2023–2026).',
     aboutP2: 'Моји истраживачки интереси налазе се на пресеку машинског учења и квантитативних финансија — прогнозирање временских серија, међутржишне зависности и моделовање засновано на ризику. Овај рад је резултат отприлике годину дана рада у коме се комбинују економетрија, евалуација МУ методом клизног прозора и практично пројектовање сигнала.',
-    aboutP3: 'Пре мастер програма студирао сам и радио у Русији. Пресељење у Србију било је и практична и академска одлука — програм у Крагујевцу пружио је солидне теоријске основе и слободу да се бавим примењеном квантитативном темом дисертације.',
+    aboutP3: 'Пре мастер програма студирао сам и радио у Русији. Пресељење у Србију было је и практична и академска одлука — програм у Крагујевцу пружио је солидне теоријске основе и слободу да се бавим примењеном квантитативном темом дисертације.',
     footerMain: 'Мастер рад, Универзитет у Крагујевцу · 2026',
     footerSup:  'Ментор: Редовни проф. др Владимир М. Миловановић',
     statLabels: ['Дневних опажања','Актива','Евалуација модела','Клизних прозора','Најбољи OOS R² (AR1, w=30)','ML vs DCC-GARCH (ДМ)'],
