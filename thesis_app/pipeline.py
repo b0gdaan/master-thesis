@@ -608,11 +608,22 @@ def fit_predict_walk_forward(
                 except Exception:
                     fitted.pop("AR1", None)
 
+            # XGB: use last 20% of training window as early-stopping validation set.
+            # A minimum of 100 validation points is required.
+            xgb_key = next((k for k in model_specs if k.startswith("XGB_")), None)
+
             for name, model in list(model_specs.items()):
                 if model is None or name == "AR1":
                     continue
                 try:
-                    model.fit(X_train, y_train)
+                    if name == xgb_key and len(X_train) >= 500:
+                        val_n = max(100, len(X_train) // 5)
+                        X_tr, X_val = X_train[:-val_n], X_train[-val_n:]
+                        y_tr, y_val = y_train[:-val_n], y_train[-val_n:]
+                        model.set_params(early_stopping_rounds=30, eval_metric="rmse")
+                        model.fit(X_tr, y_tr, eval_set=[(X_val, y_val)], verbose=False)
+                    else:
+                        model.fit(X_train, y_train)
                     fitted[name] = model
                 except Exception as exc:
                     warnings.warn(f"Fit failed for {name} at t={t}: {exc}")
@@ -634,6 +645,15 @@ def fit_predict_walk_forward(
                 preds[name][t] = model.predict(X_values[t : t + 1])[0]
             except Exception:
                 pass
+
+        # Walk-forward ensemble: equal-weight average of non-naive ML models
+        # computed from already-available predictions at step t (no extra training).
+        ml_names = [n for n in fitted if n not in {"AR1"} and n in preds]
+        ml_preds_t = [preds[n][t] for n in ml_names if not np.isnan(preds[n][t])]
+        if ml_preds_t:
+            if "Ensemble" not in preds:
+                preds["Ensemble"] = np.full(n_obs, np.nan, dtype=float)
+            preds["Ensemble"][t] = float(np.mean(ml_preds_t))
 
     pred_df = pd.DataFrame(preds, index=idx)
     metrics_df = compute_prediction_metrics(y.loc[idx], pred_df)

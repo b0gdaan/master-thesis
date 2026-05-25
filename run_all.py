@@ -1,10 +1,12 @@
 """
-Full reproducibility runner: pipeline → notebooks → LaTeX PDF
+Full reproducibility runner: pipeline → notebooks → tests → LaTeX PDF
 
 Usage:
-    python run_all.py                 # all steps
-    python run_all.py --skip-latex    # skip LaTeX compilation
+    python run_all.py                  # all steps
+    python run_all.py --skip-latex     # skip LaTeX compilation
     python run_all.py --skip-notebooks
+    python run_all.py --skip-tests
+    python run_all.py --tests-only     # run tests and regenerate PDF only
 """
 import argparse
 import importlib.metadata
@@ -12,6 +14,7 @@ import os
 import subprocess
 import sys
 import time
+import xml.etree.ElementTree as ET
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 THESIS_DIR = os.path.join(BASE, "thesis")
@@ -191,14 +194,135 @@ def step_latex():
         print("\nWARNING: main.pdf not found after compilation.")
 
 
+def step_tests() -> bool:
+    """Run the full pytest suite, save JUnit XML + human-readable summary,
+    and generate a LaTeX table for the thesis appendix.
+
+    Returns True if all tests passed (or only skipped), False if any failed.
+    """
+    results_dir = os.path.join(BASE, "outputs", "results")
+    tables_dir  = os.path.join(BASE, "outputs", "tables")
+    os.makedirs(results_dir, exist_ok=True)
+    os.makedirs(tables_dir,  exist_ok=True)
+
+    xml_path = os.path.join(results_dir, "test_results.xml")
+    txt_path = os.path.join(results_dir, "test_results.txt")
+
+    print(f"\n{'=' * 60}\nSTEP 3: pytest — automated validation suite\n{'=' * 60}")
+    t0 = time.perf_counter()
+
+    with open(txt_path, "w", encoding="utf-8") as txt_fh:
+        proc = subprocess.run(
+            [PYTHON, "-m", "pytest", "tests/", "-v",
+             "--tb=short",
+             f"--junit-xml={xml_path}"],
+            cwd=BASE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
+        output = proc.stdout.decode("utf-8", errors="replace")
+        txt_fh.write(output)
+        print(output)
+
+    elapsed = time.perf_counter() - t0
+    passed = proc.returncode == 0
+    print(f"Tests finished in {elapsed:.1f}s — {'ALL PASSED' if passed else 'SOME FAILED'}")
+
+    # ── Generate LaTeX table from JUnit XML ──────────────────────────────────
+    if os.path.exists(xml_path):
+        _tests_to_latex(xml_path, os.path.join(tables_dir, "test_report.tex"))
+
+    return passed
+
+
+def _tests_to_latex(xml_path: str, out_tex: str) -> None:
+    """Parse pytest JUnit XML → LaTeX longtable for the thesis appendix."""
+    try:
+        tree = ET.parse(xml_path)
+        root = tree.getroot()
+    except Exception as exc:
+        print(f"WARNING: could not parse test XML: {exc}")
+        return
+
+    # Collect all <testcase> elements (may be nested under <testsuite>)
+    testcases = root.findall(".//testcase")
+    if not testcases:
+        return
+
+    n_pass = n_fail = n_skip = 0
+    rows = []
+    for tc in testcases:
+        classname = tc.get("classname", "").split(".")[-1]  # last component
+        name      = tc.get("name", "")
+        time_s    = tc.get("time", "")
+        failure   = tc.find("failure")
+        error     = tc.find("error")
+        skipped   = tc.find("skipped")
+
+        if skipped is not None:
+            status = "Skip"; n_skip += 1
+        elif failure is not None or error is not None:
+            status = "FAIL"; n_fail += 1
+        else:
+            status = "Pass"; n_pass += 1
+
+        # Human-readable name: strip test_ prefix and underscores
+        display = name.replace("test_", "").replace("_", " ")
+        rows.append((classname, display, status, time_s))
+
+    color_map = {"Pass": r"\textcolor{teal}{Pass}",
+                 "FAIL": r"\textcolor{red}{\textbf{FAIL}}",
+                 "Skip": r"\textcolor{gray}{Skip}"}
+
+    lines = [
+        r"\begin{table}[H]",
+        r"\centering",
+        r"\small",
+        r"\caption{Automated validation suite results}",
+        r"\label{tab:test_report}",
+        r"\begin{tabular}{llcr}",
+        r"\toprule",
+        r"Test class & Description & Result & Time (s) \\",
+        r"\midrule",
+    ]
+    prev_class = None
+    for cls, desc, status, t in rows:
+        cls_cell = cls if cls != prev_class else r"\quad\textit{(cont.)}"
+        prev_class = cls
+        safe_cls  = cls_cell.replace("_", r"\_")
+        safe_desc = desc[:60]  # truncate long names
+        lines.append(
+            f"{safe_cls} & {safe_desc} & {color_map.get(status, status)} & {t} \\\\"
+        )
+    lines += [
+        r"\midrule",
+        rf"\multicolumn{{4}}{{r}}{{\small "
+        rf"Passed: \textbf{{{n_pass}}} \quad "
+        rf"Failed: \textbf{{{n_fail}}} \quad "
+        rf"Skipped: \textbf{{{n_skip}}} \quad "
+        rf"Total: \textbf{{{n_pass + n_fail + n_skip}}}}} \\",
+        r"\bottomrule",
+        r"\end{tabular}",
+        r"\end{table}",
+    ]
+
+    with open(out_tex, "w", encoding="utf-8") as fh:
+        fh.write("\n".join(lines))
+    print(f"Test report LaTeX saved → {out_tex}")
+
+
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Full reproducibility runner: pipeline → notebooks → LaTeX PDF"
+        description="Full reproducibility runner: pipeline → notebooks → tests → LaTeX PDF"
     )
     parser.add_argument("--skip-notebooks", action="store_true",
                         help="Skip Jupyter notebook execution")
     parser.add_argument("--skip-latex", action="store_true",
                         help="Skip LaTeX PDF compilation")
+    parser.add_argument("--skip-tests", action="store_true",
+                        help="Skip automated test suite")
+    parser.add_argument("--tests-only", action="store_true",
+                        help="Run tests and recompile PDF only (skip pipeline + notebooks)")
     return parser.parse_args()
 
 
@@ -207,17 +331,26 @@ if __name__ == "__main__":
     _preflight_check()
     t_start = time.perf_counter()
 
-    step_pipeline()
-
-    if not args.skip_notebooks:
-        step_notebooks()
-    else:
-        print("\nSkipping notebooks (--skip-notebooks).")
-
-    if not args.skip_latex:
+    if args.tests_only:
+        step_tests()
         step_latex()
     else:
-        print("\nSkipping LaTeX (--skip-latex).")
+        step_pipeline()
+
+        if not args.skip_notebooks:
+            step_notebooks()
+        else:
+            print("\nSkipping notebooks (--skip-notebooks).")
+
+        if not args.skip_tests:
+            step_tests()
+        else:
+            print("\nSkipping tests (--skip-tests).")
+
+        if not args.skip_latex:
+            step_latex()
+        else:
+            print("\nSkipping LaTeX (--skip-latex).")
 
     total = time.perf_counter() - t_start
     mins, secs = divmod(int(total), 60)

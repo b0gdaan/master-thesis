@@ -16,8 +16,10 @@ env/
 
 # IDE / Editor
 .idea/
-.vscode/
 *.iml
+# VS Code — track settings.json for shared config, ignore personal files
+.vscode/*
+!.vscode/settings.json
 
 # Local development tool traces
 .claude/
