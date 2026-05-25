@@ -1,4 +1,4 @@
 @echo off
-cd /d "D:\clear"
-"D:\clear\.venv\Scripts\python.exe" "D:\clear\run_all.py" %*
+cd /d "%~dp0"
+python run_all.py %*
 pause
