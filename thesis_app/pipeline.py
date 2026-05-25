@@ -118,7 +118,7 @@ def fetch_prices(paths: Paths, tickers: List[str], start: str, end: Optional[str
         if not missing:
             required_end = pd.Timestamp(end) if end else pd.Timestamp.today()
             cache_covers = (
-                cached.index.min() <= pd.Timestamp(start) + pd.Timedelta(days=5)
+                cached.index.min() <= pd.Timestamp(start)
                 and cached.index.max() >= required_end - pd.Timedelta(days=7)
             )
             if cache_covers:
@@ -199,24 +199,51 @@ def build_features(
     idx = y_target.index
     features = pd.DataFrame(index=idx)
 
+    # ── Dependency lags (extended: monthly + quarterly) ──────────────────────
     y_current = y_target.shift(horizon).reindex(idx)
-    for lag in [1, 2, 5, 10]:
+    for lag in [1, 2, 5, 10, 20, 60]:
         features[f"dep_lag{lag}"] = y_current.shift(lag)
 
-    features["vol_base"] = returns[base].rolling(window).std().reindex(idx)
-    features["vol_other"] = returns[other].rolling(window).std().reindex(idx)
+    # ── Dependency momentum (trend of the correlation series) ────────────────
+    features["dep_mom_5"]  = y_current.diff(5).reindex(idx)
+    features["dep_mom_20"] = y_current.diff(20).reindex(idx)
 
-    for lag in [1, 2, 5]:
-        features[f"r_base_lag{lag}"] = returns[base].shift(lag).reindex(idx)
+    # ── Dependency regime: z-score relative to trailing 252-day history ──────
+    dep_roll_mean = y_current.rolling(252, min_periods=60).mean()
+    dep_roll_std  = y_current.rolling(252, min_periods=60).std()
+    features["dep_zscore"] = ((y_current - dep_roll_mean) / (dep_roll_std + 1e-8)).reindex(idx)
+
+    # ── Volatility (two windows) ──────────────────────────────────────────────
+    features["vol_base"]    = returns[base].rolling(window).std().reindex(idx)
+    features["vol_other"]   = returns[other].rolling(window).std().reindex(idx)
+    features["vol_base_60"] = returns[base].rolling(60).std().reindex(idx)
+    features["vol_other_60"] = returns[other].rolling(60).std().reindex(idx)
+    features["vol_ratio"]   = (features["vol_base"] / (features["vol_other"] + 1e-10)).reindex(idx)
+
+    # ── Return lags (extended) ────────────────────────────────────────────────
+    for lag in [1, 2, 5, 10, 20]:
+        features[f"r_base_lag{lag}"]  = returns[base].shift(lag).reindex(idx)
         features[f"r_other_lag{lag}"] = returns[other].shift(lag).reindex(idx)
 
-    features["mean_base"] = returns[base].rolling(window).mean().reindex(idx)
+    # ── Rolling mean returns ──────────────────────────────────────────────────
+    features["mean_base"]  = returns[base].rolling(window).mean().reindex(idx)
     features["mean_other"] = returns[other].rolling(window).mean().reindex(idx)
-    features["abs_spread"] = (returns[base] - returns[other]).abs().rolling(5).mean().reindex(idx)
 
+    # ── Dispersion features ───────────────────────────────────────────────────
+    features["abs_spread"]    = (returns[base] - returns[other]).abs().rolling(5).mean().reindex(idx)
+    features["abs_spread_20"] = (returns[base] - returns[other]).abs().rolling(20).mean().reindex(idx)
+
+    # ── Multi-scale correlation structure ─────────────────────────────────────
     corr_short = rolling_corr(returns[base], returns[other], max(5, window // 4)).reindex(idx)
-    corr_long = rolling_corr(returns[base], returns[other], window).reindex(idx)
+    corr_long  = rolling_corr(returns[base], returns[other], window).reindex(idx)
     features["corr_diff"] = corr_short - corr_long
+
+    # Velocity: how fast is the short-run correlation changing
+    features["corr_short_mom"] = corr_short.diff(5).reindex(idx)
+
+    # ── Base asset squared return (volatility proxy, no look-ahead) ──────────
+    features["r_base_sq_lag1"]  = (returns[base].shift(1) ** 2).reindex(idx)
+    features["r_other_sq_lag1"] = (returns[other].shift(1) ** 2).reindex(idx)
 
     return features.dropna()
 
@@ -226,11 +253,14 @@ def _make_xgb(device: str, random_state: int):
         return None
 
     common = dict(
-        n_estimators=200,
-        max_depth=5,
-        learning_rate=0.05,
+        n_estimators=500,
+        max_depth=6,
+        learning_rate=0.02,
         subsample=0.8,
         colsample_bytree=0.8,
+        min_child_weight=3,
+        reg_alpha=0.1,
+        reg_lambda=1.0,
         # random_state is the sklearn-compatible alias for XGBoost's `seed` parameter.
         # Both are set explicitly so results are reproducible across XGBoost API versions.
         random_state=random_state,
@@ -501,9 +531,10 @@ def test_cross_asset_performance_difference(
         e_eq  = np.mean(np.vstack([e[-min_len:] for e in eq_errors]),  axis=0)
         e_neq = np.mean(np.vstack([e[-min_len:] for e in neq_errors]), axis=0)
         dm = diebold_mariano(e_eq, e_neq, h=1, nw_lag=int(cfg.get("dm_nw_lag", 0)))
-        sig = ("***" if (dm.get("p_value") or 1) < 0.01
-               else "**" if (dm.get("p_value") or 1) < 0.05
-               else "*"  if (dm.get("p_value") or 1) < 0.10
+        pv = dm.get("p_value")
+        sig = ("***" if pv is not None and pv < 0.01
+               else "**" if pv is not None and pv < 0.05
+               else "*"  if pv is not None and pv < 0.10
                else "n.s.")
         rows.append({
             "group_a": "equity", "assets_a": str(equity_assets),
@@ -543,10 +574,10 @@ def fit_predict_walk_forward(
     model_specs: Dict[str, Optional[object]] = {
         "Naive_Last": None,
         "AR1": LinearRegression(),
-        "ElasticNet": make_pipeline(StandardScaler(), ElasticNet(alpha=0.01, l1_ratio=0.5, random_state=random_state, max_iter=5000)),
-        "Ridge": make_pipeline(StandardScaler(), Ridge(alpha=1.0)),
-        "RF": RandomForestRegressor(n_estimators=100, max_depth=8, random_state=random_state, n_jobs=rf_n_jobs),
-        "GBM": GradientBoostingRegressor(n_estimators=100, max_depth=4, learning_rate=0.05, random_state=random_state),
+        "ElasticNet": make_pipeline(StandardScaler(), ElasticNet(alpha=0.005, l1_ratio=0.5, random_state=random_state, max_iter=5000)),
+        "Ridge": make_pipeline(StandardScaler(), Ridge(alpha=0.5)),
+        "RF": RandomForestRegressor(n_estimators=200, max_depth=10, min_samples_leaf=5, random_state=random_state, n_jobs=rf_n_jobs),
+        "GBM": GradientBoostingRegressor(n_estimators=300, max_depth=4, learning_rate=0.02, subsample=0.8, min_samples_leaf=5, random_state=random_state),
     }
 
     if use_xgb and XGB_AVAILABLE:
@@ -682,9 +713,9 @@ def describe_dataset(prices: pd.DataFrame, returns: pd.DataFrame, paths: Paths, 
         ax.plot(prices.index, normed, label=column, linewidth=1)
     ax.set_title("Normalized prices (Yahoo Finance, adjusted close)")
     ax.legend(loc="best", ncol=2, fontsize=9)
-    plt.tight_layout()
-    plt.savefig(os.path.join(paths.figures, "dataset_prices.png"), dpi=120)
-    plt.close()
+    fig.tight_layout()
+    fig.savefig(os.path.join(paths.figures, "dataset_prices.png"), dpi=120)
+    plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(13, 5))
     roll = returns.rolling(30).std()
@@ -692,9 +723,9 @@ def describe_dataset(prices: pd.DataFrame, returns: pd.DataFrame, paths: Paths, 
         ax.plot(roll.index, roll[column], label=column, linewidth=1)
     ax.set_title("30-day rolling volatility of log-returns")
     ax.legend(loc="best", ncol=2, fontsize=9)
-    plt.tight_layout()
-    plt.savefig(os.path.join(paths.figures, "dataset_volatility.png"), dpi=120)
-    plt.close()
+    fig.tight_layout()
+    fig.savefig(os.path.join(paths.figures, "dataset_volatility.png"), dpi=120)
+    plt.close(fig)
 
     corr = returns.corr()
     fig, ax = plt.subplots(figsize=(9, 7))
