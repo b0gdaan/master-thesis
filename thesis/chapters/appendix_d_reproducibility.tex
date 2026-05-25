@@ -86,7 +86,14 @@ for nb in ["01_EDA_Dataset.ipynb", ..., "07_Robustness_Checks.ipynb"]:
         cwd=BASE
     )
 
-# Step 3: compile the thesis PDF
+# Step 3: run automated test suite (81 unit and integration tests)
+subprocess.run(
+    [PYTHON, "-m", "pytest", "tests/", "-v",
+     "--junit-xml=outputs/results/test_results.xml"],
+    cwd=BASE
+)
+
+# Step 4: compile the thesis PDF (test report table auto-included)
 subprocess.run(
     ["latexmk", "-pdf", "-interaction=nonstopmode", "main.tex"],
     cwd=os.path.join(BASE, "thesis"), check=True
@@ -105,6 +112,8 @@ At a high level, the execution flow can be summarized as follows:
     \item Compute metrics, DM tests, and export tables and figures.
     \item Run the investor signal layer and export signal figures.
     \item Execute seven Jupyter notebooks to produce supplementary diagnostics.
+    \item Run the automated \texttt{pytest} suite (81 unit and integration tests)
+          and generate the test-report table for Appendix~E.
     \item Compile the \LaTeX\ thesis document.
 \end{enumerate}
 
@@ -171,13 +180,19 @@ Alternatively, the three stages can be executed individually:
         \item \texttt{06\_Regime\_Analysis.ipynb} --- regime catalogue and data-quality diagnostics.
         \item \texttt{07\_Robustness\_Checks.ipynb} --- refit sensitivity, stress threshold sensitivity, bootstrap confidence intervals, signal diagnostics, and cross-asset DM test.
     \end{enumerate}
+    \item Run the automated test suite and generate the appendix table:
+\begin{lstlisting}[language={}]
+python -m pytest tests/ -v --junit-xml=outputs/results/test_results.xml
+\end{lstlisting}
     \item Rebuild the PDF document from the \texttt{thesis/} directory:
 \begin{lstlisting}[language={}]
 pdflatex main.tex && biber main && pdflatex main.tex && pdflatex main.tex
 \end{lstlisting}
 \end{enumerate}
 
-Steps 1 and 2 must be completed before step 3 because several figures used in the thesis are produced by the notebooks. This makes the written work maintainable even if the underlying market data are refreshed.
+Steps 1 and 2 must be completed before step 4 because several figures used in the thesis are produced by the notebooks.
+Step 3 must be completed before step 4 so that the test-report table (Appendix~E) is up to date.
+This makes the written work maintainable even if the underlying market data are refreshed.
 
 \subsection{Final reproducibility note}
 
