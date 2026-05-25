@@ -347,8 +347,6 @@ def diagnose_signal_collapse(
         })
 
     diag_df = pd.DataFrame(rows)
-    if not diag_df.empty:
-        diag_df.to_csv(out_path, index=False)
     return diag_df
 
 
@@ -394,7 +392,7 @@ def run_stress_threshold_sensitivity(
         nr    = next_returns.loc[mask]
 
         # Recompute trailing vol from next_returns (approximate; real code uses returns)
-        trail_vol = nr.rolling(20).std().shift(1)
+        trail_vol = next_returns.rolling(20).std().shift(1).loc[mask]
 
         for sigma in sigma_thresholds:
             # Redefine target with this sigma
