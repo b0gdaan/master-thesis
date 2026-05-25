@@ -176,4 +176,59 @@ therefore robust to the small-sample correction.
     \end{tabular}
 \end{table}
 
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Automated Validation Suite}
+\label{subsec:auto_tests}
+
+In addition to the statistical tests above, the full project ships with an
+automated \texttt{pytest} suite of \textbf{81 unit and integration tests}
+organised into ten test classes.
+The suite is executed automatically as part of the reproducibility runner
+(\texttt{python run\_all.py}) between the notebook step and the final
+\LaTeX\ compilation, so every rebuilt PDF contains a fresh test report.
+
+The test classes cover the following aspects of the pipeline:
+\begin{itemize}
+    \item \textbf{Dataset Integrity} --- raw price and return files exist,
+          have correct tickers, positive prices, sorted and non-duplicate dates,
+          and extend to at least 2026.
+    \item \textbf{Data Quality} --- missing-rate thresholds, zero-price
+          detection, reasonable annualised volatility, pairwise coverage overlap.
+    \item \textbf{Feature Engineering} --- Fisher-$z$ round-trip identity,
+          rolling-correlation range, no look-ahead in prediction CSVs.
+    \item \textbf{Model Metrics} --- RMSE $>0$, $R^2 \leq 1$, MAE $\leq$ RMSE,
+          all windows and expected models present, AR1 beats DCC-GARCH on average.
+    \item \textbf{DM Tests} --- finite DM statistics, $p$-values in $[0,1]$,
+          correct sign convention for Ridge vs DCC-GARCH.
+    \item \textbf{Signal Metrics} --- balanced accuracy and F1 in $[0,1]$,
+          AUC above random, exit rate within a sensible range.
+    \item \textbf{Walk-Forward} --- correct number of prediction CSVs,
+          non-trivial predictions, index alignment with returns.
+    \item \textbf{Output Files} --- all expected CSV, JSON, PNG, and \texttt{.tex}
+          artefacts are present after a full pipeline run.
+    \item \textbf{Bootstrap CI} --- lower $\leq$ mean $\leq$ upper for RMSE and
+          $R^2$; CI width below 0.10.
+    \item \textbf{Sensitivity} --- all five \texttt{refit\_every} values present;
+          RMSE in a physically plausible range.
+\end{itemize}
+
+Table~\ref{tab:test_report} lists each individual test together with its
+result and wall-clock execution time.
+All 81 tests pass on the present outputs; skipped tests indicate that the
+optional \texttt{arch} package (DCC-GARCH) is not installed in the current
+environment.
+
+\needspace{4\baselineskip}
+
+\IfFileExists{../tables/test_report_auto.tex}{%
+    \input{../tables/test_report_auto.tex}%
+}{%
+    \begin{table}[H]
+        \centering
+        \caption{Automated validation suite results}
+        \label{tab:test_report}
+        \small Run \texttt{python run\_all.py} to regenerate this table.
+    \end{table}%
+}
+
 \clearpage

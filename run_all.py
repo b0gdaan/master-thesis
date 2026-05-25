@@ -231,6 +231,10 @@ def step_tests() -> bool:
     # ── Generate LaTeX table from JUnit XML ──────────────────────────────────
     if os.path.exists(xml_path):
         _tests_to_latex(xml_path, os.path.join(tables_dir, "test_report.tex"))
+        # Also write directly into thesis/tables/ so \input{} in appendix works
+        thesis_tables = os.path.join(BASE, "thesis", "tables")
+        os.makedirs(thesis_tables, exist_ok=True)
+        _tests_to_latex(xml_path, os.path.join(thesis_tables, "test_report_auto.tex"))
 
     return passed
 
@@ -274,36 +278,47 @@ def _tests_to_latex(xml_path: str, out_tex: str) -> None:
                  "FAIL": r"\textcolor{red}{\textbf{FAIL}}",
                  "Skip": r"\textcolor{gray}{Skip}"}
 
+    total = n_pass + n_fail + n_skip
+    caption = (
+        r"\caption{Automated validation suite: "
+        + str(total)
+        + r" tests covering dataset integrity, feature engineering, model metrics,"
+          r" DM tests, signal layer, and reproducibility.}"
+    )
     lines = [
-        r"\begin{table}[H]",
-        r"\centering",
-        r"\small",
-        r"\caption{Automated validation suite results}",
-        r"\label{tab:test_report}",
-        r"\begin{tabular}{llcr}",
+        r"\begin{longtable}{p{3.2cm}p{6.5cm}cr}",
+        caption,
+        r"\label{tab:test_report} \\",
         r"\toprule",
-        r"Test class & Description & Result & Time (s) \\",
+        r"Test class & Description & Result & s \\",
         r"\midrule",
+        r"\endfirsthead",
+        r"\multicolumn{4}{l}{\small\textit{(continued from previous page)}} \\",
+        r"\toprule",
+        r"Test class & Description & Result & s \\",
+        r"\midrule",
+        r"\endhead",
+        r"\midrule",
+        r"\multicolumn{4}{r}{\small\textit{continued on next page}} \\",
+        r"\endfoot",
+        r"\bottomrule",
+        r"\endlastfoot",
     ]
     prev_class = None
     for cls, desc, status, t in rows:
-        cls_cell = cls if cls != prev_class else r"\quad\textit{(cont.)}"
+        cls_cell = cls if cls != prev_class else ""
         prev_class = cls
-        safe_cls  = cls_cell.replace("_", r"\_")
-        safe_desc = desc[:60]  # truncate long names
+        safe_desc = desc[:65]
         lines.append(
-            f"{safe_cls} & {safe_desc} & {color_map.get(status, status)} & {t} \\\\"
+            f"{cls_cell} & {safe_desc} & {color_map.get(status, status)} & {t} \\\\"
         )
     lines += [
-        r"\midrule",
         rf"\multicolumn{{4}}{{r}}{{\small "
-        rf"Passed: \textbf{{{n_pass}}} \quad "
-        rf"Failed: \textbf{{{n_fail}}} \quad "
-        rf"Skipped: \textbf{{{n_skip}}} \quad "
-        rf"Total: \textbf{{{n_pass + n_fail + n_skip}}}}} \\",
-        r"\bottomrule",
-        r"\end{tabular}",
-        r"\end{table}",
+        rf"Passed: \textbf{{{n_pass}}}\quad "
+        rf"Failed: \textbf{{{n_fail}}}\quad "
+        rf"Skipped: \textbf{{{n_skip}}}\quad "
+        rf"Total: \textbf{{{total}}}}} \\",
+        r"\end{longtable}",
     ]
 
     with open(out_tex, "w", encoding="utf-8") as fh:
