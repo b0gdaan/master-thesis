@@ -54,6 +54,102 @@ The results are based on one-step-ahead forecasting. Multi-step performance coul
 
 Finally, no transaction-cost analysis was done. Whether the signal produces risk-adjusted gains in a real portfolio after costs and turnover constraints is unknown. That would require a separate study with explicit portfolio construction assumptions.
 
+\subsection{Iterative model development: what changed across versions}
+\label{subsec:iterations}
+
+The final model presented in this thesis is the result of several months of iterative refinement.
+This section documents that process honestly, because the sequence of changes --- what was tried,
+what failed, and what eventually helped --- is itself an empirical result about the nature of the
+forecasting problem.
+
+\paragraph{Version 1 (March 2026): minimal baseline.}
+The first working prototype contained seven models: Naive\_Last, AR1, Ridge, ElasticNet,
+Random Forest, Gradient Boosting, and XGBoost.
+Feature engineering was minimal: four autoregressive lags of the rolling correlation,
+short-window volatilities for both assets, and lagged returns up to lag~5.
+No DCC-GARCH benchmark was included at this stage.
+Hyperparameter tuning was ad hoc: Ridge $\alpha = 1.0$, ElasticNet $\alpha = 0.01$,
+XGBoost with 1000 estimators and learning rate 0.05.
+No feature scaling was applied to linear models.
+The best OOS RMSE for BTC-USD vs S\&P~500 at $w = 30$ was Ridge at 0.0897,
+with AR1 performing comparably.
+
+\paragraph{Version 2 (October 2026): DCC-GARCH and signal layer.}
+The second major milestone introduced the DCC-GARCH econometric benchmark via a
+walk-forward protocol that matched the expanding-window setup used for machine-learning models.
+This was a critical correctness fix: an earlier full-sample DCC fit would have granted the
+benchmark access to future data, invalidating the comparison.
+The investor signal layer was added as a second stage, classifying whether conventional
+assets were entering stress regimes using the rolling-dependency features.
+Core model hyperparameters and feature sets were unchanged from Version~1.
+
+\paragraph{Version 3 (November 2026, pre-Turkey checkpoint): stabilisation.}
+This version stabilised the pipeline before a planned travel break.
+No metric improvements were achieved; the focus was on robustness:
+XGBoost GPU-to-CPU fallback, better exception handling, and consistent metric exports.
+OOS results were nearly identical to Version~2, confirming that the Version~1 performance
+plateau was not an artefact of implementation bugs.
+
+\paragraph{Version 4 (May 2026): feature expansion, regularisation revision, and HAR.}
+The final version incorporated several targeted improvements informed by the
+Version~1--3 plateau:
+
+\begin{itemize}
+    \item \textbf{Feature engineering expanded from $\approx$15 to $\approx$35 features.}
+          New features include momentum and z-score of the rolling correlation
+          (\texttt{dep\_mom\_5}, \texttt{dep\_mom\_20}, \texttt{dep\_zscore}),
+          extended lags (\texttt{dep\_lag20}, \texttt{dep\_lag60}), a 60-day volatility
+          window, the volatility ratio between assets, squared-return proxies, and a
+          short-run correlation momentum term.
+    \item \textbf{HAR model added.}
+          The Heterogeneous AutoRegressive (HAR) model
+          \cite{corsi2009simple}
+          was introduced as a theoretically grounded alternative to AR1.
+          HAR uses three temporal scales simultaneously:
+          $\hat{\rho}_{t+1} = \alpha + \beta_d\,\rho_t + \beta_w\,\bar{\rho}^{(5)}_t + \beta_m\,\bar{\rho}^{(22)}_t + \varepsilon_{t+1}$,
+          where $\bar{\rho}^{(k)}_t$ denotes the equally-weighted average of the previous
+          $k$ observations.
+          Originally developed for realised variance, HAR is well-suited to rolling
+          correlations because the overlapping-window structure creates natural
+          heterogeneous memory at daily, weekly, and monthly horizons.
+    \item \textbf{Regularisation philosophy revised.}
+          Ridge regularisation was reduced from $\alpha = 1.0$ to $\alpha = 0.5$
+          and an explicit \texttt{StandardScaler} was added.
+          The combined effect was dramatic: Ridge RMSE at BTC-USD vs S\&P~500 $w = 30$
+          improved from 0.0897 (Version~1) to 0.0651, nearly matching AR1.
+          Conversely, XGBoost regularisation was \emph{tightened} (learning rate
+          0.05~$\to$~0.02, added $L_1/L_2$ penalties), reflecting the insight that
+          the expanded feature set increased overfitting risk for tree-based methods.
+    \item \textbf{Adaptive ensemble.}
+          The walk-forward ensemble now weights each constituent model by the inverse of
+          its RMSE over the most recent 60 out-of-sample predictions, rather than using
+          equal weights.
+          This allows the ensemble to adapt dynamically to regime shifts in which
+          different models temporarily dominate.
+    \item \textbf{Bootstrap confidence intervals and sensitivity analyses.}
+          500-replicate bootstrap CIs were added for RMSE and $R^2$,
+          and a refit-frequency sensitivity sweep across
+          $\{5, 10, 21, 42, 63\}$ days was included to verify that the
+          $\texttt{refit\_every} = 20$ default is not a cherry-picked choice.
+\end{itemize}
+
+\paragraph{What the iterations actually taught.}
+The most important lesson from four versions of the same model is negative:
+\emph{expanding the feature set from 15 to 35 variables did not help tree-based models}.
+XGBoost RMSE was virtually unchanged or slightly worse after the expansion, while Ridge,
+which uses the full feature set linearly with regularisation, improved substantially.
+This is consistent with the central finding of the thesis: the forecasting target has
+a nearly linear autoregressive structure, and the incremental information in
+volatility ratios, momentum, or return squares is captured well by a regularised linear
+model but does not add exploitable nonlinearity for gradient-boosted trees.
+
+The practical implication for future work is that \emph{better features} are unlikely to
+close the remaining gap between AR1 and machine learning on this task.
+Improvements would more plausibly come from a fundamentally different modelling approach
+--- multi-step horizons, high-frequency data, or joint modelling of multiple correlation pairs
+simultaneously.
+
+% ─────────────────────────────────────────────────────────────────────────────
 \subsection{Limitations, honestly stated}
 
 The main limitations are: daily frequency (no intraday), one-step horizon, Pearson correlation as the only dependency measure, a single base cryptocurrency (Bitcoin), and no portfolio backtest. Each represents a natural extension that could sharpen or complicate the findings. None of them invalidates the core empirical results within the scope of what was actually tested.

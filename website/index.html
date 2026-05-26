@@ -349,6 +349,7 @@ p{text-align:left}
       <a href="#dm-tests"    id="nav-dm">DM Tests</a>
       <a href="#signal"      id="nav-signal">Signal Layer</a>
       <a href="#conclusions" id="nav-concl">Conclusions</a>
+      <a href="#journey"     id="nav-journey">Dev Journey</a>
       <a href="#gallery"     id="nav-gallery">Figures</a>
       <a href="#repro"       id="nav-repro">Reproducibility</a>
       <a href="#references"  id="nav-refs">References</a>
@@ -1076,6 +1077,169 @@ p{text-align:left}
 </div>
 </section>
 
+<!-- MODEL DEVELOPMENT JOURNEY -->
+<section class="section" id="journey">
+<div class="container">
+  <h2 id="journey-title">Model Development Journey</h2>
+  <p class="section-intro" id="journey-intro">
+    The final model is the result of several months of iterative research.
+    Each version taught something concrete about the structure of the forecasting problem.
+  </p>
+
+  <!-- Timeline -->
+  <div style="position:relative;padding-left:32px;margin-top:32px">
+    <!-- Vertical line -->
+    <div style="position:absolute;left:11px;top:0;bottom:0;width:2px;background:var(--border)"></div>
+
+    <!-- V1 -->
+    <div style="position:relative;margin-bottom:40px">
+      <div style="position:absolute;left:-32px;top:4px;width:22px;height:22px;border-radius:50%;
+                  background:var(--bg3);border:2px solid var(--blue);display:flex;align-items:center;
+                  justify-content:center;font-size:10px;font-weight:700;color:var(--blue)">1</div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+          <span class="tag tag-blue" id="v1-tag">Version 1</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)">March 2026</span>
+          <span class="tag tag-orange" id="v1-feat-tag">~15 features</span>
+        </div>
+        <h3 id="v1-title">Minimal Baseline</h3>
+        <p id="v1-desc">First working prototype with 7 models (AR1, Ridge, ElasticNet, RF, GBM, XGBoost, Naive_Last).
+        Minimal features: 4 AR lags, short-window volatilities, returns up to lag 5. No DCC-GARCH benchmark.
+        No feature scaling for linear models. Ridge α=1.0, XGBoost lr=0.05.</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px">
+          <div style="background:var(--bg3);border-radius:var(--radius);padding:10px;text-align:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--red-text)">0.0897</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px" id="v1-m1">Ridge RMSE (BTC/SPX w=30)</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:var(--radius);padding:10px;text-align:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--orange-text)">7</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px" id="v1-m2">Models</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:var(--radius);padding:10px;text-align:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--text2)">—</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px" id="v1-m3">DCC-GARCH</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- V2 -->
+    <div style="position:relative;margin-bottom:40px">
+      <div style="position:absolute;left:-32px;top:4px;width:22px;height:22px;border-radius:50%;
+                  background:var(--bg3);border:2px solid var(--purple);display:flex;align-items:center;
+                  justify-content:center;font-size:10px;font-weight:700;color:var(--purple-text)">2</div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+          <span class="tag tag-purple" id="v2-tag">Version 2</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)">October 2026</span>
+          <span class="tag tag-green" id="v2-feat-tag">+ DCC-GARCH</span>
+        </div>
+        <h3 id="v2-title">Econometric Benchmark + Signal Layer</h3>
+        <p id="v2-desc">Critical fix: DCC-GARCH added with proper walk-forward protocol (previously would have used
+        full-sample future data — invalid comparison). Investor stress-signal layer added as a binary classifier
+        on top of correlation forecasts. No change to ML hyperparameters or features.</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px">
+          <div style="background:var(--bg3);border-radius:var(--radius);padding:10px;text-align:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--red-text)">0.2193</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px" id="v2-m1">DCC RMSE (BTC/SPX w=30)</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:var(--radius);padding:10px;text-align:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--orange-text)">8</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px" id="v2-m2">Models</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:var(--radius);padding:10px;text-align:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--green-text)">✓</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px" id="v2-m3">Signal Layer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- V3 -->
+    <div style="position:relative;margin-bottom:40px">
+      <div style="position:absolute;left:-32px;top:4px;width:22px;height:22px;border-radius:50%;
+                  background:var(--bg3);border:2px solid var(--orange);display:flex;align-items:center;
+                  justify-content:center;font-size:10px;font-weight:700;color:var(--orange-text)">3</div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+          <span class="tag tag-orange" id="v3-tag">Version 3</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)" id="v3-date">November 2026 · Pre-Turkey checkpoint</span>
+          <span class="tag" style="background:var(--bg3);color:var(--text2)" id="v3-feat-tag">Stabilisation</span>
+        </div>
+        <h3 id="v3-title">Pipeline Robustness</h3>
+        <p id="v3-desc">Focused on robustness before a planned travel break: XGBoost GPU→CPU fallback,
+        consistent exception handling, clean metric exports. No metric improvements —
+        this confirmed the Version 1–2 plateau was genuine, not an implementation bug.</p>
+        <div style="background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.2);
+                    border-radius:var(--radius);padding:10px 14px;margin-top:12px">
+          <p style="margin:0;font-size:13px;color:var(--orange-text)" id="v3-note">
+            Key insight: results identical to V2 → the performance ceiling is real, not a bug.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- V4 -->
+    <div style="position:relative">
+      <div style="position:absolute;left:-32px;top:4px;width:22px;height:22px;border-radius:50%;
+                  background:var(--green);border:2px solid var(--green);display:flex;align-items:center;
+                  justify-content:center;font-size:10px;font-weight:700;color:#fff">4</div>
+      <div class="card" style="border-color:var(--green)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+          <span class="tag tag-green" id="v4-tag">Version 4 — Current</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)">May 2026</span>
+          <span class="tag tag-green" id="v4-feat-tag">~35 features</span>
+        </div>
+        <h3 id="v4-title">Feature Expansion · HAR · Adaptive Ensemble</h3>
+        <p id="v4-desc">Targeted improvements based on lessons from V1–V3:</p>
+        <ul style="margin:8px 0 12px 18px;font-size:13.5px;color:var(--text2);line-height:1.7" id="v4-list">
+          <li><strong style="color:var(--text)">35+ features</strong> — added correlation momentum, z-score, vol ratio, extended lags (lag20, lag60), squared returns</li>
+          <li><strong style="color:var(--text)">HAR model</strong> — Heterogeneous AutoRegressive with daily/weekly/monthly components (standard in financial correlation forecasting)</li>
+          <li><strong style="color:var(--text)">Adaptive ensemble</strong> — inverse-RMSE weighting over last 60 OOS steps instead of equal weights</li>
+          <li><strong style="color:var(--text)">Ridge rescaled</strong> — α 1.0→0.5 + StandardScaler: RMSE dropped from 0.0897 to 0.0651 (nearly matched AR1)</li>
+          <li><strong style="color:var(--text)">Bootstrap CIs</strong> + refit-frequency sensitivity sweep</li>
+        </ul>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px">
+          <div style="background:var(--bg3);border-radius:var(--radius);padding:10px;text-align:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--green-text)">0.0651</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px" id="v4-m1">Ridge RMSE (↓27%)</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:var(--radius);padding:10px;text-align:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--green-text)">10</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px" id="v4-m2">Models incl. HAR</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:var(--radius);padding:10px;text-align:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--green-text)">81</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px" id="v4-m3">Auto-tests</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:var(--radius);padding:10px;text-align:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--green-text)">0.994</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px" id="v4-m4">Best R² (ETH w=90)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /timeline -->
+
+  <!-- Key lesson box -->
+  <div style="background:var(--bg2);border:1px solid var(--blue-dim);border-radius:var(--radius-lg);
+              padding:20px 24px;margin-top:36px">
+    <h4 style="color:var(--blue);margin-bottom:8px;font-size:13px;text-transform:uppercase;
+               letter-spacing:.4px" id="lesson-label">Key Lesson from 4 Versions</h4>
+    <p style="margin:0;font-size:14.5px;color:var(--text);line-height:1.75" id="lesson-text">
+      Expanding features from 15 to 35 did <em>not</em> help tree-based models —
+      XGBoost RMSE was unchanged or slightly worse. Ridge improved dramatically,
+      but only after rescaling and regularisation adjustment, not because of new features.
+      The forecasting target has a nearly linear autoregressive structure.
+      Better performance likely requires multi-step horizons or higher-frequency data,
+      not more features at daily frequency.
+    </p>
+  </div>
+
+</div>
+</section>
+
 <!-- FIGURES GALLERY -->
 <section class="section" id="gallery">
 <div class="container">
@@ -1699,8 +1863,8 @@ loadPreset('normal');
 const T = {
   en: {
     nav: { demo:'▶ Live Demo', dataset:'Dataset', method:'Methodology', results:'Results',
-           dm:'DM Tests', signal:'Signal Layer', concl:'Conclusions', gallery:'Figures',
-           repro:'Reproducibility', refs:'References', about:'About' },
+           dm:'DM Tests', signal:'Signal Layer', concl:'Conclusions', journey:'Dev Journey',
+           gallery:'Figures', repro:'Reproducibility', refs:'References', about:'About' },
     heroBadge: 'Master Thesis · University of Kragujevac · 2026',
     heroTitle: 'Forecasting Time-Varying Intermarket Dependencies Between Cryptocurrencies and Conventional Assets Using Machine Learning',
     heroProg:  'University of Kragujevac · M.Sc. Artificial Intelligence',
@@ -1720,14 +1884,15 @@ const T = {
       methodology:'Methodology', results:'Empirical Results',
       'dm-tests':'Diebold–Mariano Tests', signal:'Investor Signal Layer',
       conclusions:'Conclusions, Limitations &amp; Future Work',
+      journey:'Model Development Journey',
       gallery:'Figures Gallery', repro:'Reproducibility',
       resources:'Learning Resources', references:'References', about:'About',
     },
   },
   ru: {
     nav: { demo:'▶ Демо', dataset:'Данные', method:'Методология', results:'Результаты',
-           dm:'Тест ДМ', signal:'Сигнал', concl:'Выводы', gallery:'Графики',
-           repro:'Воспроизводимость', refs:'Литература', about:'Обо мне' },
+           dm:'Тест ДМ', signal:'Сигнал', concl:'Выводы', journey:'История улучшений',
+           gallery:'Графики', repro:'Воспроизводимость', refs:'Литература', about:'Обо мне' },
     heroBadge: 'Магистерская диссертация · Университет Крагуевац · 2026',
     heroTitle: 'Прогнозирование временно-изменяемых межрыночных зависимостей между криптовалютами и традиционными активами с использованием машинного обучения',
     heroProg:  'Университет Крагуевац · Магистратура «Искусственный интеллект»',
@@ -1747,14 +1912,15 @@ const T = {
       methodology:'Методология', results:'Эмпирические результаты',
       'dm-tests':'Тесты Дибольда–Мариано', signal:'Инвесторский сигнальный слой',
       conclusions:'Выводы, ограничения и дальнейшие исследования',
+      journey:'История развития модели',
       gallery:'Галерея графиков', repro:'Воспроизводимость',
       resources:'Учебные ресурсы', references:'Список литературы', about:'Обо мне',
     },
   },
   sr: {
     nav: { demo:'▶ Демо', dataset:'Подаци', method:'Методологија', results:'Резултати',
-           dm:'ДМ тестови', signal:'Сигнал', concl:'Закључци', gallery:'Фигуре',
-           repro:'Репродуктивност', refs:'Литература', about:'О мени' },
+           dm:'ДМ тестови', signal:'Сигнал', concl:'Закључци', journey:'Развој модела',
+           gallery:'Фигуре', repro:'Репродуктивност', refs:'Литература', about:'О мени' },
     heroBadge: 'Мастер рад · Универзитет у Крагујевцу · 2026',
     heroTitle: 'Прогнозирање временски-променљивих међутржишних зависности између криптовалута и конвенционалних актива применом машинског учења',
     heroProg:  'Универзитет у Крагујевцу · Мастер студије Вештачка интелигенција',
@@ -1774,6 +1940,7 @@ const T = {
       methodology:'Методологија', results:'Емпиријски резултати',
       'dm-tests':'Diebold–Mariano тестови', signal:'Инвестициони сигнални слој',
       conclusions:'Закључци, ограничења и будући рад',
+      journey:'Историја развоја модела',
       gallery:'Галерија фигура', repro:'Репродуктивност',
       resources:'Образовни ресурси', references:'Литература', about:'О мени',
     },
@@ -1794,8 +1961,8 @@ function setLang(lang) {
   // Nav links
   const nk = { demo:'nav-demo', dataset:'nav-dataset', method:'nav-method',
                 results:'nav-results', dm:'nav-dm', signal:'nav-signal',
-                concl:'nav-concl', gallery:'nav-gallery', repro:'nav-repro',
-                refs:'nav-refs', about:'nav-about' };
+                concl:'nav-concl', journey:'nav-journey', gallery:'nav-gallery',
+                repro:'nav-repro', refs:'nav-refs', about:'nav-about' };
   Object.entries(nk).forEach(([k,id]) => {
     const el = document.getElementById(id);
     if(el && L.nav[k]) el.textContent = L.nav[k];
