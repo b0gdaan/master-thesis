@@ -573,7 +573,8 @@ def fit_predict_walk_forward(
 
     model_specs: Dict[str, Optional[object]] = {
         "Naive_Last": None,
-        "AR1": LinearRegression(),
+        "AR1":  LinearRegression(),
+        "HAR":  None,   # Heterogeneous AutoRegressive — fitted explicitly below
         "ElasticNet": make_pipeline(StandardScaler(), ElasticNet(alpha=0.005, l1_ratio=0.5, random_state=random_state, max_iter=5000)),
         "Ridge": make_pipeline(StandardScaler(), Ridge(alpha=0.5)),
         "RF": RandomForestRegressor(n_estimators=200, max_depth=10, min_samples_leaf=5, random_state=random_state, n_jobs=rf_n_jobs),
@@ -608,12 +609,34 @@ def fit_predict_walk_forward(
                 except Exception:
                     fitted.pop("AR1", None)
 
+            # HAR (Heterogeneous AutoRegressive) model:
+            # ρ̂_{t+1} = α + β_d·ρ_t + β_w·avg(ρ_{t-4}..ρ_t) + β_m·avg(ρ_{t-21}..ρ_t)
+            # Fitted by OLS; requires ≥23 training points with daily/weekly/monthly lags.
+            if t >= 50:
+                har_vals = y_series.iloc[:t].values
+                har_feat, har_tgt = [], []
+                for i in range(22, t):
+                    lag1 = har_vals[i - 1]
+                    lag_w = float(np.mean(har_vals[max(0, i - 5):i]))
+                    lag_m = float(np.mean(har_vals[max(0, i - 22):i]))
+                    tgt   = har_vals[i]
+                    if np.isfinite(lag1) and np.isfinite(lag_w) and np.isfinite(lag_m) and np.isfinite(tgt):
+                        har_feat.append([lag1, lag_w, lag_m])
+                        har_tgt.append(tgt)
+                if len(har_feat) >= 20:
+                    try:
+                        har_reg = LinearRegression()
+                        har_reg.fit(har_feat, har_tgt)
+                        fitted["HAR"] = har_reg
+                    except Exception:
+                        fitted.pop("HAR", None)
+
             # XGB: use last 20% of training window as early-stopping validation set.
             # A minimum of 100 validation points is required.
             xgb_key = next((k for k in model_specs if k.startswith("XGB_")), None)
 
             for name, model in list(model_specs.items()):
-                if model is None or name == "AR1":
+                if model is None or name in {"AR1", "HAR"}:
                     continue
                 try:
                     if name == xgb_key and len(X_train) >= 500:
@@ -638,22 +661,51 @@ def fit_predict_walk_forward(
             except Exception:
                 pass
 
+        # HAR prediction: use daily/weekly/monthly lags of the target series
+        if "HAR" in fitted and t >= 23:
+            lag1  = y_values[t - 1]
+            lag_w = float(np.mean(y_values[max(0, t - 5):t]))
+            lag_m = float(np.mean(y_values[max(0, t - 22):t]))
+            if np.isfinite(lag1) and np.isfinite(lag_w) and np.isfinite(lag_m):
+                try:
+                    preds["HAR"][t] = fitted["HAR"].predict([[lag1, lag_w, lag_m]])[0]
+                except Exception:
+                    pass
+
         for name, model in fitted.items():
-            if name == "AR1":
+            if name in {"AR1", "HAR"}:
                 continue
             try:
                 preds[name][t] = model.predict(X_values[t : t + 1])[0]
             except Exception:
                 pass
 
-        # Walk-forward ensemble: equal-weight average of non-naive ML models
-        # computed from already-available predictions at step t (no extra training).
-        ml_names = [n for n in fitted if n not in {"AR1"} and n in preds]
-        ml_preds_t = [preds[n][t] for n in ml_names if not np.isnan(preds[n][t])]
-        if ml_preds_t:
+        # ── Adaptive ensemble ─────────────────────────────────────────────────
+        # All non-naive models participate; weight = 1/RMSE over last 60 OOS steps.
+        # Falls back to equal weights when history is too short (<10 valid pairs).
+        _ADAPT_WIN = 60
+        _all_cands = [n for n in {**fitted, **{"HAR": fitted.get("HAR")}}
+                      if n not in {"Naive_Last"} and n in preds]
+        _avail = [n for n in _all_cands if np.isfinite(preds[n][t])]
+        if _avail:
             if "Ensemble" not in preds:
                 preds["Ensemble"] = np.full(n_obs, np.nan, dtype=float)
-            preds["Ensemble"][t] = float(np.mean(ml_preds_t))
+            weights: Dict[str, float] = {}
+            for n in _avail:
+                start = max(min_train, t - _ADAPT_WIN)
+                past_p = preds[n][start:t]
+                past_y = y_values[start:t]
+                ok = np.isfinite(past_p) & np.isfinite(past_y)
+                if ok.sum() >= 10:
+                    rmse_n = float(np.sqrt(np.mean((past_p[ok] - past_y[ok]) ** 2)))
+                    weights[n] = 1.0 / (rmse_n + 1e-9)
+                else:
+                    weights[n] = 1.0
+            total_w = sum(weights.values())
+            if total_w > 0:
+                preds["Ensemble"][t] = float(
+                    sum(weights[n] * preds[n][t] for n in _avail) / total_w
+                )
 
     pred_df = pd.DataFrame(preds, index=idx)
     metrics_df = compute_prediction_metrics(y.loc[idx], pred_df)
