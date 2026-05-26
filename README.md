@@ -43,7 +43,7 @@ Daily prices 2017–2026 · source: Yahoo Finance
 - **Target**: rolling Pearson correlation (BTC vs each asset) — windows: 14 / 30 / 60 / 90 days
 - **Transform**: Fisher-z (arctanh) for variance stabilization
 - **Features**: momentum, volatility, return-based predictors derived from the dependency series
-- **Models**: AR(1), ElasticNet, Ridge, Random Forest, GBM, XGBoost vs DCC-GARCH(1,1) benchmark
+- **Models**: AR(1), HAR, ElasticNet, Ridge, Adaptive Ensemble, Random Forest, GBM, XGBoost vs DCC-GARCH(1,1) benchmark
 - **Evaluation**: walk-forward expanding window (no data leakage)
 - **Statistical tests**: Diebold-Mariano with Newey-West correction
 - **Signal layer**: logistic classifier for investor stress-day detection on traditional assets
@@ -144,6 +144,7 @@ All parameters are in `config.yaml`:
 | `xgb_device` | `cuda` | `cuda` for GPU, `cpu` for CPU |
 | `min_train_size` | `800` | Minimum training observations (walk-forward) |
 | `refit_every` | `20` | Model refit frequency (trading days) |
+| `n_parallel_workers` | `8` | Parallel experiments (ThreadPoolExecutor) |
 | `enable_signal_layer` | `true` | Run investor stress-warning signal layer |
 
 ---
