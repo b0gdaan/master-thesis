@@ -19,22 +19,24 @@ Table~\ref{tab:model_ranking_summary} reports the average out-of-sample performa
         \toprule
         Model & Average RMSE & Average MAE & Average $R^2$ \\
         \midrule
-        AR1 & 0.0664 & 0.0404 & 0.9420 \\
-        Naive\_Last & 0.0670 & 0.0395 & 0.9408 \\
-        Ridge & 0.0912 & 0.0634 & 0.8912 \\
-        ElasticNet & 0.0919 & 0.0642 & 0.8897 \\
-        RF & 0.1008 & 0.0709 & 0.8683 \\
-        GBM & 0.1015 & 0.0712 & 0.8668 \\
-        XGB\_GPU & 0.1031 & 0.0733 & 0.8621 \\
-        DCC\_GARCH & 0.2141 & 0.1682 & 0.3803 \\
+        Ridge      & 0.0656 & 0.0419 & 0.9432 \\
+        AR1        & 0.0659 & 0.0403 & 0.9424 \\
+        HAR        & 0.0659 & 0.0405 & 0.9424 \\
+        Naive\_Last & 0.0666 & 0.0395 & 0.9412 \\
+        ElasticNet & 0.0669 & 0.0434 & 0.9411 \\
+        Ensemble   & 0.0694 & 0.0462 & 0.9365 \\
+        GBM        & 0.0886 & 0.0625 & 0.8983 \\
+        RF         & 0.0905 & 0.0636 & 0.8936 \\
+        XGB\_GPU   & 0.1241 & 0.0864 & 0.7923 \\
+        DCC\_GARCH & 0.2136 & 0.1683 & 0.3715 \\
         \bottomrule
     \end{tabular}
-    \par\smallskip\noindent\footnotesize{\textit{Note: Results averaged across all asset-pair and window-length combinations. RMSE and R$^2$ computed on out-of-sample walk-forward predictions. Best-performing model excluding DCC-GARCH is AR1. All metrics reflect the full sample through 17 May 2026 (3{,}053 observations); minor numerical differences from earlier pipeline runs are attributable to the expanded dataset.}}
+    \par\smallskip\noindent\footnotesize{\textit{Note: Results averaged across all asset-pair and window-length combinations. RMSE and R$^2$ computed on out-of-sample walk-forward predictions. HAR = Heterogeneous AutoRegressive model; Ensemble = adaptive inverse-RMSE-weighted ensemble. Best-performing model by average RMSE is Ridge (regularised linear regression with StandardScaler). All metrics reflect the full sample through 26 May 2026 (3{,}053 observations).}}
 \end{table}
 
-Four notable patterns emerge from Table~\ref{tab:model_ranking_summary}. First, the top-ranked model is the AR1 baseline, with an average RMSE of 0.0664 and an out-of-sample $R^2$ of 0.9420. Second, the naive persistence model is nearly indistinguishable from AR1 (RMSE difference of 0.0006), confirming that the dominant forecasting mechanism is autoregressive in nature. Third, the regularized linear models Ridge and ElasticNet occupy an intermediate tier with $R^2$ values near 0.89, outperforming all tree-based ensembles on average. Fourth, the DCC-GARCH benchmark ranks last by a substantial margin, with an average $R^2$ of only 0.3803, indicating that the parametric conditional-correlation model is not competitive in the direct one-step-ahead prediction of the Fisher-transformed rolling correlation target.
+Five notable patterns emerge from Table~\ref{tab:model_ranking_summary}. First, the three top-ranked models --- Ridge, AR1, and HAR --- form a near-indistinguishable cluster with average RMSE values of 0.0656, 0.0659, and 0.0659 respectively and out-of-sample $R^2$ values all at or above 0.9424. The differences within this cluster are economically negligible. Second, the naive persistence model (Naive\_Last) sits just outside the top cluster with RMSE 0.0666, confirming that the dominant forecasting mechanism is autoregressive in nature. Third, the regularised linear models and the adaptive Ensemble occupy a coherent second tier, all achieving $R^2 > 0.93$. Fourth, tree-based methods --- GBM, Random Forest, and XGBoost --- constitute a clearly distinct third tier, with RMSE values between 0.09 and 0.12 and $R^2$ values below 0.90. Fifth, the DCC-GARCH benchmark ranks last by a substantial margin, with an average $R^2$ of 0.3715.
 
-The interpretation is precise. The dependency target is strongly persistent, and that persistence constitutes the principal forecasting signal. Improving upon AR1 or the naive persistence baseline requires extracting information beyond the most recent dependency value; the evidence shows that none of the models evaluated here does so systematically and at a meaningful scale.
+The interpretation is precise. The dependency target is strongly persistent, and that persistence constitutes the principal forecasting signal. Ridge, AR1, and HAR each exploit that persistence effectively but through structurally different mechanisms: AR1 uses a single autoregressive coefficient; HAR uses three temporal scales (daily, weekly, monthly); Ridge uses the full regularised feature set anchored by the most recent lag. That all three converge to essentially the same out-of-sample accuracy is itself a finding: the forecasting problem is well-characterised by linear autoregressive dynamics, and additional model complexity does not extract materially incremental information.
 
 \subsection{Representative forecast example}
 
@@ -76,7 +78,7 @@ Despite the dominance of persistence baselines in the unconditional ranking, mac
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.82\textwidth]{../outputs/figures/dm_heatmap_Ridge_vs_DCC.png}
-    \caption{Diebold--Mariano test results comparing Ridge (lowest RMSE among ML models) against DCC-GARCH across all asset-pair and window-length combinations. Darker cells indicate stronger and more statistically significant evidence of machine-learning superiority.}
+    \caption{Diebold--Mariano test results comparing Ridge (best overall RMSE across all models) against DCC-GARCH across all asset-pair and window-length combinations. Darker cells indicate stronger and more statistically significant evidence of Ridge superiority.}
     \label{fig:dm_heatmap}
 \end{figure}
 
@@ -113,17 +115,17 @@ The second empirical layer reformulates the dependency forecasting output as a s
         \toprule
         Signal model & Balanced Accuracy & F1\_down & AUC \\
         \midrule
-        Logit & 0.506 & 0.207 & 0.510 \\
-        GBM\_Cls & 0.513 & 0.178 & 0.517 \\
-        RF\_Cls & 0.502 & 0.041 & 0.516 \\
+        Logit    & 0.511 & 0.214 & 0.513 \\
+        GBM\_Cls & 0.508 & 0.158 & 0.517 \\
+        RF\_Cls  & 0.502 & 0.042 & 0.519 \\
         \bottomrule
     \end{tabular}
     \par\smallskip\noindent\footnotesize{\textit{Note: Results averaged across all asset pairs and window lengths. Balanced Accuracy corrects for class imbalance. F1\textsubscript{down} measures detection quality for the stress class only.}}
 \end{table}
 
-The signal-layer classification problem is substantially more demanding than the first-layer regression task. Stress-day identification is inherently noisy, class-imbalanced, and subject to asymmetric misclassification costs. The logistic classifier consistently achieves the highest F1 score for the stress class (0.207 on average), indicating that it maintains sensitivity to genuine stress episodes without collapsing into degenerate low-exit-rate behavior. GBM achieves a higher Balanced Accuracy (0.513) than Logit, but substantially lower F1 (0.178), reflecting a tendency to concentrate probability mass and fire the signal less often. Random Forest collapses to near-zero F1 (0.041), revealing a degenerate low-exit-rate behavior that renders it practically uninformative despite nominally adequate AUC values.
+The signal-layer classification problem is substantially more demanding than the first-layer regression task. Stress-day identification is inherently noisy, class-imbalanced, and subject to asymmetric misclassification costs. The logistic classifier consistently achieves the highest F1 score for the stress class (0.214 on average), indicating that it maintains sensitivity to genuine stress episodes without collapsing into degenerate low-exit-rate behavior. GBM achieves a comparable Balanced Accuracy (0.508) but lower F1 (0.158), reflecting a tendency to concentrate probability mass and fire the signal less often. Random Forest collapses to near-zero F1 (0.042), revealing a degenerate low-exit-rate behavior that renders it practically uninformative despite nominally adequate AUC values.
 
-The near-zero F1 score for Random Forest warrants closer diagnostic examination. Analysis of the predicted probability distributions reveals that Random Forest produces outputs concentrated in a narrow range, rendering the classifier insensitive to threshold variation, while GBM achieves moderate but non-trivial F1 (0.178). The Random Forest collapse is attributable to two compounding factors: first, the severe class imbalance between stress and non-stress days; and second, the absence of probability calibration --- ensemble methods are known to produce poorly calibrated probability estimates without explicit post-processing such as Platt scaling or isotonic regression \cite{lopezdeprado2018advances}. Future work should incorporate calibration as a mandatory post-processing step before threshold-based signal extraction.
+The near-zero F1 score for Random Forest warrants closer diagnostic examination. Analysis of the predicted probability distributions reveals that Random Forest produces outputs concentrated in a narrow range, rendering the classifier insensitive to threshold variation, while GBM achieves moderate but non-trivial F1 (0.158). The Random Forest collapse is attributable to two compounding factors: first, the severe class imbalance between stress and non-stress days; and second, the absence of probability calibration --- ensemble methods are known to produce poorly calibrated probability estimates without explicit post-processing such as Platt scaling or isotonic regression \cite{lopezdeprado2018advances}. Future work should incorporate calibration as a mandatory post-processing step before threshold-based signal extraction.
 
 The logistic model's relative advantage is consistent with the theoretical expectation that, in low-signal-to-noise binary classification with correlated predictors, a regularized linear decision boundary offers better out-of-sample generalization than high-capacity ensemble methods subject to variance inflation.
 
@@ -160,8 +162,8 @@ The empirical results of the thesis are summarized in four principal statements:
 
 \begin{enumerate}
     \item Time-varying intermarket dependency between Bitcoin and conventional assets is forecastable in an out-of-sample walk-forward framework, with high average $R^2$ values across all model classes.
-    \item The dominant source of predictive power is the serial persistence of the rolling correlation target; autoregressive and naive persistence baselines consequently lead the average performance ranking.
-    \item Machine-learning models frequently and significantly outperform the leakage-safe DCC-GARCH benchmark but do not systematically outperform the strongest persistence baselines at the one-step-ahead horizon.
+    \item The dominant source of predictive power is the serial persistence of the rolling correlation target; Ridge, AR1, and HAR form a near-indistinguishable top cluster, all exploiting this persistence through different mechanisms, while tree-based methods trail substantially.
+    \item Machine-learning models frequently and significantly outperform the leakage-safe DCC-GARCH benchmark; Ridge achieves the best overall average RMSE (0.0656) across all 24 experiments.
     \item The investor signal layer delivers moderate, statistically non-trivial classification results that are most pronounced for broad equity markets and are best interpreted as a supplementary risk-management input rather than a self-contained directional predictor.
 \end{enumerate}
 

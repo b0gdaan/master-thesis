@@ -7,17 +7,19 @@ The two cleanest takeaways from the empirical section are these. First, the roll
 
 Both findings matter, and neither cancels the other out.
 
-\subsection{Why AR1 wins, and what that actually means}
+\subsection{Why simple models dominate, and what that actually means}
 
-The dominance of simple autoregressive baselines is not embarrassing. It tells you something specific about the data-generating process. A rolling Pearson correlation computed over $w$ days shares $w-1$ observations with the previous window, which mechanically creates strong autocorrelation. After Fisher transformation, the first-order lag captures the overwhelming majority of forecastable variance. Under those conditions, any sensible model will lean heavily on the most recent value---and a model that does nothing else will be very hard to beat.
+The near-indistinguishable performance of Ridge, AR1, and HAR at the top of the ranking is not embarrassing. It tells you something specific about the data-generating process. A rolling Pearson correlation computed over $w$ days shares $w-1$ observations with the previous window, which mechanically creates strong autocorrelation. After Fisher transformation, the first-order lag captures the overwhelming majority of forecastable variance. Under those conditions, any sensible model will lean heavily on the most recent value---and models that do little else will be very hard to beat.
+
+That Ridge edges AR1 by a margin of 0.0003 RMSE (0.0656 vs.\ 0.0659) is not a decisive victory for machine learning; it reflects that regularised linear regression, when properly scaled, reconstructs the same autoregressive signal via a slightly richer feature set. HAR ties AR1 exactly, using three temporal scales (daily, weekly, monthly) that align naturally with the overlapping-window memory structure of the target. The convergence of three structurally different methods to the same accuracy level is itself a finding: it confirms that the forecasting problem has a nearly linear autoregressive structure and that no approach extracts materially different information.
 
 This is a documented pattern in financial forecasting \cite{welch2008}. Signal-to-noise ratios in financial markets are low. The incremental information in auxiliary features is often swamped by the autoregressive component. Recognising this early would have saved quite a bit of time running hyperparameter search on Random Forest configurations.
 
-That said, AR1 winning does not mean machine learning is useless here. It means machine learning is useful for a different reason: ruling out more flexible alternatives. The fact that a well-tuned XGBoost model cannot beat AR1 is itself informative. It tells you the dependency process does not contain exploitable nonlinear structure at the one-step horizon, at least not in the feature set used here.
+That said, tree-based methods performing substantially worse does not mean machine learning is useless here. It means machine learning is useful for a different reason: ruling out more flexible alternatives. The fact that well-tuned XGBoost and Random Forest models cannot match Ridge or AR1 is itself informative. It tells you the dependency process does not contain exploitable nonlinear structure at the one-step horizon, at least not in the feature set used here.
 
 \subsection{ML versus DCC-GARCH: a fairer comparison}
 
-Ridge and ElasticNet consistently beat DCC-GARCH. That gap is large---average RMSE of around 0.09 versus 0.21. The DM statistics are all positive with $p$-values at the numerical floor of double precision.
+Ridge and ElasticNet consistently beat DCC-GARCH. That gap is large---average RMSE of 0.066 versus 0.214 for Ridge, a factor of more than three. The DM statistics are all positive with $p$-values at the numerical floor of double precision.
 
 The right interpretation is not that DCC-GARCH is a bad model. It is a theoretically coherent model for conditional covariance that was designed for a different job. Its output is an instantaneous conditional correlation, not a smoothed rolling average. Projecting one onto the other introduces a systematic lag that the model was never designed to eliminate. Machine-learning models, trained directly on the Fisher-transformed rolling target, do not have that mismatch. They are optimised for the right objective from the start.
 
