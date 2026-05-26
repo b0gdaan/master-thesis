@@ -11,7 +11,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
@@ -140,9 +140,15 @@ def fit_predict_signal_walk_forward(
     model_specs: Dict[str, object] = {
         "Logit": make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000, class_weight="balanced", random_state=random_state)),
         "RF_Cls": RandomForestClassifier(n_estimators=100, max_depth=6, random_state=random_state, n_jobs=rf_n_jobs, class_weight="balanced_subsample"),
-        # GradientBoostingClassifier does not support class_weight directly;
+        # HistGradientBoostingClassifier does not support class_weight directly;
         # we pass sample_weight="balanced" at fit time (see training loop below).
-        "GBM_Cls": GradientBoostingClassifier(n_estimators=100, learning_rate=0.05, max_depth=3, random_state=random_state, subsample=0.8),
+        # HistGBM is ~10-20× faster than legacy GradientBoostingClassifier.
+        "GBM_Cls": HistGradientBoostingClassifier(
+            max_iter=200, learning_rate=0.05, max_depth=4,
+            min_samples_leaf=10, l2_regularization=0.1,
+            early_stopping="auto", validation_fraction=0.1,
+            n_iter_no_change=15, random_state=random_state,
+        ),
     }
 
     # Minimum number of samples required for each class before fitting classifiers.
