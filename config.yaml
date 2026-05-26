@@ -85,4 +85,4 @@ reproducibility:
 # -1 = auto-detect (cpu_count // 2).
 # RF n_jobs is automatically scaled down to cpu_count // n_parallel_workers so
 # cores are not over-subscribed when multiple experiments run at once.
-n_parallel_workers: 4
+n_parallel_workers: 8

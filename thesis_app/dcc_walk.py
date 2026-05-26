@@ -145,7 +145,7 @@ def dcc_garch_walk_forward_predict(
 
     for t in range(min_train, len(df)):
         if state is None or (t - last_refit) >= refit_every:
-            train = df.iloc[: t + 1]
+            train = df.iloc[:t]
             state = _fit_state(train, opt_start=last_opt)
             last_refit = t
             last_opt = np.array([state["a"], state["b"]], dtype=float)
