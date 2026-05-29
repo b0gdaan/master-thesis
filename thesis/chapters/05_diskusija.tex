@@ -64,7 +64,7 @@ This section documents that process honestly, because the sequence of changes --
 what failed, and what eventually helped --- is itself an empirical result about the nature of the
 forecasting problem.
 
-\paragraph{Version 1 (March 2025): minimal baseline.}
+\paragraph{Version 1 (September 2025): minimal baseline.}
 The first working prototype contained seven models: Naive\_Last, AR1, Ridge, ElasticNet,
 Random Forest, Gradient Boosting, and XGBoost.
 Feature engineering was minimal: four autoregressive lags of the rolling correlation,
@@ -76,7 +76,7 @@ No feature scaling was applied to linear models.
 The best OOS RMSE for BTC-USD vs S\&P~500 at $w = 30$ was Ridge at 0.0897,
 with AR1 performing comparably.
 
-\paragraph{Version 2 (October 2025): DCC-GARCH and signal layer.}
+\paragraph{Version 2 (November 2025): DCC-GARCH and signal layer.}
 The second major milestone introduced the DCC-GARCH econometric benchmark via a
 walk-forward protocol that matched the expanding-window setup used for machine-learning models.
 This was a critical correctness fix: an earlier full-sample DCC fit would have granted the
@@ -85,8 +85,8 @@ The investor signal layer was added as a second stage, classifying whether conve
 assets were entering stress regimes using the rolling-dependency features.
 Core model hyperparameters and feature sets were unchanged from Version~1.
 
-\paragraph{Version 3 (November 2025, pre-Turkey checkpoint): stabilisation.}
-This version stabilised the pipeline before a planned travel break.
+\paragraph{Version 3 (February 2026): stabilisation.}
+This version stabilised the pipeline as a robustness checkpoint.
 No metric improvements were achieved; the focus was on robustness:
 XGBoost GPU-to-CPU fallback, better exception handling, and consistent metric exports.
 OOS results were nearly identical to Version~2, confirming that the Version~1 performance
