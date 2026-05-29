@@ -2414,14 +2414,17 @@
     <bcf:citekey order="16" intorder="1">chen2016</bcf:citekey>
     <bcf:citekey order="17" intorder="1">diebold1995</bcf:citekey>
     <bcf:citekey order="18" intorder="1">yfinance2026</bcf:citekey>
-    <bcf:citekey order="19" intorder="1">diebold1995</bcf:citekey>
-    <bcf:citekey order="20" intorder="1">engle2001theoretical</bcf:citekey>
-    <bcf:citekey order="20" intorder="2">andersen2003realized</bcf:citekey>
-    <bcf:citekey order="21" intorder="1">lopezdeprado2018advances</bcf:citekey>
-    <bcf:citekey order="22" intorder="1">welch2008</bcf:citekey>
-    <bcf:citekey order="23" intorder="1">mincer1969economic</bcf:citekey>
-    <bcf:citekey order="24" intorder="1">harvey1997testing</bcf:citekey>
-    <bcf:citekey order="25" intorder="1" nocite="1">*</bcf:citekey>
+    <bcf:citekey order="19" intorder="1">corsi2009har</bcf:citekey>
+    <bcf:citekey order="20" intorder="1">corsi2009har</bcf:citekey>
+    <bcf:citekey order="21" intorder="1">diebold1995</bcf:citekey>
+    <bcf:citekey order="22" intorder="1">engle2001theoretical</bcf:citekey>
+    <bcf:citekey order="22" intorder="2">andersen2003realized</bcf:citekey>
+    <bcf:citekey order="23" intorder="1">lopezdeprado2018advances</bcf:citekey>
+    <bcf:citekey order="24" intorder="1">welch2008</bcf:citekey>
+    <bcf:citekey order="25" intorder="1">corsi2009har</bcf:citekey>
+    <bcf:citekey order="26" intorder="1">mincer1969economic</bcf:citekey>
+    <bcf:citekey order="27" intorder="1">harvey1997testing</bcf:citekey>
+    <bcf:citekey order="28" intorder="1" nocite="1">*</bcf:citekey>
   </bcf:section>
   <!-- SECTION 0 (cont.) -->
   <bcf:section number="0">

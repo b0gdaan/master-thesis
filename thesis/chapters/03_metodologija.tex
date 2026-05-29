@@ -152,41 +152,48 @@ The investor signal layer inherits the best dependency forecast available for th
 
 \subsection{Forecasting models}
 
-\subsubsection{Baseline models}
+\subsubsection{Baseline and autoregressive models}
 
-Two simple baselines are included in every forecasting experiment. The first is \texttt{Naive\_Last}, which predicts the next dependency value using the most recent observed dependency. The second is \texttt{AR1}, which estimates a one-lag autoregressive structure. These baselines are essential because the target is persistent. Any more complex model must therefore justify itself relative to these very strong simple alternatives.
+Three persistence-based models anchor the model set. \texttt{Naive\_Last} predicts the next dependency value using the most recent observed value, with no fitting required. \texttt{AR1} estimates a one-lag autoregressive structure via OLS. The \texttt{HAR} model (Heterogeneous AutoRegressive, after \textcite{corsi2009har}) extends this by combining three lags: the most recent dependency value, its five-day average (weekly component), and its twenty-two-day average (monthly component). HAR is estimated as a restricted OLS regression refitted on the expanding training window at each refit step. These baselines are essential because the target is persistent by construction; any more complex model must justify itself against them.
 
 \subsubsection{Regularized linear models}
 
-The linear machine-learning block includes Ridge and Elastic Net. Standardization is applied before fitting these models, since coefficient regularization depends on feature scaling. Ridge is expected to perform well when many predictors are weak but correlated. Elastic Net is more aggressive and can be advantageous if only a subset of variables contains stable information.
+The linear machine-learning block includes Ridge and ElasticNet. Standardization is applied before fitting both, since coefficient regularization depends on feature scaling. Ridge ($\ell_2$, $\alpha = 0.5$) is expected to perform well when many predictors are weakly correlated with the target. ElasticNet ($\alpha = 0.005$, $\ell_1/\ell_2$ mix) is more aggressive and can effectively down-weight redundant lagged features.
 
-\subsubsection{Tree ensembles}
+\subsubsection{Tree ensembles and adaptive ensemble}
 
-The non-linear block includes Random Forest, GBM, and XGBoost. These models are fit in a walk-forward setting with periodic refits. XGBoost attempts GPU execution when available, but automatically falls back to CPU mode if the environment does not support the requested configuration. This makes the pipeline more robust and prevents a hardware-specific failure from invalidating the experiment.
+The non-linear block includes Random Forest, \texttt{HistGradientBoostingRegressor} (a LightGBM-style histogram algorithm approximately ten times faster than the legacy gradient boosting implementation), and XGBoost. XGBoost attempts GPU execution when available and falls back to CPU automatically if the environment does not support the requested configuration. In addition, an \texttt{Ensemble} model is constructed at each prediction step as an adaptive inverse-RMSE weighted average of all non-naive models, with weights recomputed from the most recent 60 out-of-sample prediction errors.
 
-The complete model set is initialized as follows:
+The complete model set --- ten specifications in total --- is initialized as follows:
 
 \begin{lstlisting}[language=Python, caption={Model definitions used in the walk-forward experiment (\texttt{pipeline.py}).}, label=lst:models]
-models = {
-    "Naive_Last": None,            # persistence baseline (no fit required)
+model_specs = {
+    "Naive_Last": None,         # persistence baseline (no fit required)
     "AR1":        LinearRegression(),
-    "Ridge":      make_pipeline(StandardScaler(), Ridge(alpha=1.0)),
+    "HAR":        None,         # heterogeneous AR -- fitted via OLS on 3 lags
+                                # (dep_lag1, avg5, avg22); see walk-forward loop
+    "Ridge":      make_pipeline(StandardScaler(), Ridge(alpha=0.5)),
     "ElasticNet": make_pipeline(
                       StandardScaler(),
-                      ElasticNet(alpha=0.01, l1_ratio=0.5, max_iter=5000)
+                      ElasticNet(alpha=0.005, l1_ratio=0.5, max_iter=5000)
                   ),
     "RF":  RandomForestRegressor(
-               n_estimators=300, max_depth=8, n_jobs=-1
+               n_estimators=200, max_depth=10,
+               min_samples_leaf=5, n_jobs=-1
            ),
-    "GBM": GradientBoostingRegressor(
-               n_estimators=300, max_depth=4, learning_rate=0.05
+    "GBM": HistGradientBoostingRegressor(     # LightGBM-style histogram algorithm
+               max_iter=300, max_depth=4,
+               learning_rate=0.02, min_samples_leaf=5,
+               l2_regularization=0.1
            ),
-    "XGB": xgb.XGBRegressor(
-               device="cuda", n_estimators=300,
-               max_depth=5, learning_rate=0.05,
+    "XGB_GPU": xgb.XGBRegressor(
+               device="cuda", n_estimators=500,
+               max_depth=6, learning_rate=0.02,
                subsample=0.8, colsample_bytree=0.8
            ),
 }
+# "Ensemble": adaptive inverse-RMSE weighted average of all non-naive models.
+# Weights are recomputed at each step from the last 60 out-of-sample errors.
 \end{lstlisting}
 
 \subsubsection{DCC-GARCH benchmark}

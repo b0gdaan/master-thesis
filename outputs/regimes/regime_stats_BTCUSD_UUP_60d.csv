@@ -1,6 +1,6 @@
 regime,description,start,end,n_obs,mean_corr,median_corr,std_corr,min_corr,max_corr,ann_vol_pct
 Crypto Bear 2018,Post-ATH bear market,2018-01-01,2018-12-31,351,0.032,0.047,0.119,-0.347,0.238,68.1
-Calm 2019,Low-volatility recovery,2019-01-01,2019-12-31,360,-0.097,-0.106,0.147,-0.375,0.184,56.7
+Calm 2019,Low-volatility recovery,2019-01-01,2019-12-31,360,-0.096,-0.106,0.147,-0.375,0.184,56.7
 COVID Crash,Global pandemic shock,2020-02-20,2020-03-23,33,0.016,-0.005,0.098,-0.336,0.182,152.7
 COVID Recovery,Central bank liquidity surge,2020-03-24,2020-12-31,278,-0.257,-0.335,0.263,-0.646,0.447,47.0
 Crypto Bull 2021,"All-time highs, institutional entry",2021-01-01,2021-11-10,307,-0.175,-0.173,0.097,-0.368,0.062,69.0

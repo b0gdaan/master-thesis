@@ -16,9 +16,10 @@ data acquisition, return construction, rolling-correlation target generation,
 feature engineering, walk-forward model evaluation, and benchmarking against
 a leakage-safe DCC-GARCH(1,1) specification.
 
-**Key finding:** Intermarket dependency is forecastable, with most predictive power
-originating from persistence in the dependency series itself. ML models provide
-meaningful improvements over the DCC-GARCH econometric benchmark.
+**Key finding:** Intermarket dependency is forecastable out of sample. Ridge, AR(1), and HAR form
+a near-indistinguishable top cluster (avg RMSE 0.0656–0.0659, R² ≈ 0.942–0.943), confirming
+that serial persistence is the dominant driver. All ML models substantially outperform the
+DCC-GARCH econometric benchmark (avg RMSE 0.2136).
 
 ---
 
@@ -43,7 +44,7 @@ Daily prices 2017–2026 · source: Yahoo Finance
 - **Target**: rolling Pearson correlation (BTC vs each asset) — windows: 14 / 30 / 60 / 90 days
 - **Transform**: Fisher-z (arctanh) for variance stabilization
 - **Features**: momentum, volatility, return-based predictors derived from the dependency series
-- **Models**: AR(1), HAR, ElasticNet, Ridge, Adaptive Ensemble, Random Forest, GBM, XGBoost vs DCC-GARCH(1,1) benchmark
+- **Models**: Naive_Last, AR(1), HAR, ElasticNet, Ridge, Adaptive Ensemble, Random Forest, GBM, XGBoost vs DCC-GARCH(1,1) benchmark (10 specifications total)
 - **Evaluation**: walk-forward expanding window (no data leakage)
 - **Statistical tests**: Diebold-Mariano with Newey-West correction
 - **Signal layer**: logistic classifier for investor stress-day detection on traditional assets
