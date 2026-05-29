@@ -17,32 +17,32 @@ Test class & Description & Result & s \\
 \endlastfoot
 TestDatasetIntegrity & prices file exists & \textcolor{teal}{Pass} & 0.000 \\
  & returns file exists & \textcolor{teal}{Pass} & 0.000 \\
- & prices has all tickers & \textcolor{teal}{Pass} & 0.021 \\
+ & prices has all tickers & \textcolor{teal}{Pass} & 0.015 \\
  & prices all positive & \textcolor{teal}{Pass} & 0.006 \\
  & prices no all nan row & \textcolor{teal}{Pass} & 0.005 \\
  & prices index sorted & \textcolor{teal}{Pass} & 0.005 \\
  & prices no duplicate dates & \textcolor{teal}{Pass} & 0.005 \\
  & prices minimum length & \textcolor{teal}{Pass} & 0.005 \\
- & returns matches prices columns & \textcolor{teal}{Pass} & 0.009 \\
- & returns are log returns & \textcolor{teal}{Pass} & 0.005 \\
+ & returns matches prices columns & \textcolor{teal}{Pass} & 0.010 \\
+ & returns are log returns & \textcolor{teal}{Pass} & 0.006 \\
  & returns length is prices minus one & \textcolor{teal}{Pass} & 0.010 \\
  & eth start date correct & \textcolor{teal}{Pass} & 0.005 \\
  & prices end date reasonable & \textcolor{teal}{Pass} & 0.005 \\
 TestDataQuality & missing rate below threshold & \textcolor{teal}{Pass} & 0.005 \\
- & no negative prices & \textcolor{teal}{Pass} & 0.005 \\
+ & no negative prices & \textcolor{teal}{Pass} & 0.006 \\
  & no zero prices & \textcolor{teal}{Pass} & 0.006 \\
- & return volatility reasonable & \textcolor{teal}{Pass} & 0.005 \\
- & coverage overlap matrix symmetric & \textcolor{teal}{Pass} & 0.001 \\
+ & return volatility reasonable & \textcolor{teal}{Pass} & 0.006 \\
+ & coverage overlap matrix symmetric & \textcolor{teal}{Pass} & 0.002 \\
  & btc eth full overlap & \textcolor{teal}{Pass} & 0.005 \\
  & returns mean near zero & \textcolor{teal}{Pass} & 0.005 \\
- & no constant price series & \textcolor{teal}{Pass} & 0.005 \\
+ & no constant price series & \textcolor{teal}{Pass} & 0.006 \\
  & data quality stats file & \textcolor{teal}{Pass} & 0.001 \\
 TestFeatureEngineering & fisher z identity & \textcolor{teal}{Pass} & 0.000 \\
  & fisher z clips boundaries & \textcolor{teal}{Pass} & 0.001 \\
  & rolling corr range & \textcolor{teal}{Pass} & 0.006 \\
  & rolling corr window effect & \textcolor{teal}{Pass} & 0.006 \\
- & no lookahead in predictions & \textcolor{teal}{Pass} & 0.023 \\
- & target aligned with features & \textcolor{teal}{Pass} & 0.006 \\
+ & no lookahead in predictions & \textcolor{teal}{Pass} & 0.025 \\
+ & target aligned with features & \textcolor{teal}{Pass} & 0.007 \\
 TestModelMetrics & metrics file exists & \textcolor{teal}{Pass} & 0.000 \\
  & metrics has expected columns & \textcolor{teal}{Pass} & 0.001 \\
  & rmse positive & \textcolor{teal}{Pass} & 0.001 \\
@@ -51,7 +51,7 @@ TestModelMetrics & metrics file exists & \textcolor{teal}{Pass} & 0.000 \\
  & all windows present & \textcolor{teal}{Pass} & 0.001 \\
  & expected models present & \textcolor{teal}{Pass} & 0.001 \\
  & ar1 beats dcc on average & \textcolor{teal}{Pass} & 0.002 \\
- & naive last close to ar1 & \textcolor{teal}{Pass} & 0.001 \\
+ & naive last close to ar1 & \textcolor{teal}{Pass} & 0.002 \\
  & longer window lower rmse & \textcolor{teal}{Pass} & 0.008 \\
  & n consistent & \textcolor{teal}{Pass} & 0.004 \\
  & high r2 for longer windows & \textcolor{teal}{Pass} & 0.002 \\
@@ -60,21 +60,21 @@ TestDMTests & dm file exists & \textcolor{teal}{Pass} & 0.000 \\
  & dm stat finite & \textcolor{teal}{Pass} & 0.001 \\
  & p value in unit interval & \textcolor{teal}{Pass} & 0.002 \\
  & ridge beats dcc dm positive & \textcolor{teal}{Pass} & 0.002 \\
- & ridge loses to naive dm negative & \textcolor{red}{\textbf{FAIL}} & 0.002 \\
- & most dcc comparisons significant & \textcolor{teal}{Pass} & 0.003 \\
- & n sufficient for dm & \textcolor{teal}{Pass} & 0.002 \\
+ & ridge vs naive dm mostly negative & \textcolor{teal}{Pass} & 0.002 \\
+ & most dcc comparisons significant & \textcolor{teal}{Pass} & 0.002 \\
+ & n sufficient for dm & \textcolor{teal}{Pass} & 0.001 \\
 TestSignalMetrics & signal file exists & \textcolor{teal}{Pass} & 0.000 \\
- & signal has expected columns & \textcolor{teal}{Pass} & 0.008 \\
- & balanced accuracy range & \textcolor{teal}{Pass} & 0.002 \\
+ & signal has expected columns & \textcolor{teal}{Pass} & 0.001 \\
+ & balanced accuracy range & \textcolor{teal}{Pass} & 0.001 \\
  & f1down range & \textcolor{teal}{Pass} & 0.001 \\
  & auc above random & \textcolor{teal}{Pass} & 0.001 \\
  & exit rate not trivial & \textcolor{teal}{Pass} & 0.002 \\
- & equity signal better than commodities & \textcolor{teal}{Pass} & 0.006 \\
+ & equity signal better than commodities & \textcolor{teal}{Pass} & 0.005 \\
 TestWalkForward & prediction csvs exist & \textcolor{teal}{Pass} & 0.000 \\
  & prediction has y true column & \textcolor{teal}{Pass} & 0.016 \\
- & predictions not all nan & \textcolor{teal}{Pass} & 0.017 \\
+ & predictions not all nan & \textcolor{teal}{Pass} & 0.018 \\
  & gspc w30 predictions exist & \textcolor{teal}{Pass} & 0.000 \\
- & predictions index matches returns & \textcolor{teal}{Pass} & 0.010 \\
+ & predictions index matches returns & \textcolor{teal}{Pass} & 0.011 \\
 TestOutputFiles & output file exists[D:\\clear\\outputs\\results\\metrics.csv] & \textcolor{teal}{Pass} & 0.000 \\
  & output file exists[D:\\clear\\outputs\\results\\dm tests.csv] & \textcolor{teal}{Pass} & 0.000 \\
  & output file exists[D:\\clear\\outputs\\results\\signal metrics.cs & \textcolor{teal}{Pass} & 0.000 \\
@@ -96,5 +96,5 @@ TestSensitivity & sensitivity file exists & \textcolor{teal}{Pass} & 0.000 \\
  & sensitivity has expected refit values & \textcolor{teal}{Pass} & 0.001 \\
  & sensitivity rmse in range & \textcolor{teal}{Pass} & 0.001 \\
  & sensitivity models present & \textcolor{teal}{Pass} & 0.001 \\
-\multicolumn{4}{r}{\small Passed: \textbf{80}\quad Failed: \textbf{1}\quad Skipped: \textbf{0}\quad Total: \textbf{81}} \\
+\multicolumn{4}{r}{\small Passed: \textbf{81}\quad Failed: \textbf{0}\quad Skipped: \textbf{0}\quad Total: \textbf{81}} \\
 \end{longtable}

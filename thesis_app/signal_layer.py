@@ -141,13 +141,16 @@ def fit_predict_signal_walk_forward(
         "Logit": make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000, class_weight="balanced", random_state=random_state)),
         "RF_Cls": RandomForestClassifier(n_estimators=100, max_depth=6, random_state=random_state, n_jobs=rf_n_jobs, class_weight="balanced_subsample"),
         # HistGradientBoostingClassifier does not support class_weight directly;
-        # we pass sample_weight="balanced" at fit time (see training loop below).
+        # we pass sample_weight computed via compute_sample_weight("balanced", y)
+        # at fit time (see training loop below).
         # HistGBM is ~10-20× faster than legacy GradientBoostingClassifier.
+        # early_stopping=False: walk-forward windows are always < sklearn's 10 000-sample
+        # "auto" threshold, so early stopping never fires under "auto". Setting False
+        # explicitly uses all training data and avoids dead parameter confusion.
         "GBM_Cls": HistGradientBoostingClassifier(
             max_iter=200, learning_rate=0.05, max_depth=4,
             min_samples_leaf=10, l2_regularization=0.1,
-            early_stopping="auto", validation_fraction=0.1,
-            n_iter_no_change=15, random_state=random_state,
+            early_stopping=False, random_state=random_state,
         ),
     }
 
@@ -397,8 +400,11 @@ def run_stress_threshold_sensitivity(
         probs = prob_df.loc[mask, model_name].astype(float)
         nr    = next_returns.loc[mask]
 
-        # Recompute trailing vol from next_returns (approximate; real code uses returns)
-        trail_vol = next_returns.rolling(20).std().shift(1).loc[mask]
+        # Trailing volatility: use same-day (current) returns rather than the
+        # forward-shifted next_returns, to avoid look-ahead into future return data.
+        # rolling(20).std() at t uses r[t-19]..r[t]; .shift(1) gives r[t-20]..r[t-1],
+        # ensuring the vol estimate is based only on past information at each step.
+        trail_vol = nr.rolling(20).std().shift(1).loc[mask]
 
         for sigma in sigma_thresholds:
             # Redefine target with this sigma

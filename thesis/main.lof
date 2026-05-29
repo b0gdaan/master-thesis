@@ -5,38 +5,38 @@
 \contentsline {figure}{\numberline {3}{\ignorespaces Full-sample Pearson correlation matrix of daily log-returns. The low static correlations between Bitcoin and most conventional assets motivate studying the time-varying structure rather than relying on a single full-sample estimate.}}{19}{figure.caption.8}%
 \contentsline {figure}{\numberline {4}{\ignorespaces Rolling dependency between Bitcoin and each of the five conventional assets across all four window lengths (14, 30, 60, 90 days). The Fisher-transformed series illustrates the strong time-variation and persistence that motivate the forecasting framework.}}{21}{figure.caption.9}%
 \contentsline {figure}{\numberline {5}{\ignorespaces Observed and predicted Fisher-transformed dependency for the Bitcoin--S\&P 500 pair at the 30-day rolling window. Forecast series are generated under strict walk-forward evaluation with no use of future information.}}{28}{figure.caption.12}%
-\contentsline {figure}{\numberline {6}{\ignorespaces Diebold--Mariano test results comparing Ridge (lowest RMSE among ML models) against DCC-GARCH across all asset-pair and window-length combinations. Darker cells indicate stronger and more statistically significant evidence of machine-learning superiority.}}{30}{figure.caption.13}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Diebold--Mariano test results comparing Ridge (best overall RMSE across all models) against DCC-GARCH across all asset-pair and window-length combinations. Darker cells indicate stronger and more statistically significant evidence of Ridge superiority.}}{30}{figure.caption.13}%
 \contentsline {figure}{\numberline {7}{\ignorespaces Rolling out-of-sample RMSE over time for the Bitcoin--S\&P 500 dependency experiment. Elevated error episodes correspond to periods of abrupt regime transition in the dependency process.}}{31}{figure.caption.14}%
 \contentsline {figure}{\numberline {8}{\ignorespaces Investor stress-warning signal for the Bitcoin--S\&P 500 pair at the 30-day window. The upper panel displays the predicted stress probability from the logistic classifier together with the decision threshold; the lower panel marks flagged and missed stress events.}}{33}{figure.caption.16}%
-\contentsline {figure}{\numberline {9}{\ignorespaces Normalized prices of the assets included in the study.}}{40}{figure.caption.17}%
-\contentsline {figure}{\numberline {10}{\ignorespaces Rolling volatility across the asset universe.}}{40}{figure.caption.18}%
-\contentsline {figure}{\numberline {11}{\ignorespaces Static correlation heatmap of the return series.}}{41}{figure.caption.19}%
-\contentsline {figure}{\numberline {12}{\ignorespaces Rolling correlation overview for the asset universe.}}{42}{figure.caption.20}%
-\contentsline {figure}{\numberline {13}{\ignorespaces Observation coverage window per ticker. All assets share an identical aligned date range after the ETH-USD availability cutoff in November 2017.}}{43}{figure.caption.22}%
-\contentsline {figure}{\numberline {14}{\ignorespaces Log-return series with extreme observations ($|z|>5\sigma $) highlighted in red. Crypto assets exhibit sporadic but large outliers; conventional assets are more contained but not outlier-free.}}{44}{figure.caption.23}%
-\contentsline {figure}{\numberline {15}{\ignorespaces Distribution of the 30-day rolling correlation before and after Fisher-z transformation for the Bitcoin--S\&P~500 pair. The transformation improves normality and removes boundary compression.}}{44}{figure.caption.24}%
-\contentsline {figure}{\numberline {16}{\ignorespaces Average RMSE comparison across model families.}}{46}{figure.caption.25}%
-\contentsline {figure}{\numberline {17}{\ignorespaces Model $R^2$ comparison for the 30-day window.}}{46}{figure.caption.26}%
-\contentsline {figure}{\numberline {18}{\ignorespaces Improvement relative to the naive baseline.}}{47}{figure.caption.27}%
-\contentsline {figure}{\numberline {19}{\ignorespaces Grid-search cross-validation RMSE for the representative Bitcoin--S\&P 500 forecasting task.}}{47}{figure.caption.28}%
-\contentsline {figure}{\numberline {20}{\ignorespaces Regularization path for the Ridge-based forecasting specification.}}{47}{figure.caption.29}%
-\contentsline {figure}{\numberline {21}{\ignorespaces Readable feature-importance view for the Random Forest model.}}{48}{figure.caption.30}%
-\contentsline {figure}{\numberline {22}{\ignorespaces Window sensitivity of the XGBoost-based forecasting layer.}}{48}{figure.caption.31}%
-\contentsline {figure}{\numberline {23}{\ignorespaces Forecast scatter diagnostic for the Bitcoin--S\&P 500 dependency experiment.}}{48}{figure.caption.32}%
-\contentsline {figure}{\numberline {24}{\ignorespaces Forecast error distribution for the representative Bitcoin--S\&P 500 dependency experiment.}}{49}{figure.caption.33}%
-\contentsline {figure}{\numberline {25}{\ignorespaces Sensitivity analysis for the Bitcoin--NASDAQ pair.}}{49}{figure.caption.34}%
-\contentsline {figure}{\numberline {26}{\ignorespaces Sensitivity analysis for the Bitcoin--gold pair.}}{49}{figure.caption.35}%
-\contentsline {figure}{\numberline {27}{\ignorespaces Sensitivity analysis for the Bitcoin--silver pair.}}{50}{figure.caption.36}%
-\contentsline {figure}{\numberline {28}{\ignorespaces Sensitivity analysis for the Bitcoin--UUP pair.}}{50}{figure.caption.37}%
-\contentsline {figure}{\numberline {29}{\ignorespaces Sensitivity analysis for the Bitcoin--Ethereum pair.}}{50}{figure.caption.38}%
-\contentsline {figure}{\numberline {30}{\ignorespaces Signal-layer output for the Bitcoin--NASDAQ relation at the 30-day window.}}{52}{figure.caption.39}%
-\contentsline {figure}{\numberline {31}{\ignorespaces Signal-layer output for the Bitcoin--gold relation at the 30-day window.}}{52}{figure.caption.40}%
-\contentsline {figure}{\numberline {32}{\ignorespaces Signal-layer output for the Bitcoin--silver relation at the 30-day window.}}{53}{figure.caption.41}%
-\contentsline {figure}{\numberline {33}{\ignorespaces Signal-layer output for the Bitcoin--UUP relation at the 30-day window.}}{53}{figure.caption.42}%
-\contentsline {figure}{\numberline {34}{\ignorespaces Supplementary S\&P 500 warning signal at the 14-day window.}}{54}{figure.caption.44}%
-\contentsline {figure}{\numberline {35}{\ignorespaces Supplementary S\&P 500 warning signal at the 60-day window.}}{54}{figure.caption.45}%
-\contentsline {figure}{\numberline {36}{\ignorespaces Supplementary S\&P 500 warning signal at the 90-day window.}}{55}{figure.caption.46}%
-\contentsline {figure}{\numberline {37}{\ignorespaces Supplementary NASDAQ warning signal at the 14-day window.}}{55}{figure.caption.47}%
-\contentsline {figure}{\numberline {38}{\ignorespaces Supplementary NASDAQ warning signal at the 60-day window.}}{55}{figure.caption.48}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Normalized prices of the assets included in the study.}}{43}{figure.caption.22}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Rolling volatility across the asset universe.}}{43}{figure.caption.23}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Static correlation heatmap of the return series.}}{44}{figure.caption.24}%
+\contentsline {figure}{\numberline {12}{\ignorespaces Rolling correlation overview for the asset universe.}}{45}{figure.caption.25}%
+\contentsline {figure}{\numberline {13}{\ignorespaces Observation coverage window per ticker. All assets share an identical aligned date range after the ETH-USD availability cutoff in November 2017.}}{46}{figure.caption.27}%
+\contentsline {figure}{\numberline {14}{\ignorespaces Log-return series with extreme observations ($|z|>5\sigma $) highlighted in red. Crypto assets exhibit sporadic but large outliers; conventional assets are more contained but not outlier-free.}}{47}{figure.caption.28}%
+\contentsline {figure}{\numberline {15}{\ignorespaces Distribution of the 30-day rolling correlation before and after Fisher-z transformation for the Bitcoin--S\&P~500 pair. The transformation improves normality and removes boundary compression.}}{47}{figure.caption.29}%
+\contentsline {figure}{\numberline {16}{\ignorespaces Average RMSE comparison across model families.}}{49}{figure.caption.30}%
+\contentsline {figure}{\numberline {17}{\ignorespaces Model $R^2$ comparison for the 30-day window.}}{49}{figure.caption.31}%
+\contentsline {figure}{\numberline {18}{\ignorespaces Improvement relative to the naive baseline.}}{50}{figure.caption.32}%
+\contentsline {figure}{\numberline {19}{\ignorespaces Grid-search cross-validation RMSE for the representative Bitcoin--S\&P 500 forecasting task.}}{50}{figure.caption.33}%
+\contentsline {figure}{\numberline {20}{\ignorespaces Regularization path for the Ridge-based forecasting specification.}}{50}{figure.caption.34}%
+\contentsline {figure}{\numberline {21}{\ignorespaces Readable feature-importance view for the Random Forest model.}}{51}{figure.caption.35}%
+\contentsline {figure}{\numberline {22}{\ignorespaces Window sensitivity of the XGBoost-based forecasting layer.}}{51}{figure.caption.36}%
+\contentsline {figure}{\numberline {23}{\ignorespaces Forecast scatter diagnostic for the Bitcoin--S\&P 500 dependency experiment.}}{51}{figure.caption.37}%
+\contentsline {figure}{\numberline {24}{\ignorespaces Forecast error distribution for the representative Bitcoin--S\&P 500 dependency experiment.}}{52}{figure.caption.38}%
+\contentsline {figure}{\numberline {25}{\ignorespaces Sensitivity analysis for the Bitcoin--NASDAQ pair.}}{52}{figure.caption.39}%
+\contentsline {figure}{\numberline {26}{\ignorespaces Sensitivity analysis for the Bitcoin--gold pair.}}{52}{figure.caption.40}%
+\contentsline {figure}{\numberline {27}{\ignorespaces Sensitivity analysis for the Bitcoin--silver pair.}}{53}{figure.caption.41}%
+\contentsline {figure}{\numberline {28}{\ignorespaces Sensitivity analysis for the Bitcoin--UUP pair.}}{53}{figure.caption.42}%
+\contentsline {figure}{\numberline {29}{\ignorespaces Sensitivity analysis for the Bitcoin--Ethereum pair.}}{53}{figure.caption.43}%
+\contentsline {figure}{\numberline {30}{\ignorespaces Signal-layer output for the Bitcoin--NASDAQ relation at the 30-day window.}}{55}{figure.caption.44}%
+\contentsline {figure}{\numberline {31}{\ignorespaces Signal-layer output for the Bitcoin--gold relation at the 30-day window.}}{55}{figure.caption.45}%
+\contentsline {figure}{\numberline {32}{\ignorespaces Signal-layer output for the Bitcoin--silver relation at the 30-day window.}}{56}{figure.caption.46}%
+\contentsline {figure}{\numberline {33}{\ignorespaces Signal-layer output for the Bitcoin--UUP relation at the 30-day window.}}{56}{figure.caption.47}%
+\contentsline {figure}{\numberline {34}{\ignorespaces Supplementary S\&P 500 warning signal at the 14-day window.}}{57}{figure.caption.49}%
+\contentsline {figure}{\numberline {35}{\ignorespaces Supplementary S\&P 500 warning signal at the 60-day window.}}{57}{figure.caption.50}%
+\contentsline {figure}{\numberline {36}{\ignorespaces Supplementary S\&P 500 warning signal at the 90-day window.}}{58}{figure.caption.51}%
+\contentsline {figure}{\numberline {37}{\ignorespaces Supplementary NASDAQ warning signal at the 14-day window.}}{58}{figure.caption.52}%
+\contentsline {figure}{\numberline {38}{\ignorespaces Supplementary NASDAQ warning signal at the 60-day window.}}{58}{figure.caption.53}%
 \babel@toc {serbianc}{}\relax 
 \babel@toc {english}{}\relax 

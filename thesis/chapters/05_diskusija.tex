@@ -3,9 +3,9 @@
 
 \subsection{What the results actually say}
 
-The two cleanest takeaways from the empirical section are these. First, the rolling intermarket dependency between Bitcoin and conventional assets is genuinely forecastable out of sample---not a fluke of in-sample overfitting, but a real signal that survives strict temporal ordering constraints across all six pairs and four window lengths. Second, that forecastability is almost entirely driven by persistence. Rolling correlation does not jump around randomly; it remembers yesterday.
+The rolling intermarket dependency between Bitcoin and conventional assets is genuinely forecastable out of sample. Not a fluke of in-sample overfitting --- a real signal that survives strict temporal ordering constraints across all six pairs and four window lengths. And that forecastability is almost entirely driven by persistence: rolling correlation does not jump around randomly. It remembers yesterday.
 
-Both findings matter, and neither cancels the other out.
+Those two observations belong together. Neither undermines the other.
 
 \subsection{Why simple models dominate, and what that actually means}
 
@@ -19,7 +19,7 @@ That said, tree-based methods performing substantially worse does not mean machi
 
 \subsection{ML versus DCC-GARCH: a fairer comparison}
 
-Ridge and ElasticNet consistently beat DCC-GARCH. That gap is large---average RMSE of 0.066 versus 0.214 for Ridge, a factor of more than three. The DM statistics are all positive with $p$-values at the numerical floor of double precision.
+Ridge and ElasticNet consistently beat DCC-GARCH. That gap is large---average RMSE of 0.066 (Ridge) versus 0.214 (DCC-GARCH), a factor of more than three. The DM statistics are all positive with $p$-values at the numerical floor of double precision.
 
 The right interpretation is not that DCC-GARCH is a bad model. It is a theoretically coherent model for conditional covariance that was designed for a different job. Its output is an instantaneous conditional correlation, not a smoothed rolling average. Projecting one onto the other introduces a systematic lag that the model was never designed to eliminate. Machine-learning models, trained directly on the Fisher-transformed rolling target, do not have that mismatch. They are optimised for the right objective from the start.
 
@@ -64,7 +64,7 @@ This section documents that process honestly, because the sequence of changes --
 what failed, and what eventually helped --- is itself an empirical result about the nature of the
 forecasting problem.
 
-\paragraph{Version 1 (March 2026): minimal baseline.}
+\paragraph{Version 1 (March 2025): minimal baseline.}
 The first working prototype contained seven models: Naive\_Last, AR1, Ridge, ElasticNet,
 Random Forest, Gradient Boosting, and XGBoost.
 Feature engineering was minimal: four autoregressive lags of the rolling correlation,
@@ -76,7 +76,7 @@ No feature scaling was applied to linear models.
 The best OOS RMSE for BTC-USD vs S\&P~500 at $w = 30$ was Ridge at 0.0897,
 with AR1 performing comparably.
 
-\paragraph{Version 2 (October 2026): DCC-GARCH and signal layer.}
+\paragraph{Version 2 (October 2025): DCC-GARCH and signal layer.}
 The second major milestone introduced the DCC-GARCH econometric benchmark via a
 walk-forward protocol that matched the expanding-window setup used for machine-learning models.
 This was a critical correctness fix: an earlier full-sample DCC fit would have granted the
@@ -85,7 +85,7 @@ The investor signal layer was added as a second stage, classifying whether conve
 assets were entering stress regimes using the rolling-dependency features.
 Core model hyperparameters and feature sets were unchanged from Version~1.
 
-\paragraph{Version 3 (November 2026, pre-Turkey checkpoint): stabilisation.}
+\paragraph{Version 3 (November 2025, pre-Turkey checkpoint): stabilisation.}
 This version stabilised the pipeline before a planned travel break.
 No metric improvements were achieved; the focus was on robustness:
 XGBoost GPU-to-CPU fallback, better exception handling, and consistent metric exports.

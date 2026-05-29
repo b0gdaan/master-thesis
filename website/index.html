@@ -383,7 +383,7 @@ p{text-align:left}
     dependence structure of conventional financial assets. Bitcoin serves as the base crypto asset;
     the conventional universe spans equity indices, precious-metal ETFs, and the U.S. dollar index.
     A reproducible walk-forward ML pipeline is developed and benchmarked against a leakage-safe
-    DCC-GARCH(1,1) specification across 168 model evaluations.
+    DCC-GARCH(1,1) specification across 240 model evaluations (10 models × 6 pairs × 4 windows).
   </p>
   <p style="font-size:14px;line-height:1.7;color:var(--text2);margin-top:12px">
     The central question is whether persistence in rolling correlation — and not nonlinear
@@ -392,11 +392,11 @@ p{text-align:left}
     DCC-GARCH econometric benchmark.
   </p>
   <div class="stats-grid">
-    <div class="stat-card"><span class="stat-num">3,025</span><div class="stat-label">Daily observations</div></div>
+    <div class="stat-card"><span class="stat-num">3,053</span><div class="stat-label">Daily observations</div></div>
     <div class="stat-card"><span class="stat-num">7</span><div class="stat-label">Assets</div></div>
-    <div class="stat-card"><span class="stat-num">168</span><div class="stat-label">Model evaluations</div></div>
+    <div class="stat-card"><span class="stat-num">240</span><div class="stat-label">Model evaluations</div></div>
     <div class="stat-card"><span class="stat-num">4</span><div class="stat-label">Rolling windows</div></div>
-    <div class="stat-card"><span class="stat-num">0.942</span><div class="stat-label">Best OOS R² (AR1, w=30)</div></div>
+    <div class="stat-card"><span class="stat-num">0.943</span><div class="stat-label">Best OOS R² (Ridge avg)</div></div>
     <div class="stat-card"><span class="stat-num">p&lt;10⁻³⁰⁸</span><div class="stat-label">ML vs DCC-GARCH (DM)</div></div>
   </div>
 
@@ -440,11 +440,11 @@ p{text-align:left}
     <div style="display:flex;flex-direction:column;gap:6px;min-width:220px">
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px">Forecasting model</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green-text)">AR1 · RMSE=0.0665 · R²=0.94</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green-text)">AR1 · RMSE=0.0659 · R²=0.9424</div>
       </div>
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px">Signal classifier</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue)">Logit · F1=0.247 · AUC=0.531</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue)">Logit · F1=0.243 · AUC=0.532</div>
       </div>
     </div>
   </div>
@@ -559,7 +559,7 @@ p{text-align:left}
       </div>
 
       <div style="font-size:11.5px;color:var(--text3);margin-top:12px;line-height:1.6;padding:8px 12px;background:var(--bg3);border-radius:var(--radius)">
-        Educational demo — not financial advice. Coefficients are approximate, derived from walk-forward OOS evaluation 2021–2026 on 3,025 daily observations.
+        Educational demo — not financial advice. Coefficients are approximate, derived from walk-forward OOS evaluation 2021–2026 on 3,053 daily observations.
       </div>
     </div>
   </div>
@@ -640,7 +640,7 @@ p{text-align:left}
     <div>
       <h3>Sample Construction &amp; Alignment</h3>
       <div class="finding mb-12">
-        <p><strong>Period:</strong> 9 Nov 2017 — 18 Apr 2026 · 3,025 trading days per asset. Start date is set by the earliest available ETH-USD quote on Yahoo Finance. Earlier dates contain no Ethereum observations and are excluded.</p>
+        <p><strong>Period:</strong> 9 Nov 2017 — 16 May 2026 · 3,053 trading days per asset. Start date is set by the earliest available ETH-USD quote on Yahoo Finance. Earlier dates contain no Ethereum observations and are excluded.</p>
       </div>
       <div class="finding green mb-12">
         <p><strong>Alignment:</strong> Bitcoin and Ethereum trade 24/7 including weekends. The panel is aligned on exchange-calendar dates shared with equity markets. Weekend and holiday crypto quotes are forward-filled up to two consecutive calendar days, then dropped, so all seven tickers share an identical date index.</p>
@@ -654,13 +654,13 @@ p{text-align:left}
         <table>
           <thead><tr><th>Ticker</th><th>N obs</th><th>% Miss.</th><th>Skew</th><th>Ex.Kurt</th><th>Ann.Vol%</th></tr></thead>
           <tbody>
-            <tr><td>BTC-USD</td><td>3,025</td><td>0.00</td><td>−0.73</td><td>13.38</td><td class="text-red">56.08</td></tr>
-            <tr><td>ETH-USD</td><td>3,025</td><td>0.00</td><td>−0.74</td><td>10.77</td><td class="text-red">72.68</td></tr>
-            <tr><td>GLD</td><td>3,025</td><td>0.00</td><td>−0.89</td><td>13.96</td><td class="text-green">13.82</td></tr>
-            <tr><td>SLV</td><td>3,025</td><td>0.00</td><td>−2.77</td><td>51.61</td><td>28.20</td></tr>
-            <tr><td>UUP</td><td>3,025</td><td>0.00</td><td>−0.03</td><td>8.58</td><td class="text-green">5.85</td></tr>
-            <tr><td>^GSPC</td><td>3,025</td><td>0.00</td><td>−0.73</td><td>22.59</td><td>16.20</td></tr>
-            <tr><td>^IXIC</td><td>3,025</td><td>0.00</td><td>−0.46</td><td>12.65</td><td>19.66</td></tr>
+            <tr><td>BTC-USD</td><td>3,053</td><td>0.00</td><td>−0.73</td><td>13.38</td><td class="text-red">56.08</td></tr>
+            <tr><td>ETH-USD</td><td>3,053</td><td>0.00</td><td>−0.74</td><td>10.77</td><td class="text-red">72.68</td></tr>
+            <tr><td>GLD</td><td>3,053</td><td>0.00</td><td>−0.89</td><td>13.96</td><td class="text-green">13.82</td></tr>
+            <tr><td>SLV</td><td>3,053</td><td>0.00</td><td>−2.77</td><td>51.61</td><td>28.20</td></tr>
+            <tr><td>UUP</td><td>3,053</td><td>0.00</td><td>−0.03</td><td>8.58</td><td class="text-green">5.85</td></tr>
+            <tr><td>^GSPC</td><td>3,053</td><td>0.00</td><td>−0.73</td><td>22.59</td><td>16.20</td></tr>
+            <tr><td>^IXIC</td><td>3,053</td><td>0.00</td><td>−0.46</td><td>12.65</td><td>19.66</td></tr>
           </tbody>
         </table>
       </div>
@@ -791,18 +791,20 @@ p{text-align:left}
     </div>
   </div>
 
-  <h3>Model Suite — All 8 Configurations</h3>
+  <h3>Model Suite — All 10 Configurations</h3>
   <div class="table-wrap mb-24">
     <table>
       <thead><tr><th>Model</th><th>Type</th><th>Role</th><th>Key Parameters</th></tr></thead>
       <tbody>
-        <tr class="row-best"><td>Naive_Last</td><td>Baseline</td><td>Persistence: ŷ<sub>t+1</sub> = y<sub>t</sub></td><td>None</td></tr>
-        <tr class="row-best"><td>AR1</td><td>Baseline</td><td>1-lag autoregression</td><td>LinearRegression, 1 feature</td></tr>
-        <tr><td>Ridge</td><td>Linear ML</td><td>L2 regularisation</td><td>α=1.0 + StandardScaler</td></tr>
-        <tr><td>ElasticNet</td><td>Linear ML</td><td>L1+L2 regularisation</td><td>α=0.01, l1_ratio=0.5</td></tr>
-        <tr><td>RF</td><td>Ensemble</td><td>Bagging</td><td>300 trees, max_depth=8</td></tr>
-        <tr><td>GBM</td><td>Ensemble</td><td>Sequential boosting</td><td>300 trees, lr=0.05</td></tr>
-        <tr><td>XGB_GPU</td><td>Ensemble</td><td>GPU-accelerated boosting</td><td>300 trees, subsample=0.8, colsample=0.8</td></tr>
+        <tr><td>Naive_Last</td><td>Baseline</td><td>Persistence: ŷ<sub>t+1</sub> = y<sub>t</sub></td><td>None</td></tr>
+        <tr><td>AR1</td><td>Baseline</td><td>1-lag autoregression</td><td>LinearRegression, 1 feature</td></tr>
+        <tr><td>HAR</td><td>Baseline</td><td>Daily / weekly / monthly lags</td><td>OLS on dep_lag1, avg5, avg22</td></tr>
+        <tr class="row-best"><td>Ridge</td><td>Linear ML</td><td>L2 regularisation — <strong>best avg RMSE</strong></td><td>α=0.5 + StandardScaler</td></tr>
+        <tr><td>ElasticNet</td><td>Linear ML</td><td>L1+L2 regularisation</td><td>α=0.005, l1_ratio=0.5</td></tr>
+        <tr><td>Ensemble</td><td>Adaptive</td><td>Inverse-RMSE-weighted blend</td><td>60-step rolling window weights</td></tr>
+        <tr><td>RF</td><td>Tree ensemble</td><td>Bagging</td><td>200 trees, max_depth=10, min_leaf=5</td></tr>
+        <tr><td>GBM</td><td>Tree ensemble</td><td>Sequential boosting (HistGBM)</td><td>300 iters, lr=0.02, l2_reg=0.1</td></tr>
+        <tr><td>XGB_GPU</td><td>Tree ensemble</td><td>GPU-accelerated boosting</td><td>500 trees, subsample=0.8, colsample=0.8</td></tr>
         <tr class="row-worst"><td>DCC_GARCH</td><td>Econometric</td><td>Leakage-safe benchmark</td><td>Walk-forward re-estimated, Engle 2002</td></tr>
       </tbody>
     </table>
@@ -827,7 +829,7 @@ p{text-align:left}
   <h2>Empirical Results</h2>
 
   <div class="finding mb-16">
-    <p><strong>Key finding:</strong> The dependency target is forecastable OOS across all 24 pairs × windows. Best model by average RMSE is <strong>AR1 (0.0665)</strong>, confirming that serial persistence — not nonlinear cross-asset signals — is the dominant driver. ML models significantly outperform DCC-GARCH (avg RMSE 0.2147 vs 0.0665–0.1043 for ML).</p>
+    <p><strong>Key finding:</strong> The dependency target is forecastable OOS across all 24 pairs × windows. Best average RMSE belongs to <strong>Ridge (0.0656)</strong>, forming a near-indistinguishable top cluster with AR1 (0.0659) and HAR (0.0659) — a 0.0003 spread within which no model is statistically distinguishable. This convergence confirms that the target has a nearly linear autoregressive structure. All ML models significantly outperform DCC-GARCH (avg RMSE 0.2136 vs 0.0656–0.1241 for ML models).</p>
   </div>
 
   <h3>Average Performance — All 24 Experiments (6 pairs × 4 windows)</h3>
@@ -842,14 +844,16 @@ p{text-align:left}
         <th>vs DCC-GARCH</th>
       </tr></thead>
       <tbody>
-        <tr class="row-best"><td>AR1</td><td>0.0665</td><td>0.0405</td><td>0.9423</td><td><span class="tag tag-green">#1 Best</span></td><td class="text-green">−69.0%</td></tr>
-        <tr class="row-best"><td>Naive_Last</td><td>0.0672</td><td>0.0395</td><td>0.9411</td><td><span class="tag tag-green">#2</span></td><td class="text-green">−68.7%</td></tr>
-        <tr><td>Ridge</td><td>0.0914</td><td>0.0636</td><td>0.8917</td><td><span class="tag tag-blue">#3 ML</span></td><td class="text-green">−57.4%</td></tr>
-        <tr><td>ElasticNet</td><td>0.0921</td><td>0.0643</td><td>0.8902</td><td><span class="tag tag-blue">#4 ML</span></td><td class="text-green">−57.1%</td></tr>
-        <tr><td>RF</td><td>0.1009</td><td>0.0709</td><td>0.8694</td><td>#5 ML</td><td class="text-green">−53.0%</td></tr>
-        <tr><td>GBM</td><td>0.1035</td><td>0.0732</td><td>0.8630</td><td>#6 ML</td><td class="text-green">−51.8%</td></tr>
-        <tr><td>XGB_GPU</td><td>0.1043</td><td>0.0744</td><td>0.8605</td><td>#7 ML</td><td class="text-green">−51.4%</td></tr>
-        <tr class="row-worst"><td>DCC_GARCH</td><td>0.2147</td><td>0.1687</td><td>0.3814</td><td><span class="tag tag-red">Benchmark</span></td><td>—</td></tr>
+        <tr class="row-best"><td>Ridge</td><td>0.0656</td><td>0.0419</td><td>0.9432</td><td><span class="tag tag-green">#1 Best</span></td><td class="text-green">−69.3%</td></tr>
+        <tr class="row-best"><td>AR1</td><td>0.0659</td><td>0.0403</td><td>0.9424</td><td><span class="tag tag-green">#2 ≈#1</span></td><td class="text-green">−69.2%</td></tr>
+        <tr class="row-best"><td>HAR</td><td>0.0659</td><td>0.0405</td><td>0.9424</td><td><span class="tag tag-green">#3 ≈#1</span></td><td class="text-green">−69.2%</td></tr>
+        <tr><td>Naive_Last</td><td>0.0666</td><td>0.0395</td><td>0.9412</td><td>#4</td><td class="text-green">−68.8%</td></tr>
+        <tr><td>ElasticNet</td><td>0.0669</td><td>0.0434</td><td>0.9411</td><td><span class="tag tag-blue">#5 ML</span></td><td class="text-green">−68.7%</td></tr>
+        <tr><td>Ensemble</td><td>0.0694</td><td>0.0462</td><td>0.9365</td><td><span class="tag tag-blue">#6 ML</span></td><td class="text-green">−67.5%</td></tr>
+        <tr><td>GBM</td><td>0.0886</td><td>0.0625</td><td>0.8983</td><td>#7 ML</td><td class="text-green">−58.5%</td></tr>
+        <tr><td>RF</td><td>0.0905</td><td>0.0636</td><td>0.8936</td><td>#8 ML</td><td class="text-green">−57.6%</td></tr>
+        <tr><td>XGB_GPU</td><td>0.1241</td><td>0.0864</td><td>0.7923</td><td>#9 ML</td><td class="text-green">−41.9%</td></tr>
+        <tr class="row-worst"><td>DCC_GARCH</td><td>0.2136</td><td>0.1683</td><td>0.3715</td><td><span class="tag tag-red">Benchmark</span></td><td>—</td></tr>
       </tbody>
     </table>
   </div>
@@ -879,7 +883,7 @@ p{text-align:left}
   <div class="fig-grid-wide">
     <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/model_rmse_comparison.png','RMSE Comparison — All Models, aggregated')">
       <img src="/thesis-assets/figures/model_rmse_comparison.png" alt="RMSE comparison" loading="lazy">
-      <div class="fig-caption"><strong>RMSE Comparison — Aggregated All Pairs &amp; Windows</strong><span>AR1 and Naive_Last dominate; all ML models better than DCC-GARCH.</span></div>
+      <div class="fig-caption"><strong>RMSE Comparison — Aggregated All Pairs &amp; Windows</strong><span>Ridge, AR1, and HAR form indistinguishable top cluster; all ML models outperform DCC-GARCH.</span></div>
     </div>
     <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/model_r2_comparison_w30.png','R² at w=30 — all pairs')">
       <img src="/thesis-assets/figures/model_r2_comparison_w30.png" alt="R2 comparison" loading="lazy">
@@ -906,19 +910,19 @@ p{text-align:left}
   <div class="grid-2 mt-24">
     <div>
       <h3>ML vs Persistence Baseline (Naive_Last)</h3>
-      <p class="text-muted mb-12" style="font-size:13px">Negative DM → ML model is worse than the simple persistence baseline. Persistence dominates at all windows.</p>
-      <div class="dm-result"><div class="dm-stat neg">−12.26</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=14 <span class="dm-sig">p&lt;0.001</span></div></div>
-      <div class="dm-result"><div class="dm-stat neg">−10.44</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=30 <span class="dm-sig">p&lt;0.001</span></div></div>
-      <div class="dm-result"><div class="dm-stat neg">−9.37</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=60 <span class="dm-sig">p&lt;0.001</span></div></div>
-      <div class="dm-result"><div class="dm-stat neg">−8.38</div><div class="dm-desc">Ridge vs Naive · BTC/S&P500 · w=90 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <p class="text-muted mb-12" style="font-size:13px">Positive DM → Ridge is better. Negative → Naive wins. Result depends on window: Ridge beats Naive at w=14, ties at medium windows, falls behind only at w=90.</p>
+      <div class="dm-result"><div class="dm-stat pos">+5.14</div><div class="dm-desc">Ridge vs Naive · BTC/S&amp;P500 · w=14 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <div class="dm-result"><div class="dm-stat pos">+0.80</div><div class="dm-desc">Ridge vs Naive · BTC/S&amp;P500 · w=30 <span style="font-size:11px;color:var(--text2)">p=0.43 n.s.</span></div></div>
+      <div class="dm-result"><div class="dm-stat neg">−1.59</div><div class="dm-desc">Ridge vs Naive · BTC/S&amp;P500 · w=60 <span style="font-size:11px;color:var(--text2)">p=0.11 n.s.</span></div></div>
+      <div class="dm-result"><div class="dm-stat neg">−3.91</div><div class="dm-desc">Ridge vs Naive · BTC/S&amp;P500 · w=90 <span class="dm-sig">p&lt;0.001</span></div></div>
     </div>
     <div>
       <h3>ML vs DCC-GARCH Benchmark</h3>
-      <p class="text-muted mb-12" style="font-size:13px">Positive DM → ML model is better than DCC-GARCH. ML wins in every single experiment.</p>
-      <div class="dm-result"><div class="dm-stat pos">+22.04</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=14 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
-      <div class="dm-result"><div class="dm-stat pos">+25.55</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=30 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
-      <div class="dm-result"><div class="dm-stat pos">+33.29</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=60 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
-      <div class="dm-result"><div class="dm-stat pos">+23.70</div><div class="dm-desc">Ridge vs DCC · BTC/S&P500 · w=90 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+      <p class="text-muted mb-12" style="font-size:13px">Positive DM → ML model is better than DCC-GARCH. Ridge wins in every single experiment. Margin grows with window length.</p>
+      <div class="dm-result"><div class="dm-stat pos">+25.91</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=14 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+      <div class="dm-result"><div class="dm-stat pos">+26.86</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=30 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+      <div class="dm-result"><div class="dm-stat pos">+35.11</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=60 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+      <div class="dm-result"><div class="dm-stat pos">+39.31</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=90 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
     </div>
   </div>
 
@@ -950,29 +954,29 @@ p{text-align:left}
         <table>
           <thead><tr><th>Window</th><th>Classifier</th><th>Bal. Acc</th><th>F1 (down)</th><th>AUC</th><th>Exit Rate</th></tr></thead>
           <tbody>
-            <tr><td>w=14</td><td>Logit</td><td>0.517</td><td class="text-blue">0.225</td><td>0.515</td><td>30.4%</td></tr>
-            <tr><td>w=14</td><td>GBM_Cls</td><td>0.528</td><td>0.192</td><td>0.541</td><td>12.8%</td></tr>
-            <tr class="row-best"><td>w=30</td><td>Logit</td><td class="text-green">0.535</td><td class="text-green">0.247</td><td class="text-green">0.531</td><td>32.8%</td></tr>
-            <tr><td>w=30</td><td>GBM_Cls</td><td>0.503</td><td>0.136</td><td>0.511</td><td>11.2%</td></tr>
-            <tr><td>w=60</td><td>Logit</td><td>0.529</td><td>0.242</td><td>0.514</td><td>33.6%</td></tr>
-            <tr><td>w=90</td><td>Logit</td><td>0.526</td><td>0.242</td><td>0.505</td><td>34.6%</td></tr>
+            <tr><td>w=14</td><td>Logit</td><td>0.517</td><td class="text-blue">0.223</td><td>0.512</td><td>31.3%</td></tr>
+            <tr><td>w=14</td><td>GBM_Cls</td><td>0.509</td><td>0.156</td><td>0.521</td><td>12.9%</td></tr>
+            <tr class="row-best"><td>w=30</td><td>Logit</td><td class="text-green">0.531</td><td class="text-green">0.243</td><td class="text-green">0.532</td><td>34.6%</td></tr>
+            <tr><td>w=30</td><td>GBM_Cls</td><td>0.473</td><td>0.093</td><td>0.493</td><td>13.3%</td></tr>
+            <tr><td>w=60</td><td>Logit</td><td>0.521</td><td>0.228</td><td>0.513</td><td>31.9%</td></tr>
+            <tr><td>w=90</td><td>Logit</td><td>0.526</td><td>0.234</td><td>0.502</td><td>34.6%</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="mt-8" style="font-size:12.5px">Best: Logit at w=30 — Balanced Accuracy 0.535, F1<sub>down</sub>=0.247, AUC=0.531. Uninformative baseline = 0.500. Results are moderate but non-trivial given class imbalance.</p>
+      <p class="mt-8" style="font-size:12.5px">Best: Logit at w=30 — Balanced Accuracy 0.531, F1<sub>down</sub>=0.243, AUC=0.532. Uninformative baseline = 0.500. Results are moderate but non-trivial given class imbalance.</p>
 
-      <h3 class="mt-24">GBM Results — PPTX Benchmark</h3>
+      <h3 class="mt-24">Average Signal Performance (all pairs &amp; windows)</h3>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Classifier</th><th>F1 (stress)</th><th>ROC-AUC</th><th>Note</th></tr></thead>
+          <thead><tr><th>Classifier</th><th>Bal. Accuracy</th><th>F1 (down)</th><th>AUC</th></tr></thead>
           <tbody>
-            <tr class="row-best"><td>GBM</td><td class="text-green">0.47</td><td class="text-green">0.74</td><td>Best for imbalanced data</td></tr>
-            <tr><td>Random Forest</td><td>0.44</td><td>0.71</td><td>Slightly lower recall</td></tr>
-            <tr><td>Logistic Reg.</td><td>0.38</td><td>0.67</td><td>Linear boundary</td></tr>
+            <tr class="row-best"><td>Logit</td><td class="text-green">0.511</td><td class="text-green">0.214</td><td>0.513</td></tr>
+            <tr><td>GBM_Cls</td><td>0.508</td><td>0.158</td><td>0.517</td></tr>
+            <tr><td>RF_Cls</td><td>0.502</td><td>0.042</td><td>0.519</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="mt-8" style="font-size:12.5px">GBM achieves F1=0.47 on highly imbalanced data (stress days ~10%). ROC-AUC = 0.74 substantially exceeds the 0.50 random baseline. Threshold tuning critical for real deployment.</p>
+      <p class="mt-8" style="font-size:12.5px">Logit achieves the highest F1 (0.214) for the stress class, maintaining sensitivity without collapsing to near-zero exit rate. GBM fires less often but preserves meaningful AUC. RF degrades to near-zero F1 due to probability calibration issues in highly imbalanced settings.</p>
     </div>
 
     <div>
@@ -1025,7 +1029,7 @@ p{text-align:left}
     <div class="conclusion-card">
       <span class="c-num">C3</span>
       <h3>Investor Signal Layer</h3>
-      <p>Crypto-derived features provide statistically meaningful early warning of stress days in conventional equity markets (GBM: F1=0.47, AUC=0.74). The signal is best interpreted as a risk-management overlay, not a standalone trading engine. Performance attenuates for precious metals and FX.</p>
+      <p>Crypto-derived features provide statistically meaningful early warning of stress days in conventional equity markets. Logit achieves F1=0.214, AUC=0.513 averaged across all experiments; best configuration (BTC/S&amp;P500, w=30) reaches Balanced Accuracy 0.531. The signal is best interpreted as a risk-management overlay, not a standalone trading engine. Performance attenuates for precious metals and FX.</p>
     </div>
   </div>
 
@@ -1099,7 +1103,7 @@ p{text-align:left}
       <div class="card">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
           <span class="tag tag-blue" id="v1-tag">Version 1</span>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)">March 2026</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)">March 2025</span>
           <span class="tag tag-orange" id="v1-feat-tag">~15 features</span>
         </div>
         <h3 id="v1-title">Minimal Baseline</h3>
@@ -1131,7 +1135,7 @@ p{text-align:left}
       <div class="card">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
           <span class="tag tag-purple" id="v2-tag">Version 2</span>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)">October 2026</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)">October 2025</span>
           <span class="tag tag-green" id="v2-feat-tag">+ DCC-GARCH</span>
         </div>
         <h3 id="v2-title">Econometric Benchmark + Signal Layer</h3>
@@ -1163,7 +1167,7 @@ p{text-align:left}
       <div class="card">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
           <span class="tag tag-orange" id="v3-tag">Version 3</span>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)" id="v3-date">November 2026 · Pre-Turkey checkpoint</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)" id="v3-date">November 2025 · Pre-Turkey checkpoint</span>
           <span class="tag" style="background:var(--bg3);color:var(--text2)" id="v3-feat-tag">Stabilisation</span>
         </div>
         <h3 id="v3-title">Pipeline Robustness</h3>
@@ -1269,7 +1273,7 @@ p{text-align:left}
   <div class="tab-pane" id="tab-signal">
     <div class="fig-grid">
       <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w14.png','Signal — BTC/S&P500 w=14')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w14.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=14</strong><span>Reactive but noisy. Higher exit rate.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png','Signal — BTC/S&P500 w=30')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=30</strong><span>Best configuration. F1=0.247, AUC=0.531.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png','Signal — BTC/S&P500 w=30')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=30</strong><span>Best configuration. F1=0.243, AUC=0.532.</span></div></div>
       <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w60.png','Signal — BTC/S&P500 w=60')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w60.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=60</strong></div></div>
       <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w90.png','Signal — BTC/S&P500 w=90')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w90.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=90</strong></div></div>
       <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^IXIC_w30.png','Signal — BTC/NASDAQ w=30')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^IXIC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/NASDAQ — w=30</strong></div></div>
@@ -1333,7 +1337,7 @@ rolling_windows:   [14, 30, 60, 90]
 use_fisher_transform: true
 forecast_horizon:      1   # one-step-ahead
 signal_stress_sigma: 0.75  # ~top 10% stress
-bootstrap.n_samples: 1000  # CI estimation
+bootstrap.n_samples:  500  # CI estimation
 xgb_device:         "cuda" # GPU if available</div>
     </div>
     <div>
@@ -1633,75 +1637,303 @@ function switchTab(btn,paneId){
 const METRICS={
   GSPC:{
     14:[
-      {m:'AR1',mae:0.0908,rmse:0.1429,r2:0.8539},
-      {m:'Naive_Last',mae:0.0888,rmse:0.1450,r2:0.8495},
-      {m:'Ridge',mae:0.1398,rmse:0.1914,r2:0.7378},
-      {m:'ElasticNet',mae:0.1399,rmse:0.1918,r2:0.7367},
-      {m:'RF',mae:0.1484,rmse:0.2017,r2:0.7087},
-      {m:'GBM',mae:0.1515,rmse:0.2046,r2:0.7004},
-      {m:'XGB_GPU',mae:0.1586,rmse:0.2106,r2:0.6827},
-      {m:'DCC_GARCH',mae:0.2630,rmse:0.3300,r2:0.2205},
+      {m:'Ridge',mae:0.0938,rmse:0.1392,r2:0.8618},
+      {m:'ElasticNet',mae:0.0947,rmse:0.1406,r2:0.8590},
+      {m:'HAR',mae:0.0909,rmse:0.1427,r2:0.8547},
+      {m:'AR1',mae:0.0907,rmse:0.1428,r2:0.8547},
+      {m:'Naive_Last',mae:0.0890,rmse:0.1449,r2:0.8502},
+      {m:'Ensemble',mae:0.1029,rmse:0.1487,r2:0.8424},
+      {m:'GBM',mae:0.1321,rmse:0.1790,r2:0.7715},
+      {m:'RF',mae:0.1354,rmse:0.1845,r2:0.7572},
+      {m:'XGB_GPU',mae:0.1681,rmse:0.2175,r2:0.6628},
+      {m:'DCC_GARCH',mae:0.2631,rmse:0.3306,r2:0.2206},
     ],
     30:[
-      {m:'AR1',mae:0.0388,rmse:0.0647,r2:0.9401},
-      {m:'Naive_Last',mae:0.0382,rmse:0.0650,r2:0.9395},
-      {m:'Ridge',mae:0.0608,rmse:0.0889,r2:0.8868},
-      {m:'ElasticNet',mae:0.0618,rmse:0.0896,r2:0.8850},
-      {m:'RF',mae:0.0669,rmse:0.0971,r2:0.8648},
-      {m:'GBM',mae:0.0700,rmse:0.1000,r2:0.8567},
-      {m:'XGB_GPU',mae:0.0707,rmse:0.1009,r2:0.8540},
-      {m:'DCC_GARCH',mae:0.1590,rmse:0.1977,r2:0.4400},
+      {m:'AR1',mae:0.0389,rmse:0.0650,r2:0.9399},
+      {m:'HAR',mae:0.0390,rmse:0.0650,r2:0.9397},
+      {m:'Ridge',mae:0.0401,rmse:0.0651,r2:0.9397},
+      {m:'Naive_Last',mae:0.0384,rmse:0.0653,r2:0.9393},
+      {m:'ElasticNet',mae:0.0421,rmse:0.0664,r2:0.9372},
+      {m:'Ensemble',mae:0.0455,rmse:0.0691,r2:0.9320},
+      {m:'GBM',mae:0.0628,rmse:0.0887,r2:0.8878},
+      {m:'RF',mae:0.0639,rmse:0.0909,r2:0.8821},
+      {m:'XGB_GPU',mae:0.0839,rmse:0.1139,r2:0.8152},
+      {m:'DCC_GARCH',mae:0.1545,rmse:0.1943,r2:0.4620},
     ],
     60:[
-      {m:'AR1',mae:0.0179,rmse:0.0319,r2:0.9756},
-      {m:'Naive_Last',mae:0.0177,rmse:0.0320,r2:0.9756},
-      {m:'Ridge',mae:0.0293,rmse:0.0450,r2:0.9516},
-      {m:'ElasticNet',mae:0.0306,rmse:0.0460,r2:0.9494},
-      {m:'GBM',mae:0.0372,rmse:0.0557,r2:0.9258},
-      {m:'RF',mae:0.0364,rmse:0.0560,r2:0.9250},
-      {m:'XGB_GPU',mae:0.0381,rmse:0.0569,r2:0.9228},
-      {m:'DCC_GARCH',mae:0.1080,rmse:0.1292,r2:0.6016},
+      {m:'AR1',mae:0.0179,rmse:0.0317,r2:0.9760},
+      {m:'Naive_Last',mae:0.0176,rmse:0.0318,r2:0.9760},
+      {m:'HAR',mae:0.0179,rmse:0.0318,r2:0.9760},
+      {m:'Ridge',mae:0.0188,rmse:0.0320,r2:0.9757},
+      {m:'ElasticNet',mae:0.0211,rmse:0.0335,r2:0.9733},
+      {m:'Ensemble',mae:0.0220,rmse:0.0347,r2:0.9714},
+      {m:'GBM',mae:0.0326,rmse:0.0500,r2:0.9405},
+      {m:'RF',mae:0.0346,rmse:0.0534,r2:0.9322},
+      {m:'XGB_GPU',mae:0.0584,rmse:0.0876,r2:0.8174},
+      {m:'DCC_GARCH',mae:0.1019,rmse:0.1215,r2:0.6490},
     ],
     90:[
-      {m:'AR1',mae:0.0119,rmse:0.0220,r2:0.9852},
-      {m:'Naive_Last',mae:0.0118,rmse:0.0220,r2:0.9852},
-      {m:'Ridge',mae:0.0200,rmse:0.0318,r2:0.9691},
-      {m:'ElasticNet',mae:0.0213,rmse:0.0329,r2:0.9669},
-      {m:'RF',mae:0.0250,rmse:0.0380,r2:0.9558},
-      {m:'GBM',mae:0.0255,rmse:0.0393,r2:0.9531},
-      {m:'XGB_GPU',mae:0.0269,rmse:0.0403,r2:0.9508},
-      {m:'DCC_GARCH',mae:0.0820,rmse:0.1011,r2:0.6794},
+      {m:'HAR',mae:0.0118,rmse:0.0217,r2:0.9858},
+      {m:'AR1',mae:0.0118,rmse:0.0217,r2:0.9858},
+      {m:'Naive_Last',mae:0.0117,rmse:0.0217,r2:0.9858},
+      {m:'Ridge',mae:0.0128,rmse:0.0221,r2:0.9853},
+      {m:'ElasticNet',mae:0.0148,rmse:0.0237,r2:0.9831},
+      {m:'Ensemble',mae:0.0148,rmse:0.0238,r2:0.9829},
+      {m:'GBM',mae:0.0223,rmse:0.0337,r2:0.9659},
+      {m:'RF',mae:0.0231,rmse:0.0348,r2:0.9637},
+      {m:'XGB_GPU',mae:0.0528,rmse:0.0794,r2:0.8104},
+      {m:'DCC_GARCH',mae:0.0842,rmse:0.0983,r2:0.7090},
     ],
   },
   IXIC:{
-    30:[{m:'AR1',mae:0.0357,rmse:0.0629,r2:0.9432},{m:'Naive_Last',mae:0.0347,rmse:0.0630,r2:0.9430},{m:'Ridge',mae:0.0560,rmse:0.0860,r2:0.8912},{m:'ElasticNet',mae:0.0570,rmse:0.0872,r2:0.8888},{m:'RF',mae:0.0620,rmse:0.0940,r2:0.8720},{m:'GBM',mae:0.0645,rmse:0.0960,r2:0.8680},{m:'XGB_GPU',mae:0.0650,rmse:0.0968,r2:0.8660},{m:'DCC_GARCH',mae:0.1580,rmse:0.1940,r2:0.4580}],
-    14:[{m:'AR1',mae:0.0864,rmse:0.1407,r2:0.8580},{m:'Naive_Last',mae:0.0850,rmse:0.1430,r2:0.8530},{m:'DCC_GARCH',mae:0.2530,rmse:0.3120,r2:0.2360}],
-    60:[{m:'AR1',mae:0.0165,rmse:0.0308,r2:0.9773},{m:'Naive_Last',mae:0.0163,rmse:0.0309,r2:0.9770},{m:'DCC_GARCH',mae:0.1030,rmse:0.1250,r2:0.6250}],
-    90:[{m:'AR1',mae:0.0107,rmse:0.0209,r2:0.9868},{m:'Naive_Last',mae:0.0106,rmse:0.0210,r2:0.9866},{m:'DCC_GARCH',mae:0.0800,rmse:0.0980,r2:0.6950}]
+    14:[
+      {m:'Ridge',mae:0.0926,rmse:0.1373,r2:0.8647},
+      {m:'ElasticNet',mae:0.0933,rmse:0.1385,r2:0.8623},
+      {m:'AR1',mae:0.0903,rmse:0.1405,r2:0.8582},
+      {m:'HAR',mae:0.0907,rmse:0.1406,r2:0.8579},
+      {m:'Naive_Last',mae:0.0887,rmse:0.1426,r2:0.8540},
+      {m:'Ensemble',mae:0.1008,rmse:0.1458,r2:0.8472},
+      {m:'GBM',mae:0.1317,rmse:0.1774,r2:0.7740},
+      {m:'RF',mae:0.1335,rmse:0.1813,r2:0.7639},
+      {m:'XGB_GPU',mae:0.1676,rmse:0.2146,r2:0.6692},
+      {m:'DCC_GARCH',mae:0.2608,rmse:0.3284,r2:0.2256},
+    ],
+    30:[
+      {m:'Ridge',mae:0.0393,rmse:0.0632,r2:0.9423},
+      {m:'AR1',mae:0.0384,rmse:0.0633,r2:0.9421},
+      {m:'HAR',mae:0.0386,rmse:0.0633,r2:0.9420},
+      {m:'Naive_Last',mae:0.0381,rmse:0.0636,r2:0.9416},
+      {m:'ElasticNet',mae:0.0412,rmse:0.0646,r2:0.9396},
+      {m:'Ensemble',mae:0.0446,rmse:0.0675,r2:0.9342},
+      {m:'GBM',mae:0.0626,rmse:0.0884,r2:0.8870},
+      {m:'RF',mae:0.0634,rmse:0.0899,r2:0.8831},
+      {m:'XGB_GPU',mae:0.0876,rmse:0.1180,r2:0.7987},
+      {m:'DCC_GARCH',mae:0.1497,rmse:0.1901,r2:0.4776},
+    ],
+    60:[
+      {m:'AR1',mae:0.0177,rmse:0.0307,r2:0.9770},
+      {m:'Naive_Last',mae:0.0175,rmse:0.0307,r2:0.9769},
+      {m:'HAR',mae:0.0177,rmse:0.0307,r2:0.9769},
+      {m:'Ridge',mae:0.0186,rmse:0.0310,r2:0.9765},
+      {m:'ElasticNet',mae:0.0207,rmse:0.0324,r2:0.9743},
+      {m:'Ensemble',mae:0.0215,rmse:0.0335,r2:0.9725},
+      {m:'GBM',mae:0.0322,rmse:0.0499,r2:0.9391},
+      {m:'RF',mae:0.0336,rmse:0.0525,r2:0.9326},
+      {m:'XGB_GPU',mae:0.0571,rmse:0.0878,r2:0.8116},
+      {m:'DCC_GARCH',mae:0.0963,rmse:0.1159,r2:0.6718},
+    ],
+    90:[
+      {m:'AR1',mae:0.0115,rmse:0.0207,r2:0.9872},
+      {m:'Naive_Last',mae:0.0114,rmse:0.0207,r2:0.9872},
+      {m:'HAR',mae:0.0115,rmse:0.0207,r2:0.9871},
+      {m:'Ridge',mae:0.0126,rmse:0.0212,r2:0.9866},
+      {m:'ElasticNet',mae:0.0145,rmse:0.0228,r2:0.9844},
+      {m:'Ensemble',mae:0.0143,rmse:0.0229,r2:0.9843},
+      {m:'GBM',mae:0.0238,rmse:0.0360,r2:0.9613},
+      {m:'RF',mae:0.0239,rmse:0.0364,r2:0.9604},
+      {m:'XGB_GPU',mae:0.0516,rmse:0.0789,r2:0.8141},
+      {m:'DCC_GARCH',mae:0.0789,rmse:0.0941,r2:0.7352},
+    ],
   },
   GLD:{
-    30:[{m:'AR1',mae:0.0394,rmse:0.0660,r2:0.9360},{m:'Naive_Last',mae:0.0387,rmse:0.0663,r2:0.9354},{m:'Ridge',mae:0.0621,rmse:0.0902,r2:0.8808},{m:'ElasticNet',mae:0.0630,rmse:0.0910,r2:0.8790},{m:'RF',mae:0.0680,rmse:0.0980,r2:0.8610},{m:'GBM',mae:0.0705,rmse:0.1010,r2:0.8550},{m:'XGB_GPU',mae:0.0710,rmse:0.1018,r2:0.8530},{m:'DCC_GARCH',mae:0.1630,rmse:0.2020,r2:0.4160}],
-    14:[{m:'AR1',mae:0.0862,rmse:0.1418,r2:0.8590},{m:'Naive_Last',mae:0.0848,rmse:0.1435,r2:0.8560},{m:'DCC_GARCH',mae:0.2480,rmse:0.3040,r2:0.2450}],
-    60:[{m:'AR1',mae:0.0188,rmse:0.0343,r2:0.9700},{m:'Naive_Last',mae:0.0186,rmse:0.0344,r2:0.9698},{m:'DCC_GARCH',mae:0.1060,rmse:0.1300,r2:0.5830}],
-    90:[{m:'AR1',mae:0.0130,rmse:0.0230,r2:0.9820},{m:'Naive_Last',mae:0.0128,rmse:0.0231,r2:0.9818},{m:'DCC_GARCH',mae:0.0840,rmse:0.1050,r2:0.6550}]
+    14:[
+      {m:'Ridge',mae:0.0916,rmse:0.1399,r2:0.8633},
+      {m:'ElasticNet',mae:0.0911,rmse:0.1400,r2:0.8631},
+      {m:'AR1',mae:0.0890,rmse:0.1415,r2:0.8600},
+      {m:'HAR',mae:0.0892,rmse:0.1416,r2:0.8598},
+      {m:'Ensemble',mae:0.0962,rmse:0.1436,r2:0.8559},
+      {m:'Naive_Last',mae:0.0863,rmse:0.1441,r2:0.8550},
+      {m:'GBM',mae:0.1189,rmse:0.1662,r2:0.8070},
+      {m:'RF',mae:0.1200,rmse:0.1671,r2:0.8048},
+      {m:'XGB_GPU',mae:0.1307,rmse:0.1794,r2:0.7750},
+      {m:'DCC_GARCH',mae:0.2737,rmse:0.3494,r2:0.1468},
+    ],
+    30:[
+      {m:'AR1',mae:0.0384,rmse:0.0659,r2:0.9358},
+      {m:'HAR',mae:0.0384,rmse:0.0659,r2:0.9357},
+      {m:'Naive_Last',mae:0.0377,rmse:0.0664,r2:0.9348},
+      {m:'Ridge',mae:0.0407,rmse:0.0668,r2:0.9340},
+      {m:'ElasticNet',mae:0.0407,rmse:0.0668,r2:0.9340},
+      {m:'Ensemble',mae:0.0440,rmse:0.0696,r2:0.9282},
+      {m:'GBM',mae:0.0591,rmse:0.0859,r2:0.8907},
+      {m:'RF',mae:0.0616,rmse:0.0891,r2:0.8825},
+      {m:'XGB_GPU',mae:0.0728,rmse:0.1050,r2:0.8368},
+      {m:'DCC_GARCH',mae:0.1681,rmse:0.2111,r2:0.3403},
+    ],
+    60:[
+      {m:'AR1',mae:0.0181,rmse:0.0338,r2:0.9705},
+      {m:'HAR',mae:0.0184,rmse:0.0339,r2:0.9704},
+      {m:'Naive_Last',mae:0.0178,rmse:0.0339,r2:0.9703},
+      {m:'Ridge',mae:0.0197,rmse:0.0345,r2:0.9693},
+      {m:'ElasticNet',mae:0.0210,rmse:0.0354,r2:0.9677},
+      {m:'Ensemble',mae:0.0220,rmse:0.0362,r2:0.9662},
+      {m:'GBM',mae:0.0323,rmse:0.0469,r2:0.9433},
+      {m:'RF',mae:0.0332,rmse:0.0490,r2:0.9380},
+      {m:'XGB_GPU',mae:0.0454,rmse:0.0746,r2:0.8565},
+      {m:'DCC_GARCH',mae:0.1159,rmse:0.1508,r2:0.4127},
+    ],
+    90:[
+      {m:'AR1',mae:0.0115,rmse:0.0226,r2:0.9818},
+      {m:'Naive_Last',mae:0.0114,rmse:0.0226,r2:0.9817},
+      {m:'HAR',mae:0.0118,rmse:0.0227,r2:0.9816},
+      {m:'Ridge',mae:0.0130,rmse:0.0233,r2:0.9806},
+      {m:'ElasticNet',mae:0.0144,rmse:0.0245,r2:0.9786},
+      {m:'Ensemble',mae:0.0146,rmse:0.0248,r2:0.9781},
+      {m:'GBM',mae:0.0227,rmse:0.0340,r2:0.9587},
+      {m:'RF',mae:0.0230,rmse:0.0352,r2:0.9558},
+      {m:'XGB_GPU',mae:0.0357,rmse:0.0620,r2:0.8627},
+      {m:'DCC_GARCH',mae:0.0834,rmse:0.1100,r2:0.5683},
+    ],
   },
   SLV:{
-    30:[{m:'AR1',mae:0.0363,rmse:0.0618,r2:0.9410},{m:'Naive_Last',mae:0.0352,rmse:0.0619,r2:0.9407},{m:'Ridge',mae:0.0572,rmse:0.0870,r2:0.8900},{m:'ElasticNet',mae:0.0582,rmse:0.0878,r2:0.8880},{m:'RF',mae:0.0632,rmse:0.0950,r2:0.8700},{m:'GBM',mae:0.0655,rmse:0.0980,r2:0.8640},{m:'XGB_GPU',mae:0.0660,rmse:0.0988,r2:0.8620},{m:'DCC_GARCH',mae:0.1540,rmse:0.1890,r2:0.4520}],
-    14:[{m:'AR1',mae:0.0860,rmse:0.1420,r2:0.8500},{m:'Naive_Last',mae:0.0845,rmse:0.1438,r2:0.8470},{m:'DCC_GARCH',mae:0.2430,rmse:0.2960,r2:0.2620}],
-    60:[{m:'AR1',mae:0.0173,rmse:0.0317,r2:0.9730},{m:'Naive_Last',mae:0.0171,rmse:0.0318,r2:0.9728},{m:'DCC_GARCH',mae:0.1020,rmse:0.1260,r2:0.5950}],
-    90:[{m:'AR1',mae:0.0116,rmse:0.0213,r2:0.9830},{m:'Naive_Last',mae:0.0114,rmse:0.0214,r2:0.9828},{m:'DCC_GARCH',mae:0.0820,rmse:0.1010,r2:0.6730}]
+    14:[
+      {m:'Ridge',mae:0.0926,rmse:0.1398,r2:0.8564},
+      {m:'HAR',mae:0.0903,rmse:0.1417,r2:0.8525},
+      {m:'AR1',mae:0.0901,rmse:0.1418,r2:0.8523},
+      {m:'ElasticNet',mae:0.0953,rmse:0.1419,r2:0.8521},
+      {m:'Naive_Last',mae:0.0871,rmse:0.1444,r2:0.8469},
+      {m:'Ensemble',mae:0.1010,rmse:0.1464,r2:0.8425},
+      {m:'GBM',mae:0.1259,rmse:0.1725,r2:0.7814},
+      {m:'RF',mae:0.1275,rmse:0.1758,r2:0.7729},
+      {m:'XGB_GPU',mae:0.1528,rmse:0.2046,r2:0.6923},
+      {m:'DCC_GARCH',mae:0.2974,rmse:0.3738,r2:-0.0266},
+    ],
+    30:[
+      {m:'AR1',mae:0.0376,rmse:0.0619,r2:0.9413},
+      {m:'HAR',mae:0.0376,rmse:0.0619,r2:0.9413},
+      {m:'Naive_Last',mae:0.0370,rmse:0.0622,r2:0.9406},
+      {m:'Ridge',mae:0.0395,rmse:0.0625,r2:0.9400},
+      {m:'ElasticNet',mae:0.0415,rmse:0.0635,r2:0.9382},
+      {m:'Ensemble',mae:0.0443,rmse:0.0658,r2:0.9337},
+      {m:'GBM',mae:0.0605,rmse:0.0830,r2:0.8943},
+      {m:'RF',mae:0.0617,rmse:0.0855,r2:0.8879},
+      {m:'XGB_GPU',mae:0.0854,rmse:0.1259,r2:0.7571},
+      {m:'DCC_GARCH',mae:0.2088,rmse:0.2592,r2:-0.0302},
+    ],
+    60:[
+      {m:'AR1',mae:0.0176,rmse:0.0314,r2:0.9734},
+      {m:'Naive_Last',mae:0.0173,rmse:0.0315,r2:0.9733},
+      {m:'HAR',mae:0.0180,rmse:0.0316,r2:0.9732},
+      {m:'Ridge',mae:0.0191,rmse:0.0320,r2:0.9724},
+      {m:'ElasticNet',mae:0.0209,rmse:0.0335,r2:0.9699},
+      {m:'Ensemble',mae:0.0218,rmse:0.0346,r2:0.9678},
+      {m:'GBM',mae:0.0322,rmse:0.0493,r2:0.9345},
+      {m:'RF',mae:0.0333,rmse:0.0512,r2:0.9294},
+      {m:'XGB_GPU',mae:0.0562,rmse:0.1002,r2:0.7300},
+      {m:'DCC_GARCH',mae:0.1521,rmse:0.1943,r2:-0.0160},
+    ],
+    90:[
+      {m:'AR1',mae:0.0113,rmse:0.0216,r2:0.9825},
+      {m:'Naive_Last',mae:0.0111,rmse:0.0217,r2:0.9825},
+      {m:'HAR',mae:0.0115,rmse:0.0218,r2:0.9822},
+      {m:'Ridge',mae:0.0128,rmse:0.0222,r2:0.9815},
+      {m:'ElasticNet',mae:0.0147,rmse:0.0240,r2:0.9784},
+      {m:'Ensemble',mae:0.0149,rmse:0.0244,r2:0.9777},
+      {m:'GBM',mae:0.0240,rmse:0.0366,r2:0.9500},
+      {m:'RF',mae:0.0242,rmse:0.0375,r2:0.9473},
+      {m:'XGB_GPU',mae:0.0439,rmse:0.0799,r2:0.7614},
+      {m:'DCC_GARCH',mae:0.1277,rmse:0.1622,r2:0.0165},
+    ],
   },
   UUP:{
-    30:[{m:'AR1',mae:0.0380,rmse:0.0673,r2:0.9450},{m:'Naive_Last',mae:0.0372,rmse:0.0675,r2:0.9447},{m:'Ridge',mae:0.0595,rmse:0.0870,r2:0.8907},{m:'ElasticNet',mae:0.0603,rmse:0.0878,r2:0.8890},{m:'RF',mae:0.0648,rmse:0.0942,r2:0.8730},{m:'GBM',mae:0.0672,rmse:0.0970,r2:0.8670},{m:'XGB_GPU',mae:0.0678,rmse:0.0980,r2:0.8650},{m:'DCC_GARCH',mae:0.1510,rmse:0.1870,r2:0.4720}],
-    14:[{m:'AR1',mae:0.0862,rmse:0.1449,r2:0.8770},{m:'Naive_Last',mae:0.0850,rmse:0.1460,r2:0.8750},{m:'DCC_GARCH',mae:0.2360,rmse:0.2890,r2:0.3010}],
-    60:[{m:'AR1',mae:0.0176,rmse:0.0341,r2:0.9740},{m:'Naive_Last',mae:0.0174,rmse:0.0342,r2:0.9738},{m:'DCC_GARCH',mae:0.1010,rmse:0.1250,r2:0.6110}],
-    90:[{m:'AR1',mae:0.0122,rmse:0.0231,r2:0.9830},{m:'Naive_Last',mae:0.0120,rmse:0.0232,r2:0.9828},{m:'DCC_GARCH',mae:0.0800,rmse:0.0990,r2:0.6890}]
+    14:[
+      {m:'Ridge',mae:0.0931,rmse:0.1407,r2:0.8819},
+      {m:'ElasticNet',mae:0.0943,rmse:0.1425,r2:0.8789},
+      {m:'HAR',mae:0.0915,rmse:0.1436,r2:0.8770},
+      {m:'AR1',mae:0.0917,rmse:0.1438,r2:0.8766},
+      {m:'Naive_Last',mae:0.0890,rmse:0.1458,r2:0.8731},
+      {m:'Ensemble',mae:0.1016,rmse:0.1490,r2:0.8676},
+      {m:'GBM',mae:0.1284,rmse:0.1764,r2:0.8143},
+      {m:'RF',mae:0.1298,rmse:0.1789,r2:0.8091},
+      {m:'XGB_GPU',mae:0.1593,rmse:0.2125,r2:0.7306},
+      {m:'DCC_GARCH',mae:0.3049,rmse:0.3946,r2:0.0709},
+    ],
+    30:[
+      {m:'HAR',mae:0.0403,rmse:0.0662,r2:0.9446},
+      {m:'AR1',mae:0.0403,rmse:0.0662,r2:0.9446},
+      {m:'Naive_Last',mae:0.0398,rmse:0.0665,r2:0.9441},
+      {m:'Ridge',mae:0.0420,rmse:0.0666,r2:0.9439},
+      {m:'ElasticNet',mae:0.0429,rmse:0.0676,r2:0.9423},
+      {m:'Ensemble',mae:0.0465,rmse:0.0709,r2:0.9365},
+      {m:'GBM',mae:0.0663,rmse:0.0932,r2:0.8903},
+      {m:'RF',mae:0.0667,rmse:0.0960,r2:0.8836},
+      {m:'XGB_GPU',mae:0.0859,rmse:0.1252,r2:0.8019},
+      {m:'DCC_GARCH',mae:0.1872,rmse:0.2469,r2:0.2302},
+    ],
+    60:[
+      {m:'AR1',mae:0.0188,rmse:0.0329,r2:0.9747},
+      {m:'Naive_Last',mae:0.0186,rmse:0.0329,r2:0.9746},
+      {m:'HAR',mae:0.0190,rmse:0.0329,r2:0.9746},
+      {m:'Ridge',mae:0.0203,rmse:0.0336,r2:0.9736},
+      {m:'ElasticNet',mae:0.0222,rmse:0.0350,r2:0.9713},
+      {m:'Ensemble',mae:0.0229,rmse:0.0359,r2:0.9699},
+      {m:'GBM',mae:0.0340,rmse:0.0521,r2:0.9364},
+      {m:'RF',mae:0.0341,rmse:0.0523,r2:0.9361},
+      {m:'XGB_GPU',mae:0.0531,rmse:0.0927,r2:0.7989},
+      {m:'DCC_GARCH',mae:0.1195,rmse:0.1574,r2:0.4205},
+    ],
+    90:[
+      {m:'Naive_Last',mae:0.0117,rmse:0.0217,r2:0.9847},
+      {m:'AR1',mae:0.0119,rmse:0.0217,r2:0.9847},
+      {m:'HAR',mae:0.0121,rmse:0.0217,r2:0.9846},
+      {m:'Ridge',mae:0.0134,rmse:0.0223,r2:0.9838},
+      {m:'Ensemble',mae:0.0150,rmse:0.0237,r2:0.9817},
+      {m:'ElasticNet',mae:0.0152,rmse:0.0239,r2:0.9814},
+      {m:'GBM',mae:0.0226,rmse:0.0336,r2:0.9633},
+      {m:'RF',mae:0.0229,rmse:0.0342,r2:0.9619},
+      {m:'XGB_GPU',mae:0.0397,rmse:0.0629,r2:0.8711},
+      {m:'DCC_GARCH',mae:0.0951,rmse:0.1262,r2:0.4805},
+    ],
   },
   ETH:{
-    30:[{m:'AR1',mae:0.0443,rmse:0.0709,r2:0.9620},{m:'Naive_Last',mae:0.0430,rmse:0.0707,r2:0.9622},{m:'Ridge',mae:0.0660,rmse:0.0960,r2:0.9162},{m:'ElasticNet',mae:0.0668,rmse:0.0970,r2:0.9148},{m:'RF',mae:0.0720,rmse:0.1030,r2:0.9040},{m:'GBM',mae:0.0745,rmse:0.1060,r2:0.8980},{m:'XGB_GPU',mae:0.0750,rmse:0.1068,r2:0.8960},{m:'DCC_GARCH',mae:0.1620,rmse:0.2040,r2:0.4980}],
-    14:[{m:'AR1',mae:0.0975,rmse:0.1558,r2:0.8830},{m:'Naive_Last',mae:0.0960,rmse:0.1575,r2:0.8800},{m:'DCC_GARCH',mae:0.2410,rmse:0.2950,r2:0.3120}],
-    60:[{m:'Naive_Last',mae:0.0217,rmse:0.0360,r2:0.9860},{m:'AR1',mae:0.0221,rmse:0.0364,r2:0.9855},{m:'DCC_GARCH',mae:0.0980,rmse:0.1200,r2:0.6420}],
-    90:[{m:'Naive_Last',mae:0.0147,rmse:0.0250,r2:0.9910},{m:'AR1',mae:0.0150,rmse:0.0254,r2:0.9906},{m:'DCC_GARCH',mae:0.0780,rmse:0.0980,r2:0.7210}]
+    14:[
+      {m:'Ridge',mae:0.1018,rmse:0.1508,r2:0.8848},
+      {m:'ElasticNet',mae:0.1029,rmse:0.1516,r2:0.8835},
+      {m:'HAR',mae:0.1006,rmse:0.1528,r2:0.8817},
+      {m:'AR1',mae:0.1004,rmse:0.1528,r2:0.8816},
+      {m:'Naive_Last',mae:0.0975,rmse:0.1546,r2:0.8789},
+      {m:'Ensemble',mae:0.1089,rmse:0.1570,r2:0.8751},
+      {m:'GBM',mae:0.1354,rmse:0.1866,r2:0.8235},
+      {m:'RF',mae:0.1378,rmse:0.1870,r2:0.8228},
+      {m:'XGB_GPU',mae:0.1624,rmse:0.2182,r2:0.7587},
+      {m:'DCC_GARCH',mae:0.2613,rmse:0.3329,r2:0.4383},
+    ],
+    30:[
+      {m:'HAR',mae:0.0417,rmse:0.0697,r2:0.9600},
+      {m:'AR1',mae:0.0416,rmse:0.0699,r2:0.9598},
+      {m:'Ridge',mae:0.0434,rmse:0.0699,r2:0.9597},
+      {m:'Naive_Last',mae:0.0409,rmse:0.0701,r2:0.9595},
+      {m:'ElasticNet',mae:0.0442,rmse:0.0709,r2:0.9586},
+      {m:'Ensemble',mae:0.0488,rmse:0.0748,r2:0.9539},
+      {m:'GBM',mae:0.0711,rmse:0.1040,r2:0.9108},
+      {m:'RF',mae:0.0721,rmse:0.1065,r2:0.9066},
+      {m:'XGB_GPU',mae:0.0941,rmse:0.1350,r2:0.8498},
+      {m:'DCC_GARCH',mae:0.1652,rmse:0.2113,r2:0.6320},
+    ],
+    60:[
+      {m:'HAR',mae:0.0196,rmse:0.0342,r2:0.9865},
+      {m:'Naive_Last',mae:0.0191,rmse:0.0344,r2:0.9863},
+      {m:'AR1',mae:0.0194,rmse:0.0345,r2:0.9863},
+      {m:'Ridge',mae:0.0207,rmse:0.0347,r2:0.9861},
+      {m:'ElasticNet',mae:0.0222,rmse:0.0361,r2:0.9849},
+      {m:'Ensemble',mae:0.0239,rmse:0.0374,r2:0.9838},
+      {m:'GBM',mae:0.0382,rmse:0.0551,r2:0.9649},
+      {m:'RF',mae:0.0385,rmse:0.0565,r2:0.9631},
+      {m:'XGB_GPU',mae:0.0701,rmse:0.1098,r2:0.8608},
+      {m:'DCC_GARCH',mae:0.1373,rmse:0.1793,r2:0.6284},
+    ],
+    90:[
+      {m:'HAR',mae:0.0128,rmse:0.0232,r2:0.9920},
+      {m:'Naive_Last',mae:0.0125,rmse:0.0233,r2:0.9920},
+      {m:'AR1',mae:0.0127,rmse:0.0233,r2:0.9920},
+      {m:'Ridge',mae:0.0136,rmse:0.0235,r2:0.9919},
+      {m:'ElasticNet',mae:0.0154,rmse:0.0251,r2:0.9907},
+      {m:'Ensemble',mae:0.0164,rmse:0.0263,r2:0.9898},
+      {m:'RF',mae:0.0289,rmse:0.0463,r2:0.9683},
+      {m:'GBM',mae:0.0280,rmse:0.0468,r2:0.9676},
+      {m:'XGB_GPU',mae:0.0598,rmse:0.0933,r2:0.8716},
+      {m:'DCC_GARCH',mae:0.1513,rmse:0.1925,r2:0.4528},
+    ],
   },
 };
 
@@ -1726,7 +1958,7 @@ function renderDetailTable(){
   const tbody=document.getElementById('detail-tbody');
   tbody.innerHTML=data.map(row=>{
     let cls='';
-    if(row.m==='AR1'||row.m==='Naive_Last') cls='row-best';
+    if(row.m==='Ridge'||row.m==='AR1'||row.m==='HAR') cls='row-best';
     if(row.m==='DCC_GARCH') cls='row-worst';
     let vs='';
     if(naive&&row.m!=='Naive_Last'){
@@ -1870,14 +2102,14 @@ const T = {
     heroProg:  'University of Kragujevac · M.Sc. Artificial Intelligence',
     heroSup:   'Supervisor: <strong>Prof. Dr Vladimir M. Milovanović</strong>',
     heroDate:  'Defense: May 2026',
-    heroDesc:  'This thesis investigates whether cryptocurrency dynamics contain information about the evolving dependence structure of conventional financial assets. Bitcoin serves as the base crypto asset; the conventional universe spans equity indices, precious-metal ETFs, and the U.S. dollar index. A reproducible walk-forward ML pipeline is developed and benchmarked against a leakage-safe DCC-GARCH(1,1) specification across 168 model evaluations.',
+    heroDesc:  'This thesis investigates whether cryptocurrency dynamics contain information about the evolving dependence structure of conventional financial assets. Bitcoin serves as the base crypto asset; the conventional universe spans equity indices, precious-metal ETFs, and the U.S. dollar index. A reproducible walk-forward ML pipeline is developed and benchmarked against a leakage-safe DCC-GARCH(1,1) specification across 240 model evaluations (10 models × 6 pairs × 4 windows).',
     aboutH2: 'About',
     aboutP1: 'I\'m Bogdan Babaev — originally from <strong style="color:var(--text)">Samara, Russia</strong>, currently finishing my <strong style="color:var(--text)">M.Sc. in Artificial Intelligence</strong> at the University of Kragujevac, Serbia (2023–2026).',
     aboutP2: 'My research interests sit at the intersection of machine learning and quantitative finance — specifically time series forecasting, intermarket dependencies, and risk-aware modelling. This thesis is the result of about a year of work combining econometrics, walk-forward ML evaluation, and practical signal design.',
     aboutP3: 'Before the master\'s programme I studied and worked in Russia. Moving to Serbia was both a practical and academic decision — the programme in Kragujevac offered solid theoretical foundations and the freedom to pursue an applied quantitative thesis topic.',
     footerMain: 'Master Thesis, University of Kragujevac · 2026',
     footerSup:  'Supervisor: Prof. Dr Vladimir M. Milovanović',
-    statLabels: ['Daily observations','Assets','Model evaluations','Rolling windows','Best OOS R² (AR1, w=30)','ML vs DCC-GARCH (DM)'],
+    statLabels: ['Daily observations','Assets','Model evaluations','Rolling windows','Best OOS R² (Ridge avg)','ML vs DCC-GARCH (DM)'],
     rqLabels: ['RQ1 · Forecastability','RQ2 · ML vs DCC-GARCH','RQ3 · Feature Importance','RQ4 · Signal Layer'],
     sectionH2: {
       demo:'▶ Live Investor Signal Demo', dataset:'Dataset &amp; Asset Universe',

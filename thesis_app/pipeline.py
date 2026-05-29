@@ -155,14 +155,19 @@ def compute_returns(paths: Paths, prices: pd.DataFrame) -> pd.DataFrame:
     if os.path.exists(ret_path):
         cached = pd.read_csv(ret_path, index_col=0, parse_dates=True)
         if list(cached.columns) == list(prices.columns):
-            # Quick shape check avoids full index comparison most of the time
+            # Validate both length AND index dates to catch date-range shifts where
+            # row count stays the same but dates change (e.g. after a config change).
             expected_len = len(prices) - 1
-            if len(cached) == expected_len:
-                return cached
-        print("Recomputing returns.csv: cache columns/length mismatch.")
+            if len(cached) == expected_len and cached.index.is_monotonic_increasing:
+                # Full date-index check: both endpoint match is necessary to detect
+                # a 1-day shift that would otherwise pass a length-only check.
+                prices_ret_index = pd.DatetimeIndex(prices.index[1:])
+                if cached.index[0] == prices_ret_index[0] and cached.index[-1] == prices_ret_index[-1]:
+                    return cached
+        print("Recomputing returns.csv: cache columns/length/date mismatch.")
 
     returns = np.log(prices / prices.shift(1)).dropna().sort_index()
-    os.makedirs(os.path.dirname(ret_path), exist_ok=True)
+    os.makedirs(os.path.dirname(ret_path) or ".", exist_ok=True)
     returns.to_csv(ret_path, encoding="utf-8")
     return returns
 
@@ -594,12 +599,14 @@ def fit_predict_walk_forward(
         "RF": RandomForestRegressor(n_estimators=200, max_depth=10, min_samples_leaf=5, random_state=random_state, n_jobs=rf_n_jobs),
         # HistGradientBoostingRegressor: LightGBM-style histogram algorithm.
         # 10-20× faster than legacy GradientBoostingRegressor on large datasets.
-        # Supports native early stopping and parallelism across histogram bins.
+        # early_stopping=False: walk-forward windows (800-3000 rows) are always below
+        # sklearn's "auto" threshold of 10 000 samples, so early stopping never fires
+        # under "auto". Setting False explicitly avoids dead parameter confusion and
+        # ensures all 300 iterations run, using the full expanding training window.
         "GBM": HistGradientBoostingRegressor(
             max_iter=300, max_depth=4, learning_rate=0.02,
             min_samples_leaf=5, l2_regularization=0.1,
-            early_stopping="auto", validation_fraction=0.1,
-            n_iter_no_change=20, random_state=random_state,
+            early_stopping=False, random_state=random_state,
         ),
     }
 
@@ -636,7 +643,9 @@ def fit_predict_walk_forward(
             ar_x = np.empty((t, 1))
             ar_x[0, 0] = np.nan
             ar_x[1:, 0] = y_values[:t - 1]
-            valid = np.isfinite(ar_x[:, 0])
+            # Check both predictor (lag) and target for finiteness — a NaN target
+            # at a row where the lag is finite would silently corrupt the AR1 fit.
+            valid = np.isfinite(ar_x[:, 0]) & np.isfinite(ar_y)
             if int(valid.sum()) > 10:
                 try:
                     model_specs["AR1"].fit(ar_x[valid], ar_y[valid])
