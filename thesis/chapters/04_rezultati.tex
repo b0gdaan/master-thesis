@@ -103,6 +103,8 @@ The rolling error profile reveals that forecast quality is time-heterogeneous. D
 
 The forecast-error distribution diagnostics further establish that the dominant source of prediction error is episodic underreaction to sharp turning points rather than systematic bias. Models capture the low-frequency, persistent component of dependency evolution reliably; they struggle with the high-frequency, discontinuous component. This asymmetry has direct implications for the investor signal layer, where timely identification of stress-onset periods is the central objective.
 
+To illustrate this regime-sensitivity in concrete historical terms, Appendix~\ref{app:market_events} documents eleven landmark market events between 2020 and 2026 --- ranging from the COVID crash of March 2020 and the FTX collapse of November 2022 to the Bitcoin ETF approval of January 2024 and the tariff shock of April 2025. For each episode, the appendix provides a four-panel diagnostic showing how the rolling BTC correlation shifted relative to both the event date and the pre-event baseline, together with direct references to the original news sources. These case studies confirm the main finding: the largest model errors in Figure~\ref{fig:rolling_rmse} correspond precisely to the sharpest events in the historical record.
+
 \subsection{Investor signal layer: average results}
 
 The second empirical layer reformulates the dependency forecasting output as a stress-warning classification problem. Table~\ref{tab:signal_summary} reports the average classification performance by model family, aggregated across all asset pairs and window-length combinations.
