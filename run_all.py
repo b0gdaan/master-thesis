@@ -29,6 +29,7 @@ NOTEBOOKS = [
     "05_XGB_vs_DCC.ipynb",
     "06_Regime_Analysis.ipynb",
     "07_Robustness_Checks.ipynb",
+    "08_Market_Events_Showcase.ipynb",  # landmark event deep-dives (runs last)
 ]
 
 # Canonical package name → distribution name (for importlib.metadata lookup)

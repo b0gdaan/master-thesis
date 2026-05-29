@@ -59,6 +59,8 @@ Seven Jupyter notebooks in the \texttt{notebooks/} directory supplement the main
     \item \textbf{\texttt{06\_Regime\_Analysis.ipynb}} --- Regime-conditional analysis. Produces the regime catalogue statistics table, regime-conditional RMSE bar charts, and data-quality summary figures. Provides the empirical basis for the regime-sensitivity discussion in Chapter~4.
 
     \item \textbf{\texttt{07\_Robustness\_Checks.ipynb}} --- Robustness and sensitivity analyses. Contains refit-frequency sensitivity sweeps, stress-threshold sensitivity curves, bootstrap confidence intervals for key metrics, signal-layer diagnostics, and the cross-asset Diebold--Mariano test comparing equity against non-equity pair performance.
+
+    \item \textbf{\texttt{08\_Market\_Events\_Showcase.ipynb}} --- Landmark market-event case studies. For each of 11 key episodes between 2020 and 2026 (COVID crash, Luna collapse, FTX bankruptcy, SVB crisis, Bitcoin ETF approval, Trump election rally, Liberation Day tariff shock, and others), the notebook produces a four-panel diagnostic figure showing normalized price action, daily return distributions, rolling correlation dynamics across window lengths, and a pre/post correlation shift bar chart. A correlation-regime heatmap summarises all events jointly, and a scatter-plot grid illustrates how co-movement between Bitcoin and the S\&P~500 varies by event type. All figures are saved to \texttt{outputs/figures/event\_*.png} and \texttt{outputs/figures/market\_events\_*.png}; a summary CSV is written to \texttt{outputs/results/market\_events\_summary.csv}. Embedded HTML cells include direct links to the original news sources for each event. This notebook runs last so that it can draw on the full set of pipeline outputs and serves as a narrative complement to the quantitative results of Chapters 4 and~5.
 \end{enumerate}
 
 All notebooks use a shared ROOT-detection routine that locates the project root by searching upward for \texttt{config.yaml}. This ensures correct path resolution whether a notebook is launched interactively from within the \texttt{notebooks/} directory or executed programmatically via \texttt{run\_all.py} from the project root.
@@ -77,7 +79,7 @@ PYTHON = sys.executable
 subprocess.run([PYTHON, "main.py"], cwd=BASE, check=True)
 
 # Step 2: execute each notebook with cwd set to project root
-for nb in ["01_EDA_Dataset.ipynb", ..., "07_Robustness_Checks.ipynb"]:
+for nb in ["01_EDA_Dataset.ipynb", ..., "08_Market_Events_Showcase.ipynb"]:
     subprocess.run(
         [PYTHON, "-m", "jupyter", "nbconvert",
          "--to", "notebook", "--execute", "--inplace",
@@ -111,7 +113,8 @@ At a high level, the execution flow can be summarized as follows:
     \item Fit all models in walk-forward mode and save predictions.
     \item Compute metrics, DM tests, and export tables and figures.
     \item Run the investor signal layer and export signal figures.
-    \item Execute seven Jupyter notebooks to produce supplementary diagnostics.
+    \item Execute eight Jupyter notebooks to produce supplementary diagnostics,
+          including the market-event showcase (Appendix~\ref{app:market_events}).
     \item Run the automated \texttt{pytest} suite (81 unit and integration tests)
           and generate the test-report table for Appendix~E.
     \item Compile the \LaTeX\ thesis document.
