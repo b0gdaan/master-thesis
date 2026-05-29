@@ -687,28 +687,28 @@ p{text-align:left}
 
   <h3>Exploratory Figures</h3>
   <div class="fig-grid mt-8">
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/eda_normalized_prices.png','Normalized Price Paths — all 7 assets, base=1 at 2017-11-09')">
-      <img src="/thesis-assets/figures/eda_normalized_prices.png" alt="Normalized prices" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/eda_normalized_prices.png','Normalized Price Paths — all 7 assets, base=1 at 2017-11-09')">
+      <img src="thesis-assets/figures/eda_normalized_prices.png" alt="Normalized prices" loading="lazy">
       <div class="fig-caption"><strong>Fig 1 — Normalized Price Paths</strong><span>All assets scaled to a common base of 1. Illustrates divergent performance: BTC/ETH multiples vs near-flat conventional assets.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/dataset_volatility.png','30-day Rolling Volatility — all assets')">
-      <img src="/thesis-assets/figures/dataset_volatility.png" alt="Rolling volatility" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/dataset_volatility.png','30-day Rolling Volatility — all assets')">
+      <img src="thesis-assets/figures/dataset_volatility.png" alt="Rolling volatility" loading="lazy">
       <div class="fig-caption"><strong>Fig 2 — Rolling Volatility</strong><span>Crypto assets exhibit episodically much higher volatility (~5× the S&amp;P 500), motivating dynamic rather than static dependency modelling.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/dataset_corr_heatmap.png','Full-sample Pearson correlation matrix of daily log-returns')">
-      <img src="/thesis-assets/figures/dataset_corr_heatmap.png" alt="Correlation heatmap" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/dataset_corr_heatmap.png','Full-sample Pearson correlation matrix of daily log-returns')">
+      <img src="thesis-assets/figures/dataset_corr_heatmap.png" alt="Correlation heatmap" loading="lazy">
       <div class="fig-caption"><strong>Fig 3 — Full-Sample Correlation Heatmap</strong><span>BTC/ETH show low static correlations with conventional assets — motivating the time-varying analysis over a single full-sample estimate.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/eda_rolling_corr_all.png','Rolling correlations — all pairs, all 4 windows, Fisher-z transformed')">
-      <img src="/thesis-assets/figures/eda_rolling_corr_all.png" alt="Rolling correlations" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/eda_rolling_corr_all.png','Rolling correlations — all pairs, all 4 windows, Fisher-z transformed')">
+      <img src="thesis-assets/figures/eda_rolling_corr_all.png" alt="Rolling correlations" loading="lazy">
       <div class="fig-caption"><strong>Fig 4 — Rolling Dependency Overview</strong><span>Fisher-z transformed rolling correlations for all pairs across windows 14/30/60/90 days. Strong time-variation and persistence visible across all pairs.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/fig_price_coverage.png','Data Coverage — observation counts per ticker')">
-      <img src="/thesis-assets/figures/fig_price_coverage.png" alt="Coverage" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/fig_price_coverage.png','Data Coverage — observation counts per ticker')">
+      <img src="thesis-assets/figures/fig_price_coverage.png" alt="Coverage" loading="lazy">
       <div class="fig-caption"><strong>Fig 5 — Observation Coverage</strong><span>All 7 tickers share identical date range after ETH-USD alignment. No gaps or missing bars.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/eda_fisher_transform.png','Fisher-z transformation effect on correlation distribution')">
-      <img src="/thesis-assets/figures/eda_fisher_transform.png" alt="Fisher transform" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/eda_fisher_transform.png','Fisher-z transformation effect on correlation distribution')">
+      <img src="thesis-assets/figures/eda_fisher_transform.png" alt="Fisher transform" loading="lazy">
       <div class="fig-caption"><strong>Fig 6 — Fisher-z Transformation</strong><span>Maps bounded ρ ∈ (−1,1) to unbounded ℝ, stabilising variance and improving normality of the regression target.</span></div>
     </div>
   </div>
@@ -812,12 +812,12 @@ p{text-align:left}
   </div>
 
   <div class="grid-2">
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/gridsearch_cv_rmse_BTC-USD_^GSPC_w30.png','Grid Search CV RMSE — BTC/S&P500, w=30')">
-      <img src="/thesis-assets/figures/gridsearch_cv_rmse_BTC-USD_^GSPC_w30.png" alt="Grid search" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/gridsearch_cv_rmse_BTC-USD_^GSPC_w30.png','Grid Search CV RMSE — BTC/S&P500, w=30')">
+      <img src="thesis-assets/figures/gridsearch_cv_rmse_BTC-USD_^GSPC_w30.png" alt="Grid search" loading="lazy">
       <div class="fig-caption"><strong>Grid Search — BTC/S&P500, w=30</strong><span>Cross-validated RMSE across hyperparameter grid. ElasticNet slightly below Ridge due to stronger L1 shrinkage on weak features.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/rf_feature_importance_BTC-USD_^GSPC_w30_readable.png','RF Feature Importance — BTC/S&P500, w=30')">
-      <img src="/thesis-assets/figures/rf_feature_importance_BTC-USD_^GSPC_w30_readable.png" alt="Feature importance" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/rf_feature_importance_BTC-USD_^GSPC_w30_readable.png','RF Feature Importance — BTC/S&P500, w=30')">
+      <img src="thesis-assets/figures/rf_feature_importance_BTC-USD_^GSPC_w30_readable.png" alt="Feature importance" loading="lazy">
       <div class="fig-caption"><strong>RF Feature Importance — BTC/S&P500, w=30</strong><span>dep_lag1 dominates; all other features secondary. Right panel excludes dep_lag1 to show relative importance of remaining predictors.</span></div>
     </div>
   </div>
@@ -882,20 +882,20 @@ p{text-align:left}
   </div>
 
   <div class="fig-grid-wide">
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/model_rmse_comparison.png','RMSE Comparison — All Models, aggregated')">
-      <img src="/thesis-assets/figures/model_rmse_comparison.png" alt="RMSE comparison" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/model_rmse_comparison.png','RMSE Comparison — All Models, aggregated')">
+      <img src="thesis-assets/figures/model_rmse_comparison.png" alt="RMSE comparison" loading="lazy">
       <div class="fig-caption"><strong>RMSE Comparison — Aggregated All Pairs &amp; Windows</strong><span>Ridge, AR1, and HAR form indistinguishable top cluster; all ML models outperform DCC-GARCH.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/model_r2_comparison_w30.png','R² at w=30 — all pairs')">
-      <img src="/thesis-assets/figures/model_r2_comparison_w30.png" alt="R2 comparison" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/model_r2_comparison_w30.png','R² at w=30 — all pairs')">
+      <img src="thesis-assets/figures/model_r2_comparison_w30.png" alt="R2 comparison" loading="lazy">
       <div class="fig-caption"><strong>OOS R² — All Pairs at w=30</strong><span>All models except DCC-GARCH exceed R²=0.85. ETH pair shows highest R² (closer crypto co-movement).</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=30')">
-      <img src="/thesis-assets/figures/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png" alt="Forecast" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=30')">
+      <img src="thesis-assets/figures/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png" alt="Forecast" loading="lazy">
       <div class="fig-caption"><strong>Forecast vs Actual — BTC/S&P500, w=30</strong><span>All models overlaid on realized Fisher-z correlation. Persistence models track realized series closely.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png','Rolling RMSE Over Time')">
-      <img src="/thesis-assets/figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png" alt="Rolling RMSE" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png','Rolling RMSE Over Time')">
+      <img src="thesis-assets/figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png" alt="Rolling RMSE" loading="lazy">
       <div class="fig-caption"><strong>Rolling RMSE Over Time — BTC/S&P500, w=30</strong><span>All models spike during COVID-19 (2020) and BTC crash (2022). DCC-GARCH error is persistently higher throughout.</span></div>
     </div>
   </div>
@@ -931,8 +931,8 @@ p{text-align:left}
     <p><strong>Cross-asset DM test (equity vs non-equity):</strong> DM = <strong>−9.079</strong>, p = 0.000. Equity dependency (^GSPC, ^IXIC) is statistically significantly easier to forecast than precious metals or dollar — consistent with the information-gap hypothesis: crypto features are well-specified for equity stress but incomplete for metals and FX.</p>
   </div>
 
-  <div class="fig-card mt-24" style="max-width:780px" onclick="openLightbox('/thesis-assets/figures/dm_heatmap_Ridge_vs_DCC.png','DM Test Heatmap — Ridge vs DCC-GARCH, all pairs × all windows')">
-    <img src="/thesis-assets/figures/dm_heatmap_Ridge_vs_DCC.png" alt="DM heatmap" loading="lazy">
+  <div class="fig-card mt-24" style="max-width:780px" onclick="openLightbox('thesis-assets/figures/dm_heatmap_Ridge_vs_DCC.png','DM Test Heatmap — Ridge vs DCC-GARCH, all pairs × all windows')">
+    <img src="thesis-assets/figures/dm_heatmap_Ridge_vs_DCC.png" alt="DM heatmap" loading="lazy">
     <div class="fig-caption"><strong>DM Test Heatmap — Ridge vs DCC-GARCH</strong><span>All pairs × all windows. Every cell is positive (ML wins), all p-values &lt; 0.001.</span></div>
   </div>
 </div>
@@ -999,12 +999,12 @@ p{text-align:left}
   </div>
 
   <div class="fig-grid-wide mt-8">
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png','Signal Layer — BTC/S&P500, w=30')">
-      <img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png" alt="Signal SP500 w30" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png','Signal Layer — BTC/S&P500, w=30')">
+      <img src="thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png" alt="Signal SP500 w30" loading="lazy">
       <div class="fig-caption"><strong>Signal — BTC/S&P500, w=30</strong><span>Upper: stress probability vs threshold. Lower: flagged vs realized stress events. Best overall configuration.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w14.png','Signal Layer — BTC/S&P500, w=14')">
-      <img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w14.png" alt="Signal SP500 w14" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w14.png','Signal Layer — BTC/S&P500, w=14')">
+      <img src="thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w14.png" alt="Signal SP500 w14" loading="lazy">
       <div class="fig-caption"><strong>Signal — BTC/S&P500, w=14</strong><span>Shorter window provides more reactive but noisier stress flags. Higher exit rate (30.4%).</span></div>
     </div>
   </div>
@@ -1053,20 +1053,20 @@ p{text-align:left}
 
   <h3 class="mt-24">Cross-Event Synthesis</h3>
   <div class="fig-grid-wide mt-8">
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/market_events_master_timeline.png','Master timeline 2018–2026 — BTC price, conventional assets, and 30-day BTC–S&P 500 correlation with all 11 events marked')">
-      <img src="/thesis-assets/figures/market_events_master_timeline.png" alt="Market events master timeline" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/market_events_master_timeline.png','Master timeline 2018–2026 — BTC price, conventional assets, and 30-day BTC–S&P 500 correlation with all 11 events marked')">
+      <img src="thesis-assets/figures/market_events_master_timeline.png" alt="Market events master timeline" loading="lazy">
       <div class="fig-caption"><strong>Master Timeline 2018–2026</strong><span>BTC price, S&amp;P 500 / NASDAQ / Gold, and the 30-day BTC–S&amp;P 500 correlation with all 11 events marked. Correlation spikes cluster around macro risk-off episodes, not crypto-specific ones.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/market_events_correlation_heatmap.png','Correlation regime map — post-event BTC correlation and change for all 11 events × conventional assets')">
-      <img src="/thesis-assets/figures/market_events_correlation_heatmap.png" alt="Correlation regime map" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/market_events_correlation_heatmap.png','Correlation regime map — post-event BTC correlation and change for all 11 events × conventional assets')">
+      <img src="thesis-assets/figures/market_events_correlation_heatmap.png" alt="Correlation regime map" loading="lazy">
       <div class="fig-caption"><strong>Correlation Regime Map</strong><span>Left: post-event BTC correlation (30-day average) with each conventional asset. Right: change Δρ versus the pre-event average — isolating the regime shift caused by the event.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/market_events_scatter_grid.png','Return scatter grid — BTC vs S&P 500 daily returns ±30 days around each event')">
-      <img src="/thesis-assets/figures/market_events_scatter_grid.png" alt="Return scatter grid" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/market_events_scatter_grid.png','Return scatter grid — BTC vs S&P 500 daily returns ±30 days around each event')">
+      <img src="thesis-assets/figures/market_events_scatter_grid.png" alt="Return scatter grid" loading="lazy">
       <div class="fig-caption"><strong>Return Scatter Grid</strong><span>BTC vs S&amp;P 500 daily returns for the ±30-day window around each event. Grey = pre-event, coloured = post-event; the within-window ρ annotates each panel.</span></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/market_events_regime_scatter.png','Event regime scatter — BTC 7-day return vs change in correlation, four interpretive quadrants')">
-      <img src="/thesis-assets/figures/market_events_regime_scatter.png" alt="Event regime scatter" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/market_events_regime_scatter.png','Event regime scatter — BTC 7-day return vs change in correlation, four interpretive quadrants')">
+      <img src="thesis-assets/figures/market_events_regime_scatter.png" alt="Event regime scatter" loading="lazy">
       <div class="fig-caption"><strong>Event Regime Scatter</strong><span>Each event in (BTC 7-day return, Δρ) space. Upper-left = macro risk-off crashes; lower-right = crypto-specific rallies that decoupled from equities.</span></div>
     </div>
   </div>
@@ -1074,48 +1074,48 @@ p{text-align:left}
   <h3 class="mt-24">Individual Event Deep-Dives</h3>
   <p class="text-muted mb-8" style="font-size:12.5px">Each four-panel figure: normalised price paths · daily log-returns · 30-day &amp; 14-day rolling correlation · pre/post correlation by pair. Click to enlarge; source links open the contemporary news report.</p>
   <div class="fig-grid mt-8">
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/event_covid.png','COVID Black Thursday — 12 March 2020')">
-      <img src="/thesis-assets/figures/event_covid.png" alt="COVID Black Thursday" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_covid.png','COVID Black Thursday — 12 March 2020')">
+      <img src="thesis-assets/figures/event_covid.png" alt="COVID Black Thursday" loading="lazy">
       <div class="fig-caption"><strong>1 · 🦠 COVID “Black Thursday”</strong><span>Liquidity-driven sell-off: BTC −35% over 7 days with a −26% S&amp;P. 30-day BTC–S&amp;P 500 correlation jumped 0.17 → 0.57 — diversification evaporated.</span><a href="https://www.reuters.com/article/us-health-coronavirus-markets-idUSKBN20Z0TO" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: Reuters ↗</a></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/event_crypto_summer_2020.png','Institutional Adoption Wave — Q4 2020')">
-      <img src="/thesis-assets/figures/event_crypto_summer_2020.png" alt="Institutional adoption wave 2020" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_crypto_summer_2020.png','Institutional Adoption Wave — Q4 2020')">
+      <img src="thesis-assets/figures/event_crypto_summer_2020.png" alt="Institutional adoption wave 2020" loading="lazy">
       <div class="fig-caption"><strong>2 · 🏦 Institutional Adoption Wave</strong><span>MicroStrategy / Square / PayPal drove BTC from $10K toward $20K while equities were flat. Correlation held moderate (~0.43), well below the COVID spike — March was a liquidity event, not a structural shift.</span><a href="https://www.theguardian.com/technology/2020/aug/11/microstrategy-bitcoin-250m-treasury" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: The Guardian ↗</a></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/event_china_ban.png','China Mining Ban & Musk Tweets — May 2021')">
-      <img src="/thesis-assets/figures/event_china_ban.png" alt="China mining ban 2021" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_china_ban.png','China Mining Ban & Musk Tweets — May 2021')">
+      <img src="thesis-assets/figures/event_china_ban.png" alt="China mining ban 2021" loading="lazy">
       <div class="fig-caption"><strong>3 · 🇨🇳 China Mining Ban &amp; Musk</strong><span>Mining ban + Musk tweets cut BTC −37% in a week while the S&amp;P barely moved (+1%). A textbook crypto-idiosyncratic shock — only a brief correlation rise (0.16 → 0.42).</span><a href="https://www.bbc.com/news/technology-57169726" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: BBC ↗</a></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/event_btc_ath_2021.png','Bitcoin ATH $69,000 — 10 November 2021')">
-      <img src="/thesis-assets/figures/event_btc_ath_2021.png" alt="Bitcoin ATH 2021" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_btc_ath_2021.png','Bitcoin ATH $69,000 — 10 November 2021')">
+      <img src="thesis-assets/figures/event_btc_ath_2021.png" alt="Bitcoin ATH 2021" loading="lazy">
       <div class="fig-caption"><strong>4 · 🚀 Bitcoin ATH $69,000</strong><span>At the peak, BTC–NASDAQ co-movement was elevated on shared risk appetite. The high correlation foreshadowed the 2022 bear market as the Fed began tightening.</span><a href="https://www.bbc.com/news/technology-59244848" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: BBC ↗</a></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/event_luna_terra.png','Terra/Luna Collapse — May 2022')">
-      <img src="/thesis-assets/figures/event_luna_terra.png" alt="Terra Luna collapse 2022" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_luna_terra.png','Terra/Luna Collapse — May 2022')">
+      <img src="thesis-assets/figures/event_luna_terra.png" alt="Terra Luna collapse 2022" loading="lazy">
       <div class="fig-caption"><strong>5 · 💀 Terra/Luna Collapse</strong><span>$60B algorithmic-stablecoin implosion: BTC −25% while the S&amp;P fell only −3% on unrelated macro. Gold flat — crypto contagion did not reach traditional havens.</span><a href="https://www.theguardian.com/technology/2022/may/12/luna-cryptocurrency-collapse" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: The Guardian ↗</a></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/event_ftx.png','FTX Collapse — November 2022')">
-      <img src="/thesis-assets/figures/event_ftx.png" alt="FTX collapse 2022" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_ftx.png','FTX Collapse — November 2022')">
+      <img src="thesis-assets/figures/event_ftx.png" alt="FTX collapse 2022" loading="lazy">
       <div class="fig-caption"><strong>6 · 🏚️ FTX Collapse</strong><span>Exchange bankruptcy: BTC −19% over the week while the S&amp;P rose +3% on a soft CPI print — a brief divergence, with the 30-day correlation easing 0.55 → 0.46.</span><a href="https://www.bbc.com/news/technology-63631492" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: BBC ↗</a></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/event_svb.png','SVB Banking Crisis — 10 March 2023')">
-      <img src="/thesis-assets/figures/event_svb.png" alt="SVB banking crisis 2023" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_svb.png','SVB Banking Crisis — 10 March 2023')">
+      <img src="thesis-assets/figures/event_svb.png" alt="SVB banking crisis 2023" loading="lazy">
       <div class="fig-caption"><strong>7 · 🏦 SVB Banking Crisis</strong><span>Bank failure triggered a +15% BTC rally as both BTC and Gold rose while equities fell — a clear decoupling, with the 30-day BTC–S&amp;P correlation dropping 0.37 → 0.20 (its largest risk-off divergence in the sample).</span><a href="https://www.nytimes.com/2023/03/10/business/silicon-valley-bank-failure-explained.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: NYT ↗</a></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/event_etf_approval.png','SEC Approves Spot Bitcoin ETFs — 10 January 2024')">
-      <img src="/thesis-assets/figures/event_etf_approval.png" alt="Spot Bitcoin ETF approval 2024" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_etf_approval.png','SEC Approves Spot Bitcoin ETFs — 10 January 2024')">
+      <img src="thesis-assets/figures/event_etf_approval.png" alt="Spot Bitcoin ETF approval 2024" loading="lazy">
       <div class="fig-caption"><strong>8 · ✅ SEC Approves Spot BTC ETFs</strong><span>After a decade of rejections, BlackRock IBIT &amp; Fidelity FBTC approved. Classic buy-the-rumour, sell-the-news (BTC −5%) — but BTC became accessible to US institutions for the first time.</span><a href="https://www.cnbc.com/2024/01/10/sec-approves-spot-bitcoin-etfs.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: CNBC ↗</a></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/event_btc_ath_2024.png','Bitcoin ATH $73,000 — 5 March 2024')">
-      <img src="/thesis-assets/figures/event_btc_ath_2024.png" alt="Bitcoin ATH 2024" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_btc_ath_2024.png','Bitcoin ATH $73,000 — 5 March 2024')">
+      <img src="thesis-assets/figures/event_btc_ath_2024.png" alt="Bitcoin ATH 2024" loading="lazy">
       <div class="fig-caption"><strong>9 · 🏆 Bitcoin ATH $73,000</strong><span>ETF inflows (IBIT absorbed ~$10B in 7 weeks) drove BTC +27% to a new high. BTC and NASDAQ hit ATHs the same week — institutional channels create sustained co-movement.</span><a href="https://www.coindesk.com/markets/2024/03/14/bitcoin-sets-new-all-time-high-above-73k/" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: CoinDesk ↗</a></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/event_trump_election.png','Trump Election Victory — 6 November 2024')">
-      <img src="/thesis-assets/figures/event_trump_election.png" alt="Trump election 2024" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_trump_election.png','Trump Election Victory — 6 November 2024')">
+      <img src="thesis-assets/figures/event_trump_election.png" alt="Trump election 2024" loading="lazy">
       <div class="fig-caption"><strong>10 · 🇺🇸 Trump Election Victory</strong><span>Pro-crypto platform (proposed BTC strategic reserve) lifted BTC +22% in a week; equities rallied too. Correlation rose sharply (0.42 → 0.70) on a shared political catalyst.</span><a href="https://www.reuters.com/markets/crypto-market-surges-after-trump-wins-us-presidential-election-2024-11-06/" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: Reuters ↗</a></div>
     </div>
-    <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/event_liberation_day.png','Liberation Day Tariff Shock — 2 April 2025')">
-      <img src="/thesis-assets/figures/event_liberation_day.png" alt="Liberation Day tariff shock 2025" loading="lazy">
+    <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_liberation_day.png','Liberation Day Tariff Shock — 2 April 2025')">
+      <img src="thesis-assets/figures/event_liberation_day.png" alt="Liberation Day tariff shock 2025" loading="lazy">
       <div class="fig-caption"><strong>11 · 💥 “Liberation Day” Tariff Shock</strong><span>Sweeping tariffs sent the S&amp;P −6% and BTC −6% together in days — the fastest equity drop since 2020, with Gold surging. A clear macro risk-off co-crash: BTC behaved as a risk asset, not a haven.</span><a href="https://www.reuters.com/markets/trump-liberation-day-tariffs-global-markets-crash-2025-04-02/" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: Reuters ↗</a></div>
     </div>
   </div>
@@ -1369,52 +1369,52 @@ p{text-align:left}
 
   <div class="tab-pane active" id="tab-forecast">
     <div class="fig-grid">
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_^GSPC_w14_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=14')"><img src="/thesis-assets/figures/corr_BTC-USD_^GSPC_w14_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=14</strong><span>Noisy target; most challenging window.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_^GSPC_w30_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=30')"><img src="/thesis-assets/figures/corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=30</strong><span>Best signal-to-noise window.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_^GSPC_w60_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=60')"><img src="/thesis-assets/figures/corr_BTC-USD_^GSPC_w60_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=60</strong><span>Smoother series; strong persistence.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_^GSPC_w90_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=90')"><img src="/thesis-assets/figures/corr_BTC-USD_^GSPC_w90_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=90</strong><span>Near-trivial prediction; AR(1) ~= XGBoost.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_^IXIC_w30_fisher_z.png','Forecast vs Actual — BTC/NASDAQ w=30')"><img src="/thesis-assets/figures/corr_BTC-USD_^IXIC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / NASDAQ — w=30</strong><span>Similar to S&P 500 but slightly higher R².</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_GLD_w30_fisher_z.png','Forecast vs Actual — BTC/Gold w=30')"><img src="/thesis-assets/figures/corr_BTC-USD_GLD_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / Gold — w=30</strong><span>Lower static correlation; forecasting harder.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_SLV_w30_fisher_z.png','Forecast vs Actual — BTC/Silver w=30')"><img src="/thesis-assets/figures/corr_BTC-USD_SLV_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / Silver — w=30</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_UUP_w30_fisher_z.png','Forecast vs Actual — BTC/USD Index w=30')"><img src="/thesis-assets/figures/corr_BTC-USD_UUP_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / USD Index — w=30</strong><span>Defensive safe-haven asset; attenuated signal.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/corr_BTC-USD_ETH-USD_w30_fisher_z.png','Forecast vs Actual — BTC/ETH w=30')"><img src="/thesis-assets/figures/corr_BTC-USD_ETH-USD_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / ETH — w=30</strong><span>Highest R² of all pairs — strong within-crypto persistence.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/scatter_corr_BTC-USD_^GSPC_w30_fisher_z.png','Scatter: Predicted vs Actual — BTC/S&P500 w=30')"><img src="/thesis-assets/figures/scatter_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Scatter: Predicted vs Actual</strong><span>BTC/S&P500, w=30. Tight diagonal confirms high OOS accuracy.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/corr_BTC-USD_^GSPC_w14_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=14')"><img src="thesis-assets/figures/corr_BTC-USD_^GSPC_w14_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=14</strong><span>Noisy target; most challenging window.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/corr_BTC-USD_^GSPC_w30_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=30')"><img src="thesis-assets/figures/corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=30</strong><span>Best signal-to-noise window.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/corr_BTC-USD_^GSPC_w60_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=60')"><img src="thesis-assets/figures/corr_BTC-USD_^GSPC_w60_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=60</strong><span>Smoother series; strong persistence.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/corr_BTC-USD_^GSPC_w90_fisher_z.png','Forecast vs Actual — BTC/S&P500 w=90')"><img src="thesis-assets/figures/corr_BTC-USD_^GSPC_w90_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / S&P500 — w=90</strong><span>Near-trivial prediction; AR(1) ~= XGBoost.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/corr_BTC-USD_^IXIC_w30_fisher_z.png','Forecast vs Actual — BTC/NASDAQ w=30')"><img src="thesis-assets/figures/corr_BTC-USD_^IXIC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / NASDAQ — w=30</strong><span>Similar to S&P 500 but slightly higher R².</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/corr_BTC-USD_GLD_w30_fisher_z.png','Forecast vs Actual — BTC/Gold w=30')"><img src="thesis-assets/figures/corr_BTC-USD_GLD_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / Gold — w=30</strong><span>Lower static correlation; forecasting harder.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/corr_BTC-USD_SLV_w30_fisher_z.png','Forecast vs Actual — BTC/Silver w=30')"><img src="thesis-assets/figures/corr_BTC-USD_SLV_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / Silver — w=30</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/corr_BTC-USD_UUP_w30_fisher_z.png','Forecast vs Actual — BTC/USD Index w=30')"><img src="thesis-assets/figures/corr_BTC-USD_UUP_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / USD Index — w=30</strong><span>Defensive safe-haven asset; attenuated signal.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/corr_BTC-USD_ETH-USD_w30_fisher_z.png','Forecast vs Actual — BTC/ETH w=30')"><img src="thesis-assets/figures/corr_BTC-USD_ETH-USD_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>BTC / ETH — w=30</strong><span>Highest R² of all pairs — strong within-crypto persistence.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/scatter_corr_BTC-USD_^GSPC_w30_fisher_z.png','Scatter: Predicted vs Actual — BTC/S&P500 w=30')"><img src="thesis-assets/figures/scatter_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Scatter: Predicted vs Actual</strong><span>BTC/S&P500, w=30. Tight diagonal confirms high OOS accuracy.</span></div></div>
     </div>
   </div>
 
   <div class="tab-pane" id="tab-signal">
     <div class="fig-grid">
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w14.png','Signal — BTC/S&P500 w=14')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w14.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=14</strong><span>Reactive but noisy. Higher exit rate.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png','Signal — BTC/S&P500 w=30')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=30</strong><span>Best configuration. F1=0.243, AUC=0.532.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w60.png','Signal — BTC/S&P500 w=60')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w60.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=60</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w90.png','Signal — BTC/S&P500 w=90')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w90.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=90</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_^IXIC_w30.png','Signal — BTC/NASDAQ w=30')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_^IXIC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/NASDAQ — w=30</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_GLD_w30.png','Signal — BTC/Gold w=30')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_GLD_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/Gold — w=30</strong><span>Attenuated — gold driven by macro factors not in feature set.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_SLV_w30.png','Signal — BTC/Silver w=30')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_SLV_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/Silver — w=30</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/signal_corr_BTC-USD_UUP_w30.png','Signal — BTC/USD Index w=30')"><img src="/thesis-assets/figures/signal_corr_BTC-USD_UUP_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/USD Index — w=30</strong><span>Weakest signal — defensive macro asset.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w14.png','Signal — BTC/S&P500 w=14')"><img src="thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w14.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=14</strong><span>Reactive but noisy. Higher exit rate.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png','Signal — BTC/S&P500 w=30')"><img src="thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=30</strong><span>Best configuration. F1=0.243, AUC=0.532.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w60.png','Signal — BTC/S&P500 w=60')"><img src="thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w60.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=60</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w90.png','Signal — BTC/S&P500 w=90')"><img src="thesis-assets/figures/signal_corr_BTC-USD_^GSPC_w90.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/S&P500 — w=90</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/signal_corr_BTC-USD_^IXIC_w30.png','Signal — BTC/NASDAQ w=30')"><img src="thesis-assets/figures/signal_corr_BTC-USD_^IXIC_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/NASDAQ — w=30</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/signal_corr_BTC-USD_GLD_w30.png','Signal — BTC/Gold w=30')"><img src="thesis-assets/figures/signal_corr_BTC-USD_GLD_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/Gold — w=30</strong><span>Attenuated — gold driven by macro factors not in feature set.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/signal_corr_BTC-USD_SLV_w30.png','Signal — BTC/Silver w=30')"><img src="thesis-assets/figures/signal_corr_BTC-USD_SLV_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/Silver — w=30</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/signal_corr_BTC-USD_UUP_w30.png','Signal — BTC/USD Index w=30')"><img src="thesis-assets/figures/signal_corr_BTC-USD_UUP_w30.png" loading="lazy"><div class="fig-caption"><strong>Signal BTC/USD Index — w=30</strong><span>Weakest signal — defensive macro asset.</span></div></div>
     </div>
   </div>
 
   <div class="tab-pane" id="tab-sensitivity">
     <div class="fig-grid">
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/sensitivity_BTC-USD_^GSPC.png','Window Sensitivity — BTC/S&P500')"><img src="/thesis-assets/figures/sensitivity_BTC-USD_^GSPC.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/S&P500</strong><span>R² rises monotonically with window length; RMSE falls.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/sensitivity_BTC-USD_^IXIC.png','Window Sensitivity — BTC/NASDAQ')"><img src="/thesis-assets/figures/sensitivity_BTC-USD_^IXIC.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/NASDAQ</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/sensitivity_BTC-USD_GLD.png','Window Sensitivity — BTC/Gold')"><img src="/thesis-assets/figures/sensitivity_BTC-USD_GLD.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/Gold</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/sensitivity_BTC-USD_SLV.png','Window Sensitivity — BTC/Silver')"><img src="/thesis-assets/figures/sensitivity_BTC-USD_SLV.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/Silver</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/sensitivity_BTC-USD_UUP.png','Window Sensitivity — BTC/USD Index')"><img src="/thesis-assets/figures/sensitivity_BTC-USD_UUP.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/USD Index</strong></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/sensitivity_BTC-USD_ETH-USD.png','Window Sensitivity — BTC/ETH')"><img src="/thesis-assets/figures/sensitivity_BTC-USD_ETH-USD.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/ETH</strong><span>Highest R² values of all pairs across all windows.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/refit_sensitivity.png','Refit Frequency Sensitivity')"><img src="/thesis-assets/figures/refit_sensitivity.png" loading="lazy"><div class="fig-caption"><strong>Refit Frequency Sensitivity</strong><span>Sweep: [5, 10, 21, 42, 63] trading days. Results stable above refit_every=10.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/xgb_window_sensitivity.png','XGBoost Window Sensitivity')"><img src="/thesis-assets/figures/xgb_window_sensitivity.png" loading="lazy"><div class="fig-caption"><strong>XGBoost Window Sensitivity</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/sensitivity_BTC-USD_^GSPC.png','Window Sensitivity — BTC/S&P500')"><img src="thesis-assets/figures/sensitivity_BTC-USD_^GSPC.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/S&P500</strong><span>R² rises monotonically with window length; RMSE falls.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/sensitivity_BTC-USD_^IXIC.png','Window Sensitivity — BTC/NASDAQ')"><img src="thesis-assets/figures/sensitivity_BTC-USD_^IXIC.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/NASDAQ</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/sensitivity_BTC-USD_GLD.png','Window Sensitivity — BTC/Gold')"><img src="thesis-assets/figures/sensitivity_BTC-USD_GLD.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/Gold</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/sensitivity_BTC-USD_SLV.png','Window Sensitivity — BTC/Silver')"><img src="thesis-assets/figures/sensitivity_BTC-USD_SLV.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/Silver</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/sensitivity_BTC-USD_UUP.png','Window Sensitivity — BTC/USD Index')"><img src="thesis-assets/figures/sensitivity_BTC-USD_UUP.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/USD Index</strong></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/sensitivity_BTC-USD_ETH-USD.png','Window Sensitivity — BTC/ETH')"><img src="thesis-assets/figures/sensitivity_BTC-USD_ETH-USD.png" loading="lazy"><div class="fig-caption"><strong>Window Sensitivity — BTC/ETH</strong><span>Highest R² values of all pairs across all windows.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/refit_sensitivity.png','Refit Frequency Sensitivity')"><img src="thesis-assets/figures/refit_sensitivity.png" loading="lazy"><div class="fig-caption"><strong>Refit Frequency Sensitivity</strong><span>Sweep: [5, 10, 21, 42, 63] trading days. Results stable above refit_every=10.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/xgb_window_sensitivity.png','XGBoost Window Sensitivity')"><img src="thesis-assets/figures/xgb_window_sensitivity.png" loading="lazy"><div class="fig-caption"><strong>XGBoost Window Sensitivity</strong></div></div>
     </div>
   </div>
 
   <div class="tab-pane" id="tab-diagnostics">
     <div class="fig-grid">
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/error_dist_corr_BTC-USD_^GSPC_w30_fisher_z.png','Error Distribution — BTC/S&P500 w=30')"><img src="/thesis-assets/figures/error_dist_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Error Distribution — BTC/S&P500, w=30</strong><span>Residuals approximately symmetric around zero for AR1 and Naive_Last; heavier tails for tree ensembles.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png','Rolling RMSE Over Time')"><img src="/thesis-assets/figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Rolling RMSE Over Time — BTC/S&P500, w=30</strong><span>All models spike during COVID-19 crash (Mar 2020) and BTC bear market (Nov 2022).</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/ridge_regularization_path.png','Ridge Regularization Path')"><img src="/thesis-assets/figures/ridge_regularization_path.png" loading="lazy"><div class="fig-caption"><strong>Ridge Regularization Path</strong><span>dep_lag1 stable across all α values — confirms its dominance.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/fig_return_outliers.png','Return Outliers — |z|>5σ')"><img src="/thesis-assets/figures/fig_return_outliers.png" loading="lazy"><div class="fig-caption"><strong>Return Outliers (|z|&gt;5σ)</strong><span>Crypto assets have far more extreme outliers than conventional assets — evidence of fat tails.</span></div></div>
-      <div class="fig-card" onclick="openLightbox('/thesis-assets/figures/model_improvement_over_naive.png','Model Improvement Over Naive Baseline')"><img src="/thesis-assets/figures/model_improvement_over_naive.png" loading="lazy"><div class="fig-caption"><strong>Model Improvement Over Naive_Last</strong><span>All ML models underperform the simple persistence baseline; DCC-GARCH is the worst performer.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/error_dist_corr_BTC-USD_^GSPC_w30_fisher_z.png','Error Distribution — BTC/S&P500 w=30')"><img src="thesis-assets/figures/error_dist_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Error Distribution — BTC/S&P500, w=30</strong><span>Residuals approximately symmetric around zero for AR1 and Naive_Last; heavier tails for tree ensembles.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png','Rolling RMSE Over Time')"><img src="thesis-assets/figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png" loading="lazy"><div class="fig-caption"><strong>Rolling RMSE Over Time — BTC/S&P500, w=30</strong><span>All models spike during COVID-19 crash (Mar 2020) and BTC bear market (Nov 2022).</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/ridge_regularization_path.png','Ridge Regularization Path')"><img src="thesis-assets/figures/ridge_regularization_path.png" loading="lazy"><div class="fig-caption"><strong>Ridge Regularization Path</strong><span>dep_lag1 stable across all α values — confirms its dominance.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/fig_return_outliers.png','Return Outliers — |z|>5σ')"><img src="thesis-assets/figures/fig_return_outliers.png" loading="lazy"><div class="fig-caption"><strong>Return Outliers (|z|&gt;5σ)</strong><span>Crypto assets have far more extreme outliers than conventional assets — evidence of fat tails.</span></div></div>
+      <div class="fig-card" onclick="openLightbox('thesis-assets/figures/model_improvement_over_naive.png','Model Improvement Over Naive Baseline')"><img src="thesis-assets/figures/model_improvement_over_naive.png" loading="lazy"><div class="fig-caption"><strong>Model Improvement Over Naive_Last</strong><span>All ML models underperform the simple persistence baseline; DCC-GARCH is the worst performer.</span></div></div>
     </div>
   </div>
 </div>
@@ -1666,7 +1666,7 @@ cd thesis && latexmk -pdf main.tex</div>
   <div class="about-wrap">
     <div>
       <div class="about-photo">
-        <img src="/photo.jpg" alt="Bogdan Babaev" onerror="this.parentElement.style.display='none';document.getElementById('photo-placeholder').style.display='flex'">
+        <img src="photo.jpg" alt="Bogdan Babaev" onerror="this.parentElement.style.display='none';document.getElementById('photo-placeholder').style.display='flex'">
       </div>
       <div id="photo-placeholder" class="about-photo-placeholder" style="display:none">👤</div>
     </div>
