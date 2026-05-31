@@ -1,6 +1,6 @@
 ﻿\section{Appendix A: Data Description and Additional Background}
 
-This appendix expands the empirical context of the thesis and provides additional background that supports the main text. Since the body of the thesis focuses on argument and interpretation, the appendix collects descriptive material that would otherwise interrupt the flow of the central narrative.
+This appendix collects the descriptive material that would have slowed the main text down --- the background and diagnostics behind the empirical setup --- so the body can stay focused on argument and interpretation.
 
 \subsection{Descriptive role of the asset universe}
 
@@ -14,7 +14,7 @@ The choice of assets in the thesis is not arbitrary. Each instrument represents 
     \item Ethereum is included as a crypto-native comparison asset in order to contrast same-ecosystem dependency with cross-market dependency.
 \end{itemize}
 
-The resulting dataset therefore spans assets that differ in investor base, liquidity conditions, macro sensitivity, and economic interpretation. This diversity helps the thesis avoid overly narrow conclusions.
+Between them, these assets differ in investor base, liquidity, macro sensitivity, and economic meaning --- enough variety to keep the conclusions from being an artefact of one narrow corner of the market.
 
 \subsection{Visual overview of the dataset}
 
@@ -90,16 +90,16 @@ The rolling Pearson correlation $\rho_t$ is bounded on $(-1, 1)$ and exhibits va
 
 \subsection{Why multiple rolling windows are used}
 
-The thesis uses 14-day, 30-day, 60-day, and 90-day windows because no single dependence horizon is universally appropriate. A short window is more sensitive to recent shocks, but also noisier. A longer window produces a smoother target and often stronger persistence, but may react slowly to a regime shift. Evaluating several windows allows the empirical analysis to separate these effects.
+The thesis uses 14-, 30-, 60-, and 90-day windows because no single horizon is the right one. A short window reacts fast to recent shocks but is noisy; a long window is smoother and more persistent but slow to register a regime change. Running all four lets the analysis tease these effects apart.
 
-The results indicate that the choice of window strongly shapes the forecastability profile. Longer windows are generally easier to forecast because they are smoother, but their predictive success is also more persistence-driven. Shorter windows react more quickly and are therefore more informative about local instability, although at the cost of noisier target behavior.
+The window choice turns out to shape the whole forecastability profile. Longer windows are easier to forecast because they are smoother --- but that success is almost entirely persistence. Shorter windows are noisier, yet more informative about local instability.
 
 \subsection{Additional implementation remarks}
 
-The project is organized so that each run of the pipeline produces consistent outputs in the \texttt{outputs/results}, \texttt{outputs/tables}, \texttt{outputs/figures}, and \texttt{outputs/predictions} directories. This structure is helpful not only for reproducibility but also for writing. Since the tables and figures are generated directly from the code pipeline, the gap between experiment execution and thesis writing is reduced.
+Every run of the pipeline writes consistent outputs into \texttt{outputs/results}, \texttt{outputs/tables}, \texttt{outputs/figures}, and \texttt{outputs/predictions}. That helps reproducibility, but it also helps the writing: because the tables and figures come straight from the code, there is very little distance between running an experiment and reporting it.
 
-Another useful implementation detail is that the notebook environment was aligned with the pipeline. Readability improvements were introduced in the notebooks so that figures are interpretable, benchmarks are selected robustly, and helper functions can be reused without fragile path assumptions. This matters because, in practice, exploratory notebooks often become a weak point in academic projects if they drift away from the main pipeline.
+The notebooks were kept in step with the pipeline rather than allowed to drift: figures stay interpretable, benchmarks are selected robustly, and helper functions are reused without fragile path assumptions. This matters in practice, where exploratory notebooks are often where an academic project quietly rots once they diverge from the code that produced the results.
 
 \subsection{Summary}
 
-The appendix confirms an important methodological point: the empirical environment studied in this thesis is heterogeneous, nonstationary in economic interpretation, and rich enough to justify a time-varying dependency framework. The descriptive evidence supports the modeling strategy used in the main body of the thesis.
+The takeaway is methodological: the environment studied here is heterogeneous, economically nonstationary, and rich enough to justify treating dependence as time-varying. The descriptive evidence backs the modelling strategy of the main text.
