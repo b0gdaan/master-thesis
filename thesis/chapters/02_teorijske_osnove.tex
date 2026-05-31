@@ -4,7 +4,7 @@
 
 How assets move together sits at the centre of financial theory: diversification, contagion, hedging, and portfolio risk all hinge on it. The textbook mean-variance framework treats that co-movement as a single constant correlation, but decades of evidence show the static picture does not hold. Real correlations drift over time, react more violently to bad news than to good, and spike during market downturns---exactly when diversification is supposed to help most \cite{longin2001}. Forecasting \emph{time-varying dependence} is therefore not an academic luxury but a practical necessity for managing risk.
 
-All of this matters even more when one side of the pair is a cryptocurrency. Bitcoin trades around the clock on a globally accessible market, reacts quickly to swings in sentiment and funding liquidity, and answers to a tangle of competing narratives at once: an inflation hedge to some, a speculative bet to others, a barometer of risk appetite, a hostage to regulation. Because so many forces pull on it, Bitcoin never settles into a single, stable role in a portfolio. Depending on where we are in the business and credit cycle, it can behave like a high-beta growth stock, a liquidity-sensitive risk proxy, or an idiosyncratic sentiment gauge. That instability is exactly what makes its link to conventional assets a natural candidate for a time-varying treatment.
+All of this matters even more when one side of the pair is a cryptocurrency \cite{nakamoto2008bitcoin}. Bitcoin trades around the clock on a globally accessible market, reacts quickly to swings in sentiment and funding liquidity, and answers to a tangle of competing narratives at once: an inflation hedge to some, a speculative bet to others, a barometer of risk appetite, a hostage to regulation. Because so many forces pull on it, Bitcoin never settles into a single, stable role in a portfolio. Depending on where we are in the business and credit cycle, it can behave like a high-beta growth stock, a liquidity-sensitive risk proxy, or an idiosyncratic sentiment gauge. That instability is exactly what makes its link to conventional assets a natural candidate for a time-varying treatment.
 
 \subsection{Cryptocurrencies and conventional assets}
 
@@ -59,7 +59,7 @@ DCC-GARCH is a natural benchmark here: it models time-varying co-movement under 
 
 \subsection{Machine-learning approaches to forecasting}
 
-Machine learning earns its place here not because it is guaranteed to win, but because it can pick up nonlinearities, threshold effects, and interactions that are awkward to write down as a parametric model. The thesis pits these methods against both the DCC-GARCH benchmark and plain persistence baselines, with two aims: to see where their strengths actually lie, and to pin down the conditions under which they add anything at all.
+Machine learning earns its place here not because it is guaranteed to win, but because it can pick up nonlinearities, threshold effects, and interactions that are awkward to write down as a parametric model \cite{gu2020empirical}. The thesis pits these methods against both the DCC-GARCH benchmark and plain persistence baselines, with two aims: to see where their strengths actually lie, and to pin down the conditions under which they add anything at all.
 
 \subsubsection{The HAR model and persistence-based forecasting}
 

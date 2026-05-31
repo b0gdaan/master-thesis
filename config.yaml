@@ -40,7 +40,7 @@ min_train_size: 800
 # refit_every ≈ 20 trading days ≈ 1 calendar month.
 # Monthly rebalancing is the standard frequency in portfolio risk management
 # (see e.g. Grinold & Kahn 1999; common practice in institutional PM).
-# Sensitivity over [5, 10, 21, 42, 63] is documented in outputs/results/refit_sensitivity.csv.
+# Sensitivity over [5, 10, 20, 42, 63] is documented in outputs/results/refit_sensitivity.csv.
 refit_every: 20
 
 # Diebold–Mariano test (Newey–West lag; for h=1, 0 is standard)
@@ -71,7 +71,7 @@ bootstrap:
 # Sensitivity analyses (written to outputs/results/)
 sensitivity:
   # refit_every values to sweep for the representative pair (BTC vs ^GSPC, w=30)
-  refit_every_values: [5, 10, 21, 42, 63]
+  refit_every_values: [5, 10, 20, 42, 63]
   # stress_sigma thresholds to sweep (uses already-computed probability predictions)
   stress_thresholds: [0.5, 0.75, 1.0, 1.5, 2.0]
 

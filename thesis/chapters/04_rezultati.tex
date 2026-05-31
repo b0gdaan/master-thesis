@@ -67,7 +67,7 @@ To check whether the lower errors on equity pairs are a real advantage rather th
 
 That simple persistence models top the average ranking should be read as a diagnosis of the target, not an indictment of machine learning.
 
-It follows directly from how the target is built. A rolling Pearson correlation over $w$ trading days shares $w-1$ observations with the previous window, which smooths the series like a moving average. After the Fisher transform, the result is strongly autocorrelated, and the first lag already accounts for the overwhelming share of predictable variance. So any model that leans on the most recent value will hit a high out-of-sample $R^2$ almost by construction.
+It follows directly from how the target is built. A rolling Pearson correlation over $w$ calendar days shares $w-1$ observations with the previous window, which smooths the series like a moving average. After the Fisher transform, the result is strongly autocorrelated, and the first lag already accounts for the overwhelming share of predictable variance. So any model that leans on the most recent value will hit a high out-of-sample $R^2$ almost by construction.
 
 The Random Forest feature importances say the same thing. The lagged dependency term dominates the ranking in every experiment, while the return lags, rolling volatilities, and the regime gap barely register. The problem is forecastable mainly because the target remembers its past --- not because the features hide a strong cross-asset signal independent of recent dependency.
 
@@ -163,7 +163,7 @@ The experiments point to the medium windows --- $w = 30$ days in particular --- 
 The empirical results of the thesis are summarized in four principal statements:
 
 \begin{enumerate}
-    \item Time-varying intermarket dependency between Bitcoin and conventional assets is forecastable in an out-of-sample walk-forward framework, with high average $R^2$ values across all model classes.
+    \item Time-varying intermarket dependency between Bitcoin and conventional assets is forecastable in an out-of-sample walk-forward framework, with high average $R^2$ across every model class except the DCC-GARCH benchmark.
     \item The dominant source of predictive power is the serial persistence of the rolling correlation target; Ridge, AR1, and HAR form a near-indistinguishable top cluster, all exploiting this persistence through different mechanisms, while tree-based methods trail substantially.
     \item Machine-learning models frequently and significantly outperform the leakage-safe DCC-GARCH benchmark; Ridge achieves the best overall average RMSE (0.0656) across all 24 experiments.
     \item The investor signal layer delivers moderate, statistically non-trivial classification results that are most pronounced for broad equity markets and are best interpreted as a supplementary risk-management input rather than a self-contained directional predictor.

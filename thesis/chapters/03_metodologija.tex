@@ -20,8 +20,8 @@ The empirical analysis uses daily market data obtained through the \texttt{yfina
         \midrule
         \texttt{BTC-USD} & Bitcoin, base cryptocurrency \\
         \texttt{ETH-USD} & Ethereum, crypto reference asset \\
-        \texttt{\^{}GSPC} & S\&P 500 index \\
-        \texttt{\^{}IXIC} & NASDAQ Composite index \\
+        \texttt{\textasciicircum{}GSPC} & S\&P 500 index \\
+        \texttt{\textasciicircum{}IXIC} & NASDAQ Composite index \\
         \texttt{GLD} & Gold ETF \\
         \texttt{SLV} & Silver ETF \\
         \texttt{UUP} & U.S. Dollar Index ETF proxy \\
@@ -67,7 +67,7 @@ Preprocessing is cache-aware. If the raw prices are already on disk, they are re
 
 \subsection{Target construction: rolling dependency}
 
-For each pair consisting of Bitcoin and another asset, a rolling correlation series is computed over windows of 14, 30, 60, and 90 trading days. Let $r_t^{(b)}$ denote the return of Bitcoin and $r_t^{(a)}$ the return of the other asset. For a given window length $w$, the dependency target at time $t$ is
+For each pair consisting of Bitcoin and another asset, a rolling correlation series is computed over windows of 14, 30, 60, and 90 calendar days. Let $r_t^{(b)}$ denote the return of Bitcoin and $r_t^{(a)}$ the return of the other asset. For a given window length $w$, the dependency target at time $t$ is
 \[
 \rho_t^{(w)} = \text{corr}(r_{t-w+1:t}^{(b)}, r_{t-w+1:t}^{(a)}).
 \]
@@ -96,7 +96,7 @@ One consequence of all this is that the target is smooth to begin with, and far 
     \centering
     % height cap prevents the tall multi-panel figure from overflowing the page
     \includegraphics[width=0.95\textwidth, height=0.72\textheight, keepaspectratio]{../outputs/figures/eda_rolling_corr_all.png}
-    \caption{Rolling dependency between Bitcoin and each of the five conventional assets across all four window lengths (14, 30, 60, 90 days). The Fisher-transformed series illustrates the strong time-variation and persistence that motivate the forecasting framework.}
+    \caption{Rolling dependency between Bitcoin and each of the five conventional assets plus Ethereum (six pairs in all) across all four window lengths (14, 30, 60, 90 days). The Fisher-transformed series illustrates the strong time-variation and persistence that motivate the forecasting framework.}
     \label{fig:rolling_corr_all}
 \end{figure}
 
@@ -158,15 +158,15 @@ Three persistence-based models anchor the set. \texttt{Naive\_Last} just carries
 
 \subsubsection{Regularized linear models}
 
-The linear block is Ridge and ElasticNet, each fitted after standardization (regularization is meaningless if the features sit on different scales). Ridge ($\ell_2$, $\alpha = 0.5$) should do well when many predictors each carry a little signal. ElasticNet ($\alpha = 0.005$, an $\ell_1/\ell_2$ mix) is more aggressive and can zero out redundant lags outright.
+The linear block is Ridge and ElasticNet, each fitted after standardization (regularization is meaningless if the features sit on different scales). One notational warning: the penalty strength below is scikit-learn's \texttt{alpha}, which is the $\lambda$ of Eq.~(8) --- not the $\ell_1/\ell_2$ mixing ratio $\alpha$ of that same equation (in the code that ratio is \texttt{l1\_ratio}). Ridge ($\ell_2$, \texttt{alpha}~$= 0.5$) should do well when many predictors each carry a little signal. ElasticNet (\texttt{alpha}~$= 0.005$, with an even $\ell_1/\ell_2$ split) is more aggressive and can zero out redundant lags outright.
 
 \subsubsection{Tree ensembles and adaptive ensemble}
 
-The non-linear block is Random Forest, \texttt{HistGradientBoostingRegressor} (a LightGBM-style histogram method, roughly ten times faster than the old gradient-boosting code), and XGBoost, which runs on the GPU when it can and quietly falls back to CPU when it cannot. On top of these sits an \texttt{Ensemble}: at each step it forms an inverse-RMSE weighted average of all the non-naive models, with the weights recomputed from the last 60 out-of-sample errors.
+The non-linear block is Random Forest, \texttt{HistGradientBoostingRegressor} (a LightGBM-style histogram method, roughly ten times faster than the old gradient-boosting code), and XGBoost, which runs on the GPU when it can and quietly falls back to CPU when it cannot. On top of these sits an \texttt{Ensemble}: at each step it forms an inverse-RMSE weighted average of all the non-naive models, with the weights recomputed from the last 60 out-of-sample errors --- or, during the first 60 steps before that many errors exist, from whatever errors have accumulated so far.
 
 The complete model set --- ten specifications in total --- is initialized as follows:
 
-\begin{lstlisting}[language=Python, caption={Model definitions used in the walk-forward experiment (\texttt{pipeline.py}).}, label=lst:models]
+\begin{lstlisting}[language=Python, caption={Model definitions used in the walk-forward experiment (\texttt{pipeline.py}; simplified --- \texttt{Naive\_Last} and \texttt{HAR} are \texttt{None} here and are produced directly inside the walk-forward loop rather than through \texttt{.fit}).}, label=lst:models]
 model_specs = {
     "Naive_Last": None,         # persistence baseline (no fit required)
     "AR1":        LinearRegression(),
@@ -246,6 +246,8 @@ The setup is deliberately transparent. The thesis does not bury the possibility 
     \item whether machine learning improves upon a classical econometric benchmark,
     \item whether machine learning adds value beyond persistence.
 \end{enumerate}
+
+A caveat applies to the second and third comparisons. When the simpler model is nested inside the richer one --- as Naive\_Last and AR1 are inside Ridge or the tree ensembles --- the standard Diebold--Mariano statistic is not strictly valid, because its asymptotic normal distribution assumes non-nested forecasts. Tests built for nested models, such as Clark--West or Giacomini--White \cite{diebold1995}, would be more rigorous, and the small-sample HLN correction reported in Appendix~E mitigates over-rejection but not nesting. The comparisons against the persistence baselines are therefore best read as indicative; the headline Ridge-versus-DCC-GARCH comparison, which is non-nested, is unaffected.
 
 The thesis organizes its empirical conclusions around exactly these three levels.
 

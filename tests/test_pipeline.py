@@ -665,7 +665,7 @@ class TestSensitivity:
         sens = pd.read_csv(SENSITIVITY_CSV)
         assert "refit_every" in sens.columns, "refit_sensitivity.csv missing 'refit_every'"
         found = set(sens["refit_every"].unique())
-        expected = {5, 10, 21, 42, 63}
+        expected = {5, 10, 20, 42, 63}
         missing = expected - found
         assert not missing, f"refit_every values missing from sensitivity: {missing}"
 

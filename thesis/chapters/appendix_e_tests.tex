@@ -49,9 +49,12 @@ together with its average $\alpha$ and $\beta$ coefficients.
 AR1 and HAR pass the efficiency test at the same rate (70.8\% of experiments),
 confirming that both models make near-optimal use of the available information.
 Ridge is the most efficient among the regularised ML models at 45.8\%.
-DCC-GARCH never passes: its average $\bar{\beta} = 1.44$ reflects a strong
-systematic tendency to over-predict correlation magnitudes, consistent with
-the large positive RMSE penalty observed in the main results.
+DCC-GARCH never passes: its average $\bar{\beta} = 1.44$ means that realized
+correlations swing markedly more than its forecasts do. In the regression
+$y = \alpha + \beta\hat{y}$, a slope above one signals forecasts that are too
+\emph{compressed} --- they systematically under-react to the size of the
+movements rather than overstating them. This is precisely the over-smoothing
+of DCC-GARCH seen throughout the main results.
 
 Table~\ref{tab:mz_gspc_w30} provides the full detail for the representative
 pair BTC-USD vs S\&P~500 at $w = 30$.
@@ -92,13 +95,13 @@ most severely misspecified, confirming the main-text findings.
 
 Two classical residual tests are applied to the OOS forecast errors
 $e_t = y_t - \hat{y}_t$ for every model $\times$ dependency $\times$ window
-combination (192 cases in total).
+combination (240 cases in total).
 
-\textbf{Ljung-Box Q-test} (10 lags): tests $H_0{:}$ no serial autocorrelation.
+\textbf{Ljung-Box Q-test} (10 lags) \cite{ljung1978measure}: tests $H_0{:}$ no serial autocorrelation.
 Rejection indicates that the model has not fully captured the temporal structure
 of the target series.
 
-\textbf{ARCH LM test} (5 lags): regresses $e_t^2$ on its own lags and tests
+\textbf{ARCH LM test} (5 lags) \cite{engle1982arch}: regresses $e_t^2$ on its own lags and tests
 $H_0{:}$ no conditional heteroscedasticity.
 Rejection signals remaining volatility clustering in the residuals.
 
@@ -228,14 +231,12 @@ The test classes cover the following aspects of the pipeline:
 
 Table~\ref{tab:test_report} lists each individual test together with its
 result and wall-clock execution time.
-All 81 tests pass on the present outputs; skipped tests indicate that the
-optional \texttt{arch} package (DCC-GARCH) is not installed in the current
-environment.
+All 81 tests pass on the present outputs, with none skipped.
 
 \needspace{4\baselineskip}
 
-\IfFileExists{../tables/test_report_auto.tex}{%
-    \input{../tables/test_report_auto.tex}%
+\IfFileExists{tables/test_report_auto.tex}{%
+    \input{tables/test_report_auto.tex}%
 }{%
     \begin{table}[H]
         \centering
