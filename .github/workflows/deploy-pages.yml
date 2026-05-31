@@ -27,6 +27,7 @@ jobs:
         run: |
           mkdir -p _site/thesis-assets/figures
           cp website/index.html _site/index.html
+          cp photo.JPG _site/photo.jpg
           cp outputs/figures/*.png _site/thesis-assets/figures/
           touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
