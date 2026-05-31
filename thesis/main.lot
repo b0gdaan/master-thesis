@@ -10,6 +10,6 @@
 \contentsline {table}{\numberline {8}{\ignorespaces Mincer-Zarnowitz test: BTC-USD vs S\&P~500, $w = 30$. $F$-statistic tests $H_0{:}\tmspace +\thickmuskip {.2777em}\alpha =0, \beta =1$; $p_\text {MZ}$ is the associated $p$-value.}}{64}{table.caption.55}%
 \contentsline {table}{\numberline {9}{\ignorespaces Residual diagnostics: percentage of 24 experiments passing the Ljung-Box autocorrelation test and the ARCH LM heteroscedasticity test at $\alpha = 0.05$.}}{65}{table.caption.56}%
 \contentsline {table}{\numberline {10}{\ignorespaces HLN-corrected DM test: ML models vs DCC-GARCH benchmark, BTC-USD vs S\&P~500, $w = 30$. DM: original statistic (normal); DM$_\text {HLN}$: corrected statistic ($t_{n-1}$). All models beat DCC-GARCH at $p < 0.001$ under both tests.}}{66}{table.caption.57}%
-\contentsline {table}{\numberline {11}{\ignorespaces Automated validation suite results}}{67}{table.caption.58}%
+\contentsline {table}{\numberline {11}{\ignorespaces Automated validation suite: 81 tests covering dataset integrity, feature engineering, model metrics, DM tests, signal layer, and reproducibility.}}{67}{table.11}%
 \babel@toc {serbianc}{}\relax 
 \babel@toc {english}{}\relax 
