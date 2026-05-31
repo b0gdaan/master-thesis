@@ -2,9 +2,9 @@
 
 \subsection{Research design}
 
-The thesis adopts a layered research design. The first layer is a regression-style forecasting problem in which the target is the next value of a transformed rolling correlation series between Bitcoin and another asset. The second layer is a classification-style problem in which the output of the first layer, together with crypto-derived features, is used to estimate the probability of a stress day for the conventional asset. This structure mirrors the distinction between scientific measurement and practical action.
+The design has two layers. The first is a regression problem: forecast the next value of the (transformed) rolling correlation between Bitcoin and another asset. The second is a classification problem: take that forecast, add a few crypto-derived features, and estimate the probability that the conventional asset has a stress day. The split mirrors the difference between measuring something and acting on it.
 
-The design is intentionally conservative. Rather than optimizing purely for in-sample fit, all important modeling decisions are embedded in a walk-forward evaluation framework. This includes target formation, feature alignment, benchmark estimation, and signal generation. The objective is to preserve temporal realism and minimize the risk of accidental look-ahead bias.
+The whole thing is deliberately conservative. Every decision that could leak the future---how the target is formed, how features are aligned, how the benchmark is estimated, how the signal is generated---happens inside the walk-forward loop rather than being tuned on in-sample fit. The point is to keep the timing honest and shut the door on accidental look-ahead.
 
 \subsection{Asset universe and data source}
 
@@ -29,9 +29,9 @@ The empirical analysis uses daily market data obtained through the \texttt{yfina
     \end{tabular}
 \end{table}
 
-This universe was chosen for substantive rather than purely technical reasons. The two equity indices represent broad U.S. risk assets. Gold and silver ETFs capture precious-metal exposure, often linked to inflation concerns, safe-haven narratives, or commodity sentiment. The dollar index proxy reflects global dollar strength and defensive macro positioning. Ethereum is included as an additional crypto benchmark in order to contrast cross-crypto dependency with crypto-to-conventional dependency.
+The choice of assets is substantive, not arbitrary. The two equity indices stand in for broad U.S. risk appetite. The gold and silver ETFs bring in precious-metal exposure, with its mix of inflation, safe-haven, and commodity narratives. The dollar-index proxy captures global dollar strength and defensive positioning. Ethereum is there so the study can contrast crypto-to-crypto dependence with crypto-to-conventional dependence.
 
-The sample spans from 9 November 2017 to 17 May 2026, yielding 3{,}053 daily observations per asset.\footnote{The pipeline downloads data to the most recent available trading day; the figures reported here correspond to the final run of the pipeline at the time of writing.} The effective start date is determined by the availability of Ethereum price data on Yahoo Finance; earlier dates contain no ETH-USD observations and are therefore excluded from the aligned panel. The resulting dataset is balanced: all seven tickers share an identical date index with no missing observations after alignment and forward-filling of non-trading-day gaps up to two consecutive calendar days.
+The sample runs from 9 November 2017 to 17 May 2026, giving 3{,}053 daily observations per asset.\footnote{The pipeline downloads data to the most recent available trading day; the figures reported here correspond to the final run of the pipeline at the time of writing.} The start date is set by Ethereum: Yahoo Finance has no ETH-USD prices before then, so earlier dates drop out of the aligned panel. What remains is balanced---all seven tickers share one date index, with no gaps left after alignment and forward-filling of non-trading days up to two consecutive calendar days.
 
 \begin{figure}[H]
     \centering
@@ -56,14 +56,14 @@ The sample spans from 9 November 2017 to 17 May 2026, yielding 3{,}053 daily obs
 
 \subsection{Return construction and preprocessing}
 
-All price series are converted into daily log returns. Log returns are preferred because they are additive over time and are standard in both econometric modeling and machine-learning pipelines for financial time series. For a price series $P_t$, the return is computed as
+Every price series is turned into daily log returns. Log returns are the natural choice here: they add up over time and are the standard currency of both econometric and machine-learning work on financial series. For a price series $P_t$, the return is
 \[
     r_t = \log P_t - \log P_{t-1}.
 \]
 
-Missing observations are handled through alignment across available dates, and all downstream targets and features are built only after the return matrix is synchronized.
+Missing observations are dealt with by aligning on common dates; nothing downstream---no target, no feature---is built until the return matrix is synchronized.
 
-A cache-aware preprocessing workflow is used in the codebase. If raw price data already exist, they are reused to guarantee reproducibility. If the structure of prices or the ticker universe changes, the processed returns are recomputed. This avoids stale intermediary files while keeping the workflow efficient.
+Preprocessing is cache-aware. If the raw prices are already on disk, they are reused, which keeps runs reproducible; if the price structure or the ticker set changes, the processed returns are rebuilt from scratch. That way nothing stale lingers, and nothing is recomputed needlessly.
 
 \subsection{Target construction: rolling dependency}
 
@@ -90,7 +90,7 @@ def build_target(returns, base, other, window, horizon):
     return fisher_z(target)
 \end{lstlisting}
 
-A key implication of this design is that the target is already a smooth object. It is therefore much more persistent than a raw return series. This persistence is one of the defining empirical features of the thesis and is directly reflected in the later results.
+One consequence of all this is that the target is smooth to begin with, and far more persistent than a raw return series. That persistence is one of the central empirical facts of the thesis, and it shows up everywhere in the results.
 
 \begin{figure}[H]
     \centering
@@ -102,7 +102,7 @@ A key implication of this design is that the target is already a smooth object. 
 
 \subsection{Feature engineering}
 
-The feature set is intentionally structured around interpretable financial quantities. The goal is not to create an excessively large black-box predictor matrix, but to engineer a compact set of variables that can plausibly affect future dependency dynamics.
+The features are built around quantities a financial reader can interpret. The aim is not a sprawling black-box design matrix but a compact set of variables that could plausibly move future dependency.
 
 The features fall into several groups:
 
@@ -124,7 +124,7 @@ The features fall into several groups:
     \end{tabular}
 \end{table}
 
-Dependency lags are especially important because the target is persistent by construction. Return lags allow the models to react to recent directional information. Rolling means and volatility measures summarize local regime conditions. The correlation regime gap (\texttt{corr\_diff}) captures whether the short-term dependency is diverging from the longer-term baseline, which may signal an impending regime shift. The implementation of the feature matrix is shown in Listing~\ref{lst:features}:
+The dependency lags carry most of the weight, since the target is persistent by construction. Return lags let the models respond to recent direction. Rolling means and volatilities summarize the local regime. The regime gap (\texttt{corr\_diff}) measures how far short-term dependency has pulled away from its longer-term baseline---a possible early sign of a regime shift. Listing~\ref{lst:features} shows how the matrix is assembled:
 
 \begin{lstlisting}[language=Python, caption={Core feature engineering routine (\texttt{pipeline.py}).}, label=lst:features]
 # Dependency lags: the single most important predictor group
@@ -148,21 +148,21 @@ corr_long  = rolling_corr(returns[base], returns[other],
 features["corr_diff"] = corr_short - corr_long
 \end{lstlisting}
 
-The investor signal layer inherits the best dependency forecast available for the pair and combines it with crypto-derived predictors to form a smaller classification-oriented feature set. In practice, this means that the second layer is informed by both the current crypto state and the estimated direction of the dependency process.
+The signal layer takes the best available dependency forecast for the pair and combines it with a handful of crypto-derived predictors into a smaller, classification-oriented feature set. In effect, the second layer sees both the current state of the crypto market and where the dependency process is heading.
 
 \subsection{Forecasting models}
 
 \subsubsection{Baseline and autoregressive models}
 
-Three persistence-based models anchor the model set. \texttt{Naive\_Last} predicts the next dependency value using the most recent observed value, with no fitting required. \texttt{AR1} estimates a one-lag autoregressive structure via OLS. The \texttt{HAR} model (Heterogeneous AutoRegressive, after \textcite{corsi2009har}) extends this by combining three lags: the most recent dependency value, its five-day average (weekly component), and its twenty-two-day average (monthly component). HAR is estimated as a restricted OLS regression refitted on the expanding training window at each refit step. These baselines are essential because the target is persistent by construction; any more complex model must justify itself against them.
+Three persistence-based models anchor the set. \texttt{Naive\_Last} just carries the last observed value forward---no fitting at all. \texttt{AR1} fits a single autoregressive lag by OLS. \texttt{HAR} (Heterogeneous AutoRegressive, after \textcite{corsi2009har}) adds two more horizons: the latest value, its five-day average (weekly), and its twenty-two-day average (monthly), fitted as a restricted OLS on the expanding window at each refit. These baselines are not a formality. Because the target is persistent by construction, every more complex model has to earn its keep against them.
 
 \subsubsection{Regularized linear models}
 
-The linear machine-learning block includes Ridge and ElasticNet. Standardization is applied before fitting both, since coefficient regularization depends on feature scaling. Ridge ($\ell_2$, $\alpha = 0.5$) is expected to perform well when many predictors are weakly correlated with the target. ElasticNet ($\alpha = 0.005$, $\ell_1/\ell_2$ mix) is more aggressive and can effectively down-weight redundant lagged features.
+The linear block is Ridge and ElasticNet, each fitted after standardization (regularization is meaningless if the features sit on different scales). Ridge ($\ell_2$, $\alpha = 0.5$) should do well when many predictors each carry a little signal. ElasticNet ($\alpha = 0.005$, an $\ell_1/\ell_2$ mix) is more aggressive and can zero out redundant lags outright.
 
 \subsubsection{Tree ensembles and adaptive ensemble}
 
-The non-linear block includes Random Forest, \texttt{HistGradientBoostingRegressor} (a LightGBM-style histogram algorithm approximately ten times faster than the legacy gradient boosting implementation), and XGBoost. XGBoost attempts GPU execution when available and falls back to CPU automatically if the environment does not support the requested configuration. In addition, an \texttt{Ensemble} model is constructed at each prediction step as an adaptive inverse-RMSE weighted average of all non-naive models, with weights recomputed from the most recent 60 out-of-sample prediction errors.
+The non-linear block is Random Forest, \texttt{HistGradientBoostingRegressor} (a LightGBM-style histogram method, roughly ten times faster than the old gradient-boosting code), and XGBoost, which runs on the GPU when it can and quietly falls back to CPU when it cannot. On top of these sits an \texttt{Ensemble}: at each step it forms an inverse-RMSE weighted average of all the non-naive models, with the weights recomputed from the last 60 out-of-sample errors.
 
 The complete model set --- ten specifications in total --- is initialized as follows:
 
@@ -198,17 +198,17 @@ model_specs = {
 
 \subsubsection{DCC-GARCH benchmark}
 
-A leakage-safe DCC-GARCH walk-forward benchmark is implemented as a separate module in the project. This is a key methodological correction relative to many simplified comparisons found in exploratory work. Instead of fitting DCC over the full sample and then evaluating it as if it were out of sample, the benchmark is repeatedly re-estimated on the training window only, and forecasts are produced forward from that point. This makes the benchmark slower, but methodologically consistent.
+The DCC-GARCH benchmark lives in its own module and is leakage-safe by design. This is the one methodological correction that matters most against the shortcuts common in exploratory work: instead of fitting DCC once on the full sample and then treating that fit as out-of-sample, the benchmark is re-estimated on the training window alone and rolled forward from there. It is slower, but it is finally a fair fight.
 
 \subsection{Investor signal layer}
 
-The signal layer reframes the problem as an early warning classification task. The target is not generic next-day direction, but a \emph{stress day} indicator for the conventional asset. A stress day is defined relative to the distribution of negative returns, using a configurable sigma-based threshold. This target design is intentionally conservative and aligns better with the practical goal of downside protection.
+The signal layer recasts everything as an early-warning classification. The label is not next-day direction in the abstract but a \emph{stress day} for the conventional asset, defined against the distribution of negative returns through a configurable sigma threshold. It is a deliberately conservative target, and a better match for what investors actually want: protection on the downside.
 
-Three classifiers are evaluated in this layer: logistic regression, random-forest classification, and gradient-boosted classification. The probability output of each model is compared with a threshold to decide whether the investor should treat the next day as elevated-risk. This makes the output interpretable as a probability-guided warning rather than a binary black-box trade instruction.
+Three classifiers compete here: logistic regression, a random-forest classifier, and a gradient-boosted one. Each emits a probability, which is compared against a threshold to flag the next day as elevated-risk or not. The output is therefore a probability-guided warning, not an opaque buy/sell command.
 
 \subsection{Walk-forward estimation framework}
 
-All experiments use an expanding-window walk-forward design. Let the initial estimation sample contain the first $T_0$ observations. For each forecast origin $t \geq T_0$, the model is fit using observations up to time $t$, then used to produce a prediction for $t+1$. The process continues until the end of the sample. Periodic refitting is used to reduce computational burden while preserving causal ordering.
+Every experiment uses the same expanding-window walk-forward. Start with the first $T_0$ observations; at each origin $t \geq T_0$, fit on everything up to $t$ and predict $t+1$; continue to the end of the sample. Refitting happens periodically rather than at every step, which cuts the compute cost without ever breaking causal order.
 
 \begin{lstlisting}[language=Python, caption={Expanding-window walk-forward loop (\texttt{pipeline.py}).}, label=lst:walkforward]
 for t in range(min_train, n_obs):
@@ -227,19 +227,19 @@ for t in range(min_train, n_obs):
         preds[name][t] = fitted[name].predict(X_values[[t]])[0]
 \end{lstlisting}
 
-This design has several benefits. It mirrors real forecasting conditions, supports fair benchmark comparisons, and generates a full time series of out-of-sample prediction errors. The latter is useful not only for average metrics, but also for rolling error diagnostics and Diebold--Mariano testing.
+This buys three things at once: it reproduces real forecasting conditions, it keeps benchmark comparisons fair, and it leaves behind a full time series of out-of-sample errors. That last point matters---those errors feed not just the average metrics but also the rolling diagnostics and the Diebold--Mariano tests.
 
 \subsection{Evaluation metrics}
 
-For the dependency-forecasting layer, performance is evaluated using mean absolute error (MAE), root mean squared error (RMSE), and the out-of-sample coefficient of determination $R^2$. RMSE is emphasized in model ranking because it penalizes large deviations more strongly and is well suited to smooth continuous targets.
+For the forecasting layer, three numbers do the work: mean absolute error (MAE), root mean squared error (RMSE), and the out-of-sample $R^2$. Rankings lean on RMSE, which punishes large misses harder and suits a smooth continuous target.
 
-For the investor signal layer, the primary metrics are Balanced Accuracy, F1 score for the downside class, area under the ROC curve (AUC), and exit rate. Balanced Accuracy is especially important because stress-day classification is an imbalanced problem. F1 for the downside class focuses attention on the quality of negative-event detection. Exit rate measures how often the signal would remove the investor from the market, thereby connecting prediction quality with practical usage frequency.
+For the signal layer, four numbers matter: Balanced Accuracy, the F1 score on the downside class, the area under the ROC curve (AUC), and the exit rate. Balanced Accuracy earns its prominence because stress days are rare and the classes are imbalanced. F1 on the downside class keeps the focus on catching the bad days. And the exit rate---how often the signal would pull the investor out of the market---ties statistical quality to how the signal would actually be used.
 
 \subsection{Model comparison methodology}
 
-Average metrics alone can be misleading when model differences are small. The thesis therefore applies the Diebold--Mariano test to compare forecast loss series between selected model pairs. The main comparison of interest is between the strongest non-benchmark machine-learning model and the DCC-GARCH benchmark. A secondary comparison contrasts that machine-learning model with the naive persistence baseline.
+When models are close, average metrics can mislead. So the thesis runs the Diebold--Mariano test on the loss series of selected pairs. The headline comparison is the best non-benchmark machine-learning model against DCC-GARCH; the secondary one pits that same model against the naive persistence baseline.
 
-This setup is intentionally transparent. The thesis does not hide the fact that the best overall model may be a simple baseline. Instead, the DM framework is used to distinguish between three levels of claim:
+The setup is deliberately transparent. The thesis does not bury the possibility that the best model overall is a simple baseline; instead it uses the DM framework to separate three different levels of claim:
 
 \begin{enumerate}
     \item whether dependency is forecastable at all,
@@ -247,17 +247,17 @@ This setup is intentionally transparent. The thesis does not hide the fact that 
     \item whether machine learning adds value beyond persistence.
 \end{enumerate}
 
-The empirical conclusions of the thesis are organized around precisely these three levels.
+The thesis organizes its empirical conclusions around exactly these three levels.
 
 \subsection{Implementation and reproducibility}
 
-The entire workflow is implemented in Python and organized as a modular codebase. The main pipeline coordinates loading configuration files, computing returns, generating targets, building features, fitting models, producing prediction files, saving figures, and exporting \LaTeX-ready tables. Dedicated modules are used for DCC walk-forward benchmarking, notebook support, and the investor signal layer. This modular structure is important because the thesis is not merely a conceptual study but a reproducible computational artifact.
+The whole workflow is Python, organized as a modular codebase. A main pipeline ties the steps together---read the config, compute returns, build targets and features, fit models, write prediction files, save figures, export \LaTeX\ tables---while separate modules handle the DCC walk-forward benchmark, notebook support, and the signal layer. The modularity is not decoration: the thesis is meant to be a reproducible artifact, not just an argument.
 
-Outputs are stored in a structured directory hierarchy. Metrics, DM tests, and signal results are saved as CSV files; thesis-ready tables are exported to \LaTeX; and visual diagnostics are saved as figures. This design reduces manual post-processing and helps align the research workflow with the writing workflow.
+Everything lands in a structured output tree: metrics, DM tests, and signal results as CSV; thesis-ready tables as \LaTeX; diagnostics as figures. The point is to keep manual post-processing to a minimum and let the analysis feed the writing directly.
 
 \subsection{Methodological expectations}
 
-Before turning to the empirical results, it is useful to clarify what would count as success. Success in this thesis does not mean discovering a model that perfectly predicts all conventional markets from Bitcoin. That would be an unrealistic standard for any serious financial forecasting study. A more appropriate standard is the following:
+Before the results, it is worth saying what success would even look like. It does not mean finding a model that predicts every conventional market from Bitcoin---no serious forecasting study should promise that. A fairer bar is this:
 
 \begin{itemize}
     \item the dependency target should display out-of-sample forecastability,
@@ -265,8 +265,8 @@ Before turning to the empirical results, it is useful to clarify what would coun
     \item the investor signal layer should provide non-random and practically interpretable stress warnings.
 \end{itemize}
 
-These criteria are modest but scientifically defensible. They allow the thesis to make claims that are both empirically supported and intellectually honest.
+These bars are modest, but they are defensible---low enough to clear honestly, high enough to mean something.
 
-Three additional design principles guide the interpretation of results throughout this thesis. First, no single metric is treated as definitive; RMSE, MAE, and $R^2$ are reported jointly for the regression layer, while Balanced Accuracy, F1, AUC, and exit rate are reported jointly for the classification layer. Second, statistical significance of performance differentials is established through the Diebold--Mariano test rather than by visual inspection of averages alone. Third, the analysis deliberately avoids selecting the best window length after observing results; instead, all four windows (14, 30, 60, 90 days) are evaluated uniformly to ensure that findings are not an artifact of a fortuitously chosen specification.
+Three further principles guide how the results are read. First, no single metric is treated as the verdict: the regression layer always reports RMSE, MAE, and $R^2$ together, and the classification layer reports Balanced Accuracy, F1, AUC, and exit rate together. Second, performance gaps are judged significant by the Diebold--Mariano test, not by eyeballing averages. Third, the analysis refuses to cherry-pick a window after the fact; all four (14, 30, 60, 90 days) are reported side by side, so no finding can rest on a lucky choice of specification.
 
-These principles reflect a broader commitment to methodological transparency. Financial forecasting studies can easily produce impressive-looking in-sample statistics that do not survive rigorous out-of-sample testing. The walk-forward design, the leakage-safe DCC-GARCH benchmark, and the multiple-window evaluation together form a defense against the most common sources of inflated performance claims in this literature.
+Behind all three is the same commitment to methodological transparency. It is easy to produce dazzling in-sample numbers that collapse under honest out-of-sample testing. The walk-forward design, the leakage-safe benchmark, and the all-windows evaluation are, together, a defence against exactly the kinds of inflated claims this literature is prone to.
