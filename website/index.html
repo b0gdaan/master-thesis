@@ -1131,17 +1131,17 @@ p{text-align:left}
     <div class="conclusion-card">
       <span class="c-num">C1</span>
       <h3>Forecastability Confirmed</h3>
-      <p>Time-varying BTC–asset dependencies are statistically forecastable one step ahead in a strict out-of-sample sense. Persistence in the correlation series is the dominant signal — not cross-asset momentum. This is a substantive scientific result, not a methodological failure.</p>
+      <p>Time-varying BTC–asset dependence really is forecastable one step ahead, out of sample and under strict temporal ordering. The dominant signal is the persistence of the correlation series itself, not cross-asset momentum — a substantive scientific result, not a methodological failure.</p>
     </div>
     <div class="conclusion-card">
       <span class="c-num">C2</span>
       <h3>ML Outperforms DCC-GARCH</h3>
-      <p>All ML models — including simple baselines — significantly outperform DCC-GARCH(1,1) (DM test, p&lt;10⁻³⁰⁸) across all 24 pair × window combinations. DCC-GARCH underperforms because it is optimised for long-horizon covariance estimation, not one-step-ahead smoothed scalar forecasting.</p>
+      <p>Every ML model — even the simple baselines — beats DCC-GARCH(1,1) significantly (DM test, p&lt;10⁻³⁰⁸) across all 24 pair × window combinations. DCC-GARCH lags not because it is a bad model but because it is built for long-horizon covariance, not one-step-ahead forecasting of a smoothed scalar.</p>
     </div>
     <div class="conclusion-card">
       <span class="c-num">C3</span>
       <h3>Investor Signal Layer</h3>
-      <p>Crypto-derived features provide statistically meaningful early warning of stress days in conventional equity markets. Logit achieves F1=0.214, AUC=0.513 averaged across all experiments; best configuration (BTC/S&amp;P500, w=30) reaches Balanced Accuracy 0.531. The signal is best interpreted as a risk-management overlay, not a standalone trading engine. Performance attenuates for precious metals and FX.</p>
+      <p>Crypto-derived features give a statistically meaningful early warning of stress days in equity markets. Logit averages F1=0.214 and AUC=0.513 across all experiments, and the best configuration (BTC/S&amp;P 500, w=30) reaches Balanced Accuracy 0.531. It is best read as a risk-management overlay, not a standalone trading engine, and it fades for precious metals and FX.</p>
     </div>
   </div>
 
@@ -2214,7 +2214,7 @@ const T = {
     heroProg:  'University of Kragujevac · M.Sc. Artificial Intelligence',
     heroSup:   'Supervisor: <strong>Prof. Dr Vladimir M. Milovanović</strong>',
     heroDate:  'Defense: May 2026',
-    heroDesc:  'This thesis investigates whether cryptocurrency dynamics contain information about the evolving dependence structure of conventional financial assets. Bitcoin serves as the base crypto asset; the conventional universe spans equity indices, precious-metal ETFs, and the U.S. dollar index. A reproducible walk-forward ML pipeline is developed and benchmarked against a leakage-safe DCC-GARCH(1,1) specification across 240 model evaluations (10 models × 6 pairs × 4 windows).',
+    heroDesc:  'Does the behaviour of cryptocurrency markets tell you anything about how their dependence on conventional assets shifts over time? This thesis takes Bitcoin as the base asset and tests that question against equity indices, precious-metal ETFs, and the U.S. dollar index, using a reproducible walk-forward ML pipeline benchmarked against a leakage-safe DCC-GARCH(1,1) model across 240 evaluations (10 models × 6 pairs × 4 windows).',
     aboutH2: 'About',
     aboutP1: 'I\'m Bogdan Babaev — originally from <strong style="color:var(--text)">Samara, Russia</strong>, currently finishing my <strong style="color:var(--text)">M.Sc. in Artificial Intelligence</strong> at the University of Kragujevac, Serbia (2023–2026).',
     aboutP2: 'My research interests sit at the intersection of machine learning and quantitative finance — specifically time series forecasting, intermarket dependencies, and risk-aware modelling. This thesis is the result of about a year of work combining econometrics, walk-forward ML evaluation, and practical signal design.',
