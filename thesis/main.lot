@@ -4,12 +4,12 @@
 \contentsline {table}{\numberline {2}{\ignorespaces Main groups of predictors used in the dependency-forecasting layer.}}{23}{table.caption.10}%
 \contentsline {table}{\numberline {3}{\ignorespaces Average out-of-sample forecasting performance across all dependency experiments.}}{28}{table.caption.11}%
 \contentsline {table}{\numberline {4}{\ignorespaces Average investor-signal performance by classifier family, aggregated across all experiments.}}{33}{table.caption.15}%
-\contentsline {table}{\numberline {5}{\ignorespaces Data quality summary per ticker}}{46}{table.caption.26}%
-\contentsline {table}{\numberline {6}{\ignorespaces Average signal-layer performance by classifier family.}}{57}{table.caption.48}%
-\contentsline {table}{\numberline {7}{\ignorespaces Mincer-Zarnowitz forecast efficiency: percentage of 24 experiments passing the joint $F$-test ($p \geq 0.05$) and average coefficient estimates.}}{65}{table.caption.54}%
-\contentsline {table}{\numberline {8}{\ignorespaces Mincer-Zarnowitz test: BTC-USD vs S\&P~500, $w = 30$. $F$-statistic tests $H_0{:}\tmspace +\thickmuskip {.2777em}\alpha =0, \beta =1$; $p_\text {MZ}$ is the associated $p$-value.}}{66}{table.caption.55}%
-\contentsline {table}{\numberline {9}{\ignorespaces Residual diagnostics: percentage of 24 experiments passing the Ljung-Box autocorrelation test and the ARCH LM heteroscedasticity test at $\alpha = 0.05$.}}{67}{table.caption.56}%
-\contentsline {table}{\numberline {10}{\ignorespaces HLN-corrected DM test: ML models vs DCC-GARCH benchmark, BTC-USD vs S\&P~500, $w = 30$. DM: original statistic (normal); DM$_\text {HLN}$: corrected statistic ($t_{n-1}$). All models beat DCC-GARCH at $p < 0.001$ under both tests.}}{68}{table.caption.57}%
-\contentsline {table}{\numberline {11}{\ignorespaces Automated validation suite results}}{69}{table.caption.58}%
+\contentsline {table}{\numberline {5}{\ignorespaces Data quality summary per ticker}}{45}{table.caption.26}%
+\contentsline {table}{\numberline {6}{\ignorespaces Average signal-layer performance by classifier family.}}{54}{table.caption.48}%
+\contentsline {table}{\numberline {7}{\ignorespaces Mincer-Zarnowitz forecast efficiency: percentage of 24 experiments passing the joint $F$-test ($p \geq 0.05$) and average coefficient estimates.}}{63}{table.caption.54}%
+\contentsline {table}{\numberline {8}{\ignorespaces Mincer-Zarnowitz test: BTC-USD vs S\&P~500, $w = 30$. $F$-statistic tests $H_0{:}\tmspace +\thickmuskip {.2777em}\alpha =0, \beta =1$; $p_\text {MZ}$ is the associated $p$-value.}}{64}{table.caption.55}%
+\contentsline {table}{\numberline {9}{\ignorespaces Residual diagnostics: percentage of 24 experiments passing the Ljung-Box autocorrelation test and the ARCH LM heteroscedasticity test at $\alpha = 0.05$.}}{65}{table.caption.56}%
+\contentsline {table}{\numberline {10}{\ignorespaces HLN-corrected DM test: ML models vs DCC-GARCH benchmark, BTC-USD vs S\&P~500, $w = 30$. DM: original statistic (normal); DM$_\text {HLN}$: corrected statistic ($t_{n-1}$). All models beat DCC-GARCH at $p < 0.001$ under both tests.}}{66}{table.caption.57}%
+\contentsline {table}{\numberline {11}{\ignorespaces Automated validation suite results}}{67}{table.caption.58}%
 \babel@toc {serbianc}{}\relax 
 \babel@toc {english}{}\relax 
