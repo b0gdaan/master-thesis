@@ -1,9 +1,9 @@
 \section{Appendix E: Additional Statistical Tests}
 
-This appendix presents three supplementary hypothesis tests that further
-validate the robustness of the empirical results: a Mincer-Zarnowitz forecast
-efficiency test, residual diagnostic tests (Ljung-Box and ARCH LM), and a
-Harvey-Leybourne-Newbold small-sample correction of the Diebold-Mariano statistic.
+This appendix runs three further hypothesis tests that probe the robustness of
+the empirical results: a Mincer-Zarnowitz efficiency test, residual diagnostics
+(Ljung-Box and ARCH LM), and a Harvey-Leybourne-Newbold small-sample correction
+of the Diebold-Mariano statistic.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection{Mincer-Zarnowitz Forecast Efficiency Test}
@@ -130,19 +130,19 @@ experiments in which the residuals pass each test at the 5\% level.
 \end{table}
 
 The autocorrelation results follow a clear gradient. Naive\_Last and the
-autoregressive models (AR1, HAR) partially capture the serial structure,
-passing the Ljung-Box test in 42--50\% of experiments. Ridge also passes in
-21\% of cases, reflecting its ability to exploit autoregressive signal from
-the lag features. ElasticNet, despite its linear form, passes in 0\% of
-autocorrelation tests but retains meaningful ARCH pass rates (38\%), suggesting
-it removes some but not all temporal dependence. Tree-based methods (RF, GBM,
-XGBoost) and DCC-GARCH leave strongly significant autocorrelation and
-heteroscedasticity in every experiment, confirming that they do not encode
-the autoregressive structure of the target and instead produce residuals
-that are well-structured and exploitable. The large Q-statistics for
-tree-ensemble methods (e.g.\ $Q > 1{,}000$ for XGB\_GPU across most pairs)
-underline that tree-based forecasters fail to generalise the AR structure
-learned at training time.
+autoregressive models (AR1, HAR) partly capture the serial structure,
+passing the Ljung-Box test in 42--50\% of experiments. Ridge passes in
+21\% of cases, reflecting the autoregressive signal it picks up from the
+lag features. ElasticNet is an odd case: it fails every autocorrelation
+test (0\%) yet keeps a meaningful ARCH pass rate (38\%), so it removes some
+temporal dependence but not all. The tree-based methods (RF, GBM, XGBoost)
+and DCC-GARCH leave strongly significant autocorrelation and
+heteroscedasticity in every single experiment: they never encode the
+target's autoregressive structure, so that structure leaks into the
+residuals, which remain far from white noise. The enormous Q-statistics for
+the tree ensembles (e.g.\ $Q > 1{,}000$ for XGB\_GPU on most pairs) drive the
+point home --- these forecasters simply do not carry the AR structure forward
+from training.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection{Harvey-Leybourne-Newbold Corrected Diebold-Mariano Test}
