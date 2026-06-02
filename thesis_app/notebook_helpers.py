@@ -44,14 +44,19 @@ def preferred_xgb_label(columns: Iterable[str]) -> Optional[str]:
 
 
 def best_ml_model_name(metrics: pd.DataFrame) -> Optional[str]:
-    """Return the ML model (not Naive/AR1/DCC) with lowest RMSE."""
+    """Return the ML model (not Naive/AR1/DCC) with the lowest *average* RMSE.
+
+    Averaging across experiments matters: ranking by the single lowest RMSE row
+    would pick whichever model happens to win one easy pair/window, which need not
+    be the best model overall. Aggregating by mean keeps this selection consistent
+    with the average-RMSE ranking reported in the thesis (Ridge)."""
     if metrics.empty or "model" not in metrics.columns:
         return None
     excluded = {"Naive_Last", "AR1", "DCC_GARCH"}
     ml = metrics.loc[~metrics["model"].isin(excluded)].copy()
     if ml.empty:
         return None
-    return str(ml.sort_values("RMSE").iloc[0]["model"])
+    return str(ml.groupby("model")["RMSE"].mean().idxmin())
 
 
 def significance_stars(p_value: float) -> str:

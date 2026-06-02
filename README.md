@@ -1,7 +1,7 @@
 # Forecasting Time-Varying Intermarket Dependencies Between Cryptocurrencies and Conventional Assets Using Machine Learning
 
 **Master's Thesis — Bogdan Babaev**
-Faculty of Engineering Sciences, University of Kragujevac, Serbia (2023–2026)
+M.Sc. Artificial Intelligence · University of Kragujevac, Serbia (2023–2026)
 
 ---
 
@@ -75,7 +75,8 @@ Daily prices 2017–2026 · source: Yahoo Finance
 │   ├── 04_DM_Tests_Visuals.ipynb   # Diebold-Mariano tests & thesis figures
 │   ├── 05_XGB_vs_DCC.ipynb         # XGBoost vs DCC-GARCH deep dive
 │   ├── 06_Regime_Analysis.ipynb    # Dependency regime analysis
-│   └── 07_Robustness_Checks.ipynb  # Sensitivity & robustness
+│   ├── 07_Robustness_Checks.ipynb  # Sensitivity & robustness
+│   └── 08_Market_Events_Showcase.ipynb  # Landmark market-event case studies
 │
 ├── data/                    # Auto-created on first run
 ├── outputs/                 # Auto-created: figures, results, predictions
@@ -128,6 +129,7 @@ jupyter notebook
 | `05_XGB_vs_DCC.ipynb` | Error analysis, rolling RMSE, scatter diagnostics |
 | `06_Regime_Analysis.ipynb` | Dependency regime detection and characterization |
 | `07_Robustness_Checks.ipynb` | Sensitivity to rolling window length and refit frequency |
+| `08_Market_Events_Showcase.ipynb` | Landmark market-event case studies (COVID, FTX, SVB, tariff shock, …) |
 
 ---
 

@@ -36,21 +36,13 @@ Figure~\ref{fig:eda_vol_appendix} shows rolling volatility profiles. These revea
     \label{fig:eda_vol_appendix}
 \end{figure}
 
-Figure~\ref{fig:eda_heatmap_appendix} provides the static correlation heatmap, while Figure~\ref{fig:eda_rollcorr_appendix} illustrates the dynamic rolling-correlation structure. Together, they motivate the main modeling choice of the thesis: static summaries are insufficient for describing the cross-market relations under study.
+Figure~\ref{fig:eda_heatmap_appendix} provides the static correlation heatmap; the dynamic rolling-correlation structure is shown in the methodology chapter (Figure~\ref{fig:rolling_corr_all}). Together they motivate the main modelling choice of the thesis: static summaries are insufficient for describing the cross-market relations under study.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{../outputs/figures/eda_corr_heatmap.png}
     \caption{Static correlation heatmap of the return series.}
     \label{fig:eda_heatmap_appendix}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    % height cap prevents Overfull \vbox — figure is very tall at full width
-    \includegraphics[width=0.98\textwidth, height=0.72\textheight, keepaspectratio]{../outputs/figures/eda_rolling_corr_all.png}
-    \caption{Rolling correlation overview for the asset universe.}
-    \label{fig:eda_rollcorr_appendix}
 \end{figure}
 
 \subsection{Dataset validation and quality diagnostics}
@@ -68,7 +60,7 @@ Figure~\ref{fig:dq_coverage} confirms that all seven tickers share an uninterrup
     \label{fig:dq_coverage}
 \end{figure}
 
-Figure~\ref{fig:dq_outliers} highlights extreme return episodes ($|z\text{-score}| > 5\sigma$) for each asset. Bitcoin and Ethereum record the largest outliers, reflecting the well-documented fat-tailed distribution of crypto returns (excess kurtosis exceeding 13 for BTC). All five conventional series --- the two equity indices as well as the precious-metal ETFs and the dollar proxy --- carry a large number of zero-return days. This is not an ETF quirk: it follows directly from aligning these five-day-a-week instruments onto Bitcoin's seven-day calendar and forward-filling the weekend gaps, so every Saturday and Sunday records a forced zero return, while the continuously traded crypto series show none. This calendar mismatch is a genuine limitation. On weekend rows a real Bitcoin return is paired with a zero conventional return, which mechanically attenuates the rolling correlation and adds a little artificial smoothness to the target; restricting the correlations to common trading days would remove the artefact and is a natural refinement for future work. None of the detected outliers, by contrast, are data errors; they are genuine price events and are kept in the analysis.
+Figure~\ref{fig:dq_outliers} highlights extreme return episodes ($|z\text{-score}| > 5\sigma$) for each asset. Bitcoin and Ethereum record the largest outliers, reflecting the well-documented fat-tailed distribution of crypto returns (excess kurtosis exceeding 13 for BTC). All five conventional series --- the two equity indices as well as the precious-metal ETFs and the dollar proxy --- carry a large number of zero-return days. This is not an ETF quirk: it follows directly from aligning these five-day-a-week instruments onto Bitcoin's seven-day calendar and forward-filling the weekend gaps, so every Saturday and Sunday records a forced zero return, while the continuously traded crypto series show none. This calendar mismatch is a genuine limitation: on weekend rows a real Bitcoin return is paired with a zero conventional return, which mechanically attenuates the rolling correlation. A natural worry is that this forward-filling also inflates the serial persistence of the target --- the very property that dominates the forecasting results of Chapters~\ref{sec:results_overview} and~\ref{sec:discussion}. To test this directly, the 30-day Bitcoin--S\&P~500 rolling correlation was recomputed on common trading days only, dropping the 914 weekend and holiday rows on which the S\&P~500 is forward-filled, and its persistence was compared with the full-calendar version. The persistence is essentially unchanged --- if anything marginally higher without the weekend rows: the lag-1 autocorrelation of the Fisher-$z$ target is 0.977 on the full seven-day calendar versus 0.981 on trading days only, and the naive ``tomorrow-equals-today'' $R^2$ is 0.954 versus 0.961 (the same ordering holds at the 14- and 90-day windows). The forced weekend zeros therefore inject a little noise rather than artificial persistence, so the dominant role of persistence is not an artefact of the calendar convention. Restricting the analysis to common trading days remains a clean refinement for future work, but it would not overturn the conclusions. None of the detected outliers, by contrast, are data errors; they are genuine price events and are kept in the analysis.
 
 \begin{figure}[H]
     \centering

@@ -206,6 +206,7 @@ def data_quality_to_latex(stats: pd.DataFrame, output_path: Optional[str] = None
         r"\small",
         r"\caption{Data quality summary per ticker}",
         r"\label{tab:data_quality}",
+        r"\resizebox{\textwidth}{!}{%",
         r"\begin{tabular}{l" + "r" * len(df.columns) + "}",
         r"\toprule",
         "Ticker & " + " & ".join(col_labels) + r" \\",
@@ -224,7 +225,7 @@ def data_quality_to_latex(stats: pd.DataFrame, output_path: Optional[str] = None
             else:
                 vals.append(str(v))
         lines.append(f"{safe_ticker} & " + " & ".join(vals) + r" \\")
-    lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+    lines += [r"\bottomrule", r"\end{tabular}", r"}", r"\end{table}"]
 
     latex = "\n".join(lines)
     if output_path:

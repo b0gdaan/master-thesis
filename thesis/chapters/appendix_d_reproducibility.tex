@@ -12,7 +12,8 @@ master-thesis/
 |-- requirements.txt         # Python dependencies
 |-- thesis_app/              # core Python modules
 |   |-- pipeline.py          # data, features, walk-forward, metrics
-|   |-- dcc_walk.py          # leakage-safe DCC-GARCH benchmark
+|   |-- dcc.py               # DCC-GARCH(1,1) likelihood + GARCH recursion
+|   |-- dcc_walk.py          # leakage-safe walk-forward wrapper (uses dcc.py)
 |   |-- signal_layer.py      # investor stress-warning layer
 |   |-- notebook_helpers.py  # shared plotting and styling
 |   |-- data_quality.py      # missing-value and outlier diagnostics
@@ -32,7 +33,8 @@ The following modules constitute the core of the forecasting system:
 
 \begin{itemize}
     \item \texttt{pipeline.py}: orchestrates the full dependency-forecasting and signal-generation workflow.
-    \item \texttt{dcc\_walk.py}: contains the leakage-safe walk-forward DCC-GARCH implementation.
+    \item \texttt{dcc.py}: implements the core DCC-GARCH(1,1) log-likelihood and the one-step GARCH variance recursion used by the benchmark.
+    \item \texttt{dcc\_walk.py}: contains the leakage-safe walk-forward DCC-GARCH implementation, built on the routines in \texttt{dcc.py}.
     \item \texttt{signal\_layer.py}: defines the investor warning layer and associated classification metrics.
     \item \texttt{notebook\_helpers.py}: shared plotting helpers, consistent styling, and analysis utilities used across all notebooks.
     \item \texttt{data\_quality.py}: performs missing-value, outlier, and coverage diagnostics on the raw dataset.
@@ -188,10 +190,11 @@ Alternatively, the three stages can be executed individually:
 \begin{lstlisting}[language={}]
 python -m pytest tests/ -v --junit-xml=outputs/results/test_results.xml
 \end{lstlisting}
-    \item Rebuild the PDF document from the \texttt{thesis/} directory:
+    \item Rebuild the PDF document from the \texttt{thesis/} directory with the same command the runner uses:
 \begin{lstlisting}[language={}]
-pdflatex main.tex && biber main && pdflatex main.tex && pdflatex main.tex
+latexmk -pdf -interaction=nonstopmode main.tex
 \end{lstlisting}
+    If \texttt{latexmk} is not installed, the equivalent manual sequence is \texttt{pdflatex main.tex}, then \texttt{biber main}, then \texttt{pdflatex main.tex} run twice.
 \end{enumerate}
 
 Steps 1 and 2 must be completed before step 4 because several figures used in the thesis are produced by the notebooks.

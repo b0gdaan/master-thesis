@@ -193,6 +193,19 @@ therefore robust to the small-sample correction.
     \end{tabular}
 \end{table}
 
+Two aspects of the comparison set in Table~\ref{tab:dm_hln} should be made explicit.
+First, the seven \emph{fitted} models are tested against two benchmarks: the DCC-GARCH
+econometric model and the naive last-value baseline. AR(1) is treated as one of the
+persistence baselines rather than as a test model, so it does not appear as a separate
+row; its position relative to the fitted models is established instead by the
+average-RMSE ranking of Table~\ref{tab:model_ranking_summary}, in which AR(1), HAR, and
+Ridge are statistically indistinguishable. Second, the Diebold--Mariano test assumes
+non-nested forecasts, whereas every fitted model here includes the lagged target among
+its predictors and therefore nests the persistence baselines. The statistics against
+Naive\_Last, and by extension any test against AR(1), are accordingly best read as
+descriptive; the conclusions rest on the comparison the test is designed for, namely the
+fitted models against the non-nested DCC-GARCH benchmark.
+
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection{Automated Validation Suite}
 \label{subsec:auto_tests}
@@ -229,9 +242,11 @@ The test classes cover the following aspects of the pipeline:
           RMSE in a physically plausible range.
 \end{itemize}
 
-Table~\ref{tab:test_report} lists each individual test together with its
-result and wall-clock execution time.
-All 81 tests pass on the present outputs, with none skipped.
+Table~\ref{tab:test_report} summarises the suite by test class --- the number of
+tests, the pass rate, and the total execution time for each. The complete
+per-test log, with parametrised cases and individual timings, is stored in
+\texttt{outputs/results/test\_results.xml} in the repository. All 81 tests pass
+on the present outputs, with none skipped.
 
 \needspace{4\baselineskip}
 

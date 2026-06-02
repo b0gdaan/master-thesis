@@ -19,10 +19,6 @@ env/
 *.iml
 .vscode/
 
-# Local development tool traces
-.claude/
-.claire/
-
 # Data (auto-downloaded on first run via yfinance)
 data/raw/
 data/processed/

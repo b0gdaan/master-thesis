@@ -40,20 +40,30 @@ The signal figures show that the warning layer behaves very differently from mar
 
 \begin{table}[H]
     \centering
-    \caption{Average signal-layer performance by classifier family.}
+    \caption{Balanced accuracy of the Logit signal layer by asset pair and rolling-window
+             length. Family-level averages across all pairs and windows are reported in
+             Table~\ref{tab:signal_summary}; this breakdown shows where the signal is
+             informative.}
     \label{tab:app_signal_summary}
-    \begin{tabular}{lrrr}
+    \begin{tabular}{lrrrrr}
         \toprule
-        Signal model & Balanced Accuracy & F1\_down & AUC \\
+        Asset pair & $w{=}14$ & $w{=}30$ & $w{=}60$ & $w{=}90$ & Mean \\
         \midrule
-        Logit & 0.511 & 0.214 & 0.513 \\
-        GBM\_Cls & 0.508 & 0.158 & 0.517 \\
-        RF\_Cls & 0.502 & 0.042 & 0.519 \\
+        BTC--S\&P 500  & 0.5169 & 0.5308 & 0.5212 & 0.5264 & 0.5238 \\
+        BTC--NASDAQ    & 0.5190 & 0.5016 & 0.4865 & 0.4917 & 0.4997 \\
+        BTC--Gold      & 0.5053 & 0.5041 & 0.5078 & 0.5202 & 0.5093 \\
+        BTC--Silver    & 0.4938 & 0.5187 & 0.5053 & 0.5189 & 0.5092 \\
+        BTC--USD index & 0.5071 & 0.5197 & 0.5131 & 0.5204 & 0.5151 \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-These averages confirm a signal that is meaningful but modest --- useful as a supplementary warning, not as a standalone allocator.
+This breakdown supports the main-text reading. The Bitcoin--S\&P~500 pair is the
+strongest and most consistent, peaking at 0.5308 at the 30-day window. Bitcoin--NASDAQ
+is the weakest, averaging 0.4997 and falling below the 0.50 chance level at the 60- and
+90-day windows. The precious-metal and dollar pairs are positive on average but remain
+close to chance. The signal is therefore best applied selectively to broad-equity pairs
+rather than uniformly across the asset universe.
 
 \begin{figure}[H]
     \centering

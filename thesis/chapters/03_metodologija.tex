@@ -4,7 +4,7 @@
 
 The design has two layers. The first is a regression problem: forecast the next value of the (transformed) rolling correlation between Bitcoin and another asset. The second is a classification problem: take that forecast, add a few crypto-derived features, and estimate the probability that the conventional asset has a stress day. The split mirrors the difference between measuring something and acting on it.
 
-The whole thing is deliberately conservative. Every decision that could leak the future---how the target is formed, how features are aligned, how the benchmark is estimated, how the signal is generated---happens inside the walk-forward loop rather than being tuned on in-sample fit. The point is to keep the timing honest and shut the door on accidental look-ahead.
+The whole thing is deliberately conservative. Every decision that could leak the future---how the target is formed, how features are aligned, how the benchmark is estimated, how the signal is generated---happens inside the walk-forward loop rather than being tuned on in-sample fit. The aim is to preserve correct temporal ordering and prevent accidental look-ahead.
 
 \subsection{Asset universe and data source}
 
@@ -33,26 +33,13 @@ The choice of assets is substantive, not arbitrary. The two equity indices stand
 
 The sample runs from 9 November 2017 to 16 May 2026, giving 3{,}053 daily observations per asset.\footnote{The pipeline downloads data to the most recent available trading day; the figures reported here correspond to the final run of the pipeline at the time of writing.} The start date is set by Ethereum: Yahoo Finance has no ETH-USD prices before then, so earlier dates drop out of the aligned panel. What remains is balanced---all seven tickers share one date index, with no gaps left after alignment and forward-filling of non-trading days up to two consecutive calendar days.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\textwidth]{../outputs/figures/dataset_prices.png}
-    \caption{Normalized price evolution of all seven assets over the full sample period (2017--2026). Series are scaled to a common base of 1 at the start date to allow visual comparison of relative performance.}
-    \label{fig:dataset_prices}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\textwidth]{../outputs/figures/dataset_volatility.png}
-    \caption{Thirty-day rolling volatility of log-returns across the asset universe. Bitcoin and Ethereum exhibit substantially higher and more episodic volatility than conventional assets, motivating a dynamic rather than static treatment of cross-asset dependency.}
-    \label{fig:dataset_volatility}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\textwidth]{../outputs/figures/dataset_corr_heatmap.png}
-    \caption{Full-sample Pearson correlation matrix of daily log-returns. The low static correlations between Bitcoin and most conventional assets motivate studying the time-varying structure rather than relying on a single full-sample estimate.}
-    \label{fig:dataset_corr_heatmap}
-\end{figure}
+Normalized price paths, thirty-day rolling-volatility profiles, and the full-sample
+return correlation matrix for the asset universe are collected in Appendix~A
+(Figures~\ref{fig:eda_prices_appendix}, \ref{fig:eda_vol_appendix},
+and~\ref{fig:eda_heatmap_appendix}). The much higher, more episodic volatility of the
+crypto assets and the low static Bitcoin--conventional correlations they display are
+what motivate treating cross-asset dependency dynamically rather than as a single
+full-sample number.
 
 \subsection{Return construction and preprocessing}
 
@@ -92,11 +79,15 @@ def build_target(returns, base, other, window, horizon):
 
 One consequence of all this is that the target is smooth to begin with, and far more persistent than a raw return series. That persistence is one of the central empirical facts of the thesis, and it shows up everywhere in the results.
 
+The rolling dependency series for all six pairs across the four window lengths is
+shown in Figure~\ref{fig:rolling_corr_all}. Its pronounced time-variation and
+persistence are the properties the forecasting framework is designed to exploit.
+
 \begin{figure}[H]
     \centering
     % height cap prevents the tall multi-panel figure from overflowing the page
     \includegraphics[width=0.95\textwidth, height=0.72\textheight, keepaspectratio]{../outputs/figures/eda_rolling_corr_all.png}
-    \caption{Rolling dependency between Bitcoin and each of the five conventional assets plus Ethereum (six pairs in all) across all four window lengths (14, 30, 60, 90 days). The Fisher-transformed series illustrates the strong time-variation and persistence that motivate the forecasting framework.}
+    \caption{Rolling dependency between Bitcoin and each of the five conventional assets plus Ethereum (six pairs in total) across all four window lengths (14, 30, 60, 90 days). The Fisher-transformed series exhibits the strong time-variation and persistence that motivate the forecasting framework.}
     \label{fig:rolling_corr_all}
 \end{figure}
 
@@ -115,6 +106,7 @@ The features fall into several groups:
         Group & Description \\
         \midrule
         Dependency lags & Recent values of the rolling dependency target \\
+        Dependency momentum \& regime & Trend (5- and 20-day change) and trailing z-score of the target \\
         Return lags & Lagged returns of Bitcoin and the paired asset \\
         Rolling means & Local average return over short windows \\
         Rolling volatility & Local standard deviation of returns \\
@@ -124,27 +116,34 @@ The features fall into several groups:
     \end{tabular}
 \end{table}
 
-The dependency lags carry most of the weight, since the target is persistent by construction. Return lags let the models respond to recent direction. Rolling means and volatilities summarize the local regime. The regime gap (\texttt{corr\_diff}) measures how far short-term dependency has pulled away from its longer-term baseline---a possible early sign of a regime shift. Listing~\ref{lst:features} shows how the matrix is assembled:
+The dependency lags carry most of the predictive weight, because the target is persistent by construction. Dependency momentum (\texttt{dep\_mom}) and the trailing z-score (\texttt{dep\_zscore}) summarise the recent trend and the standardised level of the correlation. Return lags allow the models to respond to recent price direction, while the rolling-mean, volatility, and dispersion features describe the local risk regime. The regime gap (\texttt{corr\_diff}) measures how far short-term dependency has moved from its longer-term baseline, which can act as an early indicator of a regime shift. Listing~\ref{lst:features} shows how the feature matrix is assembled.
 
-\begin{lstlisting}[language=Python, caption={Core feature engineering routine (\texttt{pipeline.py}).}, label=lst:features]
-# Dependency lags: the single most important predictor group
-for lag in [1, 2, 5, 10]:
+\begin{lstlisting}[language=Python, caption={Core feature engineering routine (\texttt{pipeline.py}; abbreviated --- the full routine additionally builds rolling-mean, dispersion, volatility-ratio, and lagged squared-return features).}, label=lst:features]
+# Dependency lags (extended: up to quarterly)
+for lag in [1, 2, 5, 10, 20, 60]:
     features[f"dep_lag{lag}"] = y_current.shift(lag)
 
-# Rolling volatility of both assets
-features["vol_base"]  = returns[base].rolling(window).std().reindex(idx)
-features["vol_other"] = returns[other].rolling(window).std().reindex(idx)
+# Dependency momentum (trend of the correlation series)
+features["dep_mom_5"]  = y_current.diff(5)
+features["dep_mom_20"] = y_current.diff(20)
+
+# Dependency regime: z-score vs trailing 252-day history
+features["dep_zscore"] = (y_current - dep_roll_mean) / (dep_roll_std + 1e-8)
+
+# Volatility of both assets, at the pair window and at 60 days
+features["vol_base"]     = returns[base].rolling(window).std()
+features["vol_other"]    = returns[other].rolling(window).std()
+features["vol_base_60"]  = returns[base].rolling(60).std()
+features["vol_other_60"] = returns[other].rolling(60).std()
 
 # Return lags for both assets
-for lag in [1, 2, 5]:
-    features[f"r_base_lag{lag}"]  = returns[base].shift(lag).reindex(idx)
-    features[f"r_other_lag{lag}"] = returns[other].shift(lag).reindex(idx)
+for lag in [1, 2, 5, 10, 20]:
+    features[f"r_base_lag{lag}"]  = returns[base].shift(lag)
+    features[f"r_other_lag{lag}"] = returns[other].shift(lag)
 
 # Correlation regime gap: short-window minus long-window correlation
-corr_short = rolling_corr(returns[base], returns[other],
-                          max(5, window // 4)).reindex(idx)
-corr_long  = rolling_corr(returns[base], returns[other],
-                          window).reindex(idx)
+corr_short = rolling_corr(returns[base], returns[other], max(5, window // 4))
+corr_long  = rolling_corr(returns[base], returns[other], window)
 features["corr_diff"] = corr_short - corr_long
 \end{lstlisting}
 
@@ -233,7 +232,7 @@ This buys three things at once: it reproduces real forecasting conditions, it ke
 
 For the forecasting layer, three numbers do the work: mean absolute error (MAE), root mean squared error (RMSE), and the out-of-sample $R^2$. Rankings lean on RMSE, which punishes large misses harder and suits a smooth continuous target.
 
-For the signal layer, four numbers matter: Balanced Accuracy, the F1 score on the downside class, the area under the ROC curve (AUC), and the exit rate. Balanced Accuracy earns its prominence because stress days are rare and the classes are imbalanced. F1 on the downside class keeps the focus on catching the bad days. And the exit rate---how often the signal would pull the investor out of the market---ties statistical quality to how the signal would actually be used.
+For the signal layer, four numbers matter: Balanced Accuracy, the F1 score on the downside class, the area under the ROC curve (AUC), and the exit rate. Balanced Accuracy is emphasised because stress days are rare and the classes are imbalanced. The F1 score on the downside class keeps the focus on detecting the adverse days. The exit rate---how often the signal would move the investor out of the market---links statistical quality to how the signal would actually be used.
 
 \subsection{Model comparison methodology}
 
@@ -267,8 +266,8 @@ Before the results, it is worth saying what success would even look like. It doe
     \item the investor signal layer should provide non-random and practically interpretable stress warnings.
 \end{itemize}
 
-These bars are modest, but they are defensible---low enough to clear honestly, high enough to mean something.
+These thresholds are modest but defensible: low enough to be met without overstatement, yet high enough to be meaningful.
 
 Three further principles guide how the results are read. First, no single metric is treated as the verdict: the regression layer always reports RMSE, MAE, and $R^2$ together, and the classification layer reports Balanced Accuracy, F1, AUC, and exit rate together. Second, performance gaps are judged significant by the Diebold--Mariano test, not by eyeballing averages. Third, the analysis refuses to cherry-pick a window after the fact; all four (14, 30, 60, 90 days) are reported side by side, so no finding can rest on a lucky choice of specification.
 
-Behind all three is the same commitment to methodological transparency. It is easy to produce dazzling in-sample numbers that collapse under honest out-of-sample testing. The walk-forward design, the leakage-safe benchmark, and the all-windows evaluation are, together, a defence against exactly the kinds of inflated claims this literature is prone to.
+Behind all three is the same commitment to methodological transparency. In-sample performance can appear strong yet deteriorate substantially under proper out-of-sample testing. The walk-forward design, the leakage-safe benchmark, and the all-windows evaluation together guard against the kind of inflated claims to which this literature is prone.

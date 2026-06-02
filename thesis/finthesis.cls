@@ -33,8 +33,10 @@
 % Base class and external package settings
 \LoadClass[a4paper, oneside, 12pt]{article}
 \RequirePackage[a4paper, margin=25mm]{geometry}
+\RequirePackage{cmap}              % embed ToUnicode CMap so copy/paste and PDF search work
 \RequirePackage[utf8]{inputenc}
 \RequirePackage[T1, T2A]{fontenc}
+\RequirePackage{lmodern}           % Type-1 outlines with named f-ligatures: fixes "nding" -> "finding" on copy
 \RequirePackage[english, serbianc]{babel}
 \RequirePackage{enumitem}
 \RequirePackage{varwidth}

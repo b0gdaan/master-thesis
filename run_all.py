@@ -241,7 +241,14 @@ def step_tests() -> bool:
 
 
 def _tests_to_latex(xml_path: str, out_tex: str) -> None:
-    """Parse pytest JUnit XML → LaTeX longtable for the thesis appendix."""
+    """Parse pytest JUnit XML -> compact per-class LaTeX summary for the appendix.
+
+    Only a class-level summary is written into the thesis: number of tests, pass
+    rate, and total wall-clock time per test class. The full per-test log -
+    including parametrised test IDs (which embed absolute local paths) and the
+    individual timings - stays in the JUnit XML inside the repository, so the
+    document never leaks local paths or balloons to dozens of rows.
+    """
     try:
         tree = ET.parse(xml_path)
         root = tree.getroot()
@@ -254,77 +261,77 @@ def _tests_to_latex(xml_path: str, out_tex: str) -> None:
     if not testcases:
         return
 
+    # Aggregate by test class, preserving first-seen order (dict keeps insertion order).
+    classes: dict = {}
     n_pass = n_fail = n_skip = 0
-    rows = []
     for tc in testcases:
-        classname = tc.get("classname", "").split(".")[-1]  # last component
-        name      = tc.get("name", "")
-        time_s    = tc.get("time", "")
-        failure   = tc.find("failure")
-        error     = tc.find("error")
-        skipped   = tc.find("skipped")
+        classname = tc.get("classname", "").split(".")[-1] or "(module)"
+        try:
+            t = float(tc.get("time", "0") or 0)
+        except ValueError:
+            t = 0.0
+        skipped = tc.find("skipped")
+        failed  = tc.find("failure") is not None or tc.find("error") is not None
 
         if skipped is not None:
-            status = "Skip"; n_skip += 1
-        elif failure is not None or error is not None:
-            status = "FAIL"; n_fail += 1
+            status = "skip"; n_skip += 1
+        elif failed:
+            status = "fail"; n_fail += 1
         else:
-            status = "Pass"; n_pass += 1
+            status = "pass"; n_pass += 1
 
-        # Human-readable name: strip test_ prefix and underscores
-        display = name.replace("test_", "").replace("_", " ")
-        rows.append((classname, display, status, time_s))
-
-    color_map = {"Pass": r"\textcolor{teal}{Pass}",
-                 "FAIL": r"\textcolor{red}{\textbf{FAIL}}",
-                 "Skip": r"\textcolor{gray}{Skip}"}
+        c = classes.setdefault(
+            classname, {"n": 0, "pass": 0, "fail": 0, "skip": 0, "time": 0.0}
+        )
+        c["n"] += 1
+        c[status] += 1
+        c["time"] += t
 
     total = n_pass + n_fail + n_skip
+    total_time = sum(c["time"] for c in classes.values())
+
+    def _passed_cell(c: dict) -> str:
+        if c["fail"]:
+            return rf"\textcolor{{red}}{{\textbf{{{c['pass']}/{c['n']}}}}}"
+        return rf"\textcolor{{teal}}{{{c['pass']}/{c['n']}}}"
+
+    skip_note = f" ({n_skip} skipped)" if n_skip else ", with none skipped"
     caption = (
-        r"\caption{Automated validation suite: "
+        r"\caption{Automated validation suite, summarised by test class. All "
         + str(total)
-        + r" tests covering dataset integrity, feature engineering, model metrics,"
-          r" DM tests, signal layer, and reproducibility.}"
+        + r" tests pass on the present outputs"
+        + skip_note
+        + r". The complete per-test log, including parametrised cases and per-test "
+          r"timings, is written to \texttt{outputs/results/test\_results.xml} in the "
+          r"repository.}"
     )
     lines = [
-        r"\begin{longtable}{p{3.2cm}p{6.5cm}cr}",
+        r"\begin{table}[H]",
+        r"\centering",
+        r"\small",
         caption,
-        r"\label{tab:test_report} \\",
+        r"\label{tab:test_report}",
+        r"\begin{tabular}{lccr}",
         r"\toprule",
-        r"Test class & Description & Result & s \\",
+        r"Test class & Tests & Passed & Time (s) \\",
         r"\midrule",
-        r"\endfirsthead",
-        r"\multicolumn{4}{l}{\small\textit{(continued from previous page)}} \\",
-        r"\toprule",
-        r"Test class & Description & Result & s \\",
-        r"\midrule",
-        r"\endhead",
-        r"\midrule",
-        r"\multicolumn{4}{r}{\small\textit{continued on next page}} \\",
-        r"\endfoot",
-        r"\bottomrule",
-        r"\endlastfoot",
     ]
-    prev_class = None
-    for cls, desc, status, t in rows:
-        cls_cell = cls if cls != prev_class else ""
-        prev_class = cls
-        safe_desc = desc[:65]
+    for cls, c in classes.items():
         lines.append(
-            f"{cls_cell} & {safe_desc} & {color_map.get(status, status)} & {t} \\\\"
+            rf"\texttt{{{cls}}} & {c['n']} & {_passed_cell(c)} & {c['time']:.2f} \\"
         )
     lines += [
-        rf"\multicolumn{{4}}{{r}}{{\small "
-        rf"Passed: \textbf{{{n_pass}}}\quad "
-        rf"Failed: \textbf{{{n_fail}}}\quad "
-        rf"Skipped: \textbf{{{n_skip}}}\quad "
-        rf"Total: \textbf{{{total}}}}} \\",
-        r"\end{longtable}",
+        r"\midrule",
+        rf"\textbf{{Total}} & \textbf{{{total}}} & \textbf{{{n_pass}}} & "
+        rf"\textbf{{{total_time:.2f}}} \\",
+        r"\bottomrule",
+        r"\end{tabular}",
+        r"\end{table}",
     ]
 
     with open(out_tex, "w", encoding="utf-8") as fh:
         fh.write("\n".join(lines))
-    print(f"Test report LaTeX saved → {out_tex}")
+    print(f"Test report LaTeX saved -> {out_tex}")
 
 
 def _parse_args() -> argparse.Namespace:
