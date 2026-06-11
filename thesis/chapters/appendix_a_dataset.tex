@@ -90,7 +90,7 @@ The window choice turns out to shape the whole forecastability profile. Longer w
 
 Every run of the pipeline writes consistent outputs into \texttt{outputs/results}, \texttt{outputs/tables}, \texttt{outputs/figures}, and \texttt{outputs/predictions}. That helps reproducibility, but it also helps the writing: because the tables and figures come straight from the code, there is very little distance between running an experiment and reporting it.
 
-The notebooks were kept in step with the pipeline rather than allowed to drift: figures stay interpretable, benchmarks are selected robustly, and helper functions are reused without fragile path assumptions. This matters in practice, where exploratory notebooks are often where an academic project quietly rots once they diverge from the code that produced the results.
+The notebooks were kept in step with the pipeline rather than allowed to drift: figures stay interpretable, benchmarks are selected robustly, and helper functions are reused without fragile path assumptions. This matters in practice, since exploratory notebooks frequently diverge from the code that produced the results and become unreliable over time.
 
 \subsection{Summary}
 

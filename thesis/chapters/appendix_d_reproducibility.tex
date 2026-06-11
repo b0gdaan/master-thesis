@@ -2,7 +2,7 @@
 
 \subsection{Project organization}
 
-The computational side of the thesis is built as a reproducible research project, not a pile of loose scripts. The main directories are laid out as follows:
+The computational side of the thesis is organised as a reproducible research project rather than a collection of ad hoc scripts. The main directories are laid out as follows:
 
 \begin{lstlisting}[language={}, caption={Top-level project directory structure.}, label=lst:dirstructure]
 master-thesis/
@@ -50,7 +50,7 @@ Eight Jupyter notebooks in \texttt{notebooks/} supplement the main pipeline with
 \begin{enumerate}
     \item \textbf{\texttt{01\_EDA\_Dataset.ipynb}} --- Exploratory data analysis. Produces normalized price trajectories, rolling volatility profiles, a pairwise correlation heatmap, rolling pairwise correlation time series, and the Fisher-transformation comparison plot. These figures appear in Appendix~A.
 
-    \item \textbf{\texttt{02\_GridSearch.ipynb}} --- Hyperparameter search diagnostics. Reports leave-one-out cross-validation RMSE surfaces for the representative Bitcoin--S\&P~500 experiment, regularization-path plots for Ridge and ElasticNet, and Random Forest feature-importance charts. Results support the model-selection discussion in Chapter~3.
+    \item \textbf{\texttt{02\_GridSearch.ipynb}} --- Hyperparameter search diagnostics. Reports time-series cross-validation (expanding-window \texttt{TimeSeriesSplit}) RMSE surfaces for the representative Bitcoin--S\&P~500 experiment, regularization-path plots for Ridge and ElasticNet, and Random Forest feature-importance charts. Results support the model-selection discussion in Chapter~3.
 
     \item \textbf{\texttt{03\_Model\_Comparison.ipynb}} --- Model-ranking summary. Generates the average RMSE comparison bar chart, the $R^2$ comparison across window lengths, and the improvement-over-naive baseline figure across all asset pairs. These figures provide a visual complement to Table~\ref{tab:model_ranking_summary} in Chapter~4.
 

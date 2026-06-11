@@ -16,7 +16,7 @@
 \contentsline {figure}{\numberline {14}{\ignorespaces Improvement relative to the naive baseline.}}{45}{figure.caption.28}%
 \contentsline {figure}{\numberline {15}{\ignorespaces Grid-search cross-validation RMSE for the representative Bitcoin--S\&P 500 forecasting task.}}{46}{figure.caption.29}%
 \contentsline {figure}{\numberline {16}{\ignorespaces Regularization path for the Ridge-based forecasting specification.}}{46}{figure.caption.30}%
-\contentsline {figure}{\numberline {17}{\ignorespaces Readable feature-importance view for the Random Forest model.}}{46}{figure.caption.31}%
+\contentsline {figure}{\numberline {17}{\ignorespaces Random Forest feature importances for the Bitcoin--S\&P~500 pair at the 30-day window.}}{46}{figure.caption.31}%
 \contentsline {figure}{\numberline {18}{\ignorespaces Window sensitivity of the XGBoost-based forecasting layer.}}{47}{figure.caption.32}%
 \contentsline {figure}{\numberline {19}{\ignorespaces Forecast scatter diagnostic for the Bitcoin--S\&P 500 dependency experiment.}}{47}{figure.caption.33}%
 \contentsline {figure}{\numberline {20}{\ignorespaces Forecast error distribution for the representative Bitcoin--S\&P 500 dependency experiment.}}{47}{figure.caption.34}%

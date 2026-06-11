@@ -2418,7 +2418,8 @@
     <bcf:citekey order="20" intorder="1">yfinance2026</bcf:citekey>
     <bcf:citekey order="21" intorder="1">corsi2009har</bcf:citekey>
     <bcf:citekey order="22" intorder="1">corsi2009har</bcf:citekey>
-    <bcf:citekey order="23" intorder="1">diebold1995</bcf:citekey>
+    <bcf:citekey order="23" intorder="1">clark2007nested</bcf:citekey>
+    <bcf:citekey order="23" intorder="2">giacomini2006tests</bcf:citekey>
     <bcf:citekey order="24" intorder="1">diebold1995</bcf:citekey>
     <bcf:citekey order="25" intorder="1">engle2001theoretical</bcf:citekey>
     <bcf:citekey order="25" intorder="2">andersen2003realized</bcf:citekey>

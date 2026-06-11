@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Babaev — Forecasting Intermarket Dependencies · Master Thesis 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -372,12 +374,12 @@ p{text-align:left}
   <div class="hero-meta mt-16">
     <span><strong>Bogdan Babaev</strong></span>
     <span id="hero-prog">University of Kragujevac · M.Sc. Artificial Intelligence</span>
-    <span id="hero-sup">Supervisor: <strong>Prof. Dr Vladimir M. Milovanović</strong></span>
-    <span id="hero-date">Defense: May 2026</span>
+    <span id="hero-sup">Supervisor: <strong>Assoc. Prof. Dr Vladimir M. Milovanović</strong></span>
+    <span id="hero-date">Defense: 2026</span>
   </div>
   <div style="display:flex;gap:10px;margin:16px 0 4px;flex-wrap:wrap">
-    <a href="https://en.kg.ac.rs/about.php" target="_blank" class="hero-ext-btn">🎓 University of Kragujevac</a>
-    <a href="https://kg.ac.rs/as_unikg_vi.php" target="_blank" class="hero-ext-btn">🤖 AI Programme</a>
+    <a href="https://en.kg.ac.rs/about.php" target="_blank" class="hero-ext-btn">University of Kragujevac</a>
+    <a href="https://kg.ac.rs/as_unikg_vi.php" target="_blank" class="hero-ext-btn">AI Programme</a>
   </div>
   <p id="hero-desc" style="font-size:15px;line-height:1.75;color:var(--text2);margin-top:20px">
     This thesis investigates whether cryptocurrency dynamics contain information about the evolving
@@ -454,11 +456,11 @@ p{text-align:left}
   <div style="margin-bottom:20px;margin-top:24px">
     <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:10px">Historical scenario presets — click to load</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button onclick="loadPreset('normal')"    class="filter-btn active"  id="preset-normal">📅 Normal day</button>
-      <button onclick="loadPreset('covid')"     class="filter-btn"         id="preset-covid">💥 COVID crash (Mar 2020)</button>
-      <button onclick="loadPreset('btccrash')"  class="filter-btn"         id="preset-btccrash">📉 BTC bear market (Nov 2022)</button>
-      <button onclick="loadPreset('spike')"     class="filter-btn"         id="preset-spike">🔥 Volatility spike</button>
-      <button onclick="loadPreset('recovery')"  class="filter-btn"         id="preset-recovery">🌱 Post-crash recovery</button>
+      <button onclick="loadPreset('normal')" class="filter-btn active" id="preset-normal">Normal day</button>
+      <button onclick="loadPreset('covid')" class="filter-btn" id="preset-covid">COVID crash (Mar 2020)</button>
+      <button onclick="loadPreset('btccrash')" class="filter-btn" id="preset-btccrash">BTC bear market (Nov 2022)</button>
+      <button onclick="loadPreset('spike')" class="filter-btn" id="preset-spike">Volatility spike</button>
+      <button onclick="loadPreset('recovery')" class="filter-btn" id="preset-recovery">Post-crash recovery</button>
     </div>
     <div id="preset-desc" style="font-size:13px;color:var(--text2);margin-top:10px;padding:8px 14px;background:var(--bg3);border-radius:var(--radius);border-left:3px solid var(--blue)">
       Typical trading day — BTC showing moderate positive correlation with S&P 500, normal volatility, no strong directional momentum.
@@ -515,7 +517,7 @@ p{text-align:left}
     <div>
       <!-- Big signal -->
       <div class="signal-box green" id="signal-box" style="margin-bottom:14px">
-        <div class="signal-icon" id="signal-icon">✅</div>
+        <div class="signal-icon" id="signal-icon"></div>
         <div class="signal-title green" id="signal-title">STAY IN MARKET</div>
         <div class="signal-subtitle" id="signal-subtitle">Low stress probability — dependency stable</div>
       </div>
@@ -544,7 +546,7 @@ p{text-align:left}
           <div class="prob-bar-fill" id="prob-bar" style="width:12%;background:var(--green);opacity:.85"></div>
         </div>
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:4px">
-          <span>0%</span><span style="color:var(--orange-text)">⚠ 30% alert</span><span style="color:var(--red-text)">🔴 60% exit</span><span>100%</span>
+          <span>0%</span><span style="color:var(--orange-text)"> 30% alert</span><span style="color:var(--red-text)"> 60% exit</span><span>100%</span>
         </div>
 
         <!-- Interpretation -->
@@ -560,7 +562,7 @@ p{text-align:left}
       </div>
 
       <div style="font-size:11.5px;color:var(--text3);margin-top:12px;line-height:1.6;padding:8px 12px;background:var(--bg3);border-radius:var(--radius)">
-        Educational demo — not financial advice. Coefficients are approximate, derived from walk-forward OOS evaluation 2021–2026 on 3,053 daily observations.
+        Educational demo — not financial advice. Coefficients are approximate, derived from walk-forward OOS evaluation 2020–2026 on 3,053 daily observations.
       </div>
     </div>
   </div>
@@ -1025,17 +1027,17 @@ p{text-align:left}
         <th>ρ pre</th><th>ρ post</th><th>Δρ</th>
       </tr></thead>
       <tbody>
-        <tr><td>🦠 COVID “Black Thursday”</td><td>2020-03-12</td><td><span class="text-red">Crash</span></td><td class="text-red">−34.7%</td><td class="text-red">−26.2%</td><td>0.17</td><td>0.57</td><td class="text-red">+0.40</td></tr>
-        <tr><td>🏦 Institutional Adoption Wave</td><td>2020-10-08</td><td><span class="text-green">Rally</span></td><td class="text-green">+6.4%</td><td class="text-green">+3.5%</td><td>0.45</td><td>0.43</td><td class="text-green">−0.03</td></tr>
-        <tr><td>🇨🇳 China Mining Ban &amp; Musk</td><td>2021-05-19</td><td><span class="text-red">Crash</span></td><td class="text-red">−36.7%</td><td class="text-green">+1.1%</td><td>0.16</td><td>0.42</td><td class="text-red">+0.26</td></tr>
-        <tr><td>🚀 Bitcoin ATH $69,000</td><td>2021-11-10</td><td><span style="color:#58a6ff">ATH</span></td><td class="text-red">−4.6%</td><td class="text-green">+1.2%</td><td>0.29</td><td>0.37</td><td class="text-red">+0.08</td></tr>
-        <tr><td>💀 Terra/Luna Collapse</td><td>2022-05-09</td><td><span class="text-red">Crash</span></td><td class="text-red">−25.3%</td><td class="text-red">−3.0%</td><td>0.69</td><td>0.78</td><td class="text-red">+0.10</td></tr>
-        <tr><td>🏚️ FTX Collapse</td><td>2022-11-08</td><td><span class="text-red">Crash</span></td><td class="text-red">−19.4%</td><td class="text-green">+3.0%</td><td>0.55</td><td>0.46</td><td class="text-green">−0.09</td></tr>
-        <tr><td>🏦 SVB Banking Crisis</td><td>2023-03-10</td><td><span style="color:#a371f7">Divergence</span></td><td class="text-green">+15.5%</td><td class="text-red">−1.6%</td><td>0.37</td><td>0.20</td><td class="text-green">−0.17</td></tr>
-        <tr><td>✅ SEC Approves Spot BTC ETFs</td><td>2024-01-10</td><td><span style="color:#a371f7">Milestone</span></td><td class="text-red">−5.1%</td><td class="text-red">−0.1%</td><td>−0.04</td><td>0.19</td><td class="text-red">+0.22</td></tr>
-        <tr><td>🏆 Bitcoin ATH $73,000</td><td>2024-03-05</td><td><span style="color:#58a6ff">ATH</span></td><td class="text-green">+27.1%</td><td class="text-green">+2.1%</td><td>0.17</td><td>0.12</td><td class="text-green">−0.05</td></tr>
-        <tr><td>🇺🇸 Trump Election Victory</td><td>2024-11-06</td><td><span class="text-green">Rally</span></td><td class="text-green">+22.0%</td><td class="text-green">+2.6%</td><td>0.42</td><td>0.70</td><td class="text-red">+0.28</td></tr>
-        <tr><td>💥 “Liberation Day” Tariff Shock</td><td>2025-04-02</td><td><span class="text-red">Crash</span></td><td class="text-red">−5.8%</td><td class="text-red">−5.7%</td><td>0.34</td><td>0.21</td><td class="text-green">−0.12</td></tr>
+        <tr><td>COVID “Black Thursday”</td><td>2020-03-12</td><td><span class="text-red">Crash</span></td><td class="text-red">−34.7%</td><td class="text-red">−26.2%</td><td>0.17</td><td>0.57</td><td class="text-red">+0.40</td></tr>
+        <tr><td>Institutional Adoption Wave</td><td>2020-10-08</td><td><span class="text-green">Rally</span></td><td class="text-green">+6.4%</td><td class="text-green">+3.5%</td><td>0.45</td><td>0.43</td><td class="text-green">−0.03</td></tr>
+        <tr><td>China Mining Ban &amp; Musk</td><td>2021-05-19</td><td><span class="text-red">Crash</span></td><td class="text-red">−36.7%</td><td class="text-green">+1.1%</td><td>0.16</td><td>0.42</td><td class="text-red">+0.26</td></tr>
+        <tr><td>Bitcoin ATH $69,000</td><td>2021-11-10</td><td><span style="color:#58a6ff">ATH</span></td><td class="text-red">−4.6%</td><td class="text-green">+1.2%</td><td>0.29</td><td>0.37</td><td class="text-red">+0.08</td></tr>
+        <tr><td>Terra/Luna Collapse</td><td>2022-05-09</td><td><span class="text-red">Crash</span></td><td class="text-red">−25.3%</td><td class="text-red">−3.0%</td><td>0.69</td><td>0.78</td><td class="text-red">+0.10</td></tr>
+        <tr><td>FTX Collapse</td><td>2022-11-08</td><td><span class="text-red">Crash</span></td><td class="text-red">−19.4%</td><td class="text-green">+3.0%</td><td>0.55</td><td>0.46</td><td class="text-green">−0.09</td></tr>
+        <tr><td>SVB Banking Crisis</td><td>2023-03-10</td><td><span style="color:#a371f7">Divergence</span></td><td class="text-green">+15.5%</td><td class="text-red">−1.6%</td><td>0.37</td><td>0.20</td><td class="text-green">−0.17</td></tr>
+        <tr><td>SEC Approves Spot BTC ETFs</td><td>2024-01-10</td><td><span style="color:#a371f7">Milestone</span></td><td class="text-red">−5.1%</td><td class="text-red">−0.1%</td><td>−0.04</td><td>0.19</td><td class="text-red">+0.22</td></tr>
+        <tr><td>Bitcoin ATH $73,000</td><td>2024-03-05</td><td><span style="color:#58a6ff">ATH</span></td><td class="text-green">+27.1%</td><td class="text-green">+2.1%</td><td>0.17</td><td>0.12</td><td class="text-green">−0.05</td></tr>
+        <tr><td>Trump Election Victory</td><td>2024-11-06</td><td><span class="text-green">Rally</span></td><td class="text-green">+22.0%</td><td class="text-green">+2.6%</td><td>0.42</td><td>0.70</td><td class="text-red">+0.28</td></tr>
+        <tr><td> “Liberation Day” Tariff Shock</td><td>2025-04-02</td><td><span class="text-red">Crash</span></td><td class="text-red">−5.8%</td><td class="text-red">−5.7%</td><td>0.34</td><td>0.21</td><td class="text-green">−0.12</td></tr>
       </tbody>
     </table>
   </div>
@@ -1076,47 +1078,47 @@ p{text-align:left}
   <div class="fig-grid mt-8">
     <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_covid.png','COVID Black Thursday — 12 March 2020')">
       <img src="thesis-assets/figures/event_covid.png" alt="COVID Black Thursday" loading="lazy">
-      <div class="fig-caption"><strong>1 · 🦠 COVID “Black Thursday”</strong><span>Liquidity-driven sell-off: BTC −35% over 7 days with a −26% S&amp;P. 30-day BTC–S&amp;P 500 correlation jumped 0.17 → 0.57 — diversification evaporated.</span><a href="https://www.reuters.com/article/us-health-coronavirus-markets-idUSKBN20Z0TO" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: Reuters ↗</a></div>
+      <div class="fig-caption"><strong>1 · COVID “Black Thursday”</strong><span>Liquidity-driven sell-off: BTC −35% over 7 days with a −26% S&amp;P. 30-day BTC–S&amp;P 500 correlation jumped 0.17 → 0.57 — diversification evaporated.</span><a href="https://www.reuters.com/article/us-health-coronavirus-markets-idUSKBN20Z0TO" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: Reuters ↗</a></div>
     </div>
     <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_crypto_summer_2020.png','Institutional Adoption Wave — Q4 2020')">
       <img src="thesis-assets/figures/event_crypto_summer_2020.png" alt="Institutional adoption wave 2020" loading="lazy">
-      <div class="fig-caption"><strong>2 · 🏦 Institutional Adoption Wave</strong><span>MicroStrategy / Square / PayPal drove BTC from $10K toward $20K while equities were flat. Correlation held moderate (~0.43), well below the COVID spike — March was a liquidity event, not a structural shift.</span><a href="https://www.theguardian.com/technology/2020/aug/11/microstrategy-bitcoin-250m-treasury" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: The Guardian ↗</a></div>
+      <div class="fig-caption"><strong>2 · Institutional Adoption Wave</strong><span>MicroStrategy / Square / PayPal drove BTC from $10K toward $20K while equities were flat. Correlation held moderate (~0.43), well below the COVID spike — March was a liquidity event, not a structural shift.</span><a href="https://www.theguardian.com/technology/2020/aug/11/microstrategy-bitcoin-250m-treasury" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: The Guardian ↗</a></div>
     </div>
     <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_china_ban.png','China Mining Ban & Musk Tweets — May 2021')">
       <img src="thesis-assets/figures/event_china_ban.png" alt="China mining ban 2021" loading="lazy">
-      <div class="fig-caption"><strong>3 · 🇨🇳 China Mining Ban &amp; Musk</strong><span>Mining ban + Musk tweets cut BTC −37% in a week while the S&amp;P barely moved (+1%). A textbook crypto-idiosyncratic shock — only a brief correlation rise (0.16 → 0.42).</span><a href="https://www.bbc.com/news/technology-57169726" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: BBC ↗</a></div>
+      <div class="fig-caption"><strong>3 · China Mining Ban &amp; Musk</strong><span>Mining ban + Musk tweets cut BTC −37% in a week while the S&amp;P barely moved (+1%). A textbook crypto-idiosyncratic shock — only a brief correlation rise (0.16 → 0.42).</span><a href="https://www.bbc.com/news/technology-57169726" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: BBC ↗</a></div>
     </div>
     <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_btc_ath_2021.png','Bitcoin ATH $69,000 — 10 November 2021')">
       <img src="thesis-assets/figures/event_btc_ath_2021.png" alt="Bitcoin ATH 2021" loading="lazy">
-      <div class="fig-caption"><strong>4 · 🚀 Bitcoin ATH $69,000</strong><span>At the peak, BTC–NASDAQ co-movement was elevated on shared risk appetite. The high correlation foreshadowed the 2022 bear market as the Fed began tightening.</span><a href="https://www.bbc.com/news/technology-59244848" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: BBC ↗</a></div>
+      <div class="fig-caption"><strong>4 · Bitcoin ATH $69,000</strong><span>At the peak, BTC–NASDAQ co-movement was elevated on shared risk appetite. The high correlation foreshadowed the 2022 bear market as the Fed began tightening.</span><a href="https://www.bbc.com/news/technology-59244848" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: BBC ↗</a></div>
     </div>
     <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_luna_terra.png','Terra/Luna Collapse — May 2022')">
       <img src="thesis-assets/figures/event_luna_terra.png" alt="Terra Luna collapse 2022" loading="lazy">
-      <div class="fig-caption"><strong>5 · 💀 Terra/Luna Collapse</strong><span>$60B algorithmic-stablecoin implosion: BTC −25% while the S&amp;P fell only −3% on unrelated macro. Gold flat — crypto contagion did not reach traditional havens.</span><a href="https://www.theguardian.com/technology/2022/may/12/luna-cryptocurrency-collapse" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: The Guardian ↗</a></div>
+      <div class="fig-caption"><strong>5 · Terra/Luna Collapse</strong><span>$60B algorithmic-stablecoin implosion: BTC −25% while the S&amp;P fell only −3% on unrelated macro. Gold flat — crypto contagion did not reach traditional havens.</span><a href="https://www.theguardian.com/technology/2022/may/12/luna-cryptocurrency-collapse" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: The Guardian ↗</a></div>
     </div>
     <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_ftx.png','FTX Collapse — November 2022')">
       <img src="thesis-assets/figures/event_ftx.png" alt="FTX collapse 2022" loading="lazy">
-      <div class="fig-caption"><strong>6 · 🏚️ FTX Collapse</strong><span>Exchange bankruptcy: BTC −19% over the week while the S&amp;P rose +3% on a soft CPI print — a brief divergence, with the 30-day correlation easing 0.55 → 0.46.</span><a href="https://www.bbc.com/news/technology-63631492" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: BBC ↗</a></div>
+      <div class="fig-caption"><strong>6 · FTX Collapse</strong><span>Exchange bankruptcy: BTC −19% over the week while the S&amp;P rose +3% on a soft CPI print — a brief divergence, with the 30-day correlation easing 0.55 → 0.46.</span><a href="https://www.bbc.com/news/technology-63631492" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: BBC ↗</a></div>
     </div>
     <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_svb.png','SVB Banking Crisis — 10 March 2023')">
       <img src="thesis-assets/figures/event_svb.png" alt="SVB banking crisis 2023" loading="lazy">
-      <div class="fig-caption"><strong>7 · 🏦 SVB Banking Crisis</strong><span>Bank failure triggered a +15% BTC rally as both BTC and Gold rose while equities fell — a clear decoupling, with the 30-day BTC–S&amp;P correlation dropping 0.37 → 0.20 (its largest risk-off divergence in the sample).</span><a href="https://www.nytimes.com/2023/03/10/business/silicon-valley-bank-failure-explained.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: NYT ↗</a></div>
+      <div class="fig-caption"><strong>7 · SVB Banking Crisis</strong><span>Bank failure triggered a +15% BTC rally as both BTC and Gold rose while equities fell — a clear decoupling, with the 30-day BTC–S&amp;P correlation dropping 0.37 → 0.20 (its largest risk-off divergence in the sample).</span><a href="https://www.nytimes.com/2023/03/10/business/silicon-valley-bank-failure-explained.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: NYT ↗</a></div>
     </div>
     <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_etf_approval.png','SEC Approves Spot Bitcoin ETFs — 10 January 2024')">
       <img src="thesis-assets/figures/event_etf_approval.png" alt="Spot Bitcoin ETF approval 2024" loading="lazy">
-      <div class="fig-caption"><strong>8 · ✅ SEC Approves Spot BTC ETFs</strong><span>After a decade of rejections, BlackRock IBIT &amp; Fidelity FBTC approved. Classic buy-the-rumour, sell-the-news (BTC −5%) — but BTC became accessible to US institutions for the first time.</span><a href="https://www.cnbc.com/2024/01/10/sec-approves-spot-bitcoin-etfs.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: CNBC ↗</a></div>
+      <div class="fig-caption"><strong>8 · SEC Approves Spot BTC ETFs</strong><span>After a decade of rejections, BlackRock IBIT &amp; Fidelity FBTC approved. Classic buy-the-rumour, sell-the-news (BTC −5%) — but BTC became accessible to US institutions for the first time.</span><a href="https://www.cnbc.com/2024/01/10/sec-approves-spot-bitcoin-etfs.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: CNBC ↗</a></div>
     </div>
     <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_btc_ath_2024.png','Bitcoin ATH $73,000 — 5 March 2024')">
       <img src="thesis-assets/figures/event_btc_ath_2024.png" alt="Bitcoin ATH 2024" loading="lazy">
-      <div class="fig-caption"><strong>9 · 🏆 Bitcoin ATH $73,000</strong><span>ETF inflows (IBIT absorbed ~$10B in 7 weeks) drove BTC +27% to a new high. BTC and NASDAQ hit ATHs the same week — institutional channels create sustained co-movement.</span><a href="https://www.coindesk.com/markets/2024/03/14/bitcoin-sets-new-all-time-high-above-73k/" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: CoinDesk ↗</a></div>
+      <div class="fig-caption"><strong>9 · Bitcoin ATH $73,000</strong><span>ETF inflows (IBIT absorbed ~$10B in 7 weeks) drove BTC +27% to a new high. BTC and NASDAQ hit ATHs the same week — institutional channels create sustained co-movement.</span><a href="https://www.coindesk.com/markets/2024/03/14/bitcoin-sets-new-all-time-high-above-73k/" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: CoinDesk ↗</a></div>
     </div>
     <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_trump_election.png','Trump Election Victory — 6 November 2024')">
       <img src="thesis-assets/figures/event_trump_election.png" alt="Trump election 2024" loading="lazy">
-      <div class="fig-caption"><strong>10 · 🇺🇸 Trump Election Victory</strong><span>Pro-crypto platform (proposed BTC strategic reserve) lifted BTC +22% in a week; equities rallied too. Correlation rose sharply (0.42 → 0.70) on a shared political catalyst.</span><a href="https://www.reuters.com/markets/crypto-market-surges-after-trump-wins-us-presidential-election-2024-11-06/" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: Reuters ↗</a></div>
+      <div class="fig-caption"><strong>10 · Trump Election Victory</strong><span>Pro-crypto platform (proposed BTC strategic reserve) lifted BTC +22% in a week; equities rallied too. Correlation rose sharply (0.42 → 0.70) on a shared political catalyst.</span><a href="https://www.reuters.com/markets/crypto-market-surges-after-trump-wins-us-presidential-election-2024-11-06/" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: Reuters ↗</a></div>
     </div>
     <div class="fig-card" onclick="openLightbox('thesis-assets/figures/event_liberation_day.png','Liberation Day Tariff Shock — 2 April 2025')">
       <img src="thesis-assets/figures/event_liberation_day.png" alt="Liberation Day tariff shock 2025" loading="lazy">
-      <div class="fig-caption"><strong>11 · 💥 “Liberation Day” Tariff Shock</strong><span>Sweeping tariffs sent the S&amp;P −6% and BTC −6% together in days — the fastest equity drop since 2020, with Gold surging. A clear macro risk-off co-crash: BTC behaved as a risk asset, not a haven.</span><a href="https://www.reuters.com/markets/trump-liberation-day-tariffs-global-markets-crash-2025-04-02/" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: Reuters ↗</a></div>
+      <div class="fig-caption"><strong>11 · “Liberation Day” Tariff Shock</strong><span>Sweeping tariffs sent the S&amp;P −6% and BTC −6% together in days — the fastest equity drop since 2020, with Gold surging. A clear macro risk-off co-crash: BTC behaved as a risk asset, not a haven.</span><a href="https://www.reuters.com/markets/trump-liberation-day-tariffs-global-markets-crash-2025-04-02/" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--blue);font-size:12px;margin-top:5px;display:inline-block">Source: Reuters ↗</a></div>
     </div>
   </div>
 </div>
@@ -1264,7 +1266,7 @@ p{text-align:left}
             <div style="font-size:11px;color:var(--text2);margin-top:3px" id="v2-m2">Models</div>
           </div>
           <div style="background:var(--bg3);border-radius:var(--radius);padding:10px;text-align:center">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--green-text)">✓</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--green-text)"></div>
             <div style="font-size:11px;color:var(--text2);margin-top:3px" id="v2-m3">Signal Layer</div>
           </div>
         </div>
@@ -1495,7 +1497,7 @@ cd thesis && latexmk -pdf main.tex</div>
 
   <div class="yt-grid">
     <a href="https://www.youtube.com/results?search_query=DCC+GARCH+dynamic+conditional+correlation+tutorial" target="_blank" class="yt-card">
-      <div class="yt-thumb-placeholder">📊</div>
+      <div class="yt-thumb-placeholder"></div>
       <div class="yt-info">
         <div class="yt-badge">YouTube →</div>
         <strong>DCC-GARCH: Dynamic Conditional Correlation</strong>
@@ -1503,7 +1505,7 @@ cd thesis && latexmk -pdf main.tex</div>
       </div>
     </a>
     <a href="https://www.youtube.com/results?search_query=walk+forward+validation+time+series+machine+learning" target="_blank" class="yt-card">
-      <div class="yt-thumb-placeholder">🔄</div>
+      <div class="yt-thumb-placeholder"></div>
       <div class="yt-info">
         <div class="yt-badge">YouTube →</div>
         <strong>Walk-Forward Validation in Financial ML</strong>
@@ -1511,7 +1513,7 @@ cd thesis && latexmk -pdf main.tex</div>
       </div>
     </a>
     <a href="https://www.youtube.com/results?search_query=XGBoost+gradient+boosting+explained+machine+learning" target="_blank" class="yt-card">
-      <div class="yt-thumb-placeholder">🌲</div>
+      <div class="yt-thumb-placeholder"></div>
       <div class="yt-info">
         <div class="yt-badge">YouTube →</div>
         <strong>XGBoost &amp; Gradient Boosting Explained</strong>
@@ -1527,7 +1529,7 @@ cd thesis && latexmk -pdf main.tex</div>
       </div>
     </a>
     <a href="https://www.youtube.com/results?search_query=Diebold+Mariano+test+forecast+comparison" target="_blank" class="yt-card">
-      <div class="yt-thumb-placeholder">📐</div>
+      <div class="yt-thumb-placeholder"></div>
       <div class="yt-info">
         <div class="yt-badge">YouTube →</div>
         <strong>Diebold–Mariano Test for Forecast Comparison</strong>
@@ -1668,7 +1670,7 @@ cd thesis && latexmk -pdf main.tex</div>
       <div class="about-photo">
         <img src="photo.jpg" alt="Bogdan Babaev" onerror="this.parentElement.style.display='none';document.getElementById('photo-placeholder').style.display='flex'">
       </div>
-      <div id="photo-placeholder" class="about-photo-placeholder" style="display:none">👤</div>
+      <div id="photo-placeholder" class="about-photo-placeholder" style="display:none"></div>
     </div>
     <div class="about-content">
       <h2 id="about-h2">About</h2>
@@ -1702,7 +1704,7 @@ cd thesis && latexmk -pdf main.tex</div>
           GitHub
         </a>
         <a href="mailto:babaev.bogdan.ru@gmail.com" class="about-link-btn">
-          ✉ babaev.bogdan.ru@gmail.com
+           babaev.bogdan.ru@gmail.com
         </a>
       </div>
     </div>
@@ -1714,7 +1716,7 @@ cd thesis && latexmk -pdf main.tex</div>
   <div class="container">
     <strong>Bogdan Babaev</strong> — <span id="footer-main">Master Thesis, University of Kragujevac · 2026</span><br>
     <span class="mt-8" style="display:block">
-      <span id="footer-sup">Supervisor: Prof. Dr Vladimir M. Milovanović</span> · M.Sc. Artificial Intelligence ·
+      <span id="footer-sup">Supervisor: Assoc. Prof. Dr Vladimir M. Milovanović</span> · M.Sc. Artificial Intelligence ·
       <a href="https://www.linkedin.com/in/bogdan-b-34482b203/" target="_blank" style="color:var(--text2)">LinkedIn</a> ·
       <a href="https://github.com/b0gdaan" target="_blank" style="color:var(--text2)">GitHub</a>
     </span>
@@ -2168,7 +2170,7 @@ function updateDemo(clearPreset){
 
   if(prob < 0.30){
     box.classList.add('green'); title.classList.add('green');
-    icon.textContent ='✅';
+    icon.textContent ='';
     title.textContent='STAY IN MARKET';
     sub.textContent  =`Stress probability ${pct}% — dependency stable at ρ=${rho.toFixed(2)}`;
     bar.style.background='var(--green)';
@@ -2179,7 +2181,7 @@ function updateDemo(clearPreset){
     actTxt.textContent='Hold current equity positions. No risk reduction needed based on crypto signal.';
   } else if(prob < 0.60){
     box.classList.add('orange'); title.classList.add('orange');
-    icon.textContent ='⚠️';
+    icon.textContent ='';
     title.textContent='CAUTION';
     sub.textContent  =`Stress probability ${pct}% — consider reducing equity exposure`;
     bar.style.background='var(--orange)';
@@ -2190,7 +2192,7 @@ function updateDemo(clearPreset){
     actTxt.textContent='Reduce equity gross exposure by 20–40%. Tighten stop-loss levels. Monitor intraday BTC dynamics closely.';
   } else {
     box.classList.add('red'); title.classList.add('red');
-    icon.textContent ='🔴';
+    icon.textContent ='';
     title.textContent='EXIT SIGNAL';
     sub.textContent  =`Stress probability ${pct}% — high co-crash risk detected`;
     bar.style.background='var(--red)';
@@ -2212,15 +2214,15 @@ const T = {
     heroBadge: 'Master Thesis · University of Kragujevac · 2026',
     heroTitle: 'Forecasting Time-Varying Intermarket Dependencies Between Cryptocurrencies and Conventional Assets Using Machine Learning',
     heroProg:  'University of Kragujevac · M.Sc. Artificial Intelligence',
-    heroSup:   'Supervisor: <strong>Prof. Dr Vladimir M. Milovanović</strong>',
-    heroDate:  'Defense: May 2026',
+    heroSup:   'Supervisor: <strong>Assoc. Prof. Dr Vladimir M. Milovanović</strong>',
+    heroDate:  'Defense: 2026',
     heroDesc:  'Does the behaviour of cryptocurrency markets tell you anything about how their dependence on conventional assets shifts over time? This thesis takes Bitcoin as the base asset and tests that question against equity indices, precious-metal ETFs, and the U.S. dollar index, using a reproducible walk-forward ML pipeline benchmarked against a leakage-safe DCC-GARCH(1,1) model across 240 evaluations (10 models × 6 pairs × 4 windows).',
     aboutH2: 'About',
     aboutP1: 'I\'m Bogdan Babaev — originally from <strong style="color:var(--text)">Samara, Russia</strong>, currently finishing my <strong style="color:var(--text)">M.Sc. in Artificial Intelligence</strong> at the University of Kragujevac, Serbia (2023–2026).',
     aboutP2: 'My research interests sit at the intersection of machine learning and quantitative finance — specifically time series forecasting, intermarket dependencies, and risk-aware modelling. This thesis is the result of about a year of work combining econometrics, walk-forward ML evaluation, and practical signal design.',
     aboutP3: 'Before the master\'s programme I studied and worked in Russia. Moving to Serbia was both a practical and academic decision — the programme in Kragujevac offered solid theoretical foundations and the freedom to pursue an applied quantitative thesis topic.',
     footerMain: 'Master Thesis, University of Kragujevac · 2026',
-    footerSup:  'Supervisor: Prof. Dr Vladimir M. Milovanović',
+    footerSup:  'Supervisor: Assoc. Prof. Dr Vladimir M. Milovanović',
     statLabels: ['Daily observations','Assets','Model evaluations','Rolling windows','Best OOS R² (Ridge avg)','ML vs DCC-GARCH (DM)'],
     rqLabels: ['RQ1 · Forecastability','RQ2 · ML vs DCC-GARCH','RQ3 · Feature Importance','RQ4 · Signal Layer'],
     sectionH2: {

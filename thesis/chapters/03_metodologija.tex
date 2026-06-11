@@ -4,7 +4,7 @@
 
 The design has two layers. The first is a regression problem: forecast the next value of the (transformed) rolling correlation between Bitcoin and another asset. The second is a classification problem: take that forecast, add a few crypto-derived features, and estimate the probability that the conventional asset has a stress day. The split mirrors the difference between measuring something and acting on it.
 
-The whole thing is deliberately conservative. Every decision that could leak the future---how the target is formed, how features are aligned, how the benchmark is estimated, how the signal is generated---happens inside the walk-forward loop rather than being tuned on in-sample fit. The aim is to preserve correct temporal ordering and prevent accidental look-ahead.
+The design is deliberately conservative. Every step that could leak future information --- target construction, feature alignment, benchmark estimation, and signal generation --- is performed inside the walk-forward loop rather than tuned on in-sample fit. The single exception is hyperparameter selection, which is carried out once on a representative experiment rather than re-tuned at every step; as shown in Chapter~\ref{sec:discussion}, the results are essentially flat in the regularisation strength, so this simplification does not materially affect the conclusions. The aim throughout is to preserve correct temporal ordering and prevent accidental look-ahead.
 
 \subsection{Asset universe and data source}
 
@@ -153,7 +153,7 @@ The signal layer takes the best available dependency forecast for the pair and c
 
 \subsubsection{Baseline and autoregressive models}
 
-Three persistence-based models anchor the set. \texttt{Naive\_Last} just carries the last observed value forward---no fitting at all. \texttt{AR1} fits a single autoregressive lag by OLS. \texttt{HAR} (Heterogeneous AutoRegressive, after \textcite{corsi2009har}) adds two more horizons: the latest value, its five-day average (weekly), and its twenty-two-day average (monthly), fitted as a restricted OLS on the expanding window at each refit. These baselines are not a formality. Because the target is persistent by construction, every more complex model has to earn its keep against them.
+Three persistence-based models anchor the set. \texttt{Naive\_Last} just carries the last observed value forward---no fitting at all. \texttt{AR1} fits a single autoregressive lag by OLS. \texttt{HAR} (Heterogeneous AutoRegressive, after \textcite{corsi2009har}) adds two more horizons: the latest value, its five-day average (weekly), and its twenty-two-day average (monthly), fitted as a restricted OLS on the expanding window at each refit. These baselines are not a formality: because the target is persistent by construction, any more complex model must demonstrate a clear improvement over them to justify its use.
 
 \subsubsection{Regularized linear models}
 
@@ -191,17 +191,18 @@ model_specs = {
                subsample=0.8, colsample_bytree=0.8
            ),
 }
-# "Ensemble": adaptive inverse-RMSE weighted average of all non-naive models.
+# "Ensemble": adaptive inverse-RMSE weighted average of the ML models
+#             (excludes Naive_Last and the DCC-GARCH benchmark).
 # Weights are recomputed at each step from the last 60 out-of-sample errors.
 \end{lstlisting}
 
 \subsubsection{DCC-GARCH benchmark}
 
-The DCC-GARCH benchmark lives in its own module and is leakage-safe by design. This is the one methodological correction that matters most against the shortcuts common in exploratory work: instead of fitting DCC once on the full sample and then treating that fit as out-of-sample, the benchmark is re-estimated on the training window alone and rolled forward from there. It is slower, but it is finally a fair fight.
+The DCC-GARCH benchmark is implemented in a separate module and is leakage-safe by construction. Rather than fitting DCC once on the full sample and then treating that fit as out-of-sample, the benchmark is re-estimated on the training window alone and rolled forward from there. This is computationally slower, but it places the benchmark on the same out-of-sample footing as the machine-learning models.
 
 \subsection{Investor signal layer}
 
-The signal layer recasts everything as an early-warning classification. The label is not next-day direction in the abstract but a \emph{stress day} for the conventional asset, defined against the distribution of negative returns through a configurable sigma threshold. It is a deliberately conservative target, and a better match for what investors actually want: protection on the downside.
+The signal layer reformulates the problem as early-warning classification. The label is a \emph{stress day} for the conventional asset rather than next-day return direction. Day $t+1$ is labelled as stress if the asset's return falls below $-0.75\,\sigma_t$, where $\sigma_t$ is the trailing 20-day standard deviation of returns computed from information available at time $t$. This threshold produces a positive (stress) class of roughly 15--20\% of days, depending on the asset, and its sensitivity is examined over the range $[0.5,\,2.0]\,\sigma$ in the robustness analysis. The threshold is chosen to capture moves that are worse than a typical down day rather than only extreme tail events, which matches the downside-protection use case of the signal.
 
 Three classifiers compete here: logistic regression, a random-forest classifier, and a gradient-boosted one. Each emits a probability, which is compared against a threshold to flag the next day as elevated-risk or not. The output is therefore a probability-guided warning, not an opaque buy/sell command.
 
@@ -226,11 +227,11 @@ for t in range(min_train, n_obs):
         preds[name][t] = fitted[name].predict(X_values[[t]])[0]
 \end{lstlisting}
 
-This buys three things at once: it reproduces real forecasting conditions, it keeps benchmark comparisons fair, and it leaves behind a full time series of out-of-sample errors. That last point matters---those errors feed not just the average metrics but also the rolling diagnostics and the Diebold--Mariano tests.
+This design has three benefits: it reproduces realistic forecasting conditions, it keeps the benchmark comparison fair, and it produces a complete time series of out-of-sample errors. The last point is important, since those errors feed not only the average metrics but also the rolling diagnostics and the Diebold--Mariano tests.
 
 \subsection{Evaluation metrics}
 
-For the forecasting layer, three numbers do the work: mean absolute error (MAE), root mean squared error (RMSE), and the out-of-sample $R^2$. Rankings lean on RMSE, which punishes large misses harder and suits a smooth continuous target.
+The forecasting layer is evaluated with three metrics: mean absolute error (MAE), root mean squared error (RMSE), and the out-of-sample $R^2$. Rankings are based on RMSE, which penalises large errors more heavily and is well suited to a smooth, continuous target.
 
 For the signal layer, four numbers matter: Balanced Accuracy, the F1 score on the downside class, the area under the ROC curve (AUC), and the exit rate. Balanced Accuracy is emphasised because stress days are rare and the classes are imbalanced. The F1 score on the downside class keeps the focus on detecting the adverse days. The exit rate---how often the signal would move the investor out of the market---links statistical quality to how the signal would actually be used.
 
@@ -246,13 +247,13 @@ The setup is deliberately transparent. The thesis does not bury the possibility 
     \item whether machine learning adds value beyond persistence.
 \end{enumerate}
 
-A caveat applies to the second and third comparisons. When the simpler model is nested inside the richer one --- as Naive\_Last and AR1 are inside Ridge or the tree ensembles --- the standard Diebold--Mariano statistic is not strictly valid, because its asymptotic normal distribution assumes non-nested forecasts. Tests built for nested models, such as Clark--West or Giacomini--White \cite{diebold1995}, would be more rigorous, and the small-sample HLN correction reported in Appendix~E mitigates over-rejection but not nesting. The comparisons against the persistence baselines are therefore best read as indicative; the headline Ridge-versus-DCC-GARCH comparison, which is non-nested, is unaffected.
+A caveat applies to the second and third comparisons. When the simpler model is nested inside the richer one --- as Naive\_Last and AR1 are inside Ridge or the tree ensembles --- the standard Diebold--Mariano statistic is not strictly valid, because its asymptotic normal distribution assumes non-nested forecasts. Tests built for nested models, such as Clark--West or Giacomini--White \cite{clark2007nested,giacomini2006tests}, would be more rigorous, and the small-sample HLN correction reported in Appendix~E mitigates over-rejection but not nesting. The comparisons against the persistence baselines are therefore best read as indicative; the headline Ridge-versus-DCC-GARCH comparison, which is non-nested, is unaffected.
 
 The thesis organizes its empirical conclusions around exactly these three levels.
 
 \subsection{Implementation and reproducibility}
 
-The whole workflow is Python, organized as a modular codebase. A main pipeline ties the steps together---read the config, compute returns, build targets and features, fit models, write prediction files, save figures, export \LaTeX\ tables---while separate modules handle the DCC walk-forward benchmark, notebook support, and the signal layer. The modularity is not decoration: the thesis is meant to be a reproducible artifact, not just an argument.
+The whole workflow is Python, organized as a modular codebase. A main pipeline ties the steps together---read the config, compute returns, build targets and features, fit models, write prediction files, save figures, export \LaTeX\ tables---while separate modules handle the DCC walk-forward benchmark, notebook support, and the signal layer. This modular organisation supports the goal of making the thesis a reproducible artifact, not only a written argument.
 
 Everything lands in a structured output tree: metrics, DM tests, and signal results as CSV; thesis-ready tables as \LaTeX; diagnostics as figures. The point is to keep manual post-processing to a minimum and let the analysis feed the writing directly.
 
