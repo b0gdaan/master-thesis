@@ -212,7 +212,10 @@ fitted models against the non-nested DCC-GARCH benchmark.
 
 In addition to the statistical tests above, the full project ships with an
 automated \texttt{pytest} suite of \textbf{81 unit and integration tests}
-organised into ten test classes.
+organised into ten test classes. These are predominantly consistency and regression
+checks: they verify that a fresh run reproduces the published outputs --- file presence,
+value ranges, sign conventions, and key relationships such as the average ranking of
+AR(1) against DCC-GARCH --- rather than proving the methods correct in an absolute sense.
 The suite is executed automatically as part of the reproducibility runner
 (\texttt{python run\_all.py}) between the notebook step and the final
 \LaTeX\ compilation, so every rebuilt PDF contains a fresh test report.

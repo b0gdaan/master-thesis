@@ -14,7 +14,7 @@ outputs/models/
 
 Updates
 -------
-docs/index.html — AR1 + Logit coefficients refreshed in the JS demo block
+website/index.html — AR1 + Logit coefficients refreshed in the JS demo block
 """
 import argparse
 import json
@@ -295,7 +295,7 @@ def extract_web_coefficients(full_model: CalibratedClassifierCV,
 
 def update_website(ar1: dict, web_coef: dict, metrics_full: dict,
                    metrics_web: dict, pair_key: str) -> None:
-    """Patch AR1 + LR_W constants in docs/index.html."""
+    """Patch AR1 + LR_W constants in website/index.html."""
     html_path = os.path.join(ROOT, "docs", "index.html")
     if not os.path.exists(html_path):
         print(f"  [skip] {html_path} not found")
@@ -373,7 +373,7 @@ def update_website(ar1: dict, web_coef: dict, metrics_full: dict,
 
     with open(html_path, "w", encoding="utf-8") as fh:
         fh.write(updated)
-    print(f"  Updated docs/index.html  AR1(mu={mu:.4f}, phi={phi:.4f})  "
+    print(f"  Updated website/index.html  AR1(mu={mu:.4f}, phi={phi:.4f})  "
           f"LR_W={lrw_str}")
 
 
@@ -502,7 +502,7 @@ def run(pair_key: str = "GSPC") -> None:
     print(f"  AR1:  mu={ar1_coef['mu']:.4f}  phi={ar1_coef['phi']:.4f}")
 
     # 11. Update website demo
-    print("  Updating docs/index.html…")
+    print("  Updating website/index.html…")
     update_website(ar1_coef, web_coef, metrics_full, metrics_web, pair_key)
 
     print(f"\n{'='*60}")

@@ -61,7 +61,7 @@ The equity-index pairs, Bitcoin--S\&P 500 and Bitcoin--NASDAQ, matter most in pr
 
 The Bitcoin--dollar-index pair has the weakest and most idiosyncratic dependency, and the lowest average forecastability. It is nonetheless included because it tests whether the crypto feature set can reach the macro-defensive channel at all.
 
-To check whether the lower errors on equity pairs are a real advantage rather than chance, the pooled out-of-sample losses of the equity pairs (S\&P~500, NASDAQ) are tested against those of the non-equity pairs (gold, silver, dollar index) with a two-sample Diebold--Mariano test \cite{diebold1995}. This cross-group test backs up the within-experiment DM analysis of Section~4.5 and puts the forecastability differences above on firmer footing.
+To check whether the lower errors on equity pairs are a real advantage rather than chance, the pooled out-of-sample losses of the equity pairs (S\&P~500, NASDAQ) are tested against those of the non-equity pairs (gold, silver, dollar index) with a two-sample Diebold--Mariano test \cite{diebold1995}. Because the two groups have different targets, and therefore loss series on different scales, this pooled comparison is best treated as descriptive rather than as a formal test; it nonetheless indicates that the lower errors on the equity pairs are systematic rather than incidental.
 
 \subsection{The persistence dominance result}
 
@@ -127,7 +127,7 @@ The second layer turns the dependency forecast into a stress-warning classifier.
 
 Classification is a substantially harder problem than the regression layer. Stress days are noisy, rare, and asymmetrically costly to miss. The logistic classifier achieves the highest F1 on the stress class (0.214 on average), which indicates that it remains sensitive to genuine stress without collapsing into an inactive, low-exit-rate state. GBM reaches a similar balanced accuracy (0.508) but a lower F1 (0.158), because it concentrates its probability mass and triggers less often. Random Forest performs poorly, with an F1 of 0.042. Its predicted probabilities concentrate in a narrow band, so it rarely crosses the decision threshold and provides little practical value despite a comparatively high AUC.
 
-This degenerate behaviour merits closer examination. Two factors combine to produce it: the severe imbalance between stress and non-stress days, and the absence of probability calibration. Ensemble methods are well known to produce poorly calibrated probabilities unless they are post-processed with Platt scaling or isotonic regression \cite{lopezdeprado2018advances}. GBM, which concentrates its probability mass less severely, retains a modest but non-trivial F1 (0.158). Calibration should therefore be a required step before threshold-based signal extraction in future work.
+This degenerate behaviour merits closer examination. Two factors combine to produce it: the severe imbalance between stress and non-stress days, and the absence of probability calibration. Ensemble methods are well known to produce poorly calibrated probabilities unless they are post-processed with Platt scaling \cite{platt1999probabilistic} or isotonic regression \cite{niculescu2005predicting}. GBM, which concentrates its probability mass less severely, retains a modest but non-trivial F1 (0.158). Calibration should therefore precede threshold-based signal extraction; it is applied in the deployed demonstration model but not in the reported pipeline results, and integrating it into the main pipeline is left for future work.
 
 None of this is surprising: in low-signal-to-noise classification with correlated predictors, a regularised linear boundary usually generalises better out of sample than a high-capacity ensemble that pays for its flexibility in variance.
 
@@ -151,6 +151,27 @@ The signal is intended as a probability-guided warning that flags elevated-risk 
 The usefulness of the signal can only be assessed relative to a stated decision rule. An investor would act on it selectively rather than every day, using it to inform a conditional decision: whether to reduce exposure, tighten stops, or increase hedging when the stress probability rises.
 
 From this perspective, the exit rate, that is, how often the signal is active, is as important as accuracy. A signal that never activates is of no practical use regardless of its nominal accuracy, whereas one that activates constantly raises trading costs and reduces its own informativeness. The logistic model achieves a reasonable balance between these extremes: it is active often enough to be useful, but not so often that it generates excessive turnover.
+
+The most direct test of practical value compares the conventional asset's next-day return on days the signal flags as stress against days it leaves clear. Table~\ref{tab:signal_returns} reports this for the logistic signal, averaged across the four window lengths.
+
+\begin{table}[H]
+    \centering
+    \caption{Average next-day return of the conventional asset on days flagged by the logistic signal versus days left clear, by asset pair (Logit, averaged over the four windows). Returns are in basis points per day; a positive difference means flagged days are, on average, worse. The flag rate is the share of days on which the signal is active.}
+    \label{tab:signal_returns}
+    \begin{tabular}{lrrrr}
+        \toprule
+        Asset pair & Flagged (bp) & Clear (bp) & Difference & Flag rate (\%) \\
+        \midrule
+        BTC--S\&P 500  & 4.08 & 5.05 & $+0.96$ & 33.1 \\
+        BTC--NASDAQ    & 4.70 & 6.64 & $+1.94$ & 32.0 \\
+        BTC--Gold      & 7.01 & 7.10 & $+0.08$ & 20.1 \\
+        BTC--Silver    & 10.23 & 10.13 & $-0.10$ & 26.4 \\
+        BTC--USD index & 0.57 & 0.89 & $+0.32$ & 31.4 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The pattern reinforces the classification results. For the two equity pairs the average next-day return is lower on flagged days than on clear days --- by about 1.9 basis points per day for NASDAQ and 1.0 for the S\&P~500 --- so the signal shifts exposure away from the worse days, which is its intended use. For gold, silver, and the dollar index the difference is negligible or marginally negative, consistent with the weak classification performance on those pairs. Two qualifications matter. First, the average flagged-day return is still positive, because the sample period is predominantly a rising market; the signal therefore reduces exposure to relatively worse days rather than predicting outright losses. Second, these figures are gross of transaction costs, which a turnover of roughly one third of days would erode. The signal is best read as a modest risk-reduction overlay for broad-equity exposure rather than a standalone timing rule.
 
 \subsection{Sensitivity to rolling window length}
 
