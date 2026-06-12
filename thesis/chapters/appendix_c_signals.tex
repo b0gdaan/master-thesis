@@ -1,40 +1,33 @@
-﻿\section{Appendix C: Supplementary Signal-Layer Results}
+\section{Appendix C: Supplementary Signal-Layer Results}
 
-This appendix collects the supporting material for the investor warning layer.
+This appendix collects the supporting material for the investor warning layer. A
+representative signal output is shown below, and the per-pair, per-window summary is
+given in Table~\ref{tab:app_signal_summary}. The full set of signal figures for all
+pairs and windows is produced by the pipeline and ships with the repository.
 
-\subsection{Signal figures by asset}
+\subsection{Representative signal output}
+
+Figure~\ref{fig:app_signal_ixic_w30} shows the signal for the Bitcoin--NASDAQ pair at
+the 30-day window, the weakest of the equity pairs. It contrasts with the stronger
+Bitcoin--S\&P~500 output shown in the main text (Figure~\ref{fig:signal_sp500}).
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{../outputs/figures/signal_corr_BTC-USD_^IXIC_w30.png}
-    \caption{Signal-layer output for the Bitcoin--NASDAQ relation at the 30-day window.}
+    \caption{Signal-layer output for the Bitcoin--NASDAQ relation at the 30-day window.
+             The upper panel shows the predicted stress probability and the decision
+             threshold; the lower panel marks flagged and missed stress events.}
     \label{fig:app_signal_ixic_w30}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../outputs/figures/signal_corr_BTC-USD_GLD_w30.png}
-    \caption{Signal-layer output for the Bitcoin--gold relation at the 30-day window.}
-    \label{fig:app_signal_gld_w30}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../outputs/figures/signal_corr_BTC-USD_SLV_w30.png}
-    \caption{Signal-layer output for the Bitcoin--silver relation at the 30-day window.}
-    \label{fig:app_signal_slv_w30}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../outputs/figures/signal_corr_BTC-USD_UUP_w30.png}
-    \caption{Signal-layer output for the Bitcoin--UUP relation at the 30-day window.}
-    \label{fig:app_signal_uup_w30}
 \end{figure}
 
 \subsection{Cross-market warning interpretation}
 
-The signal figures show that the warning layer behaves very differently from market to market. The S\&P~500 produces the clearest warning episodes; NASDAQ is markedly weaker, dipping below chance in several configurations --- probably because its sector concentration adds idiosyncratic noise that the crypto channel cannot see. The metal and dollar targets are noisier but not uniformly useless. The lesson is that the layer should be applied selectively, not across the board.
+The per-pair results show that the warning layer behaves very differently from market to
+market. The S\&P~500 produces the clearest warning episodes; NASDAQ is markedly weaker,
+dipping below chance at the longer windows, probably because its sector concentration
+adds idiosyncratic noise that the crypto channel cannot see. The metal and dollar targets
+are noisier but not uniformly useless. The signal should therefore be applied selectively
+rather than across the asset universe.
 
 \subsection{Summary table}
 
@@ -64,38 +57,3 @@ is the weakest, averaging 0.4997 and falling below the 0.50 chance level at the 
 90-day windows. The precious-metal and dollar pairs are positive on average but remain
 close to chance. The signal is therefore best applied selectively to broad-equity pairs
 rather than uniformly across the asset universe.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../outputs/figures/signal_corr_BTC-USD_^GSPC_w14.png}
-    \caption{Supplementary S\&P 500 warning signal at the 14-day window.}
-    \label{fig:app_signal_gspc_w14}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../outputs/figures/signal_corr_BTC-USD_^GSPC_w60.png}
-    \caption{Supplementary S\&P 500 warning signal at the 60-day window.}
-    \label{fig:app_signal_gspc_w60}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../outputs/figures/signal_corr_BTC-USD_^GSPC_w90.png}
-    \caption{Supplementary S\&P 500 warning signal at the 90-day window.}
-    \label{fig:app_signal_gspc_w90}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../outputs/figures/signal_corr_BTC-USD_^IXIC_w14.png}
-    \caption{Supplementary NASDAQ warning signal at the 14-day window.}
-    \label{fig:app_signal_ixic_w14}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{../outputs/figures/signal_corr_BTC-USD_^IXIC_w60.png}
-    \caption{Supplementary NASDAQ warning signal at the 60-day window.}
-    \label{fig:app_signal_ixic_w60}
-\end{figure}
