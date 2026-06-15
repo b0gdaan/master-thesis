@@ -400,7 +400,7 @@ p{text-align:left}
     <div class="stat-card"><span class="stat-num">240</span><div class="stat-label">Model evaluations</div></div>
     <div class="stat-card"><span class="stat-num">4</span><div class="stat-label">Rolling windows</div></div>
     <div class="stat-card"><span class="stat-num">0.943</span><div class="stat-label">Best OOS R² (Ridge avg)</div></div>
-    <div class="stat-card"><span class="stat-num">p&lt;10⁻³⁰⁸</span><div class="stat-label">ML vs DCC-GARCH (DM)</div></div>
+    <div class="stat-card"><span class="stat-num">p&lt;0.001</span><div class="stat-label">ML vs DCC-GARCH (DM)</div></div>
   </div>
 
   <!-- Research Questions -->
@@ -646,7 +646,7 @@ p{text-align:left}
         <p><strong>Period:</strong> 9 Nov 2017 — 16 May 2026 · 3,053 trading days per asset. Start date is set by the earliest available ETH-USD quote on Yahoo Finance. Earlier dates contain no Ethereum observations and are excluded.</p>
       </div>
       <div class="finding green mb-12">
-        <p><strong>Alignment:</strong> Bitcoin and Ethereum trade 24/7 including weekends. The panel is aligned on exchange-calendar dates shared with equity markets. Weekend and holiday crypto quotes are forward-filled up to two consecutive calendar days, then dropped, so all seven tickers share an identical date index.</p>
+        <p><strong>Alignment:</strong> Bitcoin and Ethereum trade continuously, including weekends. The panel is built on Bitcoin's seven-day calendar, and the conventional assets — which trade only on business days — are forward-filled across weekends and holidays. Every weekend or holiday row therefore records a zero return for the conventional series (≈900–1000 such days each), while the crypto series are unaffected; all seven tickers share an identical date index. This calendar mismatch is examined as a robustness check in the thesis.</p>
       </div>
       <div class="finding orange mb-12">
         <p><strong>Returns:</strong> Log-returns r<sub>t</sub> = log P<sub>t</sub> − log P<sub>t−1</sub> are used throughout. Log-returns are additive over time, approximately normal at moderate horizons, and standard in both econometric modelling and ML pipelines for financial time series.</p>
@@ -729,7 +729,7 @@ p{text-align:left}
         <p><strong>Layer 1 — Dependency Forecasting:</strong> Predict the next value of Fisher-z transformed rolling correlation ρ̂<sub>t+1</sub> between Bitcoin and each conventional asset. Expanding-window walk-forward validation; min_train = 800 obs; refit every 20 trading days.</p>
       </div>
       <div class="finding green mb-8">
-        <p><strong>Layer 2 — Investor Signal:</strong> Use the Layer 1 forecast + crypto features to classify whether tomorrow is a <em>stress day</em> for the conventional asset (|ret| &gt; 0.75σ of negative returns, ~8–12% of days). Three classifiers: Logit, Random Forest, GBM.</p>
+        <p><strong>Layer 2 — Investor Signal:</strong> Use the Layer 1 forecast + crypto features to classify whether tomorrow is a <em>stress day</em> for the conventional asset (a daily return below −0.75σ of the trailing 20-day volatility, ~15–18% of days). Three classifiers: Logit, Random Forest, GBM.</p>
       </div>
       <div class="mt-16">
         <p class="label">Rolling Windows Evaluated</p>
@@ -756,7 +756,7 @@ p{text-align:left}
         <div class="window-card">
           <div class="w-label">60d</div>
           <div class="w-verdict" style="color:var(--orange-text)">High persist.</div>
-          <p>Smoother series — strong XGBoost advantage. AR(1) competitive but ML adds value.</p>
+          <p>Smoother series — persistence dominates even more; AR(1), Ridge and HAR lead, while the tree ensembles trail.</p>
         </div>
         <div class="window-card">
           <div class="w-label">90d</div>
@@ -790,7 +790,7 @@ p{text-align:left}
         <div class="feat-bar"><div class="feat-name">Cross momentum</div><div class="feat-track"><div class="feat-fill" style="width:11%;background:var(--orange)"></div></div><div class="feat-pct">11%</div></div>
         <div class="feat-bar"><div class="feat-name">Other</div><div class="feat-track"><div class="feat-fill" style="width:10%;background:var(--text3)"></div></div><div class="feat-pct">10%</div></div>
       </div>
-      <p class="mt-8" style="font-size:12.5px">Lagged correlation (dep_lag1) alone accounts for 42% of feature importance — confirming that persistence is the primary driver. The AR(1) baseline captures ~54% of XGBoost performance using only a single feature.</p>
+      <p class="mt-8" style="font-size:12.5px">Lagged correlation (dep_lag1) alone accounts for the dominant share of feature importance, confirming that persistence is the primary driver: a single lag — the AR(1) baseline — already matches the best models and outperforms the tree ensembles.</p>
     </div>
   </div>
 
@@ -908,7 +908,7 @@ p{text-align:left}
 <section class="section section-alt" id="dm-tests">
 <div class="container">
   <h2>Diebold–Mariano Tests</h2>
-  <p style="max-width:780px">The Diebold–Mariano test compares out-of-sample loss series between model pairs with Newey-West heteroskedasticity-robust correction. A <span class="text-green">positive</span> DM statistic means the first model has lower forecast errors (is better). A <span class="text-red">negative</span> statistic means it is worse. All p-values are at machine-epsilon (p &lt; 10⁻³⁰⁸).</p>
+  <p style="max-width:780px">The Diebold–Mariano test compares out-of-sample loss series between model pairs with Newey-West heteroskedasticity-robust correction. A <span class="text-green">positive</span> DM statistic means the first model has lower forecast errors (is better). A <span class="text-red">negative</span> statistic means it is worse. All reported p-values are below 0.001; the asymptotic normal approximation behind the DM test is not meaningful beyond that precision.</p>
 
   <div class="grid-2 mt-24">
     <div>
@@ -922,10 +922,10 @@ p{text-align:left}
     <div>
       <h3>ML vs DCC-GARCH Benchmark</h3>
       <p class="text-muted mb-12" style="font-size:13px">Positive DM → ML model is better than DCC-GARCH. Ridge wins in every single experiment. Margin grows with window length.</p>
-      <div class="dm-result"><div class="dm-stat pos">+25.91</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=14 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
-      <div class="dm-result"><div class="dm-stat pos">+26.86</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=30 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
-      <div class="dm-result"><div class="dm-stat pos">+35.11</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=60 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
-      <div class="dm-result"><div class="dm-stat pos">+39.31</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=90 <span class="dm-sig">p&lt;10⁻³⁰⁸</span></div></div>
+      <div class="dm-result"><div class="dm-stat pos">+25.91</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=14 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <div class="dm-result"><div class="dm-stat pos">+26.86</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=30 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <div class="dm-result"><div class="dm-stat pos">+35.11</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=60 <span class="dm-sig">p&lt;0.001</span></div></div>
+      <div class="dm-result"><div class="dm-stat pos">+39.31</div><div class="dm-desc">Ridge vs DCC · BTC/S&amp;P500 · w=90 <span class="dm-sig">p&lt;0.001</span></div></div>
     </div>
   </div>
 
@@ -944,7 +944,7 @@ p{text-align:left}
 <section class="section" id="signal">
 <div class="container">
   <h2>Investor Signal Layer</h2>
-  <p style="max-width:780px">A second-layer binary classifier predicts <em>stress days</em> on conventional asset markets using Bitcoin dynamics and the Layer 1 dependency forecast. A stress day is a daily loss exceeding 0.75σ of the rolling 20-day negative-return distribution (~8–12% of days). The output is a probability-guided warning — not a directional trade signal.</p>
+  <p style="max-width:780px">A second-layer binary classifier predicts <em>stress days</em> on conventional asset markets using Bitcoin dynamics and the Layer 1 dependency forecast. A stress day is a daily return below −0.75σ of the trailing 20-day volatility (~15–18% of days). The output is a probability-guided warning — not a directional trade signal.</p>
 
   <div class="finding orange mb-24">
     <p><strong>Design principle:</strong> The signal is framed as a <em>risk overlay</em> — a supplementary input to the risk-management process. Its operational role is to raise the probability threshold for accepting risk, prompt reductions in gross exposure, or tighten dynamic risk limits when the classified probability of a stress regime is elevated.</p>
@@ -1023,31 +1023,31 @@ p{text-align:left}
     <table>
       <thead><tr>
         <th>Event</th><th>Date</th><th>Type</th>
-        <th>BTC 7d</th><th>S&amp;P 7d</th>
+        <th>BTC move</th><th>S&amp;P move</th>
         <th>ρ pre</th><th>ρ post</th><th>Δρ</th>
       </tr></thead>
       <tbody>
-        <tr><td>COVID “Black Thursday”</td><td>2020-03-12</td><td><span class="text-red">Crash</span></td><td class="text-red">−34.7%</td><td class="text-red">−26.2%</td><td>0.17</td><td>0.57</td><td class="text-red">+0.40</td></tr>
-        <tr><td>Institutional Adoption Wave</td><td>2020-10-08</td><td><span class="text-green">Rally</span></td><td class="text-green">+6.4%</td><td class="text-green">+3.5%</td><td>0.45</td><td>0.43</td><td class="text-green">−0.03</td></tr>
-        <tr><td>China Mining Ban &amp; Musk</td><td>2021-05-19</td><td><span class="text-red">Crash</span></td><td class="text-red">−36.7%</td><td class="text-green">+1.1%</td><td>0.16</td><td>0.42</td><td class="text-red">+0.26</td></tr>
-        <tr><td>Bitcoin ATH $69,000</td><td>2021-11-10</td><td><span style="color:#58a6ff">ATH</span></td><td class="text-red">−4.6%</td><td class="text-green">+1.2%</td><td>0.29</td><td>0.37</td><td class="text-red">+0.08</td></tr>
-        <tr><td>Terra/Luna Collapse</td><td>2022-05-09</td><td><span class="text-red">Crash</span></td><td class="text-red">−25.3%</td><td class="text-red">−3.0%</td><td>0.69</td><td>0.78</td><td class="text-red">+0.10</td></tr>
-        <tr><td>FTX Collapse</td><td>2022-11-08</td><td><span class="text-red">Crash</span></td><td class="text-red">−19.4%</td><td class="text-green">+3.0%</td><td>0.55</td><td>0.46</td><td class="text-green">−0.09</td></tr>
-        <tr><td>SVB Banking Crisis</td><td>2023-03-10</td><td><span style="color:#a371f7">Divergence</span></td><td class="text-green">+15.5%</td><td class="text-red">−1.6%</td><td>0.37</td><td>0.20</td><td class="text-green">−0.17</td></tr>
-        <tr><td>SEC Approves Spot BTC ETFs</td><td>2024-01-10</td><td><span style="color:#a371f7">Milestone</span></td><td class="text-red">−5.1%</td><td class="text-red">−0.1%</td><td>−0.04</td><td>0.19</td><td class="text-red">+0.22</td></tr>
-        <tr><td>Bitcoin ATH $73,000</td><td>2024-03-05</td><td><span style="color:#58a6ff">ATH</span></td><td class="text-green">+27.1%</td><td class="text-green">+2.1%</td><td>0.17</td><td>0.12</td><td class="text-green">−0.05</td></tr>
-        <tr><td>Trump Election Victory</td><td>2024-11-06</td><td><span class="text-green">Rally</span></td><td class="text-green">+22.0%</td><td class="text-green">+2.6%</td><td>0.42</td><td>0.70</td><td class="text-red">+0.28</td></tr>
-        <tr><td> “Liberation Day” Tariff Shock</td><td>2025-04-02</td><td><span class="text-red">Crash</span></td><td class="text-red">−5.8%</td><td class="text-red">−5.7%</td><td>0.34</td><td>0.21</td><td class="text-green">−0.12</td></tr>
+        <tr><td>COVID “Black Thursday”</td><td>2020-03-12</td><td><span class="text-red">Crash</span></td><td class="text-red">−45.5%</td><td class="text-red">−28.5%</td><td>0.17</td><td>0.52</td><td class="text-red">+0.35</td></tr>
+        <tr><td>Institutional Adoption Wave</td><td>2020-10-08</td><td><span class="text-green">Rally</span></td><td class="text-green">+22.6%</td><td class="text-green">+8.9%</td><td>0.45</td><td>0.30</td><td class="text-green">−0.15</td></tr>
+        <tr><td>China Mining Ban &amp; Musk</td><td>2021-05-19</td><td><span class="text-red">Crash</span></td><td class="text-red">−37.8%</td><td class="text-red">−4.0%</td><td>0.16</td><td>0.44</td><td class="text-red">+0.28</td></tr>
+        <tr><td>Bitcoin ATH $69,000</td><td>2021-11-10</td><td><span style="color:#58a6ff">ATH</span></td><td class="text-red">−16.7%</td><td class="text-green">+3.4%</td><td>0.29</td><td>0.27</td><td class="text-green">−0.02</td></tr>
+        <tr><td>Terra/Luna Collapse</td><td>2022-05-09</td><td><span class="text-red">Crash</span></td><td class="text-red">−29.0%</td><td class="text-red">−9.3%</td><td>0.69</td><td>0.63</td><td class="text-green">−0.06</td></tr>
+        <tr><td>FTX Collapse</td><td>2022-11-08</td><td><span class="text-red">Crash</span></td><td class="text-red">−25.3%</td><td class="text-green">+7.6%</td><td>0.55</td><td>0.57</td><td class="text-red">+0.01</td></tr>
+        <tr><td>SVB Banking Crisis</td><td>2023-03-10</td><td><span style="color:#a371f7">Divergence</span></td><td class="text-green">+40.4%</td><td class="text-red">−4.8%</td><td>0.37</td><td>0.16</td><td class="text-green">−0.21</td></tr>
+        <tr><td>SEC Approves Spot BTC ETFs</td><td>2024-01-10</td><td><span style="color:#a371f7">Milestone</span></td><td class="text-red">−15.9%</td><td class="text-green">+4.4%</td><td>−0.03</td><td>0.16</td><td class="text-red">+0.20</td></tr>
+        <tr><td>Bitcoin ATH $73,000</td><td>2024-03-05</td><td><span style="color:#58a6ff">ATH</span></td><td class="text-green">+44.1%</td><td class="text-green">+4.1%</td><td>0.17</td><td>0.08</td><td class="text-green">−0.09</td></tr>
+        <tr><td>Trump Election Victory</td><td>2024-11-06</td><td><span class="text-green">Rally</span></td><td class="text-green">+42.0%</td><td class="text-green">+5.2%</td><td>0.42</td><td>0.47</td><td class="text-red">+0.05</td></tr>
+        <tr><td> “Liberation Day” Tariff Shock</td><td>2025-04-02</td><td><span class="text-red">Crash</span></td><td class="text-red">−12.8%</td><td class="text-red">−13.7%</td><td>0.33</td><td>0.43</td><td class="text-red">+0.09</td></tr>
       </tbody>
     </table>
   </div>
-  <p class="text-muted mb-24" style="font-size:12.5px;max-width:920px">BTC 7d / S&amp;P 7d = price change over the 7 days from the event. ρ pre / ρ post = 30-day average BTC–S&amp;P 500 correlation before/after the event; Δρ = post − pre. <span class="text-red">Red Δρ</span> = correlation rose (diversification weakened); <span class="text-green">green Δρ</span> = decoupling.</p>
+  <p class="text-muted mb-24" style="font-size:12.5px;max-width:920px">BTC move / S&amp;P move = largest peak-to-trough (or trough-to-peak) swing in each asset within ±10 trading days of the event. ρ pre / ρ post = 30-day rolling BTC–S&amp;P 500 correlation averaged over the 30 calendar days before / after the event; Δρ = post − pre. <span class="text-red">Red Δρ</span> = correlation rose (diversification weakened); <span class="text-green">green Δρ</span> = decoupling. All values computed from the frozen daily panel by <code>08_Market_Events_Showcase.ipynb</code>.</p>
 
   <div class="card mt-8" style="padding:18px 22px;max-width:920px">
     <h3 style="margin-top:0">What the Eleven Episodes Reveal</h3>
     <ul style="margin:8px 0 0 18px;line-height:1.75;color:var(--text2)">
-      <li><strong style="color:var(--text)">Macro risk-off events drive the biggest correlation spikes.</strong> In the 2020 COVID crash the 30-day BTC–S&amp;P 500 correlation climbed to 0.57, and during the 2025 Liberation Day tariff shock Bitcoin (−5.8%) and the S&amp;P (−5.7%) fell together within days. These are exactly the periods where the models' rolling RMSE peaks.</li>
-      <li><strong style="color:var(--text)">Crypto-specific shocks barely move the equity correlation.</strong> The China mining ban, the Luna collapse, and the FTX bankruptcy each inflicted heavy Bitcoin losses while equities held steady, producing at most a brief, fading blip in correlation.</li>
+      <li><strong style="color:var(--text)">Macro risk-off events drive the biggest correlation spikes.</strong> In the 2020 COVID crash the 30-day BTC–S&amp;P 500 correlation climbed from 0.17 to 0.52, and through the 2022 tightening cycle it ran near 0.6–0.7. These are exactly the periods where the models' rolling RMSE peaks. The 2025 Liberation Day shock, by contrast, was a co-crash (both fell about 13%) that left the rolling correlation little changed (0.33 → 0.43).</li>
+      <li><strong style="color:var(--text)">Crypto-specific shocks barely move the equity correlation.</strong> The China mining ban, the Luna collapse, and the FTX bankruptcy each inflicted heavy Bitcoin losses while equity markets moved far less — during FTX the S&amp;P 500 actually rose on a soft CPI print — producing at most a brief, fading blip in correlation.</li>
       <li><strong style="color:var(--text)">The ETF era keeps correlations elevated.</strong> Since the spot-ETF approvals of January 2024, institutional money has traded Bitcoin alongside growth equities, and the BTC–NASDAQ correlation has run higher than in any comparable earlier window.</li>
       <li><strong style="color:var(--text)">Safe-haven moments happen, but they don't last.</strong> When SVB failed in 2023, Bitcoin rallied as equities fell — a genuine decoupling — yet the gap closed again within a few weeks. That short memory is exactly why simple persistence models keep winning out of sample: they re-absorb each regime shift after a brief lag.</li>
     </ul>
@@ -1138,7 +1138,7 @@ p{text-align:left}
     <div class="conclusion-card">
       <span class="c-num">C2</span>
       <h3>ML Outperforms DCC-GARCH</h3>
-      <p>Every ML model — even the simple baselines — beats DCC-GARCH(1,1) significantly (DM test, p&lt;10⁻³⁰⁸) across all 24 pair × window combinations. DCC-GARCH lags not because it is a bad model but because it is built for long-horizon covariance, not one-step-ahead forecasting of a smoothed scalar.</p>
+      <p>Every ML model — even the simple baselines — beats DCC-GARCH(1,1) significantly (DM test, p&lt;0.001) across all 24 pair × window combinations. DCC-GARCH lags not because it is a bad model but because it is built for long-horizon covariance, not one-step-ahead forecasting of a smoothed scalar.</p>
     </div>
     <div class="conclusion-card">
       <span class="c-num">C3</span>

@@ -50,7 +50,7 @@ def build_signal_target(
                         (default 0.75; configurable via config.yaml `signal_stress_sigma`)
 
     Choosing stress_sigma = 0.75
-        At σ=0.75 roughly 15–20 % of days qualify as stress events for the
+        At σ=0.75 roughly 15–18 % of days qualify as stress events for the
         traditional assets in this study, providing enough positive-class samples
         for reliable classifier training while targeting economically meaningful
         down-moves (losses exceeding ¾ of one daily standard deviation).
@@ -155,7 +155,7 @@ def fit_predict_signal_walk_forward(
     }
 
     # Minimum number of samples required for each class before fitting classifiers.
-    # Stress events are rare (~15-20 %), so early windows may have too few positives.
+    # Stress events are rare (~15-18 %), so early windows may have too few positives.
     MIN_CLASS_SAMPLES = 20
 
     prob_preds = {name: np.full(n_obs, np.nan, dtype=float) for name in model_specs}
