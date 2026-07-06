@@ -115,10 +115,30 @@ def _pick_close(df: pd.DataFrame) -> pd.DataFrame:
 
 def fetch_prices(paths: Paths, tickers: List[str], start: str, end: Optional[str]) -> pd.DataFrame:
     prices_path = os.path.join(paths.data_raw, "prices.csv")
+    meta_path = os.path.join(paths.data_raw, "prices_meta.json")
     if os.path.exists(prices_path):
         cached = pd.read_csv(prices_path, index_col=0, parse_dates=True)
         missing = [ticker for ticker in tickers if ticker not in cached.columns]
         if not missing:
+            # Primary check: the sidecar metadata records the config dates the
+            # cache was downloaded with. A raw date-range comparison cannot work
+            # here because the panel is truncated to the common ticker history
+            # (ETH starts Nov 2017), so cached.index.min() never reaches a
+            # config start_date placed before that.
+            if os.path.exists(meta_path):
+                try:
+                    with open(meta_path, "r", encoding="utf-8") as handle:
+                        meta = json.load(handle)
+                    if (
+                        meta.get("start") == str(start)
+                        and meta.get("end") == (str(end) if end else None)
+                        and not [t for t in tickers if t not in meta.get("tickers", [])]
+                    ):
+                        print(f"Loaded prices from cache: {prices_path}")
+                        return cached.sort_index()
+                except Exception:
+                    pass
+            # Legacy fallback for caches created before the metadata file existed.
             required_end = pd.Timestamp(end) if end else pd.Timestamp.today()
             cache_covers = (
                 cached.index.min() <= pd.Timestamp(start)
@@ -145,6 +165,12 @@ def fetch_prices(paths: Paths, tickers: List[str], start: str, end: Optional[str
     prices = prices.dropna(how="all").ffill(limit=2).dropna().sort_index()
     os.makedirs(os.path.dirname(prices_path), exist_ok=True)
     prices.to_csv(prices_path, encoding="utf-8")
+    with open(meta_path, "w", encoding="utf-8") as handle:
+        json.dump(
+            {"start": str(start), "end": str(end) if end else None, "tickers": list(prices.columns)},
+            handle,
+            indent=2,
+        )
     print(f"Saved prices: {prices_path} shape={prices.shape}")
     return prices
 
@@ -1143,6 +1169,15 @@ def run_pipeline(config_path: str = "config.yaml") -> None:
     # Serial mode: n_jobs=-1 (RF uses all cores for one experiment at a time).
     # Parallel mode: divide cores evenly among concurrent experiments.
     rf_n_jobs = max(1, multiprocessing.cpu_count() // n_workers) if n_workers > 1 else -1
+
+    # Append-mode result files: signal experiments append to these during the
+    # run (thread-locked), so reset them here — otherwise repeated runs
+    # accumulate rows from earlier code versions and downstream aggregation
+    # (notebook 07) mixes stale results with current ones.
+    for _append_csv in ("signal_diagnostics.csv", "stress_threshold_sensitivity.csv"):
+        _append_path = os.path.join(paths.results, _append_csv)
+        if os.path.exists(_append_path):
+            os.remove(_append_path)
 
     experiment_tasks = [
         (other, window)
