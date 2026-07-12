@@ -239,7 +239,7 @@ For the signal layer, four numbers matter: Balanced Accuracy, the F1 score on th
 
 When models are close, average metrics can mislead. So the thesis runs the Diebold--Mariano test on the loss series of selected pairs. The headline comparison is the best non-benchmark machine-learning model against DCC-GARCH; the secondary one pits that same model against the naive persistence baseline.
 
-The setup is deliberately transparent. The thesis does not bury the possibility that the best model overall is a simple baseline; instead it uses the DM framework to separate three different levels of claim:
+The setup is transparent by design. The thesis does not bury the possibility that the best model overall is a simple baseline; instead it uses the DM framework to separate three different levels of claim:
 
 \begin{enumerate}
     \item whether dependency is forecastable at all,
@@ -259,7 +259,7 @@ Everything lands in a structured output tree: metrics, DM tests, and signal resu
 
 \subsection{Methodological expectations}
 
-Before the results, it is worth saying what success would even look like. It does not mean finding a model that predicts every conventional market from Bitcoin; no serious forecasting study should promise that. A fairer bar has three parts: the dependency target should show out-of-sample forecastability, the benchmark comparison should establish whether machine learning improves on DCC-GARCH, and the signal layer should produce stress warnings that beat chance and can be acted on. These thresholds are modest, and that is deliberate.
+Before the results, it is worth saying what success would even look like. It does not mean finding a model that predicts every conventional market from Bitcoin; no serious forecasting study should promise that. A fairer bar has three parts: the dependency target should show out-of-sample forecastability, the benchmark comparison should establish whether machine learning improves on DCC-GARCH, and the signal layer should produce stress warnings that beat chance and can be acted on. These thresholds are modest on purpose.
 
 Three further principles guide how the results are read. First, no single metric is treated as the verdict: the regression layer always reports RMSE, MAE, and $R^2$ together, and the classification layer reports Balanced Accuracy, F1, AUC, and exit rate together. Second, performance gaps are judged significant by the Diebold--Mariano test, not by eyeballing averages. Third, the analysis refuses to cherry-pick a window after the fact; all four (14, 30, 60, 90 days) are reported side by side, so no finding can rest on a lucky choice of specification.
 

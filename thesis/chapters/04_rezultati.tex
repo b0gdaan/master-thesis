@@ -5,7 +5,7 @@
 
 The pipeline leaves behind a full, internally consistent trail of evidence: out-of-sample metrics, model rankings, Diebold--Mariano tests, signal-layer classification statistics, the prediction series themselves, and diagnostic figures. That breadth is deliberate. The empirical case here does not hang on a single table; it rests on whether the same story holds up from several angles at once: average accuracy, statistical significance, how the errors move over time, and how well the stress warning actually works.
 
-Two findings run through everything that follows. First, the dependency process is genuinely forecastable out of sample under a strict walk-forward design. Second, almost all of that forecastability comes from the target's own persistence; the cross-asset features add little that is new. Together the two findings describe what the forecasting problem is and where its limits lie.
+Two findings run through everything that follows. First, the dependency process is forecastable out of sample under a strict walk-forward design. Second, almost all of that forecastability comes from the target's own persistence; the cross-asset features add little that is new. Together the two findings describe what the forecasting problem is and where its limits lie.
 
 \subsection{Average dependency-forecasting performance}
 
@@ -36,7 +36,7 @@ Table~\ref{tab:model_ranking_summary} gives each model's average out-of-sample p
 
 The top three (Ridge, AR1, and HAR) are nearly indistinguishable, with average RMSE of 0.0656, 0.0659, and 0.0659 and $R^2$ of 0.9424 and above. The 0.0003 spread between them is economically meaningless, and the naive last-value baseline sits only just outside at RMSE 0.0666, which already indicates that serial persistence accounts for most of the forecastable variation. One nuance should be stated explicitly: the ranking here is by RMSE, on which Ridge leads. On mean absolute error the ordering differs, with Naive\_Last formally best (MAE 0.0395), ahead of AR1 (0.0403), HAR (0.0405), and Ridge (0.0419). RMSE penalises large errors more heavily, so Ridge effectively trades a few more small errors for fewer large ones. ElasticNet and the adaptive Ensemble form a second tier above $R^2 = 0.93$. The tree methods (GBM, Random Forest, XGBoost) trail well behind, with RMSE between roughly 0.09 and 0.12 and $R^2$ below 0.90. DCC-GARCH finishes last by a wide margin ($R^2 = 0.3715$).
 
-The structure of this top cluster is informative. Ridge, AR(1), and HAR reach almost the same accuracy through different mechanisms: AR(1) uses a single autoregressive coefficient, HAR combines three time scales (daily, weekly, and monthly), and Ridge fits the full regularised feature set anchored by the most recent lag. They converge because each is ultimately exploiting the same property, the strong persistence of the target, and the additional structure in HAR and Ridge does not capture anything that a single lag has not already accounted for. The convergence says more about the target than about the models: the series is so strongly autoregressive that there is little else left to capture.
+The composition of the top cluster deserves a closer look. Ridge, AR(1), and HAR reach almost the same accuracy through different mechanisms: AR(1) uses a single autoregressive coefficient, HAR combines three time scales (daily, weekly, and monthly), and Ridge fits the full regularised feature set anchored by the most recent lag. They converge because each is ultimately exploiting the same property, the strong persistence of the target, and the additional structure in HAR and Ridge does not capture anything that a single lag has not already accounted for. The convergence says more about the target than about the models: the series is so strongly autoregressive that there is little else left to capture.
 
 \subsection{Representative forecast example}
 
@@ -65,7 +65,7 @@ To check that the lower errors on equity pairs are not just luck, the pooled out
 
 \subsection{The persistence dominance result}
 
-That simple persistence models lead the average ranking is a statement about the target more than about the models.
+That simple persistence models lead the average ranking was to be expected.
 
 It follows directly from the construction of the target. A rolling Pearson correlation over $w$ calendar days shares $w-1$ observations with the previous window, which smooths the series in the manner of a moving average. After the Fisher transform, the result is strongly autocorrelated, and the first lag already accounts for the large majority of the predictable variance. Any model that relies on the most recent value therefore achieves a high out-of-sample $R^2$ almost by construction.
 
@@ -82,11 +82,11 @@ Even though persistence baselines win the unconditional ranking, machine learnin
     \label{fig:dm_heatmap}
 \end{figure}
 
-The DM results confirm that the best machine-learning model outperforms DCC-GARCH significantly in every experiment. The reason is structural. DCC-GARCH is designed to model the full conditional covariance of a return system; the rolling Pearson correlation is only a smoothed by-product of that covariance, which DCC never targets directly. The machine-learning models are trained directly on the Fisher-transformed correlation target, so they are fitted to precisely the quantity on which they are then scored; this alignment is the source of their advantage.
+The DM results confirm that the best machine-learning model outperforms DCC-GARCH significantly in every experiment. The reason is structural. DCC-GARCH is designed to model the full conditional covariance of a return system; the rolling Pearson correlation is only a smoothed by-product of that covariance, which DCC never targets directly. The machine-learning models are trained directly on the Fisher-transformed correlation target, so they are fitted to exactly the quantity on which they are then scored; this alignment is the source of their advantage.
 
 This comparison involves a measurement mismatch that should be acknowledged. The rolling Pearson target is smoothed and backward-looking, with persistence induced by the overlapping windows. DCC-GARCH models the instantaneous conditional covariance, a parametric and forward-looking object, so projecting it onto rolling Pearson space introduces a systematic lag. The lag comes from the definitions of the two objects \cite{engle2001theoretical, andersen2003realized}. The comparison remains valid, since both are legitimate measures of dependence, but the size of the gap should be read with caution; it is no general verdict against DCC-GARCH.
 
-Throughout, the thesis distinguishes two claims: \emph{benchmark superiority}, meaning improvement over DCC-GARCH, and \emph{unconditional superiority}, meaning improvement over AR(1). Machine learning achieves the first consistently and the second not at all. Both results are informative, and together they characterise what machine learning contributes in this setting.
+Throughout, the thesis distinguishes two claims: \emph{benchmark superiority}, meaning improvement over DCC-GARCH, and \emph{unconditional superiority}, meaning improvement over AR(1). Machine learning achieves the first consistently and the second not at all. Together the two results mark out what machine learning contributes in this setting.
 
 \subsection{Error-profile diagnostics}
 
@@ -150,7 +150,7 @@ The signal is intended as a probability-guided warning that flags elevated-risk 
 
 The usefulness of the signal can only be assessed relative to a stated decision rule. An investor would consult it selectively, as one input to a conditional decision: whether to reduce exposure, tighten stops, or increase hedging when the stress probability rises.
 
-From this perspective, the exit rate, that is, how often the signal is active, is as important as accuracy. A signal that never activates is of no practical use regardless of its nominal accuracy, whereas one that activates constantly raises trading costs and reduces its own informativeness. The logistic model sits between these extremes, active on roughly a fifth to a third of days depending on the pair (Table~\ref{tab:signal_returns}).
+The exit rate (how often the signal is active) is then as important as accuracy. A signal that never activates is useless whatever its nominal accuracy; one that activates constantly raises trading costs and stops carrying information. The logistic model sits between these extremes, active on roughly a fifth to a third of days depending on the pair (Table~\ref{tab:signal_returns}).
 
 The most direct test of practical value compares the conventional asset's next-day return on days the signal flags as stress against days it leaves clear. Table~\ref{tab:signal_returns} reports this for the logistic signal, averaged across the four window lengths.
 
@@ -171,7 +171,7 @@ The most direct test of practical value compares the conventional asset's next-d
     \end{tabular}
 \end{table}
 
-The pattern reinforces the classification results. For the two equity pairs the average next-day return is lower on flagged days than on clear days (by about 1.9 basis points per day for NASDAQ and 1.0 for the S\&P~500), so the signal shifts exposure away from the worse days, which is its intended use. For gold, silver, and the dollar index the difference is negligible or marginally negative, consistent with the weak classification performance on those pairs. Two qualifications matter. First, the average flagged-day return is still positive, because the sample period is predominantly a rising market; the signal reduces exposure to relatively worse days and does not predict outright losses. Second, these figures are gross of transaction costs, which a turnover of roughly one third of days would erode. In sum, the signal works as a modest risk-reduction overlay for broad-equity exposure and is too weak to stand alone as a timing rule.
+The pattern reinforces the classification results. For the two equity pairs the average next-day return is lower on flagged days than on clear days (by about 1.9 basis points per day for NASDAQ and 1.0 for the S\&P~500), so the signal shifts exposure away from the worse days, which is its intended use. For gold, silver, and the dollar index the difference is negligible or marginally negative, consistent with the weak classification performance on those pairs. Two qualifications matter. First, the average flagged-day return is still positive, because the sample period is predominantly a rising market; the signal reduces exposure to relatively worse days and does not predict outright losses. Second, these figures are gross of transaction costs, which a turnover of roughly one third of days would erode. The signal works as a modest risk-reduction overlay for broad-equity exposure; it is not strong enough to stand alone as a timing rule.
 
 \subsection{Sensitivity to rolling window length}
 
@@ -192,4 +192,4 @@ The empirical results of the thesis are summarized in four principal statements:
 
 These findings are consistent with one another and, together, enough to carry both the scientific and the applied contributions of the thesis. The next section takes up what they mean more broadly.
 
-Overall, the evidence provides a coherent account of how crypto information enters conventional-asset risk. The channel is real and measurable, but its predictive content sits mostly in the persistence of the dependency series itself; the nonlinear capacity of gradient-boosted or random-forest models adds nothing here. The dependency behaves as a slowly evolving, regime-sensitive quantity, and smooth, low-complexity models suit it better than flexible high-capacity ones. Chapter~\ref{sec:discussion} develops this interpretation and situates it in the wider literature on intermarket contagion and financial machine learning.
+The evidence adds up to a consistent picture of how crypto information enters conventional-asset risk. The channel is real and measurable, but its predictive content sits mostly in the persistence of the dependency series itself; the nonlinear capacity of gradient-boosted or random-forest models adds nothing here. The dependency behaves as a slowly evolving, regime-sensitive quantity, and smooth, low-complexity models suit it better than flexible high-capacity ones. Chapter~\ref{sec:discussion} develops this interpretation and situates it in the wider literature on intermarket contagion and financial machine learning.

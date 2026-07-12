@@ -2,7 +2,7 @@
 
 \subsection{Why intermarket dependency matters}
 
-The way assets move together is central to financial theory, since diversification, contagion, hedging, and portfolio risk all depend on it. The textbook mean-variance framework treats this co-movement as a single constant correlation, but decades of evidence indicate that the static picture does not hold. Empirical correlations drift over time, react more strongly to negative news than to positive news, and rise sharply during market downturns, precisely when diversification would be most valuable \cite{longin2001}. Forecasting \emph{time-varying dependence} is therefore of direct practical importance for risk management.
+The way assets move together is central to financial theory, since diversification, contagion, hedging, and portfolio risk all depend on it. The textbook mean-variance framework treats this co-movement as a single constant correlation, but decades of evidence indicate that the static picture does not hold. Empirical correlations drift over time, react more strongly to negative news than to positive news, and rise sharply during market downturns, just when diversification would be most valuable \cite{longin2001}. Forecasting \emph{time-varying dependence} is therefore of direct practical importance for risk management.
 
 These considerations are even more pronounced when one side of the pair is a cryptocurrency \cite{nakamoto2008bitcoin}. Bitcoin trades continuously on a globally accessible market, responds quickly to changes in sentiment and funding liquidity, and is interpreted through several competing narratives: as an inflation hedge, a speculative asset, an indicator of risk appetite, and an instrument sensitive to regulation. Because so many factors influence it, Bitcoin does not occupy a single stable role within a portfolio. Depending on the stage of the business and credit cycle, it can behave like a high-beta growth stock, a liquidity-sensitive risk proxy, or an idiosyncratic sentiment indicator. This instability is what makes its relationship with conventional assets a natural candidate for a time-varying treatment.
 
@@ -101,7 +101,7 @@ The evaluation protocol is as important as the choice of model. A complex model 
 
 \subsection{Model comparison and the Diebold--Mariano test}
 
-Ranking models by their average out-of-sample error is informative but not conclusive: it says nothing about whether a gap is real or just sampling noise. The Diebold--Mariano test closes that gap, formally testing the null that two forecasts are equally accurate \cite{diebold1995}.
+Ranking models by average out-of-sample error only goes so far: it says nothing about whether a gap is real or just sampling noise. The Diebold--Mariano test closes that gap, formally testing the null that two forecasts are equally accurate \cite{diebold1995}.
 
 Let $e_{1,t}$ and $e_{2,t}$ denote the forecast errors of models 1 and 2 at time $t$, and let $d_t = g(e_{1,t}) - g(e_{2,t})$ denote the loss differential under a loss function $g(\cdot)$ (typically squared or absolute error). The DM test statistic is
 \begin{equation}
@@ -109,7 +109,7 @@ Let $e_{1,t}$ and $e_{2,t}$ denote the forecast errors of models 1 and 2 at time
 \end{equation}
 where $\bar{d} = T^{-1}\sum_{t=1}^{T} d_t$ is the mean loss differential, $\hat{V}(\bar{d})$ is a heteroskedasticity- and autocorrelation-consistent (HAC) variance estimator, and $T$ is the number of evaluation periods. Under the null of equal predictive accuracy, the statistic is asymptotically standard normal.
 
-The DM test serves two purposes here. First, it assesses whether the best machine-learning configuration genuinely outperforms the leakage-safe DCC-GARCH benchmark. Second, it assesses whether any improvement over a plain autoregression or naive persistence baseline survives once sampling noise is taken into account. The second comparison is the more informative: if a model cannot significantly outperform AR(1), then most of the forecastability sits in the target's own persistence, and the cross-asset features contribute little.
+The DM test serves two purposes here. First, it assesses whether the best machine-learning configuration genuinely outperforms the leakage-safe DCC-GARCH benchmark. Second, it assesses whether any improvement over a plain autoregression or naive persistence baseline survives once sampling noise is taken into account. The second comparison matters more: if a model cannot significantly outperform AR(1), then most of the forecastability sits in the target's own persistence, and the cross-asset features contribute little.
 
 \subsection{From dependency forecasting to investor signaling}
 
