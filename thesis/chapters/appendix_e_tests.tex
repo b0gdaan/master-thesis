@@ -52,9 +52,9 @@ Ridge is the most efficient among the regularised ML models at 45.8\%.
 DCC-GARCH never passes: its average $\bar{\beta} = 1.44$ means that realized
 correlations swing markedly more than its forecasts do. In the regression
 $y = \alpha + \beta\hat{y}$, a slope above one signals forecasts that are too
-\emph{compressed} --- they systematically under-react to the size of the
-movements rather than overstating them. This is precisely the over-smoothing
-of DCC-GARCH seen throughout the main results.
+\emph{compressed}: they systematically under-react to the size of the
+movements. This is the over-smoothing of DCC-GARCH seen throughout the main
+results.
 
 Table~\ref{tab:mz_gspc_w30} provides the full detail for the representative
 pair BTC-USD vs S\&P~500 at $w = 30$.
@@ -144,7 +144,7 @@ heteroscedasticity in every single experiment: they never encode the
 target's autoregressive structure, so that structure leaks into the
 residuals, which remain far from white noise. The enormous Q-statistics for
 the tree ensembles (e.g.\ $Q > 1{,}000$ for XGB\_GPU on most pairs) drive the
-point home --- these forecasters simply do not carry the AR structure forward
+point home: these forecasters simply do not carry the AR structure forward
 from training.
 
 % ─────────────────────────────────────────────────────────────────────────────
@@ -202,7 +202,7 @@ average-RMSE ranking of Table~\ref{tab:model_ranking_summary}, in which AR(1), H
 Ridge are statistically indistinguishable. Second, the Diebold--Mariano test assumes
 non-nested forecasts, whereas every fitted model here includes the lagged target among
 its predictors and therefore nests the persistence baselines. The statistics against
-Naive\_Last, and by extension any test against AR(1), are accordingly best read as
+Naive\_Last, and by extension any test against AR(1), should accordingly be read as
 descriptive; the conclusions rest on the comparison the test is designed for, namely the
 fitted models against the non-nested DCC-GARCH benchmark.
 
@@ -213,9 +213,9 @@ fitted models against the non-nested DCC-GARCH benchmark.
 In addition to the statistical tests above, the full project ships with an
 automated \texttt{pytest} suite of \textbf{81 unit and integration tests}
 organised into ten test classes. These are predominantly consistency and regression
-checks: they verify that a fresh run reproduces the published outputs --- file presence,
+checks: they verify that a fresh run reproduces the published outputs (file presence,
 value ranges, sign conventions, and key relationships such as the average ranking of
-AR(1) against DCC-GARCH --- rather than proving the methods correct in an absolute sense.
+AR(1) against DCC-GARCH); they do not prove the methods correct in an absolute sense.
 The suite is executed automatically as part of the reproducibility runner
 (\texttt{python run\_all.py}) between the notebook step and the final
 \LaTeX\ compilation, so every rebuilt PDF contains a fresh test report.

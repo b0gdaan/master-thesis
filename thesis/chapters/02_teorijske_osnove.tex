@@ -12,7 +12,7 @@ Research at the intersection of cryptocurrency and conventional markets has grow
 
 A recurring result across this literature is that the relationship is unstable \cite{bouri2017hedge, corbet2018exploring}. In calm markets, Bitcoin's association with broad equity indices is weak or inconsistent in direction; in pronounced risk-on or risk-off episodes, it tightens sharply \cite{ji2018network, kristoufek2015main}. Precious metals co-move with Bitcoin more weakly and less reliably \cite{dyhrberg2016bitcoin, klein2018bitcoin}, consistent with their different investor base and long-standing safe-haven role. Currencies provide a further dimension, serving as a proxy for global funding liquidity \cite{corbet2018exploring}.
 
-These patterns motivate modelling dependence as a time-varying quantity rather than a fixed number. A single full-sample correlation would average out the behaviour of interest. Treating dependence as a time-varying process instead accommodates slow regime drift, sudden breaks, and the fact that different asset pairs and window lengths change at different speeds and in different directions.
+These patterns argue for treating dependence as a time-varying quantity; a single full-sample correlation would average out the behaviour of interest. A time-varying description also accommodates slow regime drift, sudden breaks, and the fact that different asset pairs and window lengths change at different speeds and in different directions.
 
 \subsection{Rolling correlation as a forecasting target}
 
@@ -24,9 +24,9 @@ The rolling window correlation estimator is conceptually transparent and computa
 \end{equation}
 where $\bar{r}_{k,t}$ denotes the in-window mean of series $k$. Traversing this estimator across all $t$ yields a time series $\{\hat{\rho}_{t}^{(w)}\}$ that characterizes the temporal evolution of intermarket co-movement.
 
-As a forecasting target, rolling correlation has several advantages. It is easy to interpret, since positive values indicate that the two assets move together and negative values indicate a hedging relationship. It is comparable across asset pairs and window lengths, which makes a systematic multi-asset study feasible. It also keeps the analysis focused on how market structure is changing rather than on the level of any single return series.
+As a forecasting target, rolling correlation has several advantages. It is easy to interpret, since positive values indicate that the two assets move together and negative values indicate a hedging relationship. It is comparable across asset pairs and window lengths, which makes a systematic multi-asset study feasible. It also keeps the analysis focused on changes in market structure instead of the level of any single return series.
 
-Its main complication is strong serial persistence. Because $\hat{\rho}_{t}^{(w)}$ is constructed from overlapping windows, consecutive estimates share $w-1$ of their observations, so the series is heavily autocorrelated by construction. This persistence is likely to dominate any forecast and may leave complex models with little to add beyond a simple autoregression. The thesis treats this persistence as a substantive empirical property of the dependency process, and as a central object of analysis in its own right.
+Its main complication is strong serial persistence. Because $\hat{\rho}_{t}^{(w)}$ is constructed from overlapping windows, consecutive estimates share $w-1$ of their observations, so the series is heavily autocorrelated by construction. This persistence is likely to dominate any forecast and may leave complex models with little to add beyond a simple autoregression. The thesis treats it as a substantive empirical property of the dependency process and analyses it directly.
 
 To improve the statistical behavior of the target, the thesis applies the Fisher $z$-transformation:
 \begin{equation}
@@ -89,7 +89,7 @@ Random Forests construct an ensemble of decision trees, each trained on a bootst
 
 Tree ensembles are natural candidates because the relationship between crypto features and intermarket dependence may be nonlinear and rich in interactions. The information that Bitcoin's realized volatility carries about future equity dependence, for example, may depend on whether the correlation is already high. Tree-based methods can detect and exploit such conditional patterns automatically, without the interactions being specified in advance.
 
-None of this guarantees that tree-based methods will be effective for one-step-ahead forecasts of a highly persistent target. When the target is governed almost entirely by its most recent value, the additional flexibility may contribute little predictive signal while incurring a substantial variance penalty. This trade-off is one of the main reasons the thesis relies on a disciplined walk-forward comparison rather than a single summary statistic.
+None of this guarantees that tree-based methods will be effective for one-step-ahead forecasts of a highly persistent target. When the target is governed almost entirely by its most recent value, the additional flexibility may contribute little predictive signal while incurring a substantial variance penalty. This trade-off is one of the main reasons every model here goes through the same walk-forward comparison and none is judged by a single summary statistic.
 
 \subsection{Walk-forward evaluation and information leakage}
 
@@ -109,13 +109,13 @@ Let $e_{1,t}$ and $e_{2,t}$ denote the forecast errors of models 1 and 2 at time
 \end{equation}
 where $\bar{d} = T^{-1}\sum_{t=1}^{T} d_t$ is the mean loss differential, $\hat{V}(\bar{d})$ is a heteroskedasticity- and autocorrelation-consistent (HAC) variance estimator, and $T$ is the number of evaluation periods. Under the null of equal predictive accuracy, the statistic is asymptotically standard normal.
 
-The DM test serves two purposes here. First, it assesses whether the best machine-learning configuration genuinely outperforms the leakage-safe DCC-GARCH benchmark. Second, it assesses whether any improvement over a plain autoregression or naive persistence baseline survives once sampling noise is taken into account. The second comparison is the more informative: if a model cannot significantly outperform AR(1), then most of the forecastability resides in the target's own persistence rather than in information extracted from the cross-asset features.
+The DM test serves two purposes here. First, it assesses whether the best machine-learning configuration genuinely outperforms the leakage-safe DCC-GARCH benchmark. Second, it assesses whether any improvement over a plain autoregression or naive persistence baseline survives once sampling noise is taken into account. The second comparison is the more informative: if a model cannot significantly outperform AR(1), then most of the forecastability sits in the target's own persistence, and the cross-asset features contribute little.
 
 \subsection{From dependency forecasting to investor signaling}
 
 Accurate forecasting of rolling correlation would in itself constitute a complete academic exercise. Because the thesis also has a practical motivation, however, it adds a further step: converting the forecasts into a form on which an investor can act, framed around the risk-management decision itself.
 
-This step is implemented as a second-stage signal layer. Rather than predicting the direction of tomorrow's return, it estimates the probability that the following day falls in a \emph{stress regime}: a day of elevated downside risk in the conventional asset under study. This formulation is closer to the way risk management operates in practice, where the objective is to flag deteriorating conditions early enough to respond rather than to predict every small movement.
+This step is implemented as a second-stage signal layer. It does not predict the direction of tomorrow's return; it estimates the probability that the following day falls in a \emph{stress regime}, a day of elevated downside risk in the conventional asset under study. This formulation is closer to the way risk management operates in practice, where the point is to flag deteriorating conditions early enough to respond. Predicting every small movement is not the goal.
 
 Keeping the two stages separate makes the design more transparent. Lower forecast error and genuine usefulness for portfolio decisions are distinct properties, and conflating them can overstate a result. The two-layer structure allows the thesis to report on each dimension separately.
 
