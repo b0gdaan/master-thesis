@@ -22,13 +22,13 @@ The rolling window correlation estimator is conceptually transparent and computa
     {\sqrt{\sum_{s=t-w+1}^{t}(r_{1,s} - \bar{r}_{1,t})^{2}} \cdot
      \sqrt{\sum_{s=t-w+1}^{t}(r_{2,s} - \bar{r}_{2,t})^{2}}},
 \end{equation}
-where $\bar{r}_{k,t}$ denotes the in-window mean of series $k$. Traversing this estimator across all $t$ yields a time series $\{\hat{\rho}_{t}^{(w)}\}$ that characterizes the temporal evolution of intermarket co-movement.
+where $\bar{r}_{k,t}$ denotes the in-window mean of series $k$. Traversing this estimator across all $t$ yields a time series $\{\hat{\rho}_{t}^{(w)}\}$ that characterises the temporal evolution of intermarket co-movement.
 
 As a forecasting target, rolling correlation has several advantages. It is easy to interpret, since positive values indicate that the two assets move together and negative values indicate a hedging relationship. It is comparable across asset pairs and window lengths, which makes a systematic multi-asset study feasible. It also keeps the analysis focused on changes in market structure instead of the level of any single return series.
 
 Its main complication is strong serial persistence. Because $\hat{\rho}_{t}^{(w)}$ is constructed from overlapping windows, consecutive estimates share $w-1$ of their observations, so the series is heavily autocorrelated by construction. This persistence is likely to dominate any forecast and may leave complex models with little to add beyond a simple autoregression. The thesis treats it as a substantive empirical property of the dependency process and analyses it directly.
 
-To improve the statistical behavior of the target, the thesis applies the Fisher $z$-transformation:
+To improve the statistical behaviour of the target, the thesis applies the Fisher $z$-transformation:
 \begin{equation}
     z_{t}^{(w)} = \frac{1}{2}\ln\!\left(\frac{1 + \hat{\rho}_{t}^{(w)}}{1 - \hat{\rho}_{t}^{(w)}}\right),
 \end{equation}
@@ -72,7 +72,7 @@ where $\bar{z}_{t-k:t-1}$ is the arithmetic mean of $z$ over the preceding $k$ p
 
 \subsubsection{Regularized linear models}
 
-Regularized linear models, including Ridge regression and Elastic Net, represent strong baselines in structured tabular forecasting settings. Ridge regression imposes an $\ell_2$ penalty on the coefficient vector, shrinking estimates toward zero to reduce estimation variance without introducing sparsity. Elastic Net combines $\ell_1$ and $\ell_2$ regularization:
+Regularised linear models, including Ridge regression and Elastic Net, represent strong baselines in structured tabular forecasting settings. Ridge regression imposes an $\ell_2$ penalty on the coefficient vector, shrinking estimates toward zero to reduce estimation variance without introducing sparsity. Elastic Net combines $\ell_1$ and $\ell_2$ regularisation:
 \begin{equation}
     \hat{\boldsymbol{\beta}} = \operatorname*{arg\,min}_{\boldsymbol{\beta}} \left\{
         \frac{1}{n}\sum_{i=1}^{n}(y_i - \mathbf{x}_i^{\top}\boldsymbol{\beta})^2
@@ -81,11 +81,11 @@ Regularized linear models, including Ridge regression and Elastic Net, represent
 \end{equation}
 where $\lambda > 0$ sets the overall strength of the penalty and $\alpha \in [0,1]$ splits it between the two terms \cite{zou2005}. The $\ell_1$ component drives some coefficients to zero, performing implicit variable selection, which is useful when many lagged predictors are weak or redundant. This is well suited to the feature set used here, which contains many overlapping transformations of correlated return and volatility series.
 
-Despite their linearity, these models often perform competitively on smooth, persistence-driven problems. When the signal-to-noise ratio is low and the most informative feature is a lag of the target, the bias introduced by the linearity assumption is typically outweighed by the reduction in variance that regularization provides.
+Despite their linearity, these models often perform competitively on smooth, persistence-driven problems. When the signal-to-noise ratio is low and the most informative feature is a lag of the target, the bias introduced by the linearity assumption is typically outweighed by the reduction in variance that regularisation provides.
 
 \subsubsection{Tree-based ensemble models}
 
-Random Forests construct an ensemble of decision trees, each trained on a bootstrapped subsample and a random subset of features, and aggregate their predictions to reduce variance and improve generalization \cite{breiman2001}. Gradient Boosting Machines instead build trees sequentially, with each new tree fitted to the pseudo-residuals of the current ensemble \cite{friedman2001}. XGBoost extends this boosting framework with second-order gradient approximations, $\ell_1$ and $\ell_2$ regularization terms on tree structure, and computational optimizations that facilitate large-scale application \cite{chen2016}.
+Random Forests construct an ensemble of decision trees, each trained on a bootstrapped subsample and a random subset of features, and aggregate their predictions to reduce variance and improve generalisation \cite{breiman2001}. Gradient Boosting Machines instead build trees sequentially, with each new tree fitted to the pseudo-residuals of the current ensemble \cite{friedman2001}. XGBoost extends this boosting framework with second-order gradient approximations, $\ell_1$ and $\ell_2$ regularisation terms on tree structure, and computational optimisations that facilitate large-scale application \cite{chen2016}.
 
 Tree ensembles are natural candidates because the relationship between crypto features and intermarket dependence may be nonlinear and rich in interactions. The information that Bitcoin's realized volatility carries about future equity dependence, for example, may depend on whether the correlation is already high. Tree-based methods can detect and exploit such conditional patterns automatically, without the interactions being specified in advance.
 

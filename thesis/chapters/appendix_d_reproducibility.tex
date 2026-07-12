@@ -48,9 +48,9 @@ Splitting the work this way pays off twice over: it makes the workflow easier to
 Eight Jupyter notebooks in \texttt{notebooks/} supplement the main pipeline with interactive diagnostics, publication-quality figures, and robustness checks. Each one is self-contained and runs either from the command line or interactively in Jupyter.
 
 \begin{enumerate}
-    \item \textbf{\texttt{01\_EDA\_Dataset.ipynb}} --- Exploratory data analysis. Produces normalized price trajectories, rolling volatility profiles, a pairwise correlation heatmap, rolling pairwise correlation time series, and the Fisher-transformation comparison plot. These figures appear in Appendix~A.
+    \item \textbf{\texttt{01\_EDA\_Dataset.ipynb}} --- Exploratory data analysis. Produces normalised price trajectories, rolling volatility profiles, a pairwise correlation heatmap, rolling pairwise correlation time series, and the Fisher-transformation comparison plot. These figures appear in Appendix~A.
 
-    \item \textbf{\texttt{02\_GridSearch.ipynb}} --- Hyperparameter search diagnostics. Reports time-series cross-validation (expanding-window \texttt{TimeSeriesSplit}) RMSE surfaces for the representative Bitcoin--S\&P~500 experiment, regularization-path plots for Ridge and ElasticNet, and Random Forest feature-importance charts. Results support the model-selection discussion in Chapter~3.
+    \item \textbf{\texttt{02\_GridSearch.ipynb}} --- Hyperparameter search diagnostics. Reports time-series cross-validation (expanding-window \texttt{TimeSeriesSplit}) RMSE surfaces for the representative Bitcoin--S\&P~500 experiment, regularisation-path plots for Ridge and ElasticNet, and Random Forest feature-importance charts. Results support the model-selection discussion in Chapter~3.
 
     \item \textbf{\texttt{03\_Model\_Comparison.ipynb}} --- Model-ranking summary. Generates the average RMSE comparison bar chart, the $R^2$ comparison across window lengths, and the improvement-over-naive baseline figure across all asset pairs. These figures provide a visual complement to Table~\ref{tab:model_ranking_summary} in Chapter~4.
 
@@ -62,7 +62,7 @@ Eight Jupyter notebooks in \texttt{notebooks/} supplement the main pipeline with
 
     \item \textbf{\texttt{07\_Robustness\_Checks.ipynb}} --- Robustness and sensitivity analyses. Contains refit-frequency sensitivity sweeps, stress-threshold sensitivity curves, bootstrap confidence intervals for key metrics, signal-layer diagnostics, and the cross-asset Diebold--Mariano test comparing equity against non-equity pair performance.
 
-    \item \textbf{\texttt{08\_Market\_Events\_Showcase.ipynb}} --- Landmark market-event case studies. For each of 11 key episodes between 2020 and 2026 (COVID crash, Luna collapse, FTX bankruptcy, SVB crisis, Bitcoin ETF approval, Trump election rally, Liberation Day tariff shock, and others), the notebook produces a four-panel diagnostic figure showing normalized price action, daily return distributions, rolling correlation dynamics across window lengths, and a pre/post correlation shift bar chart. A correlation-regime heatmap summarises all events jointly, and a scatter-plot grid illustrates how co-movement between Bitcoin and the S\&P~500 varies by event type. All figures are saved to \texttt{outputs/figures/event\_*.png} and \texttt{outputs/figures/market\_events\_*.png}; a summary CSV is written to \texttt{outputs/results/market\_events\_summary.csv}. Embedded HTML cells include direct links to the original news sources for each event. This notebook runs last so that it can draw on the full set of pipeline outputs and serves as a narrative complement to the quantitative results of Chapters 4 and~5.
+    \item \textbf{\texttt{08\_Market\_Events\_Showcase.ipynb}} --- Landmark market-event case studies. For each of 11 key episodes between 2020 and 2026 (COVID crash, Luna collapse, FTX bankruptcy, SVB crisis, Bitcoin ETF approval, Trump election rally, Liberation Day tariff shock, and others), the notebook produces a four-panel diagnostic figure showing normalised price action, daily return distributions, rolling correlation dynamics across window lengths, and a pre/post correlation shift bar chart. A correlation-regime heatmap summarises all events jointly, and a scatter-plot grid illustrates how co-movement between Bitcoin and the S\&P~500 varies by event type. All figures are saved to \texttt{outputs/figures/event\_*.png} and \texttt{outputs/figures/market\_events\_*.png}; a summary CSV is written to \texttt{outputs/results/market\_events\_summary.csv}. Embedded HTML cells include direct links to the original news sources for each event. This notebook runs last so that it can draw on the full set of pipeline outputs and serves as a narrative complement to the quantitative results of Chapters 4 and~5.
 \end{enumerate}
 
 All notebooks use a shared ROOT-detection routine that locates the project root by searching upward for \texttt{config.yaml}. This ensures correct path resolution whether a notebook is launched interactively from within the \texttt{notebooks/} directory or executed programmatically via \texttt{run\_all.py} from the project root.
@@ -104,7 +104,7 @@ subprocess.run(
 )
 \end{lstlisting}
 
-At a high level, the execution flow can be summarized as follows:
+At a high level, the execution flow can be summarised as follows:
 
 \begin{enumerate}
     \item Load configuration and path settings.
@@ -153,7 +153,7 @@ While tightening the project up, several implementation issues were fixed to bri
 \begin{itemize}
     \item A leakage-safe walk-forward DCC benchmark was introduced to avoid full-sample look-ahead contamination.
     \item The metrics pipeline was made consistent so that all relevant models, including DCC, are evaluated through the same summary path.
-    \item Feature scaling was added for the regularized linear models.
+    \item Feature scaling was added for the regularised linear models.
     \item The XGBoost block was made robust to GPU failure through CPU fallback.
     \item The investor signal layer was integrated into the main pipeline and exported to dedicated tables and figures.
     \item Notebook imports and notebook-specific plotting logic were stabilized for presentation and interpretation.

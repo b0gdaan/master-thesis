@@ -33,7 +33,7 @@ Each asset is in the set for a reason. The two equity indices stand in for broad
 
 The sample runs from 9 November 2017 to 16 May 2026, giving 3{,}053 daily observations per asset.\footnote{The pipeline downloads data to the most recent available trading day; the figures reported here correspond to the final run of the pipeline at the time of writing.} The start date is set by Ethereum: Yahoo Finance has no ETH-USD prices before then, so earlier dates drop out of the aligned panel. What remains is balanced: all seven tickers share one date index, with no gaps left after alignment and forward-filling of non-trading days up to two consecutive calendar days.
 
-Normalized price paths, thirty-day rolling-volatility profiles, and the full-sample
+Normalised price paths, thirty-day rolling-volatility profiles, and the full-sample
 return correlation matrix for the asset universe are collected in Appendix~A
 (Figures~\ref{fig:eda_prices_appendix}, \ref{fig:eda_vol_appendix},
 and~\ref{fig:eda_heatmap_appendix}). The much higher, more episodic volatility of the
@@ -110,7 +110,7 @@ The features fall into several groups:
         Return lags & Lagged returns of Bitcoin and the paired asset \\
         Rolling means & Local average return over short windows \\
         Rolling volatility & Local standard deviation of returns \\
-        Spread features & Absolute and signed gaps between crypto and asset behavior \\
+        Spread features & Absolute and signed gaps between crypto and asset behaviour \\
         Correlation regime gap & Short-window minus long-window correlation \\
         \bottomrule
     \end{tabular}
@@ -157,7 +157,7 @@ Three persistence-based models anchor the set. \texttt{Naive\_Last} just carries
 
 \subsubsection{Regularized linear models}
 
-The linear block is Ridge and ElasticNet, each fitted after standardization (regularization is meaningless if the features sit on different scales). One notational warning: the penalty strength below is scikit-learn's \texttt{alpha}, which is the $\lambda$ of Eq.~(8) and not the $\ell_1/\ell_2$ mixing ratio $\alpha$ of that same equation (in the code that ratio is \texttt{l1\_ratio}). Ridge ($\ell_2$, \texttt{alpha}~$= 0.5$) should do well when many predictors each carry a little signal. ElasticNet (\texttt{alpha}~$= 0.005$, with an even $\ell_1/\ell_2$ split) is more aggressive and can zero out redundant lags outright.
+The linear block is Ridge and ElasticNet, each fitted after standardisation (regularisation is meaningless if the features sit on different scales). One notational warning: the penalty strength below is scikit-learn's \texttt{alpha}, which is the $\lambda$ of Eq.~(8) and not the $\ell_1/\ell_2$ mixing ratio $\alpha$ of that same equation (in the code that ratio is \texttt{l1\_ratio}). Ridge ($\ell_2$, \texttt{alpha}~$= 0.5$) should do well when many predictors each carry a little signal. ElasticNet (\texttt{alpha}~$= 0.005$, with an even $\ell_1/\ell_2$ split) is more aggressive and can zero out redundant lags outright.
 
 \subsubsection{Tree ensembles and adaptive ensemble}
 
@@ -253,7 +253,7 @@ The thesis organizes its empirical conclusions around exactly these three levels
 
 \subsection{Implementation and reproducibility}
 
-The whole workflow is Python, organized as a modular codebase. A main pipeline ties the steps together (read the config, compute returns, build targets and features, fit models, write prediction files, save figures, export \LaTeX\ tables), while separate modules handle the DCC walk-forward benchmark, notebook support, and the signal layer. This organisation is what makes the thesis reproducible end to end.
+The whole workflow is Python, organised as a modular codebase. A main pipeline ties the steps together (read the config, compute returns, build targets and features, fit models, write prediction files, save figures, export \LaTeX\ tables), while separate modules handle the DCC walk-forward benchmark, notebook support, and the signal layer. This organisation is what makes the thesis reproducible end to end.
 
 Everything lands in a structured output tree: metrics, DM tests, and signal results as CSV; thesis-ready tables as \LaTeX; diagnostics as figures. The point is to keep manual post-processing to a minimum and let the analysis feed the writing directly.
 
