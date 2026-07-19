@@ -26,9 +26,17 @@ data/processed/
 # Generated outputs (reproducible — run main.py to regenerate)
 outputs/predictions/
 outputs/results/
-outputs/tables/
 models/
 out/
+
+# outputs/tables/ is ignored with a single exception below. The pattern must
+# exclude the *contents* (trailing /*) rather than the directory itself —
+# git will not descend into an excluded directory, so a negation inside one
+# would never take effect.
+outputs/tables/*
+# The thesis \input{}s this table directly in Appendix A; without it a fresh
+# clone cannot compile, so it is tracked even though it is generated.
+!outputs/tables/data_quality_table.tex
 
 # Figures are kept for README preview
 # outputs/figures/ is intentionally tracked
