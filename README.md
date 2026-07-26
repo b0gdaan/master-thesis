@@ -56,8 +56,17 @@ Daily prices 2017–2026 · source: Yahoo Finance
 ```
 ├── main.py                  # Entry point — runs full pipeline
 ├── run_all.py               # Full reproducibility runner (pipeline + notebooks)
+├── build_thesis.py          # Builds the thesis PDF (LaTeX only, no venv needed)
 ├── config.yaml              # All settings
 ├── requirements.txt
+│
+├── thesis/                  # LaTeX sources and the compiled PDF
+│   ├── main.tex             # Title data, abstracts, document order
+│   ├── chapters/            # Chapters 1–6 and Appendices A–F
+│   ├── references.bib       # Bibliography (biber)
+│   └── main.pdf             # Compiled thesis, 75 pages
+│
+├── website/                 # Project site (GitHub Pages)
 │
 ├── thesis_app/
 │   ├── pipeline.py          # Core ML pipeline
@@ -109,6 +118,23 @@ Subsequent runs use the cached CSV in `data/raw/`.
 
 **No GPU?** Set `xgb_device: "cpu"` in `config.yaml`.
 **No DCC-GARCH?** Set `use_dcc_garch: false` in `config.yaml`.
+
+---
+
+## Building the thesis PDF
+
+The compiled thesis is committed as `thesis/main.pdf`. To rebuild it, only a
+LaTeX distribution is needed — the Python pipeline does not have to run, and no
+virtual environment is required:
+
+```bash
+python build_thesis.py           # full build (~40 s)
+python build_thesis.py --check   # verify toolchain and file dependencies only
+```
+
+The script reports page count, undefined references and overfull boxes; a clean
+build is 75 pages with none of either. Setup instructions for a fresh machine
+are in [BUILD.md](BUILD.md).
 
 ---
 
