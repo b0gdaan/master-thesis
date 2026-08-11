@@ -62,6 +62,13 @@ files for prof/
 *.docx
 auxil/
 report/
+# Scanned, hand-signed thesis application used for the fourth title page. Kept
+# locally for the print build only; main.tex compiles without it.
+thesis/finthesis_assets/thesis_application.pdf
+# Print-ready build that embeds the application page (see BUILD.md)
+thesis/main_print.pdf
+# Personal defence crib sheet
+thesis/defense_script.md
 
 # OS
 .DS_Store

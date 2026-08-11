@@ -64,11 +64,37 @@ Regenerating figures and result tables requires the full Python pipeline
 and takes about two hours. That is unnecessary for proofreading or printing:
 the figures and the PDF in the repository are already the current ones.
 
+## The fourth title page (print vs. repository)
+
+The template puts a scan of the approved thesis application on the fourth title
+page. That document carries the names of the commission members and the
+official file numbers, so it is **not** kept in the repository: `.gitignore`
+excludes `thesis/finthesis_assets/thesis_application.pdf`.
+
+`main.tex` decides at build time with `\IfFileExists`:
+
+| Asset present | Result |
+|---|---|
+| no (a fresh clone) | **75 pages**, no fourth title page, builds fine |
+| yes (local print build) | **76 pages**, application page included |
+
+So a build on this machine overwrites `thesis/main.pdf` with the 76-page
+version. The repository is meant to keep the 75-page one, so before committing:
+
+```bash
+git checkout -- thesis/main.pdf
+```
+
+The print-ready copy lives beside it as `thesis/main_print.pdf`, which is
+git-ignored.
+
 ## Before printing
 
-Two things in `thesis/main.tex` still need attention for the printed copy:
-
-- `\date{...}` — set to the defense month.
-- `\fourthtitlepage` in the `\maketitle` block is commented out. The template
-  expects a scan of the approved thesis application there; add the file with
-  `\thesisapplicationfile{...}` and uncomment the line.
+- `\date{...}` in `thesis/main.tex` sets the date on the assignment page
+  (currently 19 May 2026, the date the topic was assigned). Change it only if
+  the faculty asks for the defense date there.
+- Copies needed: one per commission member (5) plus one for the university
+  archive, plus one copy on disk.
+- The title page must carry the university logo introduced in March 2026 — the
+  circular one in `thesis/finthesis_assets/unikg_logo.png`, not the old coat of
+  arms that ships with the template.
