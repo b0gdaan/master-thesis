@@ -57,7 +57,7 @@ This section documents that process, because the sequence of changes is itself a
 empirical result about the nature of the forecasting problem.
 
 \paragraph{Version 1 (September 2025): minimal baseline.}
-The first working prototype contained seven models: Naive\_Last, AR1, Ridge, ElasticNet,
+The first working prototype contained seven models: the naive last-value baseline, AR(1), Ridge, ElasticNet,
 Random Forest, Gradient Boosting, and XGBoost.
 Feature engineering was minimal: four autoregressive lags of the rolling correlation,
 short-window volatilities for both assets, and lagged returns up to lag~5.

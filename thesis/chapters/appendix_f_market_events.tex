@@ -1,4 +1,4 @@
-\section{Appendix F: Market-Event Case Studies}
+\section{Market-Event Case Studies}
 \label{app:market_events}
 
 This appendix examines the landmark market events of 2020--2026 through the lens of
@@ -61,60 +61,44 @@ most relevant comparison assets; (top-right) daily log-returns as a bar chart;
 (bottom-left) 30-day and 14-day rolling BTC correlation with the primary comparison
 asset; (bottom-right) pre-/post-event correlation for all pairs.
 
+\paragraph{Event 1 --- COVID Black Thursday (12 March 2020).}
+Bitcoin fell about 37\% in a single session, sharply outpacing the S\&P~500's 10\% drop. The 30-day BTC--S\&P~500 correlation rose from near zero to about 0.52. This was a liquidity-driven sell-off, in which Bitcoin's diversification benefit temporarily disappeared: with margin calls forcing simultaneous liquidation across asset classes, the usual distinctions between them stopped mattering. Figure~\ref{fig:event_covid} shows the episode.
+
 \needspace{4\baselineskip}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../outputs/figures/event_covid.png}
-    \caption{\textbf{Event 1 --- COVID Black Thursday (12 March 2020).}
-             Bitcoin fell about 37\% in a single session, sharply outpacing the
-             S\&P~500's 10\% drop. The 30-day BTC--S\&P~500 correlation rose from near
-             zero to about 0.52, a liquidity-driven sell-off in which
-             Bitcoin's diversification benefit temporarily disappeared.
-             Source: \protect\href{https://www.reuters.com/article/us-health-coronavirus-markets-idUSKBN20Z0TO}{Reuters}}
+    \caption{Event 1 --- COVID Black Thursday, 12 March 2020. Source: \protect\href{https://www.reuters.com/article/us-health-coronavirus-markets-idUSKBN20Z0TO}{Reuters}.}
     \label{fig:event_covid}
 \end{figure}
+
+\paragraph{Event 2 --- FTX Collapse (8--11 November 2022).}
+The exchange filed for bankruptcy and Bitcoin fell about 25\% over the following two weeks. The S\&P~500 \emph{rose} that same week on a positive CPI print, producing a sharp short-term decoupling: the 14-day BTC--equity correlation fell from about 0.6 toward zero, while the 30-day measure barely moved (about 0.55). The contrast between the two window lengths is the point of the episode. A shock confined to the crypto market registers immediately in the short window and is almost invisible in the longer one, which is exactly the trade-off between responsiveness and smoothness discussed in Section~\ref{sec:window_sensitivity}. Figure~\ref{fig:event_ftx} shows the episode.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../outputs/figures/event_ftx.png}
-    \caption{\textbf{Event 2 --- FTX Collapse (8--11 November 2022).}
-             SBF's exchange filed for bankruptcy; Bitcoin fell about 25\% over the
-             following two weeks. Paradoxically the S\&P~500 \emph{rose} that same week
-             on a positive CPI print, producing a sharp short-term
-             decoupling: the 14-day BTC--equity correlation fell from about 0.6 toward
-             zero, though the 30-day measure barely moved (about 0.55).
-             Source: \protect\href{https://www.bbc.com/news/technology-63631492}{BBC News}}
+    \caption{Event 2 --- FTX collapse, 8--11 November 2022. Source: \protect\href{https://www.bbc.com/news/technology-63631492}{BBC News}.}
     \label{fig:event_ftx}
 \end{figure}
+
+\paragraph{Event 3 --- SVB Banking Crisis (10 March 2023).}
+Silicon Valley Bank's failure triggered a Bitcoin rally of about 40\% over the following week as investors sought alternatives to the banking system. Both Bitcoin and gold rose (gold about 8\%) while equities fell. This is one of the rare episodes in the sample where the short-window correlation turned negative: the 14-day BTC--S\&P~500 measure dipped to about $-0.4$, while the 30-day measure fell from 0.37 to 0.16. It is also the only one of the four events in which Bitcoin behaved as the safe-haven asset rather than the risk asset. Figure~\ref{fig:event_svb} shows the episode.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../outputs/figures/event_svb.png}
-    \caption{\textbf{Event 3 --- SVB Banking Crisis (10 March 2023).}
-             Silicon Valley Bank's failure triggered a Bitcoin rally of about 40\% over
-             the following week as investors sought alternatives to the banking system.
-             Both Bitcoin and Gold rose (Gold about 8\%) while equities fell, one of
-             the rare episodes in the sample where the short-window correlation turned
-             negative: the 14-day BTC--S\&P~500 measure dipped to about $-0.4$, while the
-             30-day measure fell from 0.37 to 0.16.
-             Source: \protect\href{https://www.nytimes.com/2023/03/10/business/silicon-valley-bank-failure-explained.html}{The New York Times}}
+    \caption{Event 3 --- SVB banking crisis, 10 March 2023. Source: \protect\href{https://www.nytimes.com/2023/03/10/business/silicon-valley-bank-failure-explained.html}{The New York Times}.}
     \label{fig:event_svb}
 \end{figure}
+
+\paragraph{Event 4 --- ``Liberation Day'' Tariff Shock (2 April 2025).}
+Sweeping tariffs on 185 countries caused the S\&P~500 to fall about 12\% in four trading days, its fastest drop since March 2020. Bitcoin fell alongside equities over the same week, while gold climbed to record highs above \$3\,000/oz. Both risk assets sold off together, confirming that Bitcoin behaves as a risk asset rather than a safe haven during acute macro shocks; even so, the 30-day rolling BTC--S\&P~500 correlation showed no clear spike, edging only from about 0.33 to 0.43, because the sharp partial recovery in the days that followed desynchronised the daily moves. The episode illustrates that even a major macro shock need not durably raise the rolling dependency, which is the main reason a correlation-based warning layer cannot be expected to fire reliably on macro events. Figure~\ref{fig:event_liberation} shows the episode.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../outputs/figures/event_liberation_day.png}
-    \caption{\textbf{Event 4 --- ``Liberation Day'' Tariff Shock (2 April 2025).}
-             Sweeping tariffs on 185 countries caused the S\&P~500 to fall about 12\% in
-             four trading days, its fastest drop since March 2020. Bitcoin fell
-             alongside equities over the same week, while Gold climbed to record highs
-             above \$3\,000/oz. Although both risk assets sold off together (confirming
-             that Bitcoin behaves as a risk asset, not a safe haven, during acute macro
-             shocks), the 30-day rolling BTC--S\&P~500 correlation showed no clear spike:
-             it edged only from about 0.33 to 0.43, as the sharp partial
-             recovery in the days that followed desynchronised the daily moves. The episode
-             illustrates that even a major macro shock need not durably raise the rolling dependency.
-             Source: \protect\href{https://www.reuters.com/markets/trump-liberation-day-tariffs-global-markets-crash-2025-04-02/}{Reuters}}
+    \caption{Event 4 --- ``Liberation Day'' tariff shock, 2 April 2025. Source: \protect\href{https://www.reuters.com/markets/trump-liberation-day-tariffs-global-markets-crash-2025-04-02/}{Reuters}.}
     \label{fig:event_liberation}
 \end{figure}
 

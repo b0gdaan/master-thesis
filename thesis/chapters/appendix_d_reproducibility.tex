@@ -1,4 +1,4 @@
-\section{Appendix D: Reproducibility and Code Structure}
+\section{Reproducibility and Code Structure}
 
 \subsection{Project organization}
 
@@ -42,6 +42,10 @@ The following modules constitute the core of the forecasting system:
 \end{itemize}
 
 Splitting the work this way pays off twice over: it makes the workflow easier to audit, and it lets any one module be tested or improved without touching the rest.
+
+\subsection{Software environment}
+
+The implementation is Python only, with the exact versions pinned in \texttt{requirements.txt}. The regularised linear models, tree ensembles, logistic classifier, and the walk-forward splitting utilities come from scikit-learn \cite{sklearn2026}; gradient boosting on the GPU uses XGBoost \cite{xgboostdocs2026}; the univariate GARCH(1,1) fits underlying the DCC benchmark use the \texttt{arch} package \cite{archdocs2026}. Market data is retrieved through \texttt{yfinance} \cite{yfinance2026}. The document itself is typeset with the \texttt{finthesis} class of the \texttt{finlatex} project \cite{finlatex2026}, which supplies the university title pages and layout. Beyond the pinned versions, reproducibility rests on the fixed random seed (\texttt{random\_state = 42}, mirrored for XGBoost) and on the frozen return file described above; no step draws on system time or on an unpinned remote source.
 
 \subsection{Analysis notebooks}
 

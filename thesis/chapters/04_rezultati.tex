@@ -15,26 +15,28 @@ Table~\ref{tab:model_ranking_summary} gives each model's average out-of-sample p
     \centering
     \caption{Average out-of-sample forecasting performance across all dependency experiments.}
     \label{tab:model_ranking_summary}
-    \begin{tabular}{lrrr}
+    \begin{tabular}{lrcrr}
         \toprule
-        Model & Average RMSE & Average MAE & Average $R^2$ \\
+        Model & Average RMSE & 95\% CI for RMSE & Average MAE & Average $R^2$ \\
         \midrule
-        Ridge      & 0.0656 & 0.0419 & 0.9432 \\
-        AR1        & 0.0659 & 0.0403 & 0.9424 \\
-        HAR        & 0.0659 & 0.0405 & 0.9424 \\
-        Naive\_Last & 0.0666 & 0.0395 & 0.9412 \\
-        ElasticNet & 0.0669 & 0.0434 & 0.9411 \\
-        Ensemble   & 0.0694 & 0.0462 & 0.9365 \\
-        GBM        & 0.0886 & 0.0625 & 0.8983 \\
-        RF         & 0.0905 & 0.0636 & 0.8936 \\
-        XGB\_GPU   & 0.1241 & 0.0864 & 0.7923 \\
-        DCC\_GARCH & 0.2136 & 0.1683 & 0.3715 \\
+        Ridge             & 0.0656 & [0.0611,\ 0.0701] & 0.0419 & 0.9432 \\
+        AR(1)             & 0.0659 & [0.0613,\ 0.0706] & 0.0403 & 0.9424 \\
+        HAR               & 0.0659 & [0.0613,\ 0.0706] & 0.0405 & 0.9424 \\
+        Naive (last value) & 0.0666 & [0.0619,\ 0.0714] & 0.0395 & 0.9412 \\
+        ElasticNet        & 0.0669 & [0.0625,\ 0.0713] & 0.0434 & 0.9411 \\
+        Ensemble          & 0.0694 & [0.0652,\ 0.0738] & 0.0462 & 0.9365 \\
+        GBM               & 0.0886 & [0.0842,\ 0.0932] & 0.0625 & 0.8983 \\
+        Random Forest     & 0.0905 & [0.0860,\ 0.0952] & 0.0636 & 0.8936 \\
+        XGBoost           & 0.1241 & [0.1184,\ 0.1297] & 0.0864 & 0.7923 \\
+        DCC-GARCH         & 0.2136 & [0.2067,\ 0.2203] & 0.1683 & 0.3715 \\
         \bottomrule
     \end{tabular}
-    \par\smallskip\noindent\footnotesize{\textit{Note: Results averaged across all asset-pair and window-length combinations. RMSE and R$^2$ computed on out-of-sample walk-forward predictions. HAR = Heterogeneous AutoRegressive model; Ensemble = adaptive inverse-RMSE-weighted ensemble. Best-performing model by average RMSE is Ridge (regularised linear regression with StandardScaler). All metrics reflect the full sample through 16 May 2026 (3{,}053 observations).}}
+    \par\smallskip\noindent\footnotesize{\textit{Note: Results averaged across all asset-pair and window-length combinations. RMSE and R$^2$ computed on out-of-sample walk-forward predictions. The interval column averages the per-experiment bootstrap bounds (500 resamples, Appendix~\ref{app:tests}) over the same 24 experiments; it describes the typical width of the interval around each model's error, not a pooled confidence interval for the average itself. HAR = Heterogeneous AutoRegressive model; Ensemble = adaptive inverse-RMSE-weighted ensemble. Best-performing model by average RMSE is Ridge (regularised linear regression with StandardScaler). All metrics reflect the full sample through 16 May 2026 (3{,}053 observations).}}
 \end{table}
 
-The top three (Ridge, AR(1), and HAR) are nearly indistinguishable, with average RMSE of 0.0656, 0.0659, and 0.0659 and $R^2$ of 0.9424 and above. The 0.0003 spread between them is economically meaningless, and the naive last-value baseline sits only just outside at RMSE 0.0666, which already indicates that serial persistence accounts for most of the forecastable variation. One nuance should be stated explicitly: the ranking here is by RMSE, on which Ridge leads. On mean absolute error the ordering differs, with Naive\_Last formally best (MAE 0.0395), ahead of AR1 (0.0403), HAR (0.0405), and Ridge (0.0419). RMSE penalises large errors more heavily, so Ridge effectively trades a few more small errors for fewer large ones. ElasticNet and the adaptive Ensemble form a second tier above $R^2 = 0.93$. The tree methods (GBM, Random Forest, XGBoost) trail well behind, with RMSE between roughly 0.09 and 0.12 and $R^2$ below 0.90. DCC-GARCH finishes last by a wide margin ($R^2 = 0.3715$).
+The top three (Ridge, AR(1), and HAR) are nearly indistinguishable, with average RMSE of 0.0656, 0.0659, and 0.0659 and $R^2$ of 0.9424 and above. The 0.0003 spread between them is economically meaningless, and the naive last-value baseline sits only just outside at RMSE 0.0666, which already indicates that serial persistence accounts for most of the forecastable variation.
+
+The bootstrap intervals put a number on how meaningless that spread is. Each of the top four models carries an interval roughly 0.009 wide, against differences between them of 0.0003 to 0.0010; the four intervals therefore overlap almost completely, and no ordering within that group can be read as a real difference in accuracy. The same intervals separate the groups cleanly: nothing in the leading cluster comes within 0.01 of GBM or Random Forest, and DCC-GARCH sits further from the leaders than any of these intervals is wide, by more than an order of magnitude. What the ranking supports, in other words, is the division into tiers, not the order inside the top tier. One nuance should be stated explicitly: the ranking here is by RMSE, on which Ridge leads. On mean absolute error the ordering differs, with the naive last-value baseline formally best (MAE 0.0395), ahead of AR(1) (0.0403), HAR (0.0405), and Ridge (0.0419). RMSE penalises large errors more heavily, so Ridge effectively trades a few more small errors for fewer large ones. ElasticNet and the adaptive Ensemble form a second tier above $R^2 = 0.93$. The tree methods (GBM, Random Forest, XGBoost) trail well behind, with RMSE between roughly 0.09 and 0.12 and $R^2$ below 0.90. DCC-GARCH finishes last by a wide margin ($R^2 = 0.3715$).
 
 The composition of the top cluster deserves a closer look. Ridge, AR(1), and HAR reach almost the same accuracy through different mechanisms: AR(1) uses a single autoregressive coefficient, HAR combines three time scales (daily, weekly, and monthly), and Ridge fits the full regularised feature set anchored by the most recent lag. They converge because each is ultimately exploiting the same property, the strong persistence of the target, and the additional structure in HAR and Ridge does not capture anything that a single lag has not already accounted for. The convergence says more about the target than about the models: the series is so strongly autoregressive that there is little else left to capture.
 
@@ -117,9 +119,9 @@ The second layer turns the dependency forecast into a stress-warning classifier.
         \toprule
         Signal model & Balanced Accuracy & F1\_down & AUC \\
         \midrule
-        Logit    & 0.511 & 0.214 & 0.513 \\
-        GBM\_Cls & 0.508 & 0.158 & 0.517 \\
-        RF\_Cls  & 0.502 & 0.042 & 0.519 \\
+        Logistic regression    & 0.511 & 0.214 & 0.513 \\
+        GBM (classifier)       & 0.508 & 0.158 & 0.517 \\
+        Random Forest (classifier) & 0.502 & 0.042 & 0.519 \\
         \bottomrule
     \end{tabular}
     \par\smallskip\noindent\footnotesize{\textit{Note: Results averaged across all asset pairs and window lengths. Balanced Accuracy corrects for class imbalance. F1\textsubscript{down} measures detection quality for the stress class only.}}
@@ -174,6 +176,7 @@ The most direct test of practical value compares the conventional asset's next-d
 The pattern reinforces the classification results. For the two equity pairs the average next-day return is lower on flagged days than on clear days (by about 1.9 basis points per day for NASDAQ and 1.0 for the S\&P~500), so the signal shifts exposure away from the worse days, which is its intended use. For gold, silver, and the dollar index the difference is negligible or marginally negative, consistent with the weak classification performance on those pairs. Two qualifications matter. First, the average flagged-day return is still positive, because the sample period is predominantly a rising market; the signal reduces exposure to relatively worse days and does not predict outright losses. Second, these figures are gross of transaction costs, which a turnover of roughly one third of days would erode. The signal works as a modest risk-reduction overlay for broad-equity exposure; it is not strong enough to stand alone as a timing rule.
 
 \subsection{Sensitivity to rolling window length}
+\label{sec:window_sensitivity}
 
 Window length is a first-order choice, and it visibly shapes both the target and the results. Short windows give responsive but noisy estimates; long windows give smooth, heavily autocorrelated targets that are easier to forecast but slower to register a real structural change.
 

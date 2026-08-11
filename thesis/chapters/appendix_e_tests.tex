@@ -1,4 +1,5 @@
-\section{Appendix E: Additional Statistical Tests}
+\section{Additional Statistical Tests}
+\label{app:tests}
 
 This appendix runs three further hypothesis tests that probe the robustness of
 the empirical results: a Mincer-Zarnowitz efficiency test, residual diagnostics
@@ -32,21 +33,21 @@ together with its average $\alpha$ and $\beta$ coefficients.
         \toprule
         Model & Efficient (\%) & $\bar{\alpha}$ & $\bar{\beta}$ & $\bar{F}$ \\
         \midrule
-        AR1         & 70.8 & $+0.0006$ & 0.9976 &   2.0 \\
+        AR(1)         & 70.8 & $+0.0006$ & 0.9976 &   2.0 \\
         HAR         & 70.8 & $+0.0006$ & 0.9974 &   2.4 \\
         Ridge       & 45.8 & $-0.0015$ & 0.9992 &   4.1 \\
         RF          & 16.7 & $-0.0019$ & 1.0140 &  26.2 \\
-        Naive\_Last &  8.3 & $+0.0097$ & 0.9706 &  16.3 \\
+        Naive (last value) &  8.3 & $+0.0097$ & 0.9706 &  16.3 \\
         GBM         &  8.3 & $-0.0046$ & 1.0226 &  35.0 \\
         ElasticNet  &  4.2 & $-0.0056$ & 1.0175 &  20.9 \\
         Ensemble    &  0.0 & $-0.0077$ & 1.0252 &  30.1 \\
-        XGB\_GPU    &  0.0 & $-0.0252$ & 1.0979 & 202.2 \\
-        DCC\_GARCH  &  0.0 & $-0.0881$ & 1.4433 & 237.3 \\
+        XGBoost    &  0.0 & $-0.0252$ & 1.0979 & 202.2 \\
+        DCC-GARCH  &  0.0 & $-0.0881$ & 1.4433 & 237.3 \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-AR1 and HAR pass the efficiency test at the same rate (70.8\% of experiments),
+AR(1) and HAR pass the efficiency test at the same rate (70.8\% of experiments),
 confirming that both models make near-optimal use of the available information.
 Ridge is the most efficient among the regularised ML models at 45.8\%.
 DCC-GARCH never passes: its average $\bar{\beta} = 1.44$ means that realized
@@ -70,21 +71,21 @@ pair BTC-USD vs S\&P~500 at $w = 30$.
         Model & $\hat{\alpha}$ & $\hat{\beta}$ & $F$ & $p_\text{MZ}$ & Efficient \\
         \midrule
         Ridge       & $+0.0071$ & 0.9903 &   4.76 & 0.009 & No  \\
-        AR1         & $+0.0071$ & 0.9909 &   5.07 & 0.006 & No  \\
+        AR(1)         & $+0.0071$ & 0.9909 &   5.07 & 0.006 & No  \\
         HAR         & $+0.0074$ & 0.9913 &   5.77 & 0.003 & No  \\
-        Naive\_Last & $+0.0114$ & 0.9695 &  16.74 & $<0.001$ & No  \\
+        Naive (last value) & $+0.0114$ & 0.9695 &  16.74 & $<0.001$ & No  \\
         ElasticNet  & $+0.0065$ & 1.0048 &  17.18 & $<0.001$ & No  \\
         Ensemble    & $+0.0086$ & 1.0113 &  39.91 & $<0.001$ & No  \\
         RF          & $+0.0221$ & 0.9951 &  57.04 & $<0.001$ & No  \\
         GBM         & $+0.0226$ & 0.9945 &  62.30 & $<0.001$ & No  \\
-        DCC\_GARCH  & $-0.0886$ & 1.4616 & 261.03 & $<0.001$ & No  \\
-        XGB\_GPU    & $+0.0436$ & 1.0316 & 318.18 & $<0.001$ & No  \\
+        DCC-GARCH  & $-0.0886$ & 1.4616 & 261.03 & $<0.001$ & No  \\
+        XGBoost    & $+0.0436$ & 1.0316 & 318.18 & $<0.001$ & No  \\
         \bottomrule
     \end{tabular}
 \end{table}
 
 At this particular pair and window all models are technically rejected, but the
-performance gradient is steep. Ridge ($F = 4.76$), AR1 ($F = 5.07$), and HAR
+performance gradient is steep. Ridge ($F = 4.76$), AR(1) ($F = 5.07$), and HAR
 ($F = 5.77$) are rejected at the boundary of significance and have coefficients
 very close to $(0, 1)$, indicating near-efficient use of information. The
 DCC-GARCH statistic (261.0) and XGBoost statistic (318.2) stand apart as the
@@ -118,21 +119,21 @@ experiments in which the residuals pass each test at the 5\% level.
         \toprule
         Model & No autocorr (\%) & No ARCH (\%) \\
         \midrule
-        Naive\_Last & 50.0 & 58.3 \\
-        AR1         & 41.7 & 62.5 \\
+        Naive (last value) & 50.0 & 58.3 \\
+        AR(1)         & 41.7 & 62.5 \\
         HAR         & 41.7 & 58.3 \\
         Ridge       & 20.8 & 54.2 \\
         ElasticNet  &  0.0 & 37.5 \\
         Ensemble    &  0.0 & 12.5 \\
         RF          &  0.0 &  0.0 \\
         GBM         &  0.0 &  0.0 \\
-        XGB\_GPU    &  0.0 &  0.0 \\
-        DCC\_GARCH  &  0.0 &  0.0 \\
+        XGBoost    &  0.0 &  0.0 \\
+        DCC-GARCH  &  0.0 &  0.0 \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-The autocorrelation results follow a clear gradient. Naive\_Last and the
+The autocorrelation results follow a clear gradient. Naive (last value) and the
 autoregressive models (AR1, HAR) partly capture the serial structure,
 passing the Ljung-Box test in 42--50\% of experiments. Ridge passes in
 21\% of cases, reflecting the autoregressive signal it picks up from the
@@ -143,7 +144,7 @@ and DCC-GARCH leave strongly significant autocorrelation and
 heteroscedasticity in every single experiment: they never encode the
 target's autoregressive structure, so that structure leaks into the
 residuals, which remain far from white noise. The enormous Q-statistics for
-the tree ensembles (e.g.\ $Q > 1{,}000$ for XGB\_GPU on most pairs) drive the
+the tree ensembles (e.g.\ $Q > 1{,}000$ for XGBoost on most pairs) drive the
 point home: these forecasters simply do not carry the AR structure forward
 from training.
 
@@ -163,7 +164,7 @@ For $h = 1$ and $n > 1{,}000$ the factor $k \approx 1.000$, so the practical
 effect on $p$-values is negligible.
 
 Applied to all 336 DM comparisons (168 ML models vs DCC-GARCH and 168 vs
-Naive\_Last, Table~\ref{tab:dm_hln}) the HLN correction produces zero sign
+Naive (last value), Table~\ref{tab:dm_hln}) the HLN correction produces zero sign
 changes in significance at the 5\% level (average correction factor
 $k = 1.000226$).
 All conclusions regarding the relative ranking of models, and in particular
@@ -188,7 +189,7 @@ therefore robust to the small-sample correction.
         Ensemble   & 27.05 & $<0.001$ & 27.04 & $<0.001$ & *** \\
         RF         & 26.44 & $<0.001$ & 26.43 & $<0.001$ & *** \\
         GBM        & 26.16 & $<0.001$ & 26.16 & $<0.001$ & *** \\
-        XGB\_GPU   & 24.29 & $<0.001$ & 24.28 & $<0.001$ & *** \\
+        XGBoost   & 24.29 & $<0.001$ & 24.28 & $<0.001$ & *** \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -202,7 +203,7 @@ average-RMSE ranking of Table~\ref{tab:model_ranking_summary}, in which AR(1), H
 Ridge are statistically indistinguishable. Second, the Diebold--Mariano test assumes
 non-nested forecasts, whereas every fitted model here includes the lagged target among
 its predictors and therefore nests the persistence baselines. The statistics against
-Naive\_Last, and by extension any test against AR(1), should accordingly be read as
+Naive (last value), and by extension any test against AR(1), should accordingly be read as
 descriptive; the conclusions rest on the comparison the test is designed for, namely the
 fitted models against the non-nested DCC-GARCH benchmark.
 
@@ -230,7 +231,7 @@ The test classes cover the following aspects of the pipeline:
     \item \textbf{Feature Engineering} --- Fisher-$z$ round-trip identity,
           rolling-correlation range, no look-ahead in prediction CSVs.
     \item \textbf{Model Metrics} --- RMSE $>0$, $R^2 \leq 1$, MAE $\leq$ RMSE,
-          all windows and expected models present, AR1 beats DCC-GARCH on average.
+          all windows and expected models present, AR(1) beats DCC-GARCH on average.
     \item \textbf{DM Tests} --- finite DM statistics, $p$-values in $[0,1]$,
           correct sign convention for Ridge vs DCC-GARCH.
     \item \textbf{Signal Metrics} --- balanced accuracy and F1 in $[0,1]$,
