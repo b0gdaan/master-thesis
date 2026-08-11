@@ -78,15 +78,26 @@ excludes `thesis/finthesis_assets/thesis_application.pdf`.
 | no (a fresh clone) | **75 pages**, no fourth title page, builds fine |
 | yes (local print build) | **76 pages**, application page included |
 
-So a build on this machine overwrites `thesis/main.pdf` with the 76-page
-version. The repository is meant to keep the 75-page one, so before committing:
+So on this machine `thesis/main.pdf` is the 76-page print copy, while the
+repository keeps the 75-page one. There is only one PDF on disk; the split is
+handled by git rather than by a second file:
 
 ```bash
-git checkout -- thesis/main.pdf
+git update-index --skip-worktree thesis/main.pdf
 ```
 
-The print-ready copy lives beside it as `thesis/main_print.pdf`, which is
-git-ignored.
+This is already set. Git treats the file as unmodified, so rebuilding never
+puts the application page into a commit, and `git status` stays clean. The
+trade-off is that git will also refuse to update the file — if a `pull` or
+`checkout` ever needs to overwrite `main.pdf`, lift the flag first:
+
+```bash
+git update-index --no-skip-worktree thesis/main.pdf
+```
+
+To publish the 76-page version instead, lift the flag and commit the file
+normally — but note that this puts the application scan into the public
+history permanently.
 
 ## Before printing
 
