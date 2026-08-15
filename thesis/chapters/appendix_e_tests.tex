@@ -50,7 +50,7 @@ together with its average $\alpha$ and $\beta$ coefficients.
 AR(1) and HAR pass the efficiency test at the same rate (70.8\% of experiments),
 confirming that both models make near-optimal use of the available information.
 Ridge is the most efficient among the regularised ML models at 45.8\%.
-DCC-GARCH never passes: its average $\bar{\beta} = 1.44$ means that realized
+DCC-GARCH never passes: its average $\bar{\beta} = 1.44$ means that realised
 correlations swing markedly more than its forecasts do. In the regression
 $y = \alpha + \beta\hat{y}$, a slope above one signals forecasts that are too
 \emph{compressed}: they systematically under-react to the size of the
@@ -134,7 +134,7 @@ experiments in which the residuals pass each test at the 5\% level.
 \end{table}
 
 The autocorrelation results follow a clear gradient. Naive (last value) and the
-autoregressive models (AR1, HAR) partly capture the serial structure,
+autoregressive models (AR(1), HAR) partly capture the serial structure,
 passing the Ljung-Box test in 42--50\% of experiments. Ridge passes in
 21\% of cases, reflecting the autoregressive signal it picks up from the
 lag features. ElasticNet is an odd case: it fails every autocorrelation
@@ -160,13 +160,16 @@ the DM statistic by the correction factor
 \end{equation}
 where $n$ is the number of forecast observations and $h$ the forecast horizon,
 and comparing the result to a $t(n-1)$ distribution.
-For $h = 1$ and $n > 1{,}000$ the factor $k \approx 1.000$, so the practical
-effect on $p$-values is negligible.
+For $h = 1$ the factor simplifies to $k = \sqrt{(n-1)/n}$, which is slightly
+below one and therefore shrinks the statistic; with $n > 1{,}000$ the shrinkage
+is of the order of $10^{-4}$, so the practical effect on $p$-values is
+negligible.
 
 Applied to all 336 DM comparisons (168 ML models vs DCC-GARCH and 168 vs
 Naive (last value), Table~\ref{tab:dm_hln}) the HLN correction produces zero sign
 changes in significance at the 5\% level (average correction factor
-$k = 1.000226$).
+$k = 0.999774$, consistent with the slight reduction of every HLN statistic
+relative to its uncorrected counterpart in Table~\ref{tab:dm_hln}).
 All conclusions regarding the relative ranking of models, and in particular
 the finding that every ML model significantly outperforms DCC-GARCH, are
 therefore robust to the small-sample correction.

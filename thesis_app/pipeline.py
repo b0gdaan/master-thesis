@@ -516,8 +516,9 @@ def refit_sensitivity_analysis(
                linewidth=1.2, label=f"Default ({cfg.get('refit_every', 20)} days)")
     ax.set_xlabel("refit_every (trading days)")
     ax.set_ylabel("OOS RMSE")
+    apply_figure_style()
     ax.set_title(f"Refit frequency sensitivity — {rep_base} vs {rep_other} | w={rep_window}")
-    ax.legend(ncol=2, fontsize=8)
+    ax.legend(ncol=2)
     fig.tight_layout()
     fig.savefig(os.path.join(paths.figures, "refit_sensitivity.png"), dpi=120)
     plt.close(fig)
@@ -807,14 +808,38 @@ def diebold_mariano(
     }
 
 
+def apply_figure_style() -> None:
+    """Set type sizes that stay readable once a figure is scaled into the thesis.
+
+    Figures are generated 12-13 inches wide and then included at roughly
+    0.9\\textwidth, i.e. reduced by a factor of about two. At matplotlib's
+    defaults that puts tick labels near 5pt on the printed page, which is
+    why the first print run came back unreadable. The sizes below survive
+    the reduction.
+    """
+    plt.rcParams.update(
+        {
+            "font.size": 14,
+            "axes.titlesize": 16,
+            "axes.labelsize": 14,
+            "xtick.labelsize": 13,
+            "ytick.labelsize": 13,
+            "legend.fontsize": 13,
+            "figure.titlesize": 17,
+            "savefig.dpi": 150,
+        }
+    )
+
+
 def plot_series(out_path: str, title: str, series_dict: Dict[str, pd.Series], figsize=(12, 5)) -> None:
+    apply_figure_style()
     fig, ax = plt.subplots(figsize=figsize)
     for label, series in series_dict.items():
         ax.plot(series.index, series.values, label=label, linewidth=1)
     ax.set_title(title)
     ax.legend(ncol=2)
     fig.tight_layout()
-    fig.savefig(out_path, dpi=120)
+    fig.savefig(out_path, dpi=150)
     plt.close(fig)
 
 
@@ -826,6 +851,7 @@ def plot_forecast(
     top_models: Optional[List[str]] = None,
     top_k: int = 4,
 ) -> None:
+    apply_figure_style()
     fig, ax = plt.subplots(figsize=(13, 5))
     ax.plot(y_true.index, y_true.values, label="Actual", linewidth=1.8, color="black")
     cols = top_models if top_models else [c for c in pred_df.columns if pred_df[c].notna().sum() > 50][:top_k]
@@ -845,9 +871,9 @@ def describe_dataset(prices: pd.DataFrame, returns: pd.DataFrame, paths: Paths, 
         normed = prices[column] / prices[column].iloc[0]
         ax.plot(prices.index, normed, label=column, linewidth=1)
     ax.set_title("Normalized prices (Yahoo Finance, adjusted close)")
-    ax.legend(loc="best", ncol=2, fontsize=9)
+    ax.legend(loc="best", ncol=2)
     fig.tight_layout()
-    fig.savefig(os.path.join(paths.figures, "dataset_prices.png"), dpi=120)
+    fig.savefig(os.path.join(paths.figures, "dataset_prices.png"), dpi=150)
     plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(13, 5))
@@ -855,22 +881,22 @@ def describe_dataset(prices: pd.DataFrame, returns: pd.DataFrame, paths: Paths, 
     for column in roll.columns:
         ax.plot(roll.index, roll[column], label=column, linewidth=1)
     ax.set_title("30-day rolling volatility of log-returns")
-    ax.legend(loc="best", ncol=2, fontsize=9)
+    ax.legend(loc="best", ncol=2)
     fig.tight_layout()
-    fig.savefig(os.path.join(paths.figures, "dataset_volatility.png"), dpi=120)
+    fig.savefig(os.path.join(paths.figures, "dataset_volatility.png"), dpi=150)
     plt.close(fig)
 
     corr = returns.corr()
     fig, ax = plt.subplots(figsize=(9, 7))
     im = ax.imshow(corr.values, vmin=-1, vmax=1, cmap="RdBu_r")
     ax.set_xticks(range(len(corr.columns)))
-    ax.set_xticklabels(corr.columns, rotation=45, ha="right", fontsize=9)
+    ax.set_xticklabels(corr.columns, rotation=45, ha="right")
     ax.set_yticks(range(len(corr.index)))
-    ax.set_yticklabels(corr.index, fontsize=9)
+    ax.set_yticklabels(corr.index)
     ax.set_title("Full-sample correlation matrix (log-returns)")
     plt.colorbar(im, ax=ax)
     plt.tight_layout()
-    fig.savefig(os.path.join(paths.figures, "dataset_corr_heatmap.png"), dpi=120)
+    fig.savefig(os.path.join(paths.figures, "dataset_corr_heatmap.png"), dpi=150)
     plt.close(fig)
 
     n_assets = len(returns.columns)
@@ -881,13 +907,13 @@ def describe_dataset(prices: pd.DataFrame, returns: pd.DataFrame, paths: Paths, 
     for i, column in enumerate(returns.columns):
         ax = axes[i // n_cols, i % n_cols]
         ax.hist(returns[column].dropna(), bins=80, edgecolor="none", color="#2077b4", alpha=0.8)
-        ax.set_title(column, fontsize=9)
+        ax.set_title(column)
         ax.set_xlabel("log-return")
     for j in range(n_assets, n_rows * n_cols):
         axes[j // n_cols, j % n_cols].axis("off")
-    plt.suptitle("Return distributions", fontsize=11)
+    plt.suptitle("Return distributions")
     plt.tight_layout()
-    plt.savefig(os.path.join(paths.figures, "dataset_return_dist.png"), dpi=120)
+    plt.savefig(os.path.join(paths.figures, "dataset_return_dist.png"), dpi=150)
     plt.close()
 
     summary = {

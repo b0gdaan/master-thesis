@@ -12,12 +12,18 @@ import seaborn as sns
 
 
 def apply_thesis_plot_style() -> None:
-    sns.set_theme(style="whitegrid", context="talk")
+    # Figures are drawn 12 in wide and included at about 0.95\textwidth, i.e.
+    # reduced by roughly half, so type has to be set larger than it looks on
+    # screen to stay legible on paper.
+    sns.set_theme(style="whitegrid", context="talk", font_scale=1.15)
     plt.rcParams.update(
         {
             "figure.figsize": (12, 6),
-            "axes.titlesize": 16,
-            "axes.labelsize": 12,
+            "axes.titlesize": 19,
+            "axes.labelsize": 16,
+            "xtick.labelsize": 15,
+            "ytick.labelsize": 15,
+            "legend.fontsize": 15,
             "axes.titleweight": "bold",
             "axes.spines.top": False,
             "axes.spines.right": False,

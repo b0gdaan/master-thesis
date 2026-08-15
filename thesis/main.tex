@@ -79,8 +79,21 @@
 \abstractsr{У овом мастер раду разматра се проблем прогнозирања променљивих међутржишних зависности између криптовалута и традиционалних финансијских актива. У фокусу је Bitcoin као основна криптовалута, док скуп традиционалних актива обухвата акцијске индексе, фондове везане за племените метале и индекс америчког долара, уз Ethereum као додатну криптовалуту за поређење. Развијен је репродуцибилан рачунарски поступак који покрива преузимање података, израчунавање логаритамских приноса, формирање временски променљивих корелационих циљева, конструисање особина, ванузорачну процену више модела машинског учења и поређење са DCC-GARCH економетријским репером. Поред основног задатка прогнозирања зависности, уведен је и практични слој за формирање раног сигнала ризика који треба да упозори инвеститора на стресне дане на тржишту традиционалних актива. Резултати показују да је временски променљива међутржишна зависност ванузорачно предвидива, при чему Ridge регресија, AR(1) и HAR модел формирају практично неразлучиву групу на врху рангирања; свако од њих користи аутокорелациону структуру циља на другачији начин, а Ridge постиже најнижи просечни RMSE од 0.0656. Сви остали модели значајно надмашују DCC-GARCH репер. Практични сигнални слој даје умерене резултате и има смисла пре свега као додатни филтар ризика, а не као самосталан механизам за свакодневно одређивање смера тржишта.}
 \keywordssr{криптовалуте, Bitcoin, међутржишне зависности, корелација, машинско учење, DCC-GARCH, управљање ризиком}
 
-\abstracten{This thesis examines whether the dynamics of cryptocurrency markets contain usable information about how their dependence on conventional assets evolves over time, and whether such information can be converted into an early-warning signal for investors. Bitcoin is used as the base cryptocurrency and Ethereum as a second cryptocurrency reference, while the conventional universe comprises equity indices, precious-metal ETFs, and the U.S. dollar index. A reproducible machine-learning pipeline performs data acquisition, return construction, computation of rolling-correlation targets, feature engineering, and walk-forward evaluation against a leakage-safe DCC-GARCH benchmark. The results indicate that intermarket dependency is forecastable out of sample for every asset pair and window length, although almost all of the predictability comes from the persistence of the dependency series itself. Ridge regression, AR(1), and the HAR model finish at the top with almost identical accuracy, since all three exploit that persistence; Ridge attains the lowest average RMSE, 0.0656. Every other model outperforms the DCC-GARCH benchmark by a clear margin. A second-stage investor signal, constructed from cryptocurrency features and the dependency forecasts, performs modestly and mostly above chance. It can add information to an existing risk-management process, but it is too weak to time the market on its own.}
+\abstracten{This thesis examines whether the dynamics of cryptocurrency markets contain useful information about how their dependence on conventional assets changes over time, and whether such information can be turned into an early warning signal for investors. Bitcoin is used as the base cryptocurrency and Ethereum as the second reference cryptocurrency, while the conventional universe includes stock market indices, precious-metal ETFs, and the U.S. dollar index. A reproducible machine-learning pipeline performs data collection, return construction, computation of rolling-correlation targets, feature engineering, and walk-forward evaluation against a leakage-safe DCC-GARCH benchmark. The results show that intermarket dependency can be predicted out of sample for each asset pair and window length, although almost all predictability depends on the persistence of the dependency series itself. Ridge regression, AR(1), and the HAR model end up at the top with almost the same accuracy, as all three exploit that persistence; Ridge achieves the lowest average RMSE, 0.0656. All other models outperform the DCC-GARCH benchmark by a clear margin. The second-stage investor signal, based on cryptocurrency features and the dependency forecasts, performs modestly and mostly above chance. It can add information to an existing risk-management process, but is too weak to determine the timing of the market on its own.}
 \keywordsen{cryptocurrencies, Bitcoin, intermarket dependency, correlation, machine learning, DCC-GARCH, forecasting, risk management}
+
+% Редослед чланова комисије на другој насловној страни мора да прати редослед
+% из Одлуке IV-07-277/6 (четврта насловна страна), где је ментор наведен последњи.
+\makeatletter
+\renewcommand\@enumeratecommittee{%
+    \gdef\nextcommitteemember{\item}%
+    \gdef\missingcommitteemember{\hrulefill}%
+    \begin{enumerate}[left=0pt]
+        \@committeemembers
+        \nextcommitteemember \@advisor ~- ментор
+    \end{enumerate}%
+}
+\makeatother
 
 \begin{document}
 
@@ -104,6 +117,19 @@
 \input{chapters/06_zakljucak}
 
 \appendix
+% Прилози морају бити јасно означени као прилог (appendix), а не као поглавља:
+% наслов сваког прилога добија реч "Appendix" испред слова, а у садржају се
+% прилози одвајају засебним међунасловом.
+% \@seccntformat се разрешава и унутар \edef-контекста (садржај, живо заглавље),
+% па мора да остане раскривајућа наредба: префикс се бира преко \csname, а за
+% нивое за које префикс није дефинисан \csname даје \relax, тј. ништа.
+\makeatletter
+\expandafter\def\csname fin@appprefix@section\endcsname{Appendix~}
+\renewcommand{\@seccntformat}[1]{%
+    \csname fin@appprefix@#1\endcsname\csname the#1\endcsname\quad}
+\makeatother
+\addtocontents{toc}{\protect\vspace{6pt}\protect\noindent\textbf{Appendices}\protect\par}
+
 \input{chapters/appendix_a_dataset}
 \input{chapters/appendix_b_forecasts}
 \input{chapters/appendix_c_signals}
@@ -111,14 +137,6 @@
 \input{chapters/appendix_e_tests}
 \input{chapters/appendix_f_market_events}
 
-\printbibliography
-
-% ── Objavljeni radovi ─────────────────────────────────────────────────────────
-{\selectlanguage{serbianc}
-\section*{Објављени радови}
-\addcontentsline{toc}{section}{Објављени радови}
-
-Кандидат није објавио радове током израде мастер рада.
-}
+\printbibliography[heading=bibintoc]
 
 \end{document}

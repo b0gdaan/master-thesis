@@ -1,6 +1,7 @@
 \section{Reproducibility and Code Structure}
+\label{app:reproducibility}
 
-\subsection{Project organization}
+\subsection{Project organisation}
 
 The computational side of the thesis is organised as a reproducible research project rather than a collection of ad hoc scripts. The main directories are laid out as follows:
 
@@ -58,7 +59,7 @@ Eight Jupyter notebooks in \texttt{notebooks/} supplement the main pipeline with
 
     \item \textbf{\texttt{03\_Model\_Comparison.ipynb}} --- Model-ranking summary. Generates the average RMSE comparison bar chart, the $R^2$ comparison across window lengths, and the improvement-over-naive baseline figure across all asset pairs. These figures provide a visual complement to Table~\ref{tab:model_ranking_summary} in Chapter~4.
 
-    \item \textbf{\texttt{04\_DM\_Tests\_Visuals.ipynb}} --- Diebold--Mariano test visualization. Produces the DM heatmap comparing the best machine-learning model against DCC-GARCH (Figure~\ref{fig:dm_heatmap}) and the representative out-of-sample forecast panel for the Bitcoin--S\&P~500 pair (Figure~\ref{fig:sp500_forecast}).
+    \item \textbf{\texttt{04\_DM\_Tests\_Visuals.ipynb}} --- Diebold--Mariano test visualisation. Produces the DM heatmap comparing the best machine-learning model against DCC-GARCH (Figure~\ref{fig:dm_heatmap}) and the representative out-of-sample forecast panel for the Bitcoin--S\&P~500 pair (Figure~\ref{fig:sp500_forecast}).
 
     \item \textbf{\texttt{05\_XGB\_vs\_DCC.ipynb}} --- Error-profile diagnostics. Generates the rolling RMSE time series (Figure~\ref{fig:rolling_rmse}), forecast-error scatter plots, and error-distribution comparison histograms for the representative experiment.
 
@@ -113,7 +114,7 @@ At a high level, the execution flow can be summarised as follows:
 \begin{enumerate}
     \item Load configuration and path settings.
     \item Load or refresh raw price data from Yahoo Finance.
-    \item Compute synchronized log returns.
+    \item Compute synchronised log returns.
     \item Generate rolling-correlation targets for each asset pair and window.
     \item Build lagged and volatility-based feature matrices.
     \item Fit all models in walk-forward mode and save predictions.
@@ -160,7 +161,7 @@ While tightening the project up, several implementation issues were fixed to bri
     \item Feature scaling was added for the regularised linear models.
     \item The XGBoost block was made robust to GPU failure through CPU fallback.
     \item The investor signal layer was integrated into the main pipeline and exported to dedicated tables and figures.
-    \item Notebook imports and notebook-specific plotting logic were stabilized for presentation and interpretation.
+    \item Notebook imports and notebook-specific plotting logic were stabilised for presentation and interpretation.
 \end{itemize}
 
 These fixes matter because a thesis is judged not only on its idea but on whether the implementation behind it is reliable, reproducible, and internally coherent.

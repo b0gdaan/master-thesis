@@ -3,51 +3,51 @@
 
 \subsection{The core finding}
 
-The rolling intermarket dependency between Bitcoin and conventional assets is forecastable out of sample. The result is no artefact of in-sample overfitting: the signal survives strict temporal-ordering constraints across all six pairs and four window lengths. The forecastability is almost entirely driven by persistence, since the rolling correlation exhibits strong serial dependence, with its current value largely determined by its recent past.
+The rolling intermarket dependency between Bitcoin and conventional assets can be predicted out of sample. The result is not an artefact of in-sample overfitting: the signal withstands strict temporal-ordering constraints for all six pairs and four window lengths. Predictability depends almost entirely on persistence, since the rolling correlation shows strong serial dependence, and its current value is largely determined by its recent past.
 
-The two observations fit together: the dependency is predictable, and it is predictable mainly because it is persistent.
+These two observations are consistent with each other: the dependency is predictable, and it is predictable mainly because it is persistent.
 
 \subsection{Why simple models dominate}
 
-That Ridge, AR(1), and HAR finish practically level at the top of the ranking says something about the data-generating process. A rolling Pearson correlation computed over $w$ days shares $w-1$ observations with the previous window, which mechanically creates strong autocorrelation. After Fisher transformation, the first-order lag captures the large majority of the forecastable variance. Under these conditions any reasonable model relies heavily on the most recent value, and a model that does little else is difficult to outperform.
+The fact that Ridge, AR(1), and HAR finish at almost the same level at the top of the ranking says something about the data-generating process. A rolling Pearson correlation computed over $w$ days shares $w-1$ observations with the previous window, which mechanically creates strong autocorrelation. After the Fisher transformation, the first-order lag captures the vast majority of the forecastable variance. In these circumstances any reasonable model relies heavily on the most recent value, and a model that does little else is difficult to surpass.
 
-That Ridge exceeds AR(1) by only 0.0003 RMSE (0.0656 versus 0.0659) does not constitute a decisive advantage for machine learning; it reflects the fact that regularised linear regression, when properly scaled, reconstructs the same autoregressive signal through a slightly richer feature set. HAR matches AR(1) almost exactly, using three temporal scales (daily, weekly, and monthly) that align with the overlapping-window memory structure of the target. The convergence of three structurally different methods to practically the same accuracy indicates that the forecasting problem has a nearly linear autoregressive structure and that none of these methods extracts materially different information.
+That Ridge exceeds AR(1) by only 0.0003 RMSE (0.0656 versus 0.0659) is not a crucial advantage of machine learning; it reflects the fact that regularised linear regression, when scaled correctly, restores the same autoregressive signal with a slightly richer feature set. HAR corresponds almost exactly to AR(1), using three time scales (daily, weekly, and monthly) that match the overlapping-window memory structure of the target. The convergence of three structurally different methods to almost the same accuracy indicates that the prediction problem has an almost linear autoregressive structure, and that none of these methods extracts significantly different information.
 
-The pattern is well documented in financial forecasting \cite{welch2008}: signal-to-noise ratios in financial markets are low, and the incremental information in auxiliary features is often dominated by the autoregressive component. In this study, that pattern became apparent only after considerable hyperparameter search on tree-based configurations had been carried out.
+The pattern is well documented in financial forecasting \cite{welch2008}: signal-to-noise ratios in financial markets are low, and the additional information in auxiliary features is often dominated by the autoregressive component. In this study the pattern became apparent only after a long hyperparameter search over tree configurations had been carried out.
 
-The much weaker performance of the tree-based methods is still useful evidence. It is diagnostic: the fact that well-tuned XGBoost and Random Forest models cannot match Ridge or AR(1) indicates that the dependency process contains little exploitable nonlinear structure at the one-step horizon, at least within the feature set used here.
+The much lower performance of the tree methods is still useful evidence. It is diagnostic: the fact that well-configured XGBoost and Random Forest models cannot match Ridge or AR(1) indicates that the dependency process contains little exploitable nonlinear structure at the one-step horizon, at least within the scope of the feature set used here.
 
-\subsection{ML versus DCC-GARCH: a fairer comparison}
+\subsection{ML compared with DCC-GARCH: a fairer comparison}
 
-Ridge and ElasticNet consistently outperform DCC-GARCH, and the gap is large: average RMSE of 0.066 for Ridge versus 0.214 for DCC-GARCH, a factor of more than three. The DM statistics are all positive, with $p$-values at the numerical floor of double precision.
+Ridge and ElasticNet consistently outperform DCC-GARCH, and the gap is large: an average RMSE of 0.066 for Ridge compared with 0.214 for DCC-GARCH, which is more than a factor of three. All DM statistics are positive, with $p$-values at the numerical minimum of double precision.
 
-The appropriate interpretation is not that DCC-GARCH is a poor model. It is a theoretically coherent model of conditional covariance whose output is an instantaneous conditional correlation, while the target here is a smoothed rolling average. Projecting one onto the other introduces a systematic lag that the model was never intended to eliminate. The machine-learning models, trained directly on the Fisher-transformed rolling target, do not face this mismatch, because they are optimised for the relevant objective from the outset. A second, separate handicap is the data alignment. Because the conventional series are forward-filled onto Bitcoin's seven-day calendar, the GARCH components of the benchmark are estimated on return series in which roughly 30\% of observations are forced weekend and holiday zeros (Appendix~A). This degrades the volatility estimates that feed the conditional correlation and further widens the gap to the machine-learning models. Re-estimating DCC-GARCH on common trading days only would isolate this effect and is left for future work; the weekend-robustness check in Appendix~A nonetheless shows that the persistence of the target itself (the property the ML models exploit) is effectively unchanged by the calendar convention.
+The correct interpretation is not that DCC-GARCH is a bad model. It is a theoretically coherent model of conditional covariance whose output is an instantaneous conditional correlation, while the target here is a smoothed rolling average. Projecting one onto the other introduces a systematic lag that the model was never intended to eliminate. The machine-learning models, trained directly on the Fisher-transformed rolling target, do not run into this mismatch, because they are optimised for the appropriate objective from the very beginning. The second, separate obstacle is data alignment. Since the conventional series are forward-filled onto Bitcoin's seven-day calendar, the GARCH components of the benchmark are estimated on return series in which approximately 30\% of observations are forced weekend and holiday zeros (Appendix~A). This worsens the volatility estimates that feed the conditional correlation and further widens the gap with the machine-learning models. Re-estimating DCC-GARCH on common trading days only would isolate this effect and is reserved for future work; the weekend-robustness check in Appendix~A, however, shows that the persistence of the target itself, the property the ML models exploit, is effectively unchanged by the calendar convention.
 
-This explanation of the performance gap should be stated openly; presenting the gap as machine learning beating an econometric model on equal terms would overstate the result.
+This explanation of the performance gap should be stated openly; representing the gap as machine learning outperforming an econometric model on equal terms would overstate the result.
 
-\subsection{Strengths and limits of the investor signal}
+\subsection{Strengths and limitations of the investor signal}
 
-The signal layer produces results that are moderate in every dimension: AUC of roughly 0.48 to 0.56, balanced accuracy from below 0.50 to about 0.53 depending on the pair and window, and, for the logistic model, exit rates between 16 and 35\%. No single one of these figures is strong in isolation. Together they describe a signal that, on average, classifies stress regimes slightly better than chance, activates at a reasonable frequency, and carries more information about equity stress than about precious-metal or dollar-index stress.
+The signal layer gives moderate results in every dimension: AUC of approximately 0.48 to 0.56, balanced accuracy from below 0.50 to about 0.53 depending on the pair and window, and, for the logistic model, exit rates from 16 to 35\%. None of these numbers is strong in itself. Together they describe a signal that, on average, classifies stress regimes somewhat better than chance, activates with a reasonable frequency, and carries more information about equity stress than about precious-metal or dollar-index stress.
 
-The equity result is economically interpretable. Bitcoin and the S\&P~500 share exposure to global risk appetite, funding liquidity, and sentiment cycles. When the dependency between them is rising or shifting, it often reflects broader market-regime transitions that also elevate equity downside risk. The crypto feature set is reasonably well-specified for that channel.
+The equity result is amenable to economic interpretation. Bitcoin and the S\&P~500 share exposure to global risk appetite, funding liquidity, and sentiment cycles. When the dependency between them is rising or shifting, this often reflects broader market-regime transitions that also increase equity downside risk. The cryptocurrency feature set is reasonably well specified for that channel.
 
-Gold and silver respond to a wider set of forces (real rates, inflation expectations, geopolitical premia, safe-haven demand) that Bitcoin dynamics represent poorly. The attenuated signal for those instruments therefore fits the same story: the feature set captures some drivers of market stress but not all of them.
+Gold and silver respond to a broader set of factors (real rates, inflation expectations, geopolitical risk premia, and safe-haven demand) that Bitcoin dynamics reflect poorly. The weakened signal for these instruments therefore corresponds to the same story: the feature set captures some drivers of market stress, but not all of them.
 
-In practice the signal belongs in the toolbox as an auxiliary risk indicator; used as a standalone alarm it would disappoint. Its natural place is alongside fundamental valuation, macro analysis, and position-sizing rules, raising the bar for accepting risk when the dependency-based probability of a stress regime is elevated.
+In practice the signal belongs in the toolbox as an auxiliary risk indicator; used as a standalone alarm it would disappoint. Its natural place is next to fundamental valuation, macro analysis, and position-sizing rules that raise the bar for accepting risk when the dependency-based probability of a stress regime is elevated.
 
 \subsection{Methodological choices that mattered}
 
-A few design decisions turned out to be important. The most consequential was running \textbf{DCC-GARCH through the same expanding-window walk-forward} as every other model: a full-sample DCC fit would have given the benchmark access to future data and invalidated the comparison. The \textbf{Fisher transformation} mattered because the bounded Pearson correlation distorts errors near $\pm 1$; the transformed target is closer to Gaussian, and RMSE becomes a sensible loss across the whole range. Reporting \textbf{all four window lengths} kept the study honest about how strongly predictability depends on the autocorrelation structure, which the progression from $w=14$ to $w=90$ makes visible. Finally, relying on \textbf{several metrics}, with the DM test on top of the averages, revealed that DCC-GARCH is not just worse on average; it is worse for every pair, at every window, with statistical significance.
+Several design decisions were important. The most important was running \textbf{DCC-GARCH through the same expanding-window walk-forward} as every other model: a full-sample DCC fit would have given the benchmark access to future data and made the comparison invalid. The \textbf{Fisher transformation} mattered because the bounded Pearson correlation distorts errors close to $\pm 1$; the transformed target is closer to Gaussian, and RMSE becomes a sensible loss over the entire range. Reporting \textbf{all four window lengths} allowed the study to show honestly how much predictability depends on the autocorrelation structure, which the progression from $w=14$ to $w=90$ makes visible. Finally, relying on \textbf{several metrics}, with the DM test on top of the averages, showed that DCC-GARCH is not just worse on average; it is worse for every pair, at every window, with statistical significance.
 
-\subsection{Claims this thesis does not make}
+\subsection{Statements this thesis does not make}
 
 Several claims are explicitly not being made.
 
-Bitcoin does not predict equity returns. It predicts (partially) the evolving \emph{dependency} between Bitcoin and equities, which is a weaker and more precise statement. The signal layer estimates the probability of elevated downside risk for conventional assets; it says nothing about direction, size, or timing within a flagged period.
+Bitcoin does not predict equity returns. It predicts, partially, the evolving \emph{dependency} between Bitcoin and equities, which is a weaker and more precise statement. The signal layer estimates the probability of increased downside risk for conventional assets; it states nothing about direction, size, or timing within a flagged period.
 
-The results are based on one-step-ahead forecasting. Multi-step performance could differ substantially, especially for machine learning where the autoregressive advantage weakens as the horizon extends. This is an open question.
+The results are based on predicting one step ahead. Multi-step performance may differ significantly, especially for machine learning, where the autoregressive advantage weakens as the horizon expands. This is an open question.
 
-Finally, no transaction-cost analysis was done. Whether the signal produces risk-adjusted gains in a real portfolio after costs and turnover constraints is unknown. That would require a separate study with explicit portfolio construction assumptions.
+Finally, no transaction-cost analysis was performed. Whether the signal produces risk-adjusted gains in a real portfolio after costs and turnover constraints is unknown. That would require a separate study with explicit portfolio-construction assumptions.
 
 \subsection{Iterative model development: what changed across versions}
 \label{subsec:iterations}
@@ -66,7 +66,7 @@ Hyperparameter tuning was ad hoc: Ridge \texttt{alpha}~$= 1.0$, ElasticNet \text
 XGBoost with 1000 estimators and learning rate 0.05.
 No feature scaling was applied to linear models.
 The best OOS RMSE for BTC-USD vs S\&P~500 at $w = 30$ was Ridge at 0.0897,
-with AR1 performing comparably.
+with AR(1) performing comparably.
 
 \paragraph{Version 2 (November 2025): DCC-GARCH and signal layer.}
 The second major milestone introduced the DCC-GARCH econometric benchmark via a
@@ -98,7 +98,7 @@ Version~1--3 plateau:
     \item \textbf{HAR model added.}
           The Heterogeneous AutoRegressive (HAR) model
           \cite{corsi2009har}
-          was introduced as a theoretically grounded alternative to AR1.
+          was introduced as a theoretically grounded alternative to AR(1).
           HAR uses three temporal scales simultaneously, fitted on the Fisher-$z$
           target exactly as in Eq.~(7):
           $\hat{z}_{t+1} = \phi_0 + \phi_d\,z_t + \phi_w\,\bar{z}^{(5)}_t + \phi_m\,\bar{z}^{(22)}_t + \varepsilon_{t+1}$,
@@ -112,7 +112,7 @@ Version~1--3 plateau:
           Eq.~(8)) was reduced from \texttt{alpha}~$= 1.0$ to \texttt{alpha}~$= 0.5$
           and an explicit \texttt{StandardScaler} was added.
           The combined effect was dramatic: Ridge RMSE at BTC-USD vs S\&P~500 $w = 30$
-          improved from 0.0897 (Version~1) to 0.0651, nearly matching AR1.
+          improved from 0.0897 (Version~1) to 0.0651, nearly matching AR(1).
           The cross-validated optimum actually sits even lower (around
           \texttt{alpha}~$= 0.001$; see Figure~\ref{fig:app_ridge_path}), but the CV
           curve is essentially flat across this range, so the slightly firmer
@@ -145,7 +145,7 @@ volatility ratios, momentum, or return squares is captured well by a regularised
 model but does not add exploitable nonlinearity for gradient-boosted trees.
 
 The practical implication for future work is that \emph{better features} are unlikely to
-close the remaining gap between AR1 and machine learning on this task.
+close the remaining gap between AR(1) and machine learning on this task.
 Improvements would more plausibly come from a fundamentally different modelling approach:
 multi-step horizons, high-frequency data, or joint modelling of multiple correlation pairs
 simultaneously.

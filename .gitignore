@@ -34,9 +34,10 @@ out/
 # git will not descend into an excluded directory, so a negation inside one
 # would never take effect.
 outputs/tables/*
-# The thesis \input{}s this table directly in Appendix A; without it a fresh
-# clone cannot compile, so it is tracked even though it is generated.
+# The thesis \input{}s these tables directly; without them a fresh clone
+# cannot compile, so they are tracked even though they are generated.
 !outputs/tables/data_quality_table.tex
+!outputs/tables/feature_ablation_table.tex
 
 # Figures are kept for README preview
 # outputs/figures/ is intentionally tracked

@@ -44,13 +44,13 @@ The Dynamic Conditional Correlation GARCH model, introduced by \textcite{engle20
 \end{equation}
 where $D_t = \operatorname{diag}(h_{1,t}^{1/2}, h_{2,t}^{1/2})$ is a diagonal matrix of conditional standard deviations and $R_t$ is the time-varying conditional correlation matrix. Each conditional variance $h_{k,t}$ follows a univariate GARCH(1,1) process,
 \begin{equation}
-    h_{k,t} = \omega_k + \alpha_k \varepsilon_{k,t-1}^{2} + \beta_k h_{k,t-1},
+    h_{k,t} = \omega_k + \alpha_k r_{k,t-1}^{2} + \beta_k h_{k,t-1},
 \end{equation}
-where $\varepsilon_{k,t} = r_{k,t}/h_{k,t}^{1/2}$ is the standardized residual. The standardized residuals $\tilde{\varepsilon}_t = D_t^{-1} r_t$ are then used to update the pseudo-correlation matrix $Q_t$ via
+with $\omega_k > 0$, $\alpha_k, \beta_k \geq 0$ and $\alpha_k + \beta_k < 1$ for covariance stationarity. The standardised residuals $\tilde{\varepsilon}_t = D_t^{-1} r_t$, which have unit conditional variance by construction, are then used to update the pseudo-correlation matrix $Q_t$ via
 \begin{equation}
     Q_t = (1 - a - b)\bar{Q} + a\,\tilde{\varepsilon}_{t-1}\tilde{\varepsilon}_{t-1}^{\top} + b\, Q_{t-1},
 \end{equation}
-where $\bar{Q}$ is the unconditional covariance of standardized residuals, and the scalar parameters $a \geq 0$, $b \geq 0$, $a + b < 1$ govern the speed of mean reversion and the persistence of conditional correlation. The conditional correlation matrix is recovered as
+where $\bar{Q}$ is the unconditional covariance of standardised residuals, and the scalar parameters $a \geq 0$, $b \geq 0$, $a + b < 1$ govern the speed of mean reversion and the persistence of conditional correlation. The conditional correlation matrix is recovered as
 \begin{equation}
     R_t = \operatorname{diag}(Q_t)^{-1/2}\, Q_t\, \operatorname{diag}(Q_t)^{-1/2}.
 \end{equation}
@@ -70,7 +70,7 @@ The Heterogeneous Autoregressive (HAR) model, introduced by \textcite{corsi2009h
 \end{equation}
 where $\bar{z}_{t-k:t-1}$ is the arithmetic mean of $z$ over the preceding $k$ periods. The model is particularly well suited to rolling-correlation targets, which already carry a moving-average smoothing from their overlapping windows, the structure HAR is designed to exploit \cite{andersen2003realized}. In this implementation, HAR is a restricted OLS on three regressors, the latest value (daily), the 5-day mean (weekly), and the 22-day mean (monthly), evaluated under the same walk-forward protocol as the other models.
 
-\subsubsection{Regularized linear models}
+\subsubsection{Regularised linear models}
 
 Regularised linear models, including Ridge regression and Elastic Net, represent strong baselines in structured tabular forecasting settings. Ridge regression imposes an $\ell_2$ penalty on the coefficient vector, shrinking estimates toward zero to reduce estimation variance without introducing sparsity. Elastic Net combines $\ell_1$ and $\ell_2$ regularisation:
 \begin{equation}
@@ -87,7 +87,7 @@ Despite their linearity, these models often perform competitively on smooth, per
 
 Random Forests construct an ensemble of decision trees, each trained on a bootstrapped subsample and a random subset of features, and aggregate their predictions to reduce variance and improve generalisation \cite{breiman2001}. Gradient Boosting Machines instead build trees sequentially, with each new tree fitted to the pseudo-residuals of the current ensemble \cite{friedman2001}. XGBoost extends this boosting framework with second-order gradient approximations, $\ell_1$ and $\ell_2$ regularisation terms on tree structure, and computational optimisations that facilitate large-scale application \cite{chen2016}.
 
-Tree ensembles are natural candidates because the relationship between crypto features and intermarket dependence may be nonlinear and rich in interactions. The information that Bitcoin's realized volatility carries about future equity dependence, for example, may depend on whether the correlation is already high. Tree-based methods can detect and exploit such conditional patterns automatically, without the interactions being specified in advance.
+Tree ensembles are natural candidates because the relationship between crypto features and intermarket dependence may be nonlinear and rich in interactions. The information that Bitcoin's realised volatility carries about future equity dependence, for example, may depend on whether the correlation is already high. Tree-based methods can detect and exploit such conditional patterns automatically, without the interactions being specified in advance.
 
 None of this guarantees that tree-based methods will be effective for one-step-ahead forecasts of a highly persistent target. When the target is governed almost entirely by its most recent value, the additional flexibility may contribute little predictive signal while incurring a substantial variance penalty. This trade-off is one of the main reasons every model here goes through the same walk-forward comparison and none is judged by a single summary statistic.
 
@@ -105,9 +105,9 @@ Ranking models by average out-of-sample error only goes so far: it says nothing 
 
 Let $e_{1,t}$ and $e_{2,t}$ denote the forecast errors of models 1 and 2 at time $t$, and let $d_t = g(e_{1,t}) - g(e_{2,t})$ denote the loss differential under a loss function $g(\cdot)$ (typically squared or absolute error). The DM test statistic is
 \begin{equation}
-    \mathrm{DM} = \frac{\bar{d}}{\sqrt{\hat{V}(\bar{d})\,/\, T}} \xrightarrow{d} \mathcal{N}(0,1),
+    \mathrm{DM} = \frac{\bar{d}}{\sqrt{\hat{V}(d)\,/\, T}} \xrightarrow{d} \mathcal{N}(0,1),
 \end{equation}
-where $\bar{d} = T^{-1}\sum_{t=1}^{T} d_t$ is the mean loss differential, $\hat{V}(\bar{d})$ is a heteroskedasticity- and autocorrelation-consistent (HAC) variance estimator, and $T$ is the number of evaluation periods. Under the null of equal predictive accuracy, the statistic is asymptotically standard normal.
+where $\bar{d} = T^{-1}\sum_{t=1}^{T} d_t$ is the mean loss differential, $\hat{V}(d)$ is a heteroskedasticity- and autocorrelation-consistent (HAC) estimator of the long-run variance of the loss-differential series, and $T$ is the number of evaluation periods; the ratio $\hat{V}(d)/T$ is therefore the estimated variance of $\bar{d}$. Under the null of equal predictive accuracy, the statistic is asymptotically standard normal.
 
 The DM test serves two purposes here. First, it assesses whether the best machine-learning configuration genuinely outperforms the leakage-safe DCC-GARCH benchmark. Second, it assesses whether any improvement over a plain autoregression or naive persistence baseline survives once sampling noise is taken into account. The second comparison matters more: if a model cannot significantly outperform AR(1), then most of the forecastability sits in the target's own persistence, and the cross-asset features contribute little.
 
@@ -121,6 +121,6 @@ Keeping the two stages separate makes the design more transparent. Lower forecas
 
 \subsection{Positioning of the present thesis}
 
-The thesis lies at the intersection of financial econometrics, machine learning, and applied risk analysis. It does not claim that cryptocurrency data solve the market-timing problem. The claim is narrower: Bitcoin's price dynamics carry statistically detectable information about how intermarket dependence evolves, and this information can support a modest early-warning signal for conventional markets.
+The thesis lies at the intersection of financial econometrics, machine learning, and applied risk analysis. It does not claim that cryptocurrency data solve the market-timing problem. The claim is narrower still than it might appear: intermarket dependence is forecastable out of sample, but the results in Chapter~\ref{sec:results_overview} attribute almost all of that forecastability to the persistence of the dependency series itself, with Bitcoin's price dynamics adding only marginally beyond it. What the crypto features do support, modestly, is an early-warning signal for stress days in conventional markets.
 
 Its main contribution is to establish that dynamic intermarket dependence is forecastable, and to compare persistence baselines, machine-learning models, and DCC-GARCH on an equal walk-forward footing. The investor signal layer extends the work in a practical direction without claiming more than the evidence supports.
