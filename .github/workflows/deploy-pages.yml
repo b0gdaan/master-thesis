@@ -27,6 +27,7 @@ jobs:
         run: |
           mkdir -p _site/thesis-assets/figures
           cp website/index.html _site/index.html
+          cp website/latest_snapshot.json _site/latest_snapshot.json
           cp photo.JPG _site/photo.jpg
           cp outputs/figures/*.png _site/thesis-assets/figures/
           touch _site/.nojekyll
