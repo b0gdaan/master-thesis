@@ -1,0 +1,32 @@
+{
+  "generated_at_utc": "2026-09-07T09:55:03.319313+00:00",
+  "as_of_date": "2026-09-06",
+  "sp500_last_close_date": "2026-09-04",
+  "forecast_for": "2026-09-07",
+  "pair": "BTC-USD / S&P 500",
+  "window_days": 30,
+  "forecast_correlation": 0.2347,
+  "forecast_fisher_z": 0.239191,
+  "current_correlation": 0.2306,
+  "stress_probability": 0.5085,
+  "inputs": {
+    "btc_daily_return": 0.00657,
+    "btc_annualised_volatility": 0.540331,
+    "btc_momentum_5d": 0.037359
+  },
+  "ar1": {
+    "intercept": 0.01179791,
+    "beta": 0.96846971
+  },
+  "logit": {
+    "intercept": -0.00956875,
+    "coefficients": {
+      "dep_pred": 0.17231108,
+      "btcusd_ret_abs": -3.27667185,
+      "btcusd_vol_20_norm": -0.00589724,
+      "btcusd_mom_5_abs": 0.55175982,
+      "dep_pred_change_1": 1.04667314
+    }
+  },
+  "method_note": "Static research snapshot. Prices are public Yahoo Finance adjusted closes; model features and coefficients follow the thesis web demonstrator."
+}
