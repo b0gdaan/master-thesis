@@ -1,27 +1,12 @@
 \section{Market-Event Case Studies}
 \label{app:market_events}
 
-This appendix examines the landmark market events of 2020--2026 through the lens of
-the thesis's central variable: the rolling Pearson correlation between Bitcoin and
-conventional assets. A master timeline and a correlation regime map first summarise
-all eleven episodes jointly; detailed four-panel diagnostics are then provided for
-four representative events (the COVID crash, the FTX collapse, the SVB banking
-crisis, and the 2025 ``Liberation Day'' tariff shock), chosen to span the main
-regime types: a liquidity-driven co-crash, a crypto-idiosyncratic shock, a brief
-safe-haven decoupling, and a macro risk-off shock. The remaining seven episodes are
-marked on the master timeline and reproduced in full by notebook
-\texttt{08\_Market\_Events\_Showcase.ipynb} in the repository. The purpose is to
-anchor the aggregate quantitative results of Chapter~4 in concrete historical
-episodes and to show how the regime-transition problem manifests in practice.
+This appendix examines key market events from 2020 to 2026 using the thesis's main variable: the rolling Pearson correlation between Bitcoin and traditional assets. The main timeline and correlation regime map first summarise all eleven events. This is followed by a detailed analysis of four representative events: the COVID crash, the FTX collapse, the SVB banking crisis, and the 2025 ``Liberation Day'' tariff shock. These events were selected to cover the main types of regimes: a liquidity-driven co-crash, a crypto-specific shock, a brief safe-haven decoupling, and a macro risk-off shock. The remaining seven events are marked on the main timeline and are fully reproduced in the 08\_Market\_Events\_Showcase.ipynb notebook in the repository. The goal is to link the quantitative results from Chapter~4 to specific historical events and to show how the regime-transition problem appears in practice.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection*{Master Timeline}
 
-Figure~\ref{fig:events_timeline} presents the full sample period with all eleven events
-marked. The three panels show Bitcoin's normalised price trajectory (log scale),
-the S\&P~500 and NASDAQ together with gold, and the 30-day rolling BTC--S\&P~500
-Pearson correlation. The event markers make visible how correlation spikes cluster
-around macro risk-off episodes while remaining subdued during crypto-specific events.
+Figure~\ref{fig:events_timeline} shows the full sample period with all eleven events marked. The three panels display Bitcoin's normalised price trajectory on a logarithmic scale, the S\&P~500 and NASDAQ together with gold, and the 30-day rolling Pearson correlation between BTC and the S\&P~500. The event markers show how correlation spikes cluster around macro risk-off episodes while remaining subdued during crypto-specific events.
 
 \begin{figure}[H]
     \centering
@@ -105,42 +90,18 @@ Sweeping tariffs on 185 countries caused the S\&P~500 to fall about 12\% in four
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection*{Interpretation}
 
-Across the full set of episodes (those detailed above together with the remainder
-marked on the master timeline), four conclusions complement the aggregate
-quantitative findings of Chapter~4:
+Across the set of episodes described above and others highlighted in the main timeline, four key findings complement the overall quantitative results obtained in Chapter~4.
 
 \begin{enumerate}
-    \item \textbf{Macro risk-off events create the largest correlation spikes.}
-    The COVID crash (2020) and the 2021--22 Fed tightening cycle pushed BTC--equity
-    correlation to its highest sustained levels in the sample: the 30-day measure rose
-    to about 0.52 in March 2020 and ran near 0.6--0.7 through the 2022 sell-off. These
-    are precisely the episodes where rolling-RMSE peaks in Figure~\ref{fig:rolling_rmse}.
-    By contrast, the 2025 ``Liberation Day'' shock was a co-crash in prices that left the
-    rolling correlation little changed, a reminder that even severe macro shocks do
-    not always raise measured dependency.
+    \item Macro risk-off events lead to the largest spikes in correlation. The COVID crash in 2020 and the Fed's tightening cycle from 2021 to 2022 led to the BTC--equity correlation reaching the highest sustained levels in the sample. The 30-day indicator rose to about 0.52 in March 2020 and remained at 0.6--0.7 during the 2022 selloff. Figure~\ref{fig:rolling_rmse} also shows the periods when the rolling RMSE reaches its maximum. In contrast, the shock caused by Liberation Day in 2025 was accompanied by a sharp drop in prices, but the sliding correlation remained virtually unchanged. This shows that even severe macroeconomic shocks do not always increase the measurable dependence.
 
-    \item \textbf{Crypto-idiosyncratic shocks leave equity correlations largely unchanged.}
-    The China mining ban, Luna collapse, and FTX bankruptcy each caused severe Bitcoin
-    losses while equity markets barely moved, producing at most a brief, transitory
-    swing in the rolling correlation and no sustained regime shift.
+    \item Due to the shocks associated with cryptocurrencies, equity correlations often remain virtually unchanged. The ban on mining in China, the collapse of Luna and the bankruptcy of FTX led to large losses of bitcoin, while the stock markets remained virtually unchanged. These events led to only small and temporary changes in the dynamic correlation and did not lead to long-term shifts in the relationship.
 
-    \item \textbf{The institutional era (post-2024 ETF approval) keeps correlations elevated.}
-    The structural inflow of institutional capital via ETF wrappers means Bitcoin is
-    now traded alongside growth equities in the same risk-on/off frameworks. The 30-day
-    BTC--NASDAQ correlation has remained elevated since the January 2024 ETF approval,
-    averaging about 0.36 over 2024--2026, although it does not exceed the peak of about
-    0.58 reached during the 2022 monetary-tightening cycle, when both assets sold off together.
+    \item The institutional era that has come since 2024 has led to increased correlation. After the approval of the ETF in January 2024, institutional capital began to flow into bitcoin through the ETF products. This means that bitcoin is increasingly trading under the same risk-on/risk-off frameworks as growth equities. Thus, the 30-day BTC--NASDAQ correlation remains at a high level, averaging about 0.36 from 2024 to 2026. However, it has not yet reached the peak of 0.58, which was observed during the monetary policy tightening cycle in 2022, when both assets were sold off at the same time.
 
-    \item \textbf{Rare safe-haven episodes exist but are short-lived.}
-    The SVB crisis produced a genuine negative BTC--equity correlation, but it lasted
-    only two to three weeks before reverting. This transience explains why persistence-based
-    models continue to dominate out-of-sample: the autoregressive signal is strong
-    enough to absorb regime shifts after a short lag, even if it cannot anticipate them.
+    \item Safe-haven episodes do happen, but they are short-lived. The SVB crisis led to a genuinely negative correlation between BTC and equity, but it lasted only two to three weeks before it returned to normal. Such a short duration helps explain why persistence-based models continue to dominate out-of-sample: the autoregression signal is strong enough to absorb regime shifts after a short delay, even if it cannot anticipate them.
 \end{enumerate}
 
-The full set of event-level figures, summary statistics, and news references for all
-eleven episodes is produced automatically by notebook
-\texttt{08\_Market\_Events\_Showcase.ipynb}, which runs as the final step of
-\texttt{run\_all.py}.
+A complete set of event level data, summary statistics, and news links for all eleven episodes are automatically generated by notebook 08\_Market\_Events\_Showcase.ipynb, which is launched as the final step of \texttt{run\_all.py}.
 
 \clearpage

@@ -1,15 +1,10 @@
 \section{Supplementary Signal-Layer Results}
 
-This appendix collects the supporting material for the investor warning layer. A
-representative signal output is shown below, and the per-pair, per-window summary is
-given in Table~\ref{tab:app_signal_summary}. The full set of signal figures for all
-pairs and windows is produced by the pipeline and ships with the repository.
+This appendix gathers the supporting material for the investor warning layer. A representative signal output is shown below, and Table~\ref{tab:app_signal_summary} gives the per-pair, per-window summary. The full set of signal figures for all pairs and windows is produced by the pipeline and is included with the repository.
 
 \subsection{Representative signal output}
 
-Figure~\ref{fig:app_signal_ixic_w30} shows the signal for the Bitcoin--NASDAQ pair at
-the 30-day window, the weakest of the equity pairs. It contrasts with the stronger
-Bitcoin--S\&P~500 output shown in the main text (Figure~\ref{fig:signal_sp500}).
+Figure~\ref{fig:app_signal_ixic_w30} shows the signal for the Bitcoin--NASDAQ pair at the 30-day window, which is the weakest among the equity pairs. This differs from the stronger Bitcoin--S\&P~500 output shown in the main text (Figure~\ref{fig:signal_sp500}).
 
 \begin{figure}[H]
     \centering
@@ -22,12 +17,7 @@ Bitcoin--S\&P~500 output shown in the main text (Figure~\ref{fig:signal_sp500}).
 
 \subsection{Cross-market warning interpretation}
 
-The per-pair results show that the warning layer behaves very differently from market to
-market. The S\&P~500 produces the clearest warning episodes; NASDAQ is markedly weaker,
-dipping below chance at the longer windows, probably because its sector concentration
-adds idiosyncratic noise that the crypto channel cannot see. The metal and dollar targets
-are noisier but not uniformly useless. The signal should therefore be applied selectively
-rather than across the asset universe.
+The per-pair results show that the warning layer behaves differently across markets. The S\&P~500 produces the clearest warning episodes, while NASDAQ is much weaker and falls below chance at the longer windows. This may be because its sector concentration adds idiosyncratic noise that the crypto channel cannot capture. The metal and dollar targets are noisier but are not uniformly uninformative. The signal should therefore be applied selectively rather than across the whole asset universe.
 
 \subsection{Summary table}
 
@@ -51,9 +41,4 @@ rather than across the asset universe.
     \end{tabular}
 \end{table}
 
-This breakdown supports the main-text reading. The Bitcoin--S\&P~500 pair is the
-strongest and most consistent, peaking at 0.5308 at the 30-day window. Bitcoin--NASDAQ
-is the weakest, averaging 0.4997 and falling below the 0.50 chance level at the 60- and
-90-day windows. The precious-metal and dollar pairs are positive on average but remain
-close to chance. The signal is therefore best applied selectively to broad-equity pairs
-rather than uniformly across the asset universe.
+This breakdown supports the main-text reading. The Bitcoin--S\&P~500 pair is the strongest and most consistent, reaching 0.5308 at the 30-day window. Bitcoin--NASDAQ is the weakest, averaging 0.4997 and falling below the 0.50 chance level at the 60- and 90-day windows. The precious-metal and dollar pairs are positive on average but remain close to chance. The signal is therefore best applied selectively to broad-equity pairs rather than uniformly across the asset universe.

@@ -1,10 +1,7 @@
 \section{Additional Statistical Tests}
 \label{app:tests}
 
-This appendix runs three further hypothesis tests that probe the robustness of
-the empirical results: a Mincer-Zarnowitz efficiency test, residual diagnostics
-(Ljung-Box and ARCH LM), and a Harvey-Leybourne-Newbold small-sample correction
-of the Diebold-Mariano statistic.
+This appendix runs three further hypothesis tests to check the robustness of the empirical results. The first is a Mincer-Zarnowitz efficiency test. The second set consists of residual diagnostics, including the Ljung-Box test and the ARCH LM test. The third is the Harvey-Leybourne-Newbold small-sample correction of the Diebold-Mariano statistic.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection{Mincer-Zarnowitz Forecast Efficiency Test}
@@ -16,9 +13,12 @@ For each model the auxiliary regression
     y_t = \alpha + \beta\,\hat{y}_t + \varepsilon_t
 \end{equation}
 is estimated by OLS and the joint null hypothesis $H_0{:}\;\alpha = 0,\;\beta = 1$
-is tested with an $F$-statistic.
-Rejection ($p < 0.05$) indicates that the forecast is either biased ($\alpha \neq 0$)
-or fails to make full use of available information ($\beta \neq 1$).
+is assessed with the conventional OLS $F$-statistic. Because the realised rolling
+correlation and forecast errors inherit serial dependence from overlapping windows,
+the conventional $F$ reference distribution need not hold. The reported values are
+therefore diagnostic coefficient summaries, not HAC-robust tests of forecast
+efficiency. A confirmatory MZ analysis should use a heteroskedasticity-and-
+autocorrelation-consistent Wald test with a lag choice justified by the window length.
 
 Table~\ref{tab:mz_summary} summarises the percentage of the 24
 dependency–window experiments in which each model passes the MZ test,
@@ -27,7 +27,7 @@ together with its average $\alpha$ and $\beta$ coefficients.
 \begin{table}[H]
     \centering
     \caption{Mincer-Zarnowitz forecast efficiency: percentage of 24 experiments
-             passing the joint $F$-test ($p \geq 0.05$) and average coefficient estimates.}
+             not rejected by the conventional OLS $F$ diagnostic ($p \geq 0.05$) and average coefficient estimates.}
     \label{tab:mz_summary}
     \begin{tabular}{lrrrr}
         \toprule
@@ -47,10 +47,11 @@ together with its average $\alpha$ and $\beta$ coefficients.
     \end{tabular}
 \end{table}
 
-AR(1) and HAR pass the efficiency test at the same rate (70.8\% of experiments),
-confirming that both models make near-optimal use of the available information.
-Ridge is the most efficient among the regularised ML models at 45.8\%.
-DCC-GARCH never passes: its average $\bar{\beta} = 1.44$ means that realised
+AR(1) and HAR are not rejected by the conventional diagnostic at the same rate
+(70.8\% of experiments). Ridge is not rejected in 45.8\% of experiments among
+the regularised ML models. These proportions are descriptive because the reported
+$F$-tests are not HAC-robust. DCC-GARCH is rejected by the conventional diagnostic
+in every experiment; its average $\bar{\beta} = 1.44$ means that realised
 correlations swing markedly more than its forecasts do. In the regression
 $y = \alpha + \beta\hat{y}$, a slope above one signals forecasts that are too
 \emph{compressed}: they systematically under-react to the size of the
@@ -63,8 +64,8 @@ pair BTC-USD vs S\&P~500 at $w = 30$.
 \begin{table}[H]
     \centering
     \caption{Mincer-Zarnowitz test: BTC-USD vs S\&P~500, $w = 30$.
-             $F$-statistic tests $H_0{:}\;\alpha=0, \beta=1$; $p_\text{MZ}$ is
-             the associated $p$-value.}
+             Conventional OLS $F$ diagnostic for $H_0{:}\;\alpha=0, \beta=1$;
+             $p_\text{MZ}$ is not HAC-robust.}
     \label{tab:mz_gspc_w30}
     \begin{tabular}{lrrrrl}
         \toprule
@@ -84,12 +85,12 @@ pair BTC-USD vs S\&P~500 at $w = 30$.
     \end{tabular}
 \end{table}
 
-At this particular pair and window all models are technically rejected, but the
-performance gradient is steep. Ridge ($F = 4.76$), AR(1) ($F = 5.07$), and HAR
-($F = 5.77$) are rejected at the boundary of significance and have coefficients
-very close to $(0, 1)$, indicating near-efficient use of information. The
-DCC-GARCH statistic (261.0) and XGBoost statistic (318.2) stand apart as the
-most severely misspecified, confirming the main-text findings.
+At this particular pair and window all models are rejected by the conventional
+OLS diagnostic, but the coefficient gradient is steep. Ridge ($F = 4.76$), AR(1)
+($F = 5.07$), and HAR ($F = 5.77$) have coefficients close to $(0, 1)$ under
+this descriptive regression. The DCC-GARCH statistic (261.0) and XGBoost statistic
+(318.2) are much larger, but neither difference is treated as formal evidence of
+misspecification without HAC-robust inference.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection{Residual Diagnostics: Ljung-Box and ARCH LM Tests}
@@ -133,20 +134,7 @@ experiments in which the residuals pass each test at the 5\% level.
     \end{tabular}
 \end{table}
 
-The autocorrelation results follow a clear gradient. Naive (last value) and the
-autoregressive models (AR(1), HAR) partly capture the serial structure,
-passing the Ljung-Box test in 42--50\% of experiments. Ridge passes in
-21\% of cases, reflecting the autoregressive signal it picks up from the
-lag features. ElasticNet is an odd case: it fails every autocorrelation
-test (0\%) yet keeps a meaningful ARCH pass rate (38\%), so it removes some
-temporal dependence but not all. The tree-based methods (RF, GBM, XGBoost)
-and DCC-GARCH leave strongly significant autocorrelation and
-heteroscedasticity in every single experiment: they never encode the
-target's autoregressive structure, so that structure leaks into the
-residuals, which remain far from white noise. The enormous Q-statistics for
-the tree ensembles (e.g.\ $Q > 1{,}000$ for XGBoost on most pairs) drive the
-point home: these forecasters simply do not carry the AR structure forward
-from training.
+The autocorrelation results show a clear pattern. The Naive (last-value) model and the autoregressive models (AR(1), HAR) capture part of the serial structure and pass the Ljung-Box test in 42--50\% of experiments. Ridge passes in 21\% of cases, showing that it picks up the autoregressive signal from the lag features. ElasticNet is a particular case: it fails every autocorrelation test (0\%) yet still has a meaningful ARCH pass rate (38\%), so it removes some temporal dependence but not all. The tree-based methods (RF, GBM, XGBoost) and DCC-GARCH retain significant autocorrelation and heteroscedasticity in every single experiment: they never encode the target's autoregressive structure, so that structure leaks into the residuals, which remain far from white noise. The large Q-statistics for the tree ensembles (for example, $Q > 1{,}000$ for XGBoost on most pairs) make this clear: these forecasters simply do not carry the AR structure forward from training.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection{Harvey-Leybourne-Newbold Corrected Diebold-Mariano Test}
@@ -162,25 +150,24 @@ where $n$ is the number of forecast observations and $h$ the forecast horizon,
 and comparing the result to a $t(n-1)$ distribution.
 For $h = 1$ the factor simplifies to $k = \sqrt{(n-1)/n}$, which is slightly
 below one and therefore shrinks the statistic; with $n > 1{,}000$ the shrinkage
-is of the order of $10^{-4}$, so the practical effect on $p$-values is
-negligible.
+is of the order of $10^{-4}$. This correction addresses finite-sample size, not
+the serial dependence in loss differentials induced by overlapping rolling windows.
 
 Applied to all 336 DM comparisons (168 ML models vs DCC-GARCH and 168 vs
-Naive (last value), Table~\ref{tab:dm_hln}) the HLN correction produces zero sign
-changes in significance at the 5\% level (average correction factor
-$k = 0.999774$, consistent with the slight reduction of every HLN statistic
-relative to its uncorrected counterpart in Table~\ref{tab:dm_hln}).
-All conclusions regarding the relative ranking of models, and in particular
-the finding that every ML model significantly outperforms DCC-GARCH, are
-therefore robust to the small-sample correction.
+Naive (last value)), Table~\ref{tab:dm_hln} shows that the HLN correction changes
+the reported zero-lag statistics only trivially (average correction factor
+$k = 0.999774$). This establishes only that the displayed calculations are
+insensitive to the finite-sample HLN multiplier. It does not validate their
+zero-lag variance estimator or turn them into formal significance tests for the
+overlapping rolling target.
 
 \begin{table}[H]
     \centering
-    \caption{HLN-corrected DM test: ML models vs DCC-GARCH benchmark,
+    \caption{HLN-corrected DM diagnostic: ML models vs DCC-GARCH benchmark,
              BTC-USD vs S\&P~500, $w = 30$.
              DM: original statistic (normal); DM$_\text{HLN}$: corrected
              statistic ($t_{n-1}$).
-             All models beat DCC-GARCH at $p < 0.001$ under both tests.}
+             Reported $p$-values retain the zero-lag variance assumption and are descriptive.}
     \label{tab:dm_hln}
     \begin{tabular}{lrrrrl}
         \toprule
@@ -198,12 +185,12 @@ therefore robust to the small-sample correction.
 \end{table}
 
 Two aspects of the comparison set in Table~\ref{tab:dm_hln} should be made explicit.
-First, the seven \emph{fitted} models are tested against two benchmarks: the DCC-GARCH
+First, the seven \emph{fitted} models are compared against two benchmarks: the DCC-GARCH
 econometric model and the naive last-value baseline. AR(1) is treated as one of the
 persistence baselines rather than as a test model, so it does not appear as a separate
 row; its position relative to the fitted models is established instead by the
-average-RMSE ranking of Table~\ref{tab:model_ranking_summary}, in which AR(1), HAR, and
-Ridge are statistically indistinguishable. Second, the Diebold--Mariano test assumes
+average-RMSE ranking of Table~\ref{tab:model_ranking_summary}, where AR(1), HAR, and
+Ridge have closely clustered errors. Second, the Diebold--Mariano test assumes
 non-nested forecasts, whereas every fitted model here includes the lagged target among
 its predictors and therefore nests the persistence baselines. The statistics against
 Naive (last value), and by extension any test against AR(1), should accordingly be read as
@@ -226,27 +213,16 @@ The suite is executed automatically as part of the reproducibility runner
 
 The test classes cover the following aspects of the pipeline:
 \begin{itemize}
-    \item \textbf{Dataset Integrity} --- raw price and return files exist,
-          have correct tickers, positive prices, sorted and non-duplicate dates,
-          and extend to at least 2026.
-    \item \textbf{Data Quality} --- missing-rate thresholds, zero-price
-          detection, reasonable annualised volatility, pairwise coverage overlap.
-    \item \textbf{Feature Engineering} --- Fisher-$z$ round-trip identity,
-          rolling-correlation range, no look-ahead in prediction CSVs.
-    \item \textbf{Model Metrics} --- RMSE $>0$, $R^2 \leq 1$, MAE $\leq$ RMSE,
-          all windows and expected models present, AR(1) beats DCC-GARCH on average.
-    \item \textbf{DM Tests} --- finite DM statistics, $p$-values in $[0,1]$,
-          correct sign convention for Ridge vs DCC-GARCH.
-    \item \textbf{Signal Metrics} --- balanced accuracy and F1 in $[0,1]$,
-          AUC above random, exit rate within a sensible range.
-    \item \textbf{Walk-Forward} --- correct number of prediction CSVs,
-          non-trivial predictions, index alignment with returns.
-    \item \textbf{Output Files} --- all expected CSV, JSON, PNG, and \texttt{.tex}
-          artefacts are present after a full pipeline run.
-    \item \textbf{Bootstrap CI} --- lower $\leq$ mean $\leq$ upper for RMSE and
-          $R^2$; CI width below 0.10.
-    \item \textbf{Sensitivity} --- all five \texttt{refit\_every} values present;
-          RMSE in a physically plausible range.
+    \item \textbf{Dataset Integrity}. Price and return files exist. They contain the correct tickers, positive prices, sorted and non-duplicated dates, and extend to at least 2026.
+    \item \textbf{Data Quality}. Missing-rate thresholds are met, zero-price detection works, annualised volatility is reasonable, and pairwise coverage overlap is adequate.
+    \item \textbf{Feature Engineering}. The Fisher-$z$ round-trip identity holds, rolling correlation falls within the expected range, and prediction CSVs contain no look-ahead information.
+    \item \textbf{Model Metrics}. RMSE is greater than zero, $R^2$ is less than or equal to one, MAE is less than or equal to RMSE, all windows and expected models are present, and AR(1) performs better than DCC-GARCH on average.
+    \item \textbf{DM Tests}. DM statistics are finite, $p$-values lie between zero and one, and the sign convention for Ridge versus DCC-GARCH is correct.
+    \item \textbf{Signal Metrics}. Balanced accuracy and F1 score are between zero and one, AUC is above random, and the exit rate falls within a sensible range.
+    \item \textbf{Walk-Forward}. The correct number of prediction CSVs are produced, predictions are non-trivial, and indices align with returns.
+    \item \textbf{Output Files}. After a full pipeline run, all expected CSV, JSON, PNG, and \texttt{.tex} artefacts are present.
+    \item \textbf{Bootstrap CI}. The lower bound is less than or equal to the mean, which is less than or equal to the upper bound for RMSE and $R^2$, and CI width is below 0.10.
+    \item \textbf{Sensitivity}. All five \texttt{refit\_every} values are present. RMSE lies within a physically plausible range.
 \end{itemize}
 
 Table~\ref{tab:test_report} summarises the suite by test class --- the number of

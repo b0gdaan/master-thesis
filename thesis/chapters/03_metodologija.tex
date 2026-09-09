@@ -2,13 +2,13 @@
 
 \subsection{Research design}
 
-The design has two layers. The first is a regression problem: forecast the next value of the (transformed) rolling correlation between Bitcoin and another asset. The second is a classification problem: take that forecast, add a few crypto-derived features, and estimate the probability that the conventional asset has a stress day. The split mirrors the difference between measuring something and acting on it.
+The project consists of two parts. The first part is a regression problem: to predict the value of the (adjusted) moving correlation between Bitcoin and another asset. The second part is a classification problem: to use this forecast, which incorporates certain cryptographic features, to calculate the probability that a traditional asset will have a ``day.'' This distinction highlights the difference between observing something and reacting to it.
 
-The design is deliberately conservative. Every step that could leak future information (target construction, feature alignment, benchmark estimation, signal generation) is performed inside the walk-forward loop instead of being tuned on in-sample fit. The single exception is hyperparameter selection, which is carried out once on a representative experiment; as shown in Chapter~\ref{sec:discussion}, the results are essentially flat in the regularisation strength, so this simplification does not materially affect the conclusions. The aim throughout is to preserve correct temporal ordering and prevent accidental look-ahead.
+The design preserves temporal ordering in target construction, feature alignment, benchmark estimation, and signal generation: each is performed inside the walk-forward loop. Model hyperparameters, however, were selected once using time-series cross-validation on the BTC--S\&P~500, $w=30$ representative experiment. Consequently, the reported result for that same experiment is an exploratory illustration rather than a fully independent confirmatory estimate. The all-pair, all-window rankings remain out-of-sample conditional on these fixed choices, but a future study should tune within each training fold (nested walk-forward validation) before making confirmatory claims.
 
 \subsection{Asset universe and data source}
 
-The empirical analysis uses daily market data obtained through the \texttt{yfinance} interface \cite{yfinance2026}. Bitcoin, represented by \texttt{BTC-USD}, serves as the base cryptocurrency throughout the study. The comparison set includes the following assets:
+The empirical analysis uses daily market data obtained through the yfinance interface \cite{yfinance2026}. Bitcoin, represented by BTC-USD, serves as the base cryptocurrency throughout the study. The comparison set includes the following assets:
 
 \begin{table}[H]
     \centering
@@ -33,20 +33,15 @@ Each asset is in the set for a reason. The two equity indices stand in for broad
 
 The sample runs from 9 November 2017 to 16 May 2026, giving 3{,}053 daily observations per asset.\footnote{The pipeline downloads data to the most recent available trading day; the figures reported here correspond to the final run of the pipeline at the time of writing.} The start date is set by Ethereum: Yahoo Finance has no ETH-USD prices before then, so earlier dates drop out of the aligned panel. What remains is balanced: all seven tickers share one date index, with no gaps left after alignment and forward-filling of non-trading days up to two consecutive calendar days.
 
-Normalised price paths, thirty-day rolling-volatility profiles, and the full-sample
-return correlation matrix for the asset universe are collected in Appendix~A
-(Figures~\ref{fig:eda_prices_appendix}, \ref{fig:eda_vol_appendix},
-and~\ref{fig:eda_heatmap_appendix}). The much higher, more episodic volatility of the
-crypto assets and the low static Bitcoin--conventional correlations they display are
-the reason cross-asset dependency is treated here as a moving quantity instead of a
-single full-sample number.
+Normalised price paths, thirty-day rolling-volatility profiles, and the full-sample return correlation matrix for the asset universe are collected in Appendix A (Figures \ref{fig:eda_prices_appendix}, \ref{fig:eda_vol_appendix}, and \ref{fig:eda_heatmap_appendix}). The much higher, more episodic volatility of the crypto assets and the low static Bitcoin--conventional correlations they display are the reason cross-asset dependency is treated here as a moving quantity instead of a single full-sample number.
 
 \subsection{Return construction and preprocessing}
 
 Every price series is turned into daily log returns. Log returns are the natural choice here: they add up over time and are the standard currency of both econometric and machine-learning work on financial series. For a price series $P_t$, the return is
 \[
-    r_t = \log P_t - \log P_{t-1}.
+    r_t = \log P_t - \log P_{t-1}
 \]
+
 
 Missing observations are dealt with by aligning on common dates; nothing downstream (no target, no feature) is built until the return matrix is synchronised.
 
@@ -56,14 +51,14 @@ Preprocessing is cache-aware. If the raw prices are already on disk, they are re
 
 For each pair consisting of Bitcoin and another asset, a rolling correlation series is computed over windows of 14, 30, 60, and 90 calendar days. Let $r_t^{(b)}$ denote the return of Bitcoin and $r_t^{(a)}$ the return of the other asset. For a given window length $w$, the dependency target at time $t$ is
 \[
-\rho_t^{(w)} = \text{corr}(r_{t-w+1:t}^{(b)}, r_{t-w+1:t}^{(a)}).
+    \rho_t^{(w)} = \operatorname{corr}\!\left(\{r_{t-w+1}^{(b)},\ldots,r_t^{(b)}\},\{r_{t-w+1}^{(a)},\ldots,r_t^{(a)}\}\right).
 \]
 
 The resulting series is then transformed using the Fisher transformation
 \[
-z_t^{(w)} = \frac{1}{2}\log\left(\frac{1 + \rho_t^{(w)}}{1 - \rho_t^{(w)}}\right) = \operatorname{arctanh}\!\left(\rho_t^{(w)}\right),
+    z_t^{(w)} = \frac{1}{2}\log\left(\frac{1 + \rho_t^{(w)}}{1 - \rho_t^{(w)}}\right) = \operatorname{arctanh}\!\left(\rho_t^{(w)}\right),
 \]
-which maps the bounded correlation domain $(-1, 1)$ into an unbounded real-valued space. In the empirical implementation, the one-step-ahead value of the transformed dependency series is used as the main forecasting target. The implementation clips the raw correlation away from the boundary to prevent numerical overflow:
+ which maps the bounded correlation domain $(-1, 1)$ into an unbounded real-valued space. In the empirical implementation, the one-step-ahead value of the transformed dependency series is used as the main forecasting target. The implementation clips the raw correlation away from the boundary to prevent numerical overflow:
 
 \begin{lstlisting}[language=Python, caption={Fisher z-transform and target construction (\texttt{pipeline.py}).}, label=lst:fisher]
 def fisher_z(r: pd.Series, eps: float = 1e-6) -> pd.Series:
@@ -79,9 +74,7 @@ def build_target(returns, base, other, window, horizon):
 
 One consequence of all this is that the target is smooth to begin with, and far more persistent than a raw return series. That persistence is one of the central empirical facts of the thesis, and it shows up everywhere in the results.
 
-The rolling dependency series for all six pairs across the four window lengths is
-shown in Figure~\ref{fig:rolling_corr_all}. Its pronounced time-variation and
-persistence are the properties the forecasting framework is designed to exploit.
+The rolling dependency series for all six pairs across the four window lengths is shown in Figure~\ref{fig:rolling_corr_all}. Its pronounced time-variation and persistence are the properties the forecasting framework is designed to exploit.
 
 \begin{figure}[H]
     \centering
@@ -116,7 +109,7 @@ The features fall into several groups:
     \end{tabular}
 \end{table}
 
-The dependency lags carry most of the predictive weight, because the target is persistent by construction. Dependency momentum (\texttt{dep\_mom}) and the trailing z-score (\texttt{dep\_zscore}) summarise the recent trend and the standardised level of the correlation. Return lags allow the models to respond to recent price direction, while the rolling-mean, volatility, and dispersion features describe the local risk regime. The regime gap (\texttt{corr\_diff}) measures how far short-term dependency has moved from its longer-term baseline, which can act as an early indicator of a regime shift. Listing~\ref{lst:features} shows how the feature matrix is assembled.
+The dependency lags carry most of the predictive weight, because the target is persistent by construction. Dependency momentum (dep\_mom) and the trailing z-score (dep\_zscore) summarise the recent trend and the standardised level of the correlation. Return lags allow the models to respond to recent price direction, while the rolling-mean, volatility, and dispersion features describe the local risk regime. The regime gap (corr\_diff) measures how far short-term dependency has moved from its longer-term baseline, which can act as an early indicator of a regime shift. Listing \ref{lst:features} shows how the feature matrix is assembled.
 
 \begin{lstlisting}[language=Python, caption={Core feature engineering routine (\texttt{pipeline.py}; abbreviated --- the full routine additionally builds rolling-mean, dispersion, volatility-ratio, and lagged squared-return features).}, label=lst:features]
 # Dependency lags (extended: up to quarterly)
@@ -153,15 +146,15 @@ The signal layer takes the best available dependency forecast for the pair and c
 
 \subsubsection{Baseline and autoregressive models}
 
-Three persistence-based models anchor the set. The naive last-value baseline just carries the last observed value forward, with no fitting at all. AR(1) fits a single autoregressive lag by OLS. HAR (Heterogeneous AutoRegressive, after \textcite{corsi2009har}) adds two more horizons: the latest value, its five-day average (weekly), and its twenty-two-day average (monthly), fitted as a restricted OLS on the expanding window at each refit. These baselines are not a formality: because the target is persistent by construction, any more complex model must demonstrate a clear improvement over them to justify its use.
+Three persistence-based models anchor the set. The naive last-value baseline just carries the last observed value forward, with no fitting at all. AR(1) fits a single autoregressive lag by OLS. HAR (Heterogeneous AutoRegressive, after \cite{corsi2009har}) adds two more horizons: the latest value, its five-day average (weekly), and its twenty-two-day average (monthly), fitted as a restricted OLS on the expanding window at each refit. These baselines are not a formality: because the target is persistent by construction, any more complex model must demonstrate a clear improvement over them to justify its use.
 
 \subsubsection{Regularised linear models}
 
-The linear block is Ridge and ElasticNet, each fitted after standardisation (regularisation is meaningless if the features sit on different scales). Both are specified in the notation of Eq.~(8): $\lambda$ is the penalty strength and $\alpha$ the $\ell_1/\ell_2$ mixing ratio, which scikit-learn's interface calls \texttt{alpha} and \texttt{l1\_ratio} respectively. Ridge ($\ell_2$, $\lambda = 0.5$) should do well when many predictors each carry a little signal. ElasticNet ($\lambda = 0.005$, $\alpha = 0.5$) is more aggressive and can zero out redundant lags outright.
+The linear block is Ridge and ElasticNet, each fitted after standardisation (regularisation is meaningless if the features sit on different scales). Both are specified in the notation of Eq. (8): $\lambda$ is the penalty strength and $\alpha$ the $\ell_1/\ell_2$ mixing ratio, which scikit-learn's interface calls alpha and l1\_ratio respectively. Ridge ($\ell_2$, $\lambda = 0.5$) should do well when many predictors each carry a little signal. ElasticNet ($\lambda = 0.005$, $\alpha = 0.5$) is more aggressive and can zero out redundant lags outright.
 
 \subsubsection{Tree ensembles and adaptive ensemble}
 
-The non-linear block is Random Forest, \texttt{HistGradientBoostingRegressor} (a LightGBM-style histogram method, roughly ten times faster than the old gradient-boosting code), and XGBoost, which runs on the GPU when it can and quietly falls back to CPU when it cannot. On top of these sits an \texttt{Ensemble}: at each step it forms an inverse-RMSE weighted average of all the non-naive models, with the weights recomputed from the last 60 out-of-sample errors (during the first 60 steps, from whatever errors have accumulated so far).
+The non-linear block is Random Forest, HistGradientBoostingRegressor (a LightGBM-style histogram method, roughly ten times faster than the old gradient-boosting code), and XGBoost, which runs on the GPU when it can and quietly falls back to CPU when it cannot. On top of these sits an Ensemble: at each step it forms an inverse-RMSE weighted average of all the non-naive models, with the weights recomputed from the last 60 out-of-sample errors (during the first 60 steps, from whatever errors have accumulated so far).
 
 The complete model set, ten specifications in total, is initialised as follows:
 
@@ -198,13 +191,13 @@ model_specs = {
 
 \subsubsection{DCC-GARCH benchmark}
 
-The DCC-GARCH benchmark is implemented in a separate module and is leakage-safe by construction. Fitting DCC once on the full sample and then reading off ``out-of-sample'' predictions would use future information, so the benchmark is instead re-estimated on the training window alone and rolled forward from there. This is computationally slower, but it places the benchmark on the same out-of-sample footing as the machine-learning models.
+The DCC-GARCH benchmark is implemented in a separate module and is leakage-safe by construction. Fitting DCC once on the full sample and then reading off "out-of-sample" predictions would use future information, so the benchmark is instead re-estimated on the training window alone and rolled forward from there. This is computationally slower, but it places the benchmark on the same out-of-sample footing as the machine-learning models.
 
 \subsection{Investor signal layer}
 
-The signal layer reformulates the problem as early-warning classification. The label is a \emph{stress day} for the conventional asset, not the direction of the next-day return. Day $t+1$ is labelled as stress if the asset's return falls below $-0.75\,\sigma_t$, where $\sigma_t$ is the trailing 20-day standard deviation of returns computed from information available at time $t$. This threshold produces a positive (stress) class of roughly 15--18\% of days, depending on the asset (15.2\% for the S\&P~500 up to 17.5\% for the dollar index), and its sensitivity is examined over the range $[0.5,\,2.0]\,\sigma$ in the robustness analysis. The threshold is chosen to capture moves that are worse than a typical down day without being limited to extreme tail events, which matches the downside-protection use case of the signal.
+The signal layer reformulates the problem as early-warning classification. The label is a stress day for the conventional asset, not the direction of the next-day return. Day $t+1$ is labelled as stress if the asset's return falls below $-0.75\,\sigma_t$, where $\sigma_t$ is the trailing 20-day standard deviation of returns computed from information available at time $t$. This threshold produces a positive (stress) class of roughly 15--18\% of days, depending on the asset (15.2\% for the S\&P 500 up to 17.5\% for the dollar index), and its sensitivity is examined over the range $[0.5,\,2.0]\,\sigma$ in the robustness analysis. The threshold is chosen to capture moves that are worse than a typical down day without being limited to extreme tail events, which matches the downside-protection use case of the signal.
 
-Three classifiers compete here: logistic regression, a random-forest classifier, and a gradient-boosted one. Each emits a probability, which is compared against a threshold to flag the next day as elevated-risk or not. The output is therefore a probability-guided warning, not an opaque buy/sell command.
+Three classifiers compete here: logistic regression, a random-forest classifier, and a gradient-boosted one. Each emits a probability, and a day is flagged as elevated-risk when that probability is at least $0.55$. This fixed operating threshold is used for the reported classification metrics and signal plots. The output is therefore a probability-guided warning, not an opaque buy/sell command.
 
 \subsection{Walk-forward estimation framework}
 
@@ -239,15 +232,15 @@ For the signal layer, four numbers matter: Balanced Accuracy, the F1 score on th
 
 When models are close, average metrics can mislead. So the thesis runs the Diebold--Mariano test on the loss series of selected pairs. The headline comparison is the best non-benchmark machine-learning model against DCC-GARCH; the secondary one pits that same model against the naive persistence baseline.
 
-The setup is transparent by design. The thesis does not bury the possibility that the best model overall is a simple baseline; instead it uses the DM framework to separate three different levels of claim:
+The setup is transparent by design. The thesis does not hide the possibility that a simple baseline may be the best overall model. Instead, it uses the DM framework to distinguish between three different levels of claims:
 
 \begin{enumerate}
     \item whether dependency is forecastable at all,
     \item whether machine learning improves upon a classical econometric benchmark,
-    \item whether machine learning adds value beyond persistence.
+    \item whether an observed RMSE difference is statistically distinguishable under the stated loss-differential assumptions.
 \end{enumerate}
 
-A caveat applies to the second and third comparisons. When the simpler model is nested inside the richer one (as the naive baseline and AR(1) are inside Ridge or the tree ensembles), the standard Diebold--Mariano statistic is not strictly valid, because its asymptotic normal distribution assumes non-nested forecasts. Tests built for nested models, such as Clark--West or Giacomini--White \cite{clark2007nested,giacomini2006tests}, would be more rigorous, and the small-sample HLN correction reported in Appendix~E mitigates over-rejection but not nesting. The comparisons against the persistence baselines should therefore be read as indicative; the headline Ridge-versus-DCC-GARCH comparison, which is non-nested, is unaffected. A separate consideration concerns the variance estimator. The DM statistics use a Newey--West HAC estimator with zero lags, which is standard at the one-step horizon but assumes loss differentials that are not autocorrelated. Because the rolling-correlation target is built from overlapping windows, the loss differentials are autocorrelated by construction, so the zero-lag variance can be understated and the statistic correspondingly inflated. Re-estimating the variance with a lag of the order of the rolling-window length would give a more conservative statistic; given the very large margins against DCC-GARCH ($\mathrm{DM}\approx 27$), the significance of the headline comparison is unlikely to be overturned, but the precise magnitudes should be interpreted with this in mind.
+A caveat applies to comparisons involving nested models. When the simpler model is nested inside the richer one (as the naive baseline and AR(1) are inside Ridge or the tree ensembles), the standard Diebold--Mariano statistic is not strictly valid, because its asymptotic normal distribution assumes non-nested forecasts. Tests built for nested models, such as Clark--West or Giacomini--White \cite{clark2007nested,giacomini2006tests}, would be more rigorous, and the small-sample HLN correction reported in Appendix E mitigates over-rejection but not nesting. The comparisons against persistence baselines are therefore indicative only. In addition, the reported DM statistics use a Newey--West HAC estimator with zero lags. Although forecasts are one step ahead, the rolling-correlation target uses overlapping windows, so loss differentials can be autocorrelated and zero-lag standard errors can be too small. The reported DM values and $p$-values are consequently descriptive diagnostics, not formal significance evidence; a confirmatory analysis should use a HAC lag selected for the window-induced dependence and report sensitivity to that choice. The large RMSE gap to DCC-GARCH remains a descriptive finding, but its formal statistical certainty is not claimed here.
 
 The thesis organises its empirical conclusions around exactly these three levels.
 
@@ -261,6 +254,6 @@ Everything lands in a structured output tree: metrics, DM tests, and signal resu
 
 Before the results, it is worth saying what success would even look like. It does not mean finding a model that predicts every conventional market from Bitcoin; no serious forecasting study should promise that. A fairer bar has three parts: the dependency target should show out-of-sample forecastability, the benchmark comparison should establish whether machine learning improves on DCC-GARCH, and the signal layer should produce stress warnings that beat chance and can be acted on. These thresholds are modest on purpose.
 
-Three further principles guide how the results are read. First, no single metric is treated as the verdict: the regression layer always reports RMSE, MAE, and $R^2$ together, and the classification layer reports Balanced Accuracy, F1, AUC, and exit rate together. Second, performance gaps are judged significant by the Diebold--Mariano test, not by eyeballing averages. Third, the analysis refuses to cherry-pick a window after the fact; all four (14, 30, 60, 90 days) are reported side by side, so no finding can rest on a lucky choice of specification.
+Three further principles guide how the results are read. First, no single metric is treated as the verdict: the regression layer always reports RMSE, MAE, and $R^2$ together, and the classification layer reports Balanced Accuracy, F1, AUC, and exit rate together. Second, paired DM statistics complement average loss differences but are interpreted descriptively because of the overlapping target. Third, the analysis refuses to cherry-pick a window after the fact; all four (14, 30, 60, 90 days) are reported side by side, so no finding can rest on a lucky choice of specification.
 
 Behind all three is the same commitment to methodological transparency. In-sample performance can appear strong yet deteriorate substantially under proper out-of-sample testing, and financial machine learning is unusually exposed to this failure, since repeated evaluation on the same historical sample inflates apparent performance long before any single result looks suspicious \cite{lopezdeprado2018advances}. The walk-forward design, the leakage-safe benchmark, and the all-windows evaluation together guard against the kind of inflated claims to which this literature is prone.

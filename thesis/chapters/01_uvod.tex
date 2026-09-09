@@ -2,33 +2,40 @@
 
 \subsection{Motivation and research context}
 
-Over the past decade, Bitcoin has gone from a niche technological experiment to an asset class held and monitored by institutional investors. This shift has direct implications for risk management: once a previously isolated market becomes large enough to attract significant capital, its price movements begin to affect portfolios that hold no cryptocurrency directly. For risk management the important part is the time variation of this influence: how and when the dependence between Bitcoin and conventional markets changes.
+Satoshi Nakamoto published the Bitcoin concept in 2008. And on January 5, 2009, the first ``genesis block'' was generated, and thus the first Bitcoin network came into operation, involving computers to generate Bitcoin blocks. Since then, the technology has evolved from an experiment to a class of high-risk assets. As a result, the cryptocurrency market has now grown so large that it exerts a real influence on the market for conventional assets, as many investors—as well as government funds—use Bitcoin both as a vehicle for storing capital and for conducting financial transactions. This creates a large pool of financial capital, the rise and fall of which can influence conventional, traditional markets. Consequently, the task arises of managing risks and identifying correlations between Bitcoin and traditional markets.
 
-This thesis focuses on \emph{time-varying intermarket dependency}: the evolving statistical relationship between Bitcoin and conventional assets such as equity indices, gold, silver, and the dollar. The question is whether this correlation is predictable at all, and whether cryptocurrency price dynamics contain an early warning signal about stress in traditional markets. Its average level is less important here than the way it moves.
+This thesis explores time-varying intermarket dependency. The time-varying statistical relationship between Bitcoin and traditional asset markets:
+1) stock indices;
+2) gold;
+3) silver;
+4) the dollar.
+Is such a correlation even predictable? Does the cryptocurrency market contain signals about the dynamics of traditional asset prices? To assess market risks and stress, the direction of the market is important, since the cryptocurrency market is more volatile; because of this, it is possible to predict the nature of the movement of traditional asset markets more quickly.
 
-The practical motivation is specific. A risk manager does not need an exact point forecast of returns to benefit from this kind of analysis. What matters is the ability to recognise when co-movement patterns change: when the market regime shifts from decorrelated to tightly coupled, or when the probability of a stress day in conventional markets rises. Even a modest and statistically reliable signal of this type can be useful, if its limitations are understood.
+Let's call the investor who needs a tool for precise yield forecasting a ``risk manager.'' A risk manager must be able to identify the moment when the nature of the markets' joint movement changes—the moment of transition from a closely correlated to a decorrelated state, and vice versa. When the likelihood of a stressful day in traditional asset markets increases—given the scale of investments—even a small signal can be very useful, allowing the Risk Manager to withdraw a portion of assets before the markets fall.
 
 \subsection{Research questions}
 
-The thesis is built on two interrelated layers. The first is a forecasting problem: can the rolling correlation between Bitcoin and a conventional asset be predicted one step ahead, and how do machine-learning models compare with a classical econometric benchmark under strict out-of-sample evaluation? The second is an applied question: can these forecasts be turned into a practical warning signal for investors?
+This thesis is structured around two interrelated levels.
+1) The forecasting problem: Is it possible to predict the moving correlation between Bitcoin and a traditional asset (all assets are considered individually; the goal is not to identify an average traditional asset)? Compare machine learning models with classical economic valuation models.
+2) Is it possible to turn machine learning forecasts into an early warning signal for real-world investors?
 
-More specifically, four research questions are addressed:
+Four research questions are also examined:
 
 \begin{enumerate}
-    \item Is the rolling dependency between Bitcoin and conventional assets forecastable out of sample?
-    \item Do machine-learning models outperform a leakage-safe DCC-GARCH benchmark?
-    \item Do machine-learning models add value beyond simple persistence-based baselines such as AR(1)?
-    \item Can crypto-derived dependency forecasts support a practically useful stress-warning signal for conventional markets?
+\item Is there a correlation between traditional assets and Bitcoin?
+    \item Which is better: the DCC-GARCH method or machine learning models?
+    \item Which is better: basic models, such as AR(1), or machine learning models?
+    \item Do forecasts based on cryptocurrency data contain practically useful information about stress in traditional markets?
 \end{enumerate}
 
 \subsection{Contributions of the thesis}
 
-To address these questions, a reproducible Python pipeline was created from scratch. It loads price data, builds log-return series, computes rolling correlations across multiple window lengths, constructs lagged and volatility-based features, and evaluates a range of models within a walk-forward experimental design. The model set includes a naive random-walk baseline and an AR(1) autoregressive model, a Heterogeneous AutoRegressive (HAR) model that uses daily, weekly, and monthly dependency lags, regularised linear models (Ridge, ElasticNet), an adaptive inverse-RMSE-weighted ensemble, tree-based ensembles (Random Forest, GBM, XGBoost), and a leakage-safe DCC-GARCH(1,1) benchmark. On top of the forecasting stage, a second layer converts the forecasts into a binary stress classifier for conventional assets.
+In this work, a reproducible Python pipeline was designed from scratch and hosted on GitHub. When run, it loads price data from open exchange sources, constructs logarithmic return series, and calculates rolling correlations for various window lengths. The models used include the naive basic random walk model, AR(1) autoregression, the HAR autoregressive model, regularized linear models such as Ridge and ElasticNet, tree ensembles (Random Forest, GBM, XGBoost), and the DCC-GARCH method with data leakage protection. After the first layer completes its work, the second level performs calculations using the first layer's forecasts to determine whether the market is under stress or not.
 
-The main empirical conclusion is that the dependency process can be predicted out of sample, but much of this predictability comes from the target's own past; new cross-asset information does not add much. Ridge, AR(1), and HAR end up at the top with almost the same accuracy, because all three rely on the high serial persistence of the rolling correlation. The convergence of three structurally different models is eloquent in itself: the target has an almost linear autoregressive structure, and additional model complexity buys almost nothing. Machine learning nonetheless adds clear value over DCC-GARCH, and it is most useful in the stress-classification task, where regularised linear classifiers outperform tree ensembles.
+The main thing that we found out is that we can predict the further development of the addiction process, but most of this predictability is due to what happened in the past. Adding new information from other sources does not bring significant benefits. The Ridge, AR(1), and HAR models eventually turned out to be approximately equally accurate, since they all rely on the fact that the sliding correlation remains very stable over time. Interestingly, these three completely different models came to the same result — this indicates that the objective function has a fairly simple linear structure, and complicating the models does not really add anything. At the same time, machine learning does bring some benefits, especially when it comes to classifying stressful periods. In this case, regularized linear classifiers work better than ensembles of trees.
 
-Three specific contributions follow from this work. First, a reproducible Python pipeline makes the complete empirical record replicable from the raw data to the final figures. Second, a systematic comparison of ten models, ranging from naive persistence to XGBoost and DCC-GARCH within a consistent walk-forward design, quantifies where machine learning adds value and where it does not. Third, an explicit mapping from rolling-correlation forecasts to a binary stress classifier translates the statistical results into a form usable by a risk practitioner.
+This study makes three main contributions. First, we developed a reproducible pipeline in Python that covers the entire analysis process from processing the raw data to generating the final plots. Second, we evaluated ten forecasting models, ranging from simple benchmark specifications to more complex approaches such as XGBoost and DCC-GARCH. This provides a consistent framework for assessing whether the added complexity of machine learning methods leads to improved forecasting performance. Third, we used correlation forecasts to build a simple stress scenario classifier, linking the forecasting results to practical applications in the field of risk management.
 
 \subsection{Thesis outline}
 
-Section~2 reviews the relevant theory and literature: time-varying dependence, financial contagion, machine-learning forecasting methods, and the Diebold--Mariano test. Section~3 describes the data, target construction, feature engineering, model specifications, and the evaluation design. Section~4 presents the empirical results for both layers. Section~5 interprets and qualifies these results. Section~6 concludes.
+Section 2 provides an overview of the theory and literature: time-varying dependence, financial contagion, machine learning-based forecasting methods, and the Dibold–Mariano test. Section 3 describes the data, the construction of the target series, feature engineering, model specifications, and the estimation procedure. Section 4 presents the empirical results for both levels. Section 5 interprets and refines these results. Section 6 summarizes the findings.

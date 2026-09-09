@@ -69,6 +69,21 @@ thesis/finthesis_assets/thesis_application.pdf
 # Personal defence crib sheet
 thesis/defense_script.md
 
+# Local review artefacts and unrelated working material
+tmp/
+output/
+zub_staging/
+progress.json
+simple-page-*.png
+thesis/_backup_appendices/
+thesis/_backup_before_rewrite/
+presentation/*.aux
+presentation/*.log
+presentation/*.nav
+presentation/*.out
+presentation/*.snm
+presentation/*.toc
+
 # OS
 .DS_Store
 Thumbs.db

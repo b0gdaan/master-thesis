@@ -3,7 +3,7 @@
 
 \subsection{Project organisation}
 
-The computational side of the thesis is organised as a reproducible research project rather than a collection of ad hoc scripts. The main directories are laid out as follows:
+The computational section of the dissertation is organized more as a research project than as a set of ad hoc scripts. The main directories are laid out as follows:
 
 \begin{lstlisting}[language={}, caption={Top-level project directory structure.}, label=lst:dirstructure]
 master-thesis/
@@ -19,7 +19,7 @@ master-thesis/
 |   |-- notebook_helpers.py  # shared plotting and styling
 |   |-- data_quality.py      # missing-value and outlier diagnostics
 |   `-- regime_analysis.py   # historical regime catalogue
-|-- notebooks/               # eight Jupyter notebooks (01-08)
+|-- notebooks/               # nine Jupyter notebooks (01-09)
 |-- data/raw/                # cached downloaded price data
 |-- data/processed/          # derived returns
 |-- outputs/results/         # CSV summaries of experiments
@@ -42,35 +42,37 @@ The following modules constitute the core of the forecasting system:
     \item \texttt{regime\_analysis.py}: implements the historical regime catalogue and regime-conditional statistics.
 \end{itemize}
 
-Splitting the work this way pays off twice over: it makes the workflow easier to audit, and it lets any one module be tested or improved without touching the rest.
+This division of labor offers two benefits: it simplifies the audit of the workflow, and it allows any module to be tested or improved without affecting the others.
 
 \subsection{Software environment}
 
-The implementation is Python only, with the exact versions pinned in \texttt{requirements.txt}. The regularised linear models, tree ensembles, logistic classifier, and the walk-forward splitting utilities come from scikit-learn \cite{sklearn2026}; gradient boosting on the GPU uses XGBoost \cite{xgboostdocs2026}; the univariate GARCH(1,1) fits underlying the DCC benchmark use the \texttt{arch} package \cite{archdocs2026}. Market data is retrieved through \texttt{yfinance} \cite{yfinance2026}. The document itself is typeset with the \texttt{finthesis} class of the \texttt{finlatex} project \cite{finlatex2026}, which supplies the university title pages and layout. Beyond the pinned versions, reproducibility rests on the fixed random seed (\texttt{random\_state = 42}, mirrored for XGBoost) and on the frozen return file described above; no step draws on system time or on an unpinned remote source.
+The implementation is in Python, and the exact package versions are fixed in \texttt{requirements.txt}. The regularised linear models, tree ensembles, logistic classifier, and walk-forward splitting utilities come from scikit-learn \cite{sklearn2026}. GPU-based gradient boosting uses XGBoost \cite{xgboostdocs2026}. The univariate GARCH(1,1) models used for the DCC benchmark are fitted with the arch package \cite{archdocs2026}. Market data are retrieved through yfinance \cite{yfinance2026}. The thesis is typeset using the finthesis class from the finlatex project \cite{finlatex2026}, which provides the university title pages and document layout. Reproducibility is supported by the fixed random seed (\texttt{random\_state = 42}, also used for XGBoost) and the frozen return file described earlier. No step depends on system time or on an unpinned remote source.
 
 \subsection{Analysis notebooks}
 
-Eight Jupyter notebooks in \texttt{notebooks/} supplement the main pipeline with interactive diagnostics, publication-quality figures, and robustness checks. Each one is self-contained and runs either from the command line or interactively in Jupyter.
+Nine Jupyter notebooks in \texttt{notebooks/} supplement the main pipeline with interactive diagnostics, publication-quality figures, and robustness checks. Each notebook is self-contained and can be run either from the command line or interactively in Jupyter.
 
 \begin{enumerate}
-    \item \textbf{\texttt{01\_EDA\_Dataset.ipynb}} --- Exploratory data analysis. Produces normalised price trajectories, rolling volatility profiles, a pairwise correlation heatmap, rolling pairwise correlation time series, and the Fisher-transformation comparison plot. These figures appear in Appendix~A.
+    \item \textbf{\texttt{01\_EDA\_Dataset.ipynb}} --- Exploratory data analysis. The notebook produces normalised price trajectories, rolling volatility profiles, a pairwise correlation heatmap, rolling pairwise correlation time series, and a Fisher-transformation comparison plot. These figures are presented in Appendix~A.
 
-    \item \textbf{\texttt{02\_GridSearch.ipynb}} --- Hyperparameter search diagnostics. Reports time-series cross-validation (expanding-window \texttt{TimeSeriesSplit}) RMSE surfaces for the representative Bitcoin--S\&P~500 experiment, regularisation-path plots for Ridge and ElasticNet, and Random Forest feature-importance charts. Results support the model-selection discussion in Chapter~3.
+    \item \textbf{\texttt{02\_GridSearch.ipynb}} --- Hyperparameter search diagnostics. The notebook reports time-series cross-validation using an expanding-window \texttt{TimeSeriesSplit}, RMSE surfaces for the representative Bitcoin--S\&P~500 experiment, regularisation-path plots for Ridge and ElasticNet, and Random Forest feature-importance charts. These results support the model-selection discussion in Chapter~3.
 
-    \item \textbf{\texttt{03\_Model\_Comparison.ipynb}} --- Model-ranking summary. Generates the average RMSE comparison bar chart, the $R^2$ comparison across window lengths, and the improvement-over-naive baseline figure across all asset pairs. These figures provide a visual complement to Table~\ref{tab:model_ranking_summary} in Chapter~4.
+    \item \textbf{\texttt{03\_Model\_Comparison.ipynb}} --- Model-ranking summary. The notebook produces an average RMSE comparison bar chart, an $R^2$ comparison across window lengths, and an improvement-over-naive baseline figure for all asset pairs. These figures provide a visual complement to Table~\ref{tab:model_ranking_summary} in Chapter~4.
 
-    \item \textbf{\texttt{04\_DM\_Tests\_Visuals.ipynb}} --- Diebold--Mariano test visualisation. Produces the DM heatmap comparing the best machine-learning model against DCC-GARCH (Figure~\ref{fig:dm_heatmap}) and the representative out-of-sample forecast panel for the Bitcoin--S\&P~500 pair (Figure~\ref{fig:sp500_forecast}).
+    \item \textbf{\texttt{04\_DM\_Tests\_Visuals.ipynb}} --- Diebold--Mariano test visualisation. The notebook produces the DM heatmap comparing the best machine-learning model with DCC-GARCH (Figure~\ref{fig:dm_heatmap}) and the representative out-of-sample forecast panel for the Bitcoin--S\&P~500 pair (Figure~\ref{fig:sp500_forecast}).
 
-    \item \textbf{\texttt{05\_XGB\_vs\_DCC.ipynb}} --- Error-profile diagnostics. Generates the rolling RMSE time series (Figure~\ref{fig:rolling_rmse}), forecast-error scatter plots, and error-distribution comparison histograms for the representative experiment.
+    \item \textbf{\texttt{05\_XGB\_vs\_DCC.ipynb}} --- Error-profile diagnostics. The notebook produces the rolling RMSE time series (Figure~\ref{fig:rolling_rmse}), forecast-error scatter plots, and error-distribution comparison histograms for the representative experiment.
 
-    \item \textbf{\texttt{06\_Regime\_Analysis.ipynb}} --- Regime-conditional analysis. Produces the regime catalogue statistics table, regime-conditional RMSE bar charts, and data-quality summary figures. Provides the empirical basis for the regime-sensitivity discussion in Chapter~4.
+    \item \textbf{\texttt{06\_Regime\_Analysis.ipynb}} --- Regime-conditional analysis. The notebook produces the regime catalogue statistics table, regime-conditional RMSE bar charts, and data-quality summary figures. These outputs provide the empirical basis for the regime-sensitivity discussion in Chapter~4.
 
-    \item \textbf{\texttt{07\_Robustness\_Checks.ipynb}} --- Robustness and sensitivity analyses. Contains refit-frequency sensitivity sweeps, stress-threshold sensitivity curves, bootstrap confidence intervals for key metrics, signal-layer diagnostics, and the cross-asset Diebold--Mariano test comparing equity against non-equity pair performance.
+    \item \textbf{\texttt{07\_Robustness\_Checks.ipynb}} --- Robustness and sensitivity analyses. The notebook contains refit-frequency sensitivity sweeps, stress-threshold sensitivity curves, bootstrap confidence intervals for key metrics, signal-layer diagnostics, and a cross-asset Diebold--Mariano test comparing equity and non-equity pair performance.
 
-    \item \textbf{\texttt{08\_Market\_Events\_Showcase.ipynb}} --- Landmark market-event case studies. For each of 11 key episodes between 2020 and 2026 (COVID crash, Luna collapse, FTX bankruptcy, SVB crisis, Bitcoin ETF approval, Trump election rally, Liberation Day tariff shock, and others), the notebook produces a four-panel diagnostic figure showing normalised price action, daily return distributions, rolling correlation dynamics across window lengths, and a pre/post correlation shift bar chart. A correlation-regime heatmap summarises all events jointly, and a scatter-plot grid illustrates how co-movement between Bitcoin and the S\&P~500 varies by event type. All figures are saved to \texttt{outputs/figures/event\_*.png} and \texttt{outputs/figures/market\_events\_*.png}; a summary CSV is written to \texttt{outputs/results/market\_events\_summary.csv}. Embedded HTML cells include direct links to the original news sources for each event. This notebook runs last so that it can draw on the full set of pipeline outputs and serves as a narrative complement to the quantitative results of Chapters 4 and~5.
+    \item \textbf{\texttt{08\_Market\_Events\_Showcase.ipynb}} --- Landmark market-event case studies. The notebook covers eleven episodes between 2020 and 2026, including the COVID crash, Luna collapse, FTX bankruptcy, SVB crisis, Bitcoin ETF approval, Trump election rally, Liberation Day tariff shock, and other notable events. For each episode, it produces a four-panel diagnostic figure showing normalised price action, daily return distributions, rolling correlation dynamics across window lengths, and a pre/post correlation shift bar chart. A correlation-regime heatmap summarises all events together, while a scatter-plot grid shows how the co-movement between Bitcoin and the S\&P~500 varies by event type. All figures are saved to \texttt{outputs/figures/event\_*.png} and \texttt{outputs/figures/market\_events\_*.png}, and a summary CSV is written to \texttt{outputs/results/market\_events\_summary.csv}. Embedded HTML cells contain links to the original news sources for each event. This notebook runs last so that it can use the full set of pipeline outputs and serves as a narrative complement to the quantitative results of Chapters 4 and 5.
+
+    \item \textbf{\texttt{09\_Feature\_Ablation.ipynb}} --- Feature-group ablation. The notebook retrains Ridge, Random Forest, and XGBoost using the nested sequence of feature sets reported in Table~\ref{tab:feature_ablation}, starting with a single dependency lag and ending with the full design matrix. The models are evaluated using the walk-forward protocol and the same seeds as in the main experiment. The notebook reproduces the ablation result from Section~\ref{sec:ablation} using the frozen dataset without running the full pipeline again.
 \end{enumerate}
 
-All notebooks use a shared ROOT-detection routine that locates the project root by searching upward for \texttt{config.yaml}. This ensures correct path resolution whether a notebook is launched interactively from within the \texttt{notebooks/} directory or executed programmatically via \texttt{run\_all.py} from the project root.
+All notebooks use a shared ROOT-detection routine that locates the project root by searching upward for \texttt{config.yaml}. This ensures correct path resolution whether a notebook is launched interactively from within the \texttt{notebooks/} directory or executed programmatically through \texttt{run\_all.py} from the project root.
 
 \subsection{Execution flow}
 
@@ -113,21 +115,19 @@ At a high level, the execution flow can be summarised as follows:
 
 \begin{enumerate}
     \item Load configuration and path settings.
-    \item Load or refresh raw price data from Yahoo Finance.
+    \item Refresh raw price data from Yahoo Finance.
     \item Compute synchronised log returns.
     \item Generate rolling-correlation targets for each asset pair and window.
     \item Build lagged and volatility-based feature matrices.
     \item Fit all models in walk-forward mode and save predictions.
     \item Compute metrics, DM tests, and export tables and figures.
     \item Run the investor signal layer and export signal figures.
-    \item Execute eight Jupyter notebooks to produce supplementary diagnostics,
-          including the market-event showcase (Appendix~\ref{app:market_events}).
-    \item Run the automated \texttt{pytest} suite (81 unit and integration tests)
-          and generate the test-report table for Appendix~E.
+    \item Execute nine Jupyter notebooks to produce supplementary diagnostics, including the market-event showcase (Appendix~\ref{app:market_events}).
+    \item Run the automated \texttt{pytest} suite (81 unit and integration tests) and generate the test-report table for Appendix E.
     \item Compile the \LaTeX\ thesis document.
 \end{enumerate}
 
-The payoff is traceability: every figure and number in the thesis can be traced back to one consistent computational procedure.
+The advantage is traceability. Every figure and number in the thesis can be traced back to a single, step-by-step computational procedure. This means that every result can be traced back to its source. This gives confidence in the work, since every number can be linked to how it was obtained. There are no hidden steps or assumptions here. Everything is clear and verifiable. This transparency makes the research more reliable and allows others to verify the work.
 
 \subsection{Configuration}
 
@@ -156,12 +156,12 @@ random_state:        42
 While tightening the project up, several implementation issues were fixed to bring the code to thesis standard.
 
 \begin{itemize}
-    \item A leakage-safe walk-forward DCC benchmark was introduced to avoid full-sample look-ahead contamination.
-    \item The metrics pipeline was made consistent so that all relevant models, including DCC, are evaluated through the same summary path.
-    \item Feature scaling was added for the regularised linear models.
-    \item The XGBoost block was made robust to GPU failure through CPU fallback.
+    \item To avoid contaminating the entire sample during the preliminary analysis, a leakage-safe DCC benchmark was implemented to prevent look-ahead contamination.
+    \item The feature pipeline was designed so that all relevant models, including DCC, would be evaluated using the same generalisation procedure.
+    \item Feature scaling was added for regularised linear models.
+    \item The XGBoost block became resilient to GPU failures through CPU fallback.
     \item The investor signal layer was integrated into the main pipeline and exported to dedicated tables and figures.
-    \item Notebook imports and notebook-specific plotting logic were stabilised for presentation and interpretation.
+    \item Notebook imports and notebook-specific plotting logic were optimised for presentation and interpretation.
 \end{itemize}
 
 These fixes matter because a thesis is judged not only on its idea but on whether the implementation behind it is reliable, reproducible, and internally coherent.
@@ -170,18 +170,18 @@ These fixes matter because a thesis is judged not only on its idea but on whethe
 
 A practical benefit of the current project state is that the full workflow can be rerun from scratch with a single command from the project root:
 
-\begin{lstlisting}[language={}, caption={Full rebuild from the project root directory.}, label=lst:rebuild]
+\begin{lstlisting}[language={}, aboveskip=4pt, belowskip=4pt, caption={Full rebuild from the project root directory.}, label=lst:rebuild]
 python run_all.py
 \end{lstlisting}
 
 Alternatively, the three stages can be executed individually:
 
-\begin{enumerate}
+\begin{enumerate}[topsep=4pt, itemsep=3pt, parsep=0pt]
     \item Run the main pipeline:\\
           \texttt{python main.py}\\
           This generates prediction CSVs, metrics, DM-test results, and the majority of figures.
     \item Execute the notebooks in order:
-    \begin{enumerate}
+    \begin{enumerate}[topsep=2pt, itemsep=1pt, parsep=0pt]
         \item \texttt{01\_EDA\_Dataset.ipynb} --- dataset overview and EDA figures.
         \item \texttt{02\_GridSearch.ipynb} --- cross-validated hyperparameter search.
         \item \texttt{03\_Model\_Comparison.ipynb} --- model-ranking table and heatmaps.
@@ -190,13 +190,14 @@ Alternatively, the three stages can be executed individually:
         \item \texttt{06\_Regime\_Analysis.ipynb} --- regime catalogue and data-quality diagnostics.
         \item \texttt{07\_Robustness\_Checks.ipynb} --- refit sensitivity, stress threshold sensitivity, bootstrap confidence intervals, signal diagnostics, and cross-asset DM test.
         \item \texttt{08\_Market\_Events\_Showcase.ipynb} --- landmark market-event case studies (Appendix~\ref{app:market_events}).
+        \item \texttt{09\_Feature\_Ablation.ipynb} --- feature-group ablation (Section~\ref{sec:ablation}).
     \end{enumerate}
     \item Run the automated test suite and generate the appendix table:
-\begin{lstlisting}[language={}]
+\begin{lstlisting}[language={}, aboveskip=3pt, belowskip=3pt]
 python -m pytest tests/ -v --junit-xml=outputs/results/test_results.xml
 \end{lstlisting}
     \item Rebuild the PDF document from the \texttt{thesis/} directory with the same command the runner uses:
-\begin{lstlisting}[language={}]
+\begin{lstlisting}[language={}, aboveskip=3pt, belowskip=3pt]
 latexmk -pdf -interaction=nonstopmode main.tex
 \end{lstlisting}
     If \texttt{latexmk} is not installed, the equivalent manual sequence is \texttt{pdflatex main.tex}, then \texttt{biber main}, then \texttt{pdflatex main.tex} run twice.
