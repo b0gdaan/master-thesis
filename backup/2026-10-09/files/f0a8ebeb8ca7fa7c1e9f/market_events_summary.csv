@@ -1,0 +1,12 @@
+Event,Date,Type,BTC move (%),S&P move (%),Corr pre (ρ),Corr post (ρ)
+"""Black Thursday"" — COVID-19 Market",2020-03-12,CRASH,-45.5,-28.5,0.168,0.518
+Crypto Summer & Institutional Adopt,2020-10-08,RALLY,22.6,8.9,0.453,0.298
+China Mining Ban & Elon Musk Tweet,2021-05-19,CRASH,-37.8,-4.0,0.16,0.441
+"Bitcoin All-Time High — $69,000",2021-11-10,ATH,-16.7,3.4,0.292,0.274
+Terra/Luna Collapse — $60B Wiped Ou,2022-05-09,CRASH,-29.0,-9.3,0.685,0.629
+FTX Collapse — Crypto Exchange Bank,2022-11-08,CRASH,-25.3,7.6,0.551,0.566
+"SVB Banking Crisis — Bitcoin as ""Ba",2023-03-10,DIVERGENCE,40.4,-4.8,0.369,0.159
+SEC Approves Spot Bitcoin ETFs,2024-01-10,MILESTONE,-15.9,4.4,-0.035,0.161
+"Bitcoin New All-Time High — $73,000",2024-03-05,ATH,44.1,4.1,0.169,0.084
+Trump Election Victory — Crypto Sup,2024-11-06,RALLY,42.0,5.2,0.418,0.471
+"""Liberation Day"" Tariff Shock",2025-04-02,CRASH,-12.8,-13.7,0.335,0.428

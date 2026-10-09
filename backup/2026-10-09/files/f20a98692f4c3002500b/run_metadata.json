@@ -1,0 +1,52 @@
+{
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "yahoo_access_date": "2026-01-01",
+  "config": {
+    "base_dir": "D:/progr",
+    "start_date": "2016-01-01",
+    "end_date": null,
+    "yahoo_access_date": "2026-01-01",
+    "assets": {
+      "crypto": [
+        "BTC-USD",
+        "ETH-USD"
+      ],
+      "traditional": [
+        "^GSPC",
+        "^IXIC",
+        "GLD",
+        "SLV",
+        "UUP"
+      ]
+    },
+    "base_asset": "BTC-USD",
+    "extra_assets": [
+      "ETH-USD"
+    ],
+    "rolling_windows": [
+      14,
+      30,
+      60,
+      90
+    ],
+    "forecast_horizon": 1,
+    "use_fisher_transform": true,
+    "use_dcc_garch": true,
+    "min_train_size": 800,
+    "refit_every": 20,
+    "dm_nw_lag": 0,
+    "random_state": 42,
+    "use_xgboost": true
+  },
+  "package_versions": {
+    "numpy": "2.4.2",
+    "pandas": "3.0.1",
+    "scikit-learn": "1.8.0",
+    "scipy": "1.17.0",
+    "yfinance": "1.2.0",
+    "xgboost": "3.2.0",
+    "torch": "2.10.0",
+    "pyarrow": "23.0.1",
+    "arch": "8.0.0"
+  }
+}

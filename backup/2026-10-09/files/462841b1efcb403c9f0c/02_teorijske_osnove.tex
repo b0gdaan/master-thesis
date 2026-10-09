@@ -1,0 +1,126 @@
+\section{Theoretical Background and Literature Review}
+
+\subsection{Why intermarket dependency matters}
+
+Asset correlations matter a lot in finance. This is because asset correlations change how you handle diversification, hedging, spread and portfolio risk. Standard mean-variance models assume that asset correlations stay the same all the time.. In the real world asset correlations change quite often. Asset correlations usually react harder, to bad news. They also tend to jump up fast when the markets go down. This happens at the moment when diversification is needed the most \cite{longin2001}. Because of this trying to guess how asset correlations will change is a way to manage risk.
+
+These factors become even more significant when one component of the pair is a cryptocurrency \cite{nakamoto2008bitcoin}. Bitcoin is constantly traded on a market accessible to anyone around the world. It reacts quickly to optimistic or pessimistic sentiment, as well as to a reduction in the money supply. People have their own ideas about what Bitcoin is. Some see it as a hedge against inflation, others as a betting instrument, still others as an indicator of the level of risk people are willing to take, and yet others as something that changes depending on rules and laws. Because it is influenced by many factors, Bitcoin does not occupy a clear position on the investment spectrum. Depending on the stage of a business's or loan's life cycle, Bitcoin can act as a high-risk stock, an indicator of cash availability, or a tool for gauging public sentiment. It is precisely because of this volatile behavior that the relationship between Bitcoin and traditional investments is an example of a phenomenon that changes over time.
+
+\subsection{Cryptocurrencies and conventional assets}
+
+Over the past ten years, research at the intersection of the cryptocurrency and traditional markets has expanded rapidly. This research can be divided into several main areas. The first area focuses on Bitcoin itself. It examines how Bitcoin returns are distributed. It also examines Bitcoin's volatility and analyzes event risk. It examines whether Bitcoin is inefficient. The second section asks whether Bitcoin can help diversify a portfolio. It considers whether Bitcoin is a good complement to stocks, gold, oil, or major currencies. The third section is the one most closely related to this thesis. It examines how different markets are interconnected. It explores how problems in one market can spread to others. It focuses on how returns and volatility vary across markets. It also focuses on crisis and stress situations.
+
+A recurring finding in this research is that the relationship is not stable \cite{bouri2017hedge,corbet2018exploring}. In markets Bitcoins connection with overall stock markets is weak or not clear in direction; in strong risk-, on or risk-off situations it becomes much stronger \cite{ji2018network,kristoufek2015main}. Precious metals move with Bitcoin strongly and less consistently \cite{dyhrberg2016bitcoin,klein2018bitcoin} which makes sense because they have a group of investors and have long been seen as safe places to put money. Currencies add another aspect acting as a sign of money availability \cite{corbet2018exploring}.
+
+These patterns suggest that the relationship should be viewed as changing over time rather than as constant. Using a single correlation estimate for the entire sample would obscure important features of the underlying dynamics. A time-varying approach allows us to identify changes in market regimes and sudden disruptions, and it also shows that different asset pairs and the duration of the period can change at different rates and in different directions.
+
+\subsection{Rolling correlation as a forecasting target}
+
+We use the moving-window correlation method because it is intuitive and easy to compute. Given two return series, ${r_{1,t}}$ and ${r_{2,t}}$, the correlation at time $t$ within a window of length $w$ is defined as
+\begin{equation}
+    \hat{\rho}_{t}^{(w)} = \frac{\sum_{s=t-w+1}^{t}(r_{1,s} - \bar{r}_{1,t})(r_{2,s} - \bar{r}_{2,t})}
+    {\sqrt{\sum_{s=t-w+1}^{t}(r_{1,s} - \bar{r}_{1,t})^{2}} \cdot
+     \sqrt{\sum_{s=t-w+1}^{t}(r_{2,s} - \bar{r}_{2,t})^{2}}},
+\end{equation}
+where $\bar{r}_{k,t}$ denotes the in-window mean of series $k$. Traversing this estimator across all $t$ yields a time series $\{\hat{\rho}_{t}^{(w)}\}$ that characterises the temporal evolution of intermarket co-movement.
+
+As a forecasting tool, moving correlation offers several advantages. It is easy to interpret: positive values indicate that two assets tend to move in the same direction, while negative values indicate that they tend to move in opposite directions and may offer hedging opportunities. Correlation can also be compared across different asset pairs and time intervals, making it possible to systematically analyze multiple assets. Finally, when using moving correlation, the focus is on changes in the relationship between assets, rather than on the level of any single return series.
+
+Its main challenge is strong serial persistence. Since $\hat{\rho}_{t}^{(w)}$ is calculated using overlapping windows, consecutive estimates share $w-1$ observations. As a result, the series exhibits a high degree of autocorrelation by construction. This persistence can affect forecasting performance and leave complex models with little to add beyond a simple autoregressive specification. In this thesis, we treat this persistence as an important empirical characteristic of the dependency process and analyze it directly.
+
+To improve the statistical behaviour of the target, the thesis applies the Fisher $z$-transformation:
+\begin{equation}
+    z_{t}^{(w)} = \frac{1}{2}\ln\!\left(\frac{1 + \hat{\rho}_{t}^{(w)}}{1 - \hat{\rho}_{t}^{(w)}}\right),
+\end{equation}
+which stretches the bounded values $\hat{\rho} \in (-1,1)$ onto the whole real line and gives them a sampling distribution much closer to Gaussian. It is standard practice for correlation-like quantities and tames the variance that otherwise blows up near $\pm 1$.
+
+The main alternative is a copula-based approach \cite{patton2006copula}, in which the marginal distributions and the structure of the dependence are modeled separately. This allows for the dependence in the tails of the distribution and nonlinear joint behavior, which cannot be captured using Pearson's correlation. This dissertation retains the moving Pearson correlation for four reasons: (i) it is readily understandable to risk managers; (ii) it is computationally efficient enough to be recalculated at each step of the ``walk-forward'' cycle; (iii) it is consistent with the benchmark DCC-GARCH model, which yields the conditional correlation matrix $R_t$ \cite{engle2001theoretical}; and (iv) the Fisher $z$-transformation already accounts for behavior at the distribution boundaries. The use of Pearson's correlation is a practical limitation, and extending the analysis to methods based on copulas is a natural next step.
+
+\subsection{Econometric benchmark: DCC-GARCH}
+
+The Dynamic Conditional Correlation GARCH model, introduced by \cite{engle2002}, provides the classical econometric benchmark for the present study. The DCC-GARCH framework decomposes the conditional covariance matrix $H_t$ of a vector of returns $\mathbf{r}_t$ according to
+\begin{equation}
+    H_t = D_t R_t D_t,
+\end{equation}
+where $D_t = \operatorname{diag}(h_{1,t}^{1/2}, h_{2,t}^{1/2})$ is a diagonal matrix of conditional standard deviations and $R_t$ is the time-varying conditional correlation matrix. Each conditional variance $h_{k,t}$ follows a univariate GARCH(1,1) process,
+\begin{equation}
+    h_{k,t} = \omega_k + \alpha_k r_{k,t-1}^{2} + \beta_k h_{k,t-1},
+\end{equation}
+with $\omega_k > 0$, $\alpha_k, \beta_k \geq 0$ and $\alpha_k + \beta_k < 1$ for covariance stationarity. The standardised residuals $\tilde{\varepsilon}_t = D_t^{-1} r_t$, which have unit conditional variance by construction, are then used to update the pseudo-correlation matrix $Q_t$ via
+\begin{equation}
+    Q_t = (1 - a - b)\bar{Q} + a\,\tilde{\varepsilon}_{t-1}\tilde{\varepsilon}_{t-1}^{\top} + b\, Q_{t-1},
+\end{equation}
+where $\bar{Q}$ is the unconditional covariance of standardised residuals, and the scalar parameters $a \geq 0$, $b \geq 0$, $a + b < 1$ govern the speed of mean reversion and the persistence of conditional correlation. The conditional correlation matrix is recovered as
+\begin{equation}
+    R_t = \operatorname{diag}(Q_t)^{-1/2}\, Q_t\, \operatorname{diag}(Q_t)^{-1/2}.
+\end{equation}
+
+DCC-GARCH serves as a benchmark in this situation because it shows how everything changes over time as volatility fluctuates. This type of volatility is characteristic of both cryptocurrencies and the stock market. The problem with DCC-GARCH lies in how it is configured. A fixed approach cannot be easily adapted to handle patterns or sudden changes. Another issue, which is harder to spot, is that information from the future gets mixed in. This happens when the model is first trained on all the data and then used to make a forecast for a specific time period. These forecasts then incorporate information that should not be available. To prevent this, the thesis rebuilds the DCC-GARCH model using data from each round of testing. This is done in the same way as for machine learning models.
+
+\subsection{Machine-learning approaches to forecasting}
+
+Machine-learning methods are included here for their ability to capture nonlinearities, threshold effects, and interactions that are difficult to specify in a parametric model \cite{gu2020empirical}. They are not assumed to outperform in every case; the thesis evaluates them against both the DCC-GARCH benchmark and simple persistence baselines, with two aims: to identify where their strengths lie, and to determine the conditions under which they add predictive value.
+
+\subsubsection{The HAR model and persistence-based forecasting}
+
+The Heterogeneous Autoregressive (HAR) model, introduced by \cite{corsi2009har}, provides a natural benchmark for forecasting persistent financial time series. The HAR model approximates long-memory dynamics by summing three autoregressive components operating at daily, weekly, and monthly horizons:
+\begin{equation}
+    z_t = \phi_0 + \phi_d z_{t-1} + \phi_w \bar{z}_{t-5:t-1}
+          + \phi_m \bar{z}_{t-22:t-1} + \varepsilon_t,
+\end{equation}
+where $\bar{z}_{t-k:t-1}$ is the arithmetic mean of $z$ over the preceding $k$ periods. The model is particularly well suited to rolling-correlation targets, which already carry a moving-average smoothing from their overlapping windows, the structure HAR is designed to exploit \cite{andersen2003realized}. In this implementation, HAR is a restricted OLS on three regressors, the latest value (daily), the 5-day mean (weekly), and the 22-day mean (monthly), evaluated under the same walk-forward protocol as the other models.
+
+\subsubsection{Regularised linear models}
+
+Regularised linear models, including Ridge regression and Elastic Net, represent strong baselines in structured tabular forecasting settings. Ridge regression imposes an $\ell_2$ penalty on the coefficient vector, shrinking estimates toward zero to reduce estimation variance without introducing sparsity. Elastic Net combines $\ell_1$ and $\ell_2$ regularisation:
+\begin{equation}
+    \hat{\boldsymbol{\beta}} = \operatorname*{arg\,min}_{\boldsymbol{\beta}} \left\{
+        \frac{1}{n}\sum_{i=1}^{n}(y_i - \mathbf{x}_i^{\top}\boldsymbol{\beta})^2
+        + \lambda \left[(1-\alpha)\|\boldsymbol{\beta}\|_2^2 + \alpha\|\boldsymbol{\beta}\|_1\right]
+    \right\},
+\end{equation}
+where $\lambda > 0$ sets the overall strength of the penalty and $\alpha \in [0,1]$ splits it between the two terms \cite{zou2005}. The $\ell_1$ component drives some coefficients to zero, performing implicit variable selection, which is useful when many lagged predictors are weak or redundant. This is well suited to the feature set used here, which contains many overlapping transformations of correlated return and volatility series.
+
+Even though these models are linear these models perform well on persistence-driven problems. When the signal-to-noise ratio is low and the informative feature is a lag of the target the bias from the linearity assumption is usually less than the drop, in variance that regularisation provides.
+
+\subsubsection{Tree-based ensemble models}
+
+Random Forests construct an ensemble of decision trees, each trained on a bootstrapped subsample and a random subset of features, and aggregate their predictions to reduce variance and improve generalisation \cite{breiman2001}. Gradient Boosting Machines instead build trees sequentially, with each new tree fitted to the pseudo-residuals of the current ensemble \cite{friedman2001}. XGBoost extends this boosting framework with second-order gradient approximations, $\ell_1$ and $\ell_2$ regularisation terms on tree structure, and computational optimisations that facilitate large-scale application \cite{chen2016}.
+
+Tree-based ensembles are a natural choice, since the relationship between cryptocurrency characteristics and cross-market dependence may be nonlinear and involve interactions between variables. For example, the information contained in Bitcoin's realized volatility regarding future dependence on stocks may depend on how high the current correlation is. Tree-based methods can automatically capture such conditional relationships without requiring interactions to be specified in advance.
+
+However, this does not guarantee that tree-based methods will perform well when forecasting one step ahead for a target variable with a high degree of stability. If the target variable is determined primarily by its most recent value, the additional flexibility of these models may provide little additional predictive information while increasing the variance of the estimates. This trade-off is one of the main reasons why all models are evaluated using the same step-by-step procedure rather than on the basis of a single summary statistic.
+
+\subsection{Walk-forward evaluation and information leakage}
+
+Temporal ordering is fundamental in financial forecasting and constrains how the evaluation must be designed. A random train-test split is inappropriate, because it disrupts the causal ordering and allows a model trained on period $t + k$ to "predict" period $t$. A valid design is one in which every forecast uses only information available at or before its own origin.
+
+Thus, the dissertation employs a step-by-step procedure: the model is trained based on an expanding history, generates a one-step-ahead forecast, then the training sample is extended by one day, and the process is repeated. To reduce computational costs, the models are updated at regular intervals rather than at every step. This is a practical compromise that also reflects how a forecasting system might operate in practice. In any case, information about the future cannot be included in the forecast.
+
+The evaluation protocol is as vital as the selection of a model. A complex model that hides a data leak may look better, than a model that has been evaluated properly and that would break the comparison. Because the goal is to reach conclusions it is mandatory that the evaluation protocol has no data leak.
+
+\subsection{Model comparison and the Diebold--Mariano test}
+
+Ranking models by average out-of-sample error only goes so far: it says nothing about whether a gap is real or just sampling noise. The Diebold--Mariano test closes that gap, formally testing the null that two forecasts are equally accurate \cite{diebold1995}.
+
+Let $e_{1,t}$ and $e_{2,t}$ denote the forecast errors of models 1 and 2 at time $t$, and let $d_t = g(e_{1,t}) - g(e_{2,t})$ denote the loss differential under a loss function $g(\cdot)$ (typically squared or absolute error). The DM test statistic is
+\begin{equation}
+    \mathrm{DM} = \frac{\bar{d}}{\sqrt{\hat{V}(d)\,/\, T}} \xrightarrow{d} \mathcal{N}(0,1),
+\end{equation}
+where $\bar{d} = T^{-1}\sum_{t=1}^{T} d_t$ is the mean loss differential, $\hat{V}(d)$ is a heteroskedasticity- and autocorrelation-consistent (HAC) estimator of the long-run variance of the loss-differential series, and $T$ is the number of evaluation periods; the ratio $\hat{V}(d)/T$ is therefore the estimated variance of $\bar{d}$. Under the null of equal predictive accuracy, the statistic is asymptotically standard normal.
+
+In this case, the DM test serves two purposes. First, it assesses whether the most effective machine learning configuration truly outperforms the DCC-GARCH test in terms of protection against leaks. Second, it assesses whether any improvement over a simple autoregressive model or the baseline level of naive robustness remains significant after accounting for sampling uncertainty. The second comparison is more important: if the model cannot significantly outperform AR(1), then most of the predictability depends on the asset's own stability, while cross-asset-related functions provide little predictive value.
+
+\subsection{From dependency forecasting to investor signaling}
+
+Accurate forecasting of rolling correlation would in itself constitute a complete academic exercise. Because the thesis also has a practical motivation, however, it adds a further step: converting the forecasts into a form on which an investor can act, framed around the risk-management decision itself.
+
+This step is implemented as a second-stage warning level. It does not predict the direction of tomorrow's returns. Instead, it assesses the probability that the following day will enter a ``stress mode,'' defined as a period of heightened risk of a decline in value for the traditional asset in question. This formulation is closer to how risk management works in practice, where the goal is to identify deteriorating conditions early enough to take corrective action. Predicting every minor price change is not the objective.
+
+Separating these two stages makes the development process more transparent. A lower forecast error and actual usefulness for portfolio decision-making are distinct properties, and combining them may lead to an overestimation of the results. The two-tier structure allows the dissertation to present a report on each aspect separately.
+
+\subsection{Positioning of the present thesis}
+
+The thesis lies at the intersection of financial econometrics, machine learning, and applied risk analysis. It does not claim that cryptocurrency data solve the market-timing problem. The claim is narrower still than it might appear: intermarket dependence is forecastable out of sample, but the results in Chapter~\ref{sec:results_overview} attribute almost all of that forecastability to the persistence of the dependency series itself, with Bitcoin's price dynamics adding only marginally beyond it. What the crypto features do support, modestly, is an early-warning signal for stress days in conventional markets.
+
+The main contribution of this study is to demonstrate that dynamic intermarket relationships can be forecasted, as well as to provide a comparative analysis of the stability metrics of machine learning models and DCC-GARCH models based on a step-by-step approach. The level of investor signals expands the scope of the work in a certain direction but does not require more than what the facts confirm.

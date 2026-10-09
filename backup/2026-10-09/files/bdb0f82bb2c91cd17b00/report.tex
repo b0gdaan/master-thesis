@@ -1,0 +1,650 @@
+% ============================================================
+%  RESEARCH REPORT — standalone, pdflatex-compilable
+%  "Forecasting Time-Varying Intermarket Dependencies
+%   Between Cryptocurrencies and Conventional Assets
+%   Using Machine Learning"
+%  Author: Bogdan Babaev  |  2026
+% ============================================================
+\documentclass[12pt, a4paper]{article}
+
+% --- packages ---
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{parskip}
+\setlength{\parskip}{6pt}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=blue!60!black,
+  citecolor=blue!60!black
+}
+
+% --- title ---
+\title{%
+  \large\textbf{Research Report}\\[6pt]
+  \Large Forecasting Time-Varying Intermarket Dependencies\\
+  Between Cryptocurrencies and Conventional Assets\\
+  Using Machine Learning\\[10pt]
+  \normalsize Master's Thesis — Summary Report
+}
+\author{Bogdan Babaev}
+\date{March 2026}
+
+% ============================================================
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{Introduction and Motivation}
+% ============================================================
+
+Financial markets are increasingly interconnected, and the relationship
+between cryptocurrency and conventional assets has become one of the most
+actively discussed topics in modern quantitative finance.
+Unlike traditional assets, Bitcoin and Ethereum trade continuously,
+respond rapidly to sentiment shifts, and can simultaneously behave as
+a speculative instrument, an inflation hedge, or a macro-risk proxy.
+This hybrid nature makes the \emph{dependency} between crypto and
+conventional markets time-varying and difficult to model with standard
+static tools.
+
+The central question of this thesis is:
+\begin{quote}
+\textit{Can information derived from cryptocurrency dynamics be used to
+forecast time-varying dependency structures with conventional assets,
+and can such forecasts be translated into a practically useful
+early-warning signal for investors?}
+\end{quote}
+
+Answering this question requires a disciplined empirical framework that
+avoids the most common pitfalls in financial ML research: in-sample
+overfitting, look-ahead bias, and cherry-picked metrics.
+The thesis therefore adopts a strict walk-forward out-of-sample
+evaluation throughout and compares machine-learning models against
+both a classical econometric benchmark (DCC-GARCH) and simple
+persistence baselines.
+
+The contribution of the thesis is twofold. First, it provides a
+\textbf{reproducible forecasting pipeline} for rolling intermarket
+dependencies. Second, it introduces an \textbf{investor signal layer}
+that converts dependency forecasts into a stress-warning signal for
+conventional markets.
+
+% ============================================================
+\section{Data}
+% ============================================================
+
+\subsection{Asset universe}
+
+Daily market data were obtained via the \texttt{yfinance} interface.
+Bitcoin (\texttt{BTC-USD}) is the base cryptocurrency throughout.
+The conventional asset universe consists of six instruments selected
+to represent broad equity risk, precious metals, and macro-defensive
+positioning.
+
+\begin{table}[H]
+  \centering
+  \caption{Asset universe.}
+  \label{tab:assets}
+  \begin{tabular}{lll}
+    \toprule
+    Ticker        & Description                        & Category \\
+    \midrule
+    \texttt{BTC-USD}  & Bitcoin                        & Cryptocurrency (base) \\
+    \texttt{ETH-USD}  & Ethereum                       & Cryptocurrency (reference) \\
+    \texttt{\^{}GSPC} & S\&P 500 index                 & Equity \\
+    \texttt{\^{}IXIC} & NASDAQ Composite index          & Equity \\
+    \texttt{GLD}      & Gold ETF (SPDR)                & Precious metals \\
+    \texttt{SLV}      & Silver ETF (iShares)           & Precious metals \\
+    \texttt{UUP}      & U.S.\ Dollar Index ETF proxy   & Macro / FX \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Sample period and preprocessing}
+
+The sample spans \textbf{9 November 2017 to 27 February 2026},
+yielding 2{,}976 daily observations per asset.
+The effective start date is determined by the earliest availability
+of ETH-USD on Yahoo Finance.
+All price series are converted to daily log returns.
+Missing observations due to non-overlapping trading calendars
+are handled by alignment and forward-filling of up to two
+consecutive non-trading days.
+
+The full dataset therefore contains $7 \times 2{,}975 = 20{,}825$
+daily log-return observations, with no remaining missing values
+after preprocessing.
+
+\subsection{Dependency targets}
+
+For each of the five Bitcoin–other-asset pairs, a rolling
+Pearson correlation is computed over four window lengths
+$w \in \{14, 30, 60, 90\}$ trading days, producing
+$5 \times 4 = 20$ dependency series in total.
+
+To stabilize the distribution and reduce boundary effects,
+each correlation series is passed through the Fisher $z$-transform:
+\[
+  z_t^{(w)} = \frac{1}{2}\log\!\left(\frac{1 + \rho_t^{(w)}}{1 - \rho_t^{(w)}}\right),
+\]
+where $\rho_t^{(w)}$ is the rolling correlation at time $t$
+with window $w$.
+All forecasting models use the Fisher-transformed series as the
+prediction target.
+The one-step-ahead value $z_{t+1}^{(w)}$ is the quantity to be
+forecast from information available at time $t$.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{../outputs/figures/eda_rolling_corr_all.png}
+  \caption{Rolling correlations between Bitcoin and each of the five conventional
+           assets over the full sample (2017--2026), shown for all four window lengths
+           ($w = 14, 30, 60, 90$ trading days).
+           The shortest window ($w=14$, light blue) is more reactive but noisier;
+           longer windows produce smoother, more persistent series.
+           Substantial time-variation is visible across all pairs and all window lengths.}
+  \label{fig:rolling_corr}
+\end{figure}
+
+% ============================================================
+\section{Methodology}
+% ============================================================
+
+\subsection{Feature engineering}
+
+Predictors are constructed exclusively from information available
+at time $t$ or earlier, ensuring no look-ahead contamination.
+The feature set covers six interpretable groups:
+
+\begin{table}[H]
+  \centering
+  \caption{Feature groups used in the dependency-forecasting layer.}
+  \label{tab:features}
+  \begin{tabular}{ll}
+    \toprule
+    Group                & Description \\
+    \midrule
+    Dependency lags      & Recent values of the rolling correlation target \\
+    Return lags          & Lagged log-returns of BTC and the paired asset \\
+    Rolling means        & Local average return over short sub-windows \\
+    Rolling volatility   & Local standard deviation of returns \\
+    Spread features      & Signed / absolute gap between BTC and asset behaviour \\
+    Cross-asset context  & Additional lags capturing joint dynamics \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Dependency lags are by far the most important predictors because
+the rolling-correlation target is smooth and strongly autocorrelated
+by construction.
+All features are computed inside the training window only;
+the test-period window never contributes to feature calculations.
+
+\subsection{Forecasting models}
+
+Eight forecasting approaches are evaluated for each of the 20
+dependency experiments, covering the full spectrum from simple
+baselines to complex ensemble methods and a classical
+econometric benchmark.
+
+\begin{table}[H]
+  \centering
+  \caption{Models evaluated in the dependency-forecasting layer.}
+  \label{tab:models}
+  \begin{tabular}{lll}
+    \toprule
+    Model              & Type                     & Notes \\
+    \midrule
+    \texttt{Naive\_Last}  & Persistence baseline  & $\hat{z}_{t+1} = z_t$ \\
+    \texttt{AR1}          & Autoregressive        & OLS, one lag \\
+    \texttt{Ridge}        & Regularised linear    & L2 penalty, standardised features \\
+    \texttt{ElasticNet}   & Regularised linear    & L1+L2 penalty \\
+    \texttt{RF}           & Tree ensemble         & Random Forest \\
+    \texttt{GBM}          & Tree ensemble         & Gradient Boosting \\
+    \texttt{XGB\_GPU}     & Tree ensemble         & XGBoost (GPU / CPU fallback) \\
+    \texttt{DCC\_GARCH}   & Econometric benchmark & Walk-forward DCC-GARCH(1,1) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Walk-forward evaluation}
+
+All experiments use an \textbf{expanding-window walk-forward design}.
+The initial training window contains the first $T_0$ observations
+(approximately 60\% of the sample).
+At each forecast origin $t \geq T_0$:
+\begin{enumerate}[noitemsep]
+  \item The model is re-fitted on all observations up to $t$.
+  \item A forecast is produced for $t+1$.
+  \item The window expands by one day.
+\end{enumerate}
+
+This design mirrors real-world forecasting conditions and
+ensures that no future information is used in model fitting.
+Refitting is performed periodically (every 30 steps) to
+balance computational cost and temporal accuracy.
+
+The DCC-GARCH benchmark undergoes the same expanding-window
+procedure, making the comparison methodologically fair.
+This \emph{leakage-safe} DCC implementation is a key
+feature of the thesis: many studies compare ML models
+against a full-sample DCC fit, which inadvertently gives
+the benchmark access to future data.
+
+\subsection{Evaluation metrics}
+
+Forecasting accuracy is measured by:
+\begin{itemize}[noitemsep]
+  \item \textbf{RMSE} — root mean squared error (primary ranking metric);
+  \item \textbf{MAE} — mean absolute error;
+  \item $\boldsymbol{R^2}$ — out-of-sample coefficient of determination.
+\end{itemize}
+
+Statistical significance of model differences is assessed with
+the \textbf{Diebold--Mariano (DM) test} using a
+Newey--West long-run variance estimator.
+Two comparisons are made for each experiment:
+ML vs.\ DCC-GARCH and ML vs.\ Naive persistence.
+
+\subsection{Investor signal layer}
+
+A second modelling layer reformulates the problem as binary
+classification. The target is a \emph{stress-day indicator}
+for the conventional asset: a day is labelled as a stress day
+if the asset's log return falls below a configurable
+negative-sigma threshold.
+Three classifiers are tested: \textbf{Logistic Regression},
+\textbf{Random Forest (Cls)}, and \textbf{GBM (Cls)}.
+Signal performance is measured by Balanced Accuracy,
+F1 score for the downside class (F1$_{\text{down}}$),
+AUC, and exit rate.
+
+% ============================================================
+\section{Results}
+% ============================================================
+
+\subsection{Average forecasting performance}
+
+Table~\ref{tab:ranking} presents average out-of-sample performance
+across all 20 dependency experiments (5 pairs $\times$ 4 windows).
+Models are ranked by average RMSE.
+
+\begin{table}[H]
+  \centering
+  \caption{Average out-of-sample performance across all 20 dependency experiments.}
+  \label{tab:ranking}
+  \begin{tabular}{lrrr}
+    \toprule
+    Model            & Avg.\ RMSE & Avg.\ MAE & Avg.\ $R^2$ \\
+    \midrule
+    \textbf{AR1}     & \textbf{0.0667} & \textbf{0.0405} & \textbf{0.9421} \\
+    Naive\_Last      & 0.0674 & 0.0396 & 0.9409 \\
+    Ridge            & 0.0916 & 0.0637 & 0.8914 \\
+    ElasticNet       & 0.0923 & 0.0644 & 0.8898 \\
+    RF               & 0.1013 & 0.0711 & 0.8687 \\
+    GBM              & 0.1038 & 0.0734 & 0.8622 \\
+    XGB\_GPU         & 0.1057 & 0.0758 & 0.8566 \\
+    \midrule
+    DCC\_GARCH       & 0.2345 & 0.1848 & 0.2788 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Three observations stand out immediately.
+
+\textbf{First}, the best model overall is \texttt{AR1}
+(RMSE = 0.0667, $R^2$ = 0.9421).
+The naive persistence baseline \texttt{Naive\_Last} is nearly
+identical, trailing by only 0.0007 RMSE.
+This is not a failure of the framework — it is an empirical
+finding about the nature of the target.
+Rolling correlation is a smooth, highly autocorrelated series;
+the primary source of one-step-ahead predictability is therefore
+the target's own recent history.
+
+\textbf{Second}, among the ML models, regularised linear methods
+(Ridge and ElasticNet) outperform tree ensembles.
+Ridge achieves the best ML RMSE (0.0916), while XGBoost
+with GPU acceleration (0.1057) ranks last among ML models.
+This pattern is consistent with the high persistence of the target:
+ridge shrinkage effectively captures the dominant autoregressive
+structure, while boosted trees tend to overfit minor noise.
+
+\textbf{Third}, the DCC-GARCH benchmark is substantially weaker
+than all other approaches (RMSE = 0.2345, $R^2$ = 0.2788).
+This gap is large and consistent across experiments.
+
+\subsection{Performance across window lengths}
+
+Table~\ref{tab:bywindow} shows the best-model RMSE for each
+window length, averaged across the five asset pairs.
+
+\begin{table}[H]
+  \centering
+  \caption{Best-model RMSE by rolling window length (average across 5 pairs).
+           All best models are AR1.}
+  \label{tab:bywindow}
+  \begin{tabular}{cc}
+    \toprule
+    Window $w$ & Best RMSE (AR1) \\
+    \midrule
+    14 days & 0.1451 \\
+    30 days & 0.0658 \\
+    60 days & 0.0332 \\
+    90 days & 0.0228 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Longer windows produce smoother, more predictable targets;
+RMSE drops monotonically from 0.1451 at $w=14$ to 0.0228
+at $w=90$.
+This confirms that the forecasting difficulty is largely
+governed by the smoothness of the target rather than by
+the choice of model.
+
+\subsection{Representative forecast visualisation}
+
+Figure~\ref{fig:forecast_sp500} illustrates the walk-forward
+forecast for the Bitcoin–S\&P 500 pair at $w=30$, the
+experiment of highest practical interest.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{../outputs/figures/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png}
+  \caption{Out-of-sample walk-forward forecast of the Bitcoin–S\&P 500
+           rolling dependency (Fisher-transformed, $w=30$).
+           The best models closely track the target, especially
+           in low-volatility regimes.}
+  \label{fig:forecast_sp500}
+\end{figure}
+
+The figure highlights a characteristic pattern: models
+track broad directional trends well (low-frequency evolution),
+but sharp regime transitions — for example, the abrupt
+dependency spike during the COVID-19 market crash in
+March 2020 — remain difficult for all models.
+
+\subsection{Diebold--Mariano tests}
+
+The Diebold--Mariano framework is used to rigorously test
+whether differences in forecast accuracy are statistically
+significant.
+Two sets of comparisons are performed:
+
+\begin{enumerate}[noitemsep]
+  \item \textbf{Ridge vs.\ DCC-GARCH}:
+    Ridge is the strongest ML model and the natural
+    representative for the ML class.
+  \item \textbf{Ridge vs.\ Naive\_Last}:
+    Tests whether ML adds value beyond simple persistence.
+\end{enumerate}
+
+\textbf{Results — Ridge vs.\ DCC-GARCH}:
+All 24 DM tests reject the null of equal predictive accuracy
+at the $p < 0.001$ level.
+DM statistics range from 20.69 to 33.07, confirming that
+Ridge \emph{systematically} outperforms DCC-GARCH across
+all dependency experiments.
+
+\textbf{Results — Ridge vs.\ Naive\_Last}:
+All 24 DM statistics are \emph{negative} (range: $-12.72$
+to $-5.78$), meaning the null of equal accuracy is rejected
+in the \emph{opposite} direction — Naive persistence
+significantly outperforms Ridge in all experiments.
+
+Figure~\ref{fig:dm_heatmap} summarises the DM comparison
+against DCC-GARCH.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.82\textwidth]{../outputs/figures/dm_heatmap_Ridge_vs_DCC.png}
+  \caption{Diebold--Mariano test results: Ridge vs.\ DCC-GARCH
+           across all 20 dependency experiments.
+           Positive DM statistics (warm colours) indicate Ridge wins.
+           All tests are significant at $p < 0.001$.}
+  \label{fig:dm_heatmap}
+\end{figure}
+
+These results support a structured three-level interpretation:
+\begin{enumerate}[noitemsep]
+  \item \textbf{Is dependency forecastable?} Yes — all models
+    achieve high out-of-sample $R^2$ (AR1: 0.942).
+  \item \textbf{Does ML beat DCC-GARCH?} Yes — Ridge
+    significantly outperforms DCC in all 24 tests.
+  \item \textbf{Does ML beat persistence?} No — Naive and AR1
+    significantly outperform all ML models on average.
+\end{enumerate}
+
+\subsection{Temporal error dynamics}
+
+Forecast accuracy is not constant through time.
+Figure~\ref{fig:rolling_rmse} shows the 60-day rolling RMSE
+for the Bitcoin--S\&P~500 pair, comparing Ridge (the best ML model),
+DCC-GARCH, and the naive persistence baseline.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{../outputs/figures/rolling_rmse_corr_BTC-USD_^GSPC_w30_fisher_z.png}
+  \caption{60-day rolling RMSE for the Bitcoin--S\&P~500 pair ($w=30$):
+           Ridge (best ML model, green) vs DCC-GARCH (blue) vs Naive persistence (dashed).
+           Ridge consistently outperforms DCC; the Naive baseline remains the tightest
+           overall, confirming that persistence drives most predictability.
+           Error spikes cluster around known market stress episodes.}
+  \label{fig:rolling_rmse}
+\end{figure}
+
+Error spikes cluster around known market stress periods
+(2020 COVID crash, 2022 crypto bear market, 2022–2023
+rate-hike cycle).
+During these episodes all models deteriorate, but the
+deterioration is proportionally smaller for the simpler models,
+which underreact to abrupt changes without accumulating
+additional noise from more complex fitting procedures.
+
+\subsection{Investor signal layer}
+
+Table~\ref{tab:signal} reports average classification results
+across all dependency experiments and window lengths.
+
+\begin{table}[H]
+  \centering
+  \caption{Average investor-signal performance by classifier.}
+  \label{tab:signal}
+  \begin{tabular}{lrrrr}
+    \toprule
+    Signal model & Bal.\ Accuracy & F1$_{\text{down}}$ & AUC & Exit Rate \\
+    \midrule
+    \textbf{Logit}  & \textbf{0.5058} & \textbf{0.2087} & 0.5080 & 0.292 \\
+    GBM\_Cls        & 0.5008          & 0.0334          & \textbf{0.5201} & 0.018 \\
+    RF\_Cls         & 0.5003          & 0.0297          & 0.5195 & 0.017 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Logistic regression emerges as the most balanced classifier.
+It achieves a Balanced Accuracy of 0.506, meaningfully above
+the 0.50 random baseline, with an F1$_{\text{down}}$ of 0.209.
+Tree-based classifiers achieve higher AUC but collapse into
+near-zero exit rates, effectively failing to flag any
+stress days in practice.
+
+The best individual configuration is BTC–S\&P 500, $w=30$,
+Logistic Regression:
+\[
+  \text{Balanced Accuracy} = 0.541,\quad
+  \text{F1}_{\text{down}} = 0.252,\quad
+  \text{AUC} = 0.538,\quad
+  \text{Exit Rate} = 33\%.
+\]
+
+Figure~\ref{fig:signal_sp500} shows the generated signal
+alongside the S\&P 500 return series.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{../outputs/figures/signal_corr_BTC-USD_^GSPC_w30.png}
+  \caption{Investor stress-warning signal for the S\&P 500
+           ($w=30$, Logit classifier). Red markers indicate
+           flagged elevated-risk days.}
+  \label{fig:signal_sp500}
+\end{figure}
+
+The signal is not strong enough to serve as a standalone
+trading rule.
+It is best interpreted as a \textbf{risk-management overlay}:
+a tool that raises caution flags on roughly 30\% of days,
+with moderate success at capturing genuine downside episodes.
+
+% ============================================================
+\section{Key Findings and Discussion}
+% ============================================================
+
+\subsection{The persistence result is the main finding}
+
+The dominant empirical result is that the rolling dependency
+between Bitcoin and conventional assets is forecastable,
+but that the forecast is driven almost entirely by
+the \textbf{target's own inertia}.
+This finding is not a limitation — it is substantively meaningful.
+
+It implies that intermarket dependencies in crypto-conventional
+pairs move gradually and persistently.
+A portfolio manager who tracks the 30-day rolling BTC–S\&P 500
+correlation obtains approximately 94\% of the next day's
+variance explained simply by observing today's value.
+Complex models cannot easily improve on this because the
+signal-to-noise ratio in the \emph{incremental} component is low.
+
+\subsection{Where machine learning adds genuine value}
+
+Machine learning does not beat simple baselines, but it
+beats DCC-GARCH \emph{consistently and significantly}
+(DM statistics 20–33, all $p < 0.001$).
+This has a clear explanation: DCC-GARCH is designed to
+model the full conditional covariance structure of returns.
+When evaluated purely as a point forecaster of a smoothed
+rolling-correlation target, its parametric structure
+is less adaptive than even a regularised linear model
+that has direct access to recent dependency lags.
+
+This finding validates the design choice of treating rolling
+correlation as a direct ML forecasting target, rather than
+deriving it from a parametric GARCH system.
+
+\subsection{Practical interpretation of the signal layer}
+
+The signal layer deliberately avoids overstatement.
+Results show modest but statistically non-trivial performance
+(Balanced Accuracy 0.506–0.541 for Logit).
+From a practical standpoint, the signal's value lies in
+\emph{risk reduction} rather than \emph{alpha generation}.
+A cautious investor who reduces equity exposure on the
+$\approx 33\%$ of days flagged by the logistic signal
+for the BTC–S\&P 500 pair would skip a disproportionate
+share of severe downside days, at the cost of also missing
+some positive days.
+
+% ============================================================
+\section{Limitations and Future Work}
+% ============================================================
+
+\subsection{Limitations}
+
+\begin{itemize}
+  \item \textbf{Daily frequency only}: intraday spillovers
+    and very short-lived contagion are not captured.
+  \item \textbf{One-step-ahead horizon}: multi-day and weekly
+    forecasting may reveal different model rankings.
+  \item \textbf{Rolling correlation as target}: alternative
+    dependence measures (copulas, tail dependence, realised
+    covariance) could uncover additional structure.
+  \item \textbf{No portfolio backtest}: the signal layer is
+    evaluated statistically but not translated into full
+    portfolio-level profit/loss accounting with transaction costs.
+  \item \textbf{Live data dependency}: results reflect
+    market conditions through February 2026; a later
+    replication may capture structurally different
+    crypto–equity regimes.
+\end{itemize}
+
+\subsection{Directions for future research}
+
+\begin{enumerate}[noitemsep]
+  \item Extend to multi-day and weekly forecast horizons.
+  \item Enrich features with macro variables (VIX, credit spreads,
+    on-chain Bitcoin metrics).
+  \item Apply richer dependence targets: copula-based
+    or realised covariance measures.
+  \item Integrate the signal layer into a portfolio
+    optimisation framework with turnover constraints.
+  \item Evaluate out-of-sample stability across distinct
+    crypto market regimes (bull 2020–21, bear 2022,
+    recovery 2023–24, new ATH cycle 2024–26).
+\end{enumerate}
+
+% ============================================================
+\section{Conclusion}
+% ============================================================
+
+This report summarises a master's thesis that develops and
+evaluates a reproducible two-layer machine-learning pipeline
+for forecasting time-varying dependency between Bitcoin
+and five conventional asset classes.
+
+The empirical work covers 2{,}976 daily observations
+(November 2017 – February 2026), 20 dependency experiments
+(5 pairs $\times$ 4 windows), 8 forecasting models, 48 DM tests,
+and an investor signal layer with 3 classifiers.
+
+The principal findings are:
+
+\begin{enumerate}
+  \item \textbf{Dependency is forecastable} in an out-of-sample
+    walk-forward setting across all pairs and windows
+    ($R^2 \approx 0.84$–$0.97$ for the best models).
+  \item \textbf{Persistence dominates}: AR1 and Naive baselines
+    rank first because the smoothed rolling-correlation target
+    is strongly autocorrelated.
+  \item \textbf{Machine learning beats DCC-GARCH}:
+    Ridge significantly outperforms the leakage-safe DCC benchmark
+    in all 24 DM tests ($p < 0.001$, DM statistics 20–33).
+  \item \textbf{The investor signal is moderate but meaningful}:
+    Logistic regression achieves Balanced Accuracy up to 0.54
+    and F1$_{\text{down}}$ up to 0.25 for BTC–S\&P 500,
+    supporting its use as a risk-management overlay.
+\end{enumerate}
+
+These results are internally consistent, methodologically grounded,
+and practically interpretable.
+The thesis does not claim that cryptocurrency data can predict
+conventional markets with high accuracy.
+It does show that cryptocurrency dynamics carry structured
+information about changing cross-market dependencies,
+that this structure is forecastable, and that such forecasts
+can inform an investor-facing risk warning mechanism.
+
+% ============================================================
+\end{document}

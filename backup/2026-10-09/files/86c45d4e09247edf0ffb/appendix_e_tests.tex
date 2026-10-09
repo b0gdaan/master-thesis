@@ -1,0 +1,179 @@
+\section{Appendix E: Additional Statistical Tests}
+
+This appendix presents three supplementary hypothesis tests that further
+validate the robustness of the empirical results: a Mincer-Zarnowitz forecast
+efficiency test, residual diagnostic tests (Ljung-Box and ARCH LM), and a
+Harvey-Leybourne-Newbold small-sample correction of the Diebold-Mariano statistic.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Mincer-Zarnowitz Forecast Efficiency Test}
+
+The Mincer-Zarnowitz (MZ) test \cite{mincer1969economic} checks whether forecasts
+are unbiased and informationally efficient.
+For each model the auxiliary regression
+\begin{equation}
+    y_t = \alpha + \beta\,\hat{y}_t + \varepsilon_t
+\end{equation}
+is estimated by OLS and the joint null hypothesis $H_0{:}\;\alpha = 0,\;\beta = 1$
+is tested with an $F$-statistic.
+Rejection ($p < 0.05$) indicates that the forecast is either biased ($\alpha \neq 0$)
+or fails to make full use of available information ($\beta \neq 1$).
+
+Table~\ref{tab:mz_summary} summarises the percentage of the 24
+dependency–window experiments in which each model passes the MZ test,
+together with its average $\alpha$ and $\beta$ coefficients.
+
+\begin{table}[H]
+    \centering
+    \caption{Mincer-Zarnowitz forecast efficiency: percentage of 24 experiments
+             passing the joint $F$-test ($p \geq 0.05$) and average coefficient estimates.}
+    \label{tab:mz_summary}
+    \begin{tabular}{lrrrr}
+        \toprule
+        Model & Efficient (\%) & $\bar{\alpha}$ & $\bar{\beta}$ & $\bar{F}$ \\
+        \midrule
+        AR1         & 79.2 & $+0.0010$ & 0.9976 &   2.1 \\
+        Ridge       & 58.3 & $-0.0018$ & 0.9970 &   6.6 \\
+        RF          & 41.7 & $-0.0023$ & 1.0029 &   8.3 \\
+        GBM         & 16.7 & $-0.0060$ & 1.0185 &  16.1 \\
+        XGB\_GPU    & 12.5 & $-0.0030$ & 1.0173 &  17.0 \\
+        ElasticNet  &  8.3 & $-0.0082$ & 1.0223 &  19.8 \\
+        Naive\_Last &  4.2 & $+0.0099$ & 0.9702 &  17.1 \\
+        DCC-GARCH   &  0.0 & $-0.0307$ & 1.1780 & 291.0 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+AR1 passes the efficiency test in nearly four-fifths of experiments, confirming
+that it makes near-optimal use of the information set.
+Ridge is the most efficient among the ML models.
+DCC-GARCH never passes: its average $\bar{\beta} = 1.18$ reflects a systematic
+tendency to over-predict correlation magnitudes, consistent with the large
+positive RMSE penalty observed in the main results.
+
+Table~\ref{tab:mz_gspc_w30} provides the full detail for the representative
+pair BTC-USD vs S\&P~500 at $w = 30$.
+
+\begin{table}[H]
+    \centering
+    \caption{Mincer-Zarnowitz test: BTC-USD vs S\&P~500, $w = 30$.
+             $F$-statistic tests $H_0{:}\;\alpha=0, \beta=1$; $p_\text{MZ}$ is
+             the associated $p$-value.}
+    \label{tab:mz_gspc_w30}
+    \begin{tabular}{lrrrrl}
+        \toprule
+        Model & $\hat{\alpha}$ & $\hat{\beta}$ & $F$ & $p_\text{MZ}$ & Efficient \\
+        \midrule
+        AR1         & $+0.0071$ & 0.9915 &   5.22 & 0.005 & No  \\
+        Ridge       & $+0.0140$ & 0.9850 &  12.04 & $<0.001$ & No  \\
+        Naive\_Last & $+0.0115$ & 0.9693 &  17.41 & $<0.001$ & No  \\
+        RF          & $+0.0184$ & 0.9804 &  17.58 & $<0.001$ & No  \\
+        ElasticNet  & $+0.0091$ & 1.0065 &  18.88 & $<0.001$ & No  \\
+        GBM         & $+0.0151$ & 0.9998 &  26.32 & $<0.001$ & No  \\
+        XGB\_GPU    & $+0.0181$ & 1.0001 &  37.33 & $<0.001$ & No  \\
+        DCC-GARCH   & $-0.0814$ & 1.4757 & 307.61 & $<0.001$ & No  \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+At this particular pair and window all models are technically rejected, yet the
+AR1 $F$-statistic (5.22) is an order of magnitude smaller than those for the
+ML models, and the DCC-GARCH statistic (307.6) stands apart as the most
+severely misspecified.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Residual Diagnostics: Ljung-Box and ARCH LM Tests}
+
+Two classical residual tests are applied to the OOS forecast errors
+$e_t = y_t - \hat{y}_t$ for every model $\times$ dependency $\times$ window
+combination (192 cases in total).
+
+\textbf{Ljung-Box Q-test} (10 lags): tests $H_0{:}$ no serial autocorrelation.
+Rejection indicates that the model has not fully captured the temporal structure
+of the target series.
+
+\textbf{ARCH LM test} (5 lags): regresses $e_t^2$ on its own lags and tests
+$H_0{:}$ no conditional heteroscedasticity.
+Rejection signals remaining volatility clustering in the residuals.
+
+Table~\ref{tab:resid_summary} reports, for each model, the percentage of
+experiments in which the residuals pass each test at the 5\% level.
+
+\begin{table}[H]
+    \centering
+    \caption{Residual diagnostics: percentage of 24 experiments passing the
+             Ljung-Box autocorrelation test and the ARCH LM heteroscedasticity
+             test at $\alpha = 0.05$.}
+    \label{tab:resid_summary}
+    \begin{tabular}{lrr}
+        \toprule
+        Model & No autocorr (\%) & No ARCH (\%) \\
+        \midrule
+        Naive\_Last &  41.7 & 66.7 \\
+        AR1         &  37.5 & 62.5 \\
+        ElasticNet  &   0.0 &  0.0 \\
+        Ridge       &   0.0 &  0.0 \\
+        RF          &   0.0 &  0.0 \\
+        GBM         &   0.0 &  0.0 \\
+        XGB\_GPU    &   0.0 &  0.0 \\
+        DCC-GARCH   &   0.0 &  0.0 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+AR1 and Naive\_Last partially capture the temporal structure of the series,
+passing the Ljung-Box test in roughly 37--42\% of experiments.
+All ML models and DCC-GARCH leave strongly significant autocorrelation and
+volatility clustering in every experiment (0\% pass rate).
+This confirms that persistence in the dependency series is the primary
+driver of forecastability: any model that does not explicitly encode an
+autoregressive component fails to adequately model the temporal structure,
+and the large Q-statistics for tree-ensemble methods (e.g.\
+$Q = 1{,}225$ for XGB\_GPU at BTC-USD vs S\&P 500, $w = 30$)
+underline that tree-based forecasters do not generalise the AR structure
+learned at training time.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Harvey-Leybourne-Newbold Corrected Diebold-Mariano Test}
+
+The standard Diebold-Mariano statistic uses the asymptotic standard-normal
+distribution, which tends to over-reject in finite samples.
+Harvey, Leybourne \& Newbold \cite{harvey1997testing} propose multiplying
+the DM statistic by the correction factor
+\begin{equation}
+    k = \sqrt{\frac{n + 1 - 2h + h(h-1)/n}{n}},
+\end{equation}
+where $n$ is the number of forecast observations and $h$ the forecast horizon,
+and comparing the result to a $t(n-1)$ distribution.
+For $h = 1$ and $n > 1{,}000$ the factor $k \approx 1.000$, so the practical
+effect on $p$-values is negligible.
+
+Applied to all 240 DM comparisons (Table~\ref{tab:dm_hln}) the HLN correction
+produces zero sign changes in significance at the 5\% level (average correction
+factor $k = 1.000226$).
+All conclusions regarding the relative ranking of models, and in particular
+the finding that every ML model significantly outperforms DCC-GARCH, are
+therefore robust to the small-sample correction.
+
+\begin{table}[H]
+    \centering
+    \caption{HLN-corrected DM test: ML models vs DCC-GARCH benchmark,
+             BTC-USD vs S\&P~500, $w = 30$.
+             DM: original statistic (normal); DM$_\text{HLN}$: corrected
+             statistic ($t_{n-1}$).
+             All models beat DCC-GARCH at $p < 0.001$ under both tests.}
+    \label{tab:dm_hln}
+    \begin{tabular}{lrrrrl}
+        \toprule
+        Model & DM & $p_\text{DM}$ & DM$_\text{HLN}$ & $p_\text{HLN}$ & Sig. \\
+        \midrule
+        ElasticNet & 25.80 & $<0.001$ & 25.79 & $<0.001$ & *** \\
+        Ridge      & 25.75 & $<0.001$ & 25.75 & $<0.001$ & *** \\
+        RF         & 26.67 & $<0.001$ & 26.66 & $<0.001$ & *** \\
+        GBM        & 27.38 & $<0.001$ & 27.37 & $<0.001$ & *** \\
+        XGB\_GPU   & 27.39 & $<0.001$ & 27.38 & $<0.001$ & *** \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\clearpage

@@ -1,0 +1,92 @@
+\begin{table}[H]
+\centering
+\small
+\caption{Out-of-sample forecasting metrics (Fisher-z space).}
+\label{tab:model_comparison}
+\begin{tabular}{llllrrrr}
+\toprule
+Dependency & $w$ & Space & Model & MAE & RMSE & $R^2$ & $n$ \\
+\midrule
+BTC-USD_ETH-USD & 14 & fisher_z & AR1 & 0.1012 & 0.1561 & 0.8817 &  \\
+BTC-USD_ETH-USD & 14 & fisher_z & Naive_Last & 0.0987 & 0.1582 & 0.8784 &  \\
+BTC-USD_ETH-USD & 14 & fisher_z & Ridge & 0.1455 & 0.2022 & 0.8014 &  \\
+BTC-USD_ETH-USD & 14 & fisher_z & ElasticNet & 0.1463 & 0.2031 & 0.7997 &  \\
+BTC-USD_ETH-USD & 14 & fisher_z & RF & 0.1558 & 0.2136 & 0.7784 &  \\
+BTC-USD_ETH-USD & 14 & fisher_z & GBM & 0.1599 & 0.2178 & 0.7696 &  \\
+BTC-USD_ETH-USD & 14 & fisher_z & XGB_GPU & 0.1628 & 0.2217 & 0.7612 &  \\
+BTC-USD_ETH-USD & 14 & fisher_z & DCC_GARCH & 0.3349 & 0.4280 & 0.1103 &  \\
+BTC-USD_ETH-USD & 30 & fisher_z & AR1 & 0.0420 & 0.0710 & 0.9609 &  \\
+BTC-USD_ETH-USD & 30 & fisher_z & Naive_Last & 0.0410 & 0.0712 & 0.9608 &  \\
+BTC-USD_ETH-USD & 30 & fisher_z & Ridge & 0.0677 & 0.1000 & 0.9225 &  \\
+BTC-USD_ETH-USD & 30 & fisher_z & ElasticNet & 0.0680 & 0.1005 & 0.9217 &  \\
+BTC-USD_ETH-USD & 30 & fisher_z & RF & 0.0778 & 0.1149 & 0.8976 &  \\
+BTC-USD_ETH-USD & 30 & fisher_z & GBM & 0.0813 & 0.1194 & 0.8896 &  \\
+BTC-USD_ETH-USD & 30 & fisher_z & XGB_GPU & 0.0833 & 0.1216 & 0.8854 &  \\
+BTC-USD_ETH-USD & 30 & fisher_z & DCC_GARCH & 0.1968 & 0.2600 & 0.4763 &  \\
+BTC-USD_ETH-USD & 60 & fisher_z & Naive_Last & 0.0193 & 0.0360 & 0.9853 &  \\
+BTC-USD_ETH-USD & 60 & fisher_z & AR1 & 0.0198 & 0.0360 & 0.9853 &  \\
+BTC-USD_ETH-USD & 60 & fisher_z & Ridge & 0.0331 & 0.0524 & 0.9688 &  \\
+BTC-USD_ETH-USD & 60 & fisher_z & ElasticNet & 0.0342 & 0.0536 & 0.9674 &  \\
+BTC-USD_ETH-USD & 60 & fisher_z & RF & 0.0411 & 0.0605 & 0.9584 &  \\
+BTC-USD_ETH-USD & 60 & fisher_z & GBM & 0.0417 & 0.0606 & 0.9583 &  \\
+BTC-USD_ETH-USD & 60 & fisher_z & XGB_GPU & 0.0439 & 0.0632 & 0.9547 &  \\
+BTC-USD_ETH-USD & 60 & fisher_z & DCC_GARCH & 0.1694 & 0.2236 & 0.4323 &  \\
+BTC-USD_ETH-USD & 90 & fisher_z & Naive_Last & 0.0128 & 0.0253 & 0.9905 &  \\
+BTC-USD_ETH-USD & 90 & fisher_z & AR1 & 0.0130 & 0.0253 & 0.9905 &  \\
+BTC-USD_ETH-USD & 90 & fisher_z & Ridge & 0.0218 & 0.0367 & 0.9800 &  \\
+BTC-USD_ETH-USD & 90 & fisher_z & ElasticNet & 0.0233 & 0.0379 & 0.9786 &  \\
+BTC-USD_ETH-USD & 90 & fisher_z & XGB_GPU & 0.0306 & 0.0501 & 0.9627 &  \\
+BTC-USD_ETH-USD & 90 & fisher_z & RF & 0.0302 & 0.0533 & 0.9578 &  \\
+BTC-USD_ETH-USD & 90 & fisher_z & GBM & 0.0321 & 0.0583 & 0.9495 &  \\
+BTC-USD_ETH-USD & 90 & fisher_z & DCC_GARCH & 0.1516 & 0.1947 & 0.4370 &  \\
+BTC-USD_GLD & 14 & fisher_z & AR1 & 0.0889 & 0.1420 & 0.8615 &  \\
+BTC-USD_GLD & 14 & fisher_z & Naive_Last & 0.0861 & 0.1445 & 0.8566 &  \\
+BTC-USD_GLD & 14 & fisher_z & Ridge & 0.1379 & 0.1932 & 0.7436 &  \\
+BTC-USD_GLD & 14 & fisher_z & ElasticNet & 0.1375 & 0.1935 & 0.7428 &  \\
+BTC-USD_GLD & 14 & fisher_z & RF & 0.1446 & 0.2011 & 0.7224 &  \\
+BTC-USD_GLD & 14 & fisher_z & GBM & 0.1506 & 0.2065 & 0.7073 &  \\
+BTC-USD_GLD & 14 & fisher_z & XGB_GPU & 0.1523 & 0.2080 & 0.7030 &  \\
+BTC-USD_GLD & 14 & fisher_z & DCC_GARCH & 0.2815 & 0.3605 & 0.1078 &  \\
+BTC-USD_GLD & 30 & fisher_z & AR1 & 0.0383 & 0.0662 & 0.9369 &  \\
+BTC-USD_GLD & 30 & fisher_z & Naive_Last & 0.0375 & 0.0667 & 0.9360 &  \\
+BTC-USD_GLD & 30 & fisher_z & ElasticNet & 0.0621 & 0.0919 & 0.8784 &  \\
+BTC-USD_GLD & 30 & fisher_z & Ridge & 0.0619 & 0.0920 & 0.8782 &  \\
+BTC-USD_GLD & 30 & fisher_z & XGB_GPU & 0.0727 & 0.1019 & 0.8506 &  \\
+BTC-USD_GLD & 30 & fisher_z & RF & 0.0711 & 0.1019 & 0.8506 &  \\
+BTC-USD_GLD & 30 & fisher_z & GBM & 0.0715 & 0.1024 & 0.8490 &  \\
+BTC-USD_GLD & 30 & fisher_z & DCC_GARCH & 0.1872 & 0.2329 & 0.2194 &  \\
+BTC-USD_GLD & 60 & fisher_z & AR1 & 0.0183 & 0.0345 & 0.9705 &  \\
+BTC-USD_GLD & 60 & fisher_z & Naive_Last & 0.0180 & 0.0346 & 0.9703 &  \\
+BTC-USD_GLD & 60 & fisher_z & Ridge & 0.0312 & 0.0485 & 0.9417 &  \\
+BTC-USD_GLD & 60 & fisher_z & ElasticNet & 0.0319 & 0.0487 & 0.9411 &  \\
+BTC-USD_GLD & 60 & fisher_z & RF & 0.0361 & 0.0535 & 0.9292 &  \\
+BTC-USD_GLD & 60 & fisher_z & GBM & 0.0368 & 0.0539 & 0.9279 &  \\
+BTC-USD_GLD & 60 & fisher_z & XGB_GPU & 0.0389 & 0.0557 & 0.9232 &  \\
+BTC-USD_GLD & 60 & fisher_z & DCC_GARCH & 0.1236 & 0.1547 & 0.4074 &  \\
+BTC-USD_GLD & 90 & fisher_z & AR1 & 0.0117 & 0.0233 & 0.9817 &  \\
+BTC-USD_GLD & 90 & fisher_z & Naive_Last & 0.0116 & 0.0233 & 0.9817 &  \\
+BTC-USD_GLD & 90 & fisher_z & Ridge & 0.0205 & 0.0332 & 0.9627 &  \\
+BTC-USD_GLD & 90 & fisher_z & ElasticNet & 0.0213 & 0.0337 & 0.9617 &  \\
+BTC-USD_GLD & 90 & fisher_z & RF & 0.0247 & 0.0375 & 0.9526 &  \\
+BTC-USD_GLD & 90 & fisher_z & GBM & 0.0263 & 0.0393 & 0.9480 &  \\
+BTC-USD_GLD & 90 & fisher_z & XGB_GPU & 0.0271 & 0.0399 & 0.9463 &  \\
+BTC-USD_GLD & 90 & fisher_z & DCC_GARCH & 0.0977 & 0.1294 & 0.4350 &  \\
+BTC-USD_SLV & 14 & fisher_z & AR1 & 0.0902 & 0.1426 & 0.8508 &  \\
+BTC-USD_SLV & 14 & fisher_z & Naive_Last & 0.0870 & 0.1451 & 0.8453 &  \\
+BTC-USD_SLV & 14 & fisher_z & Ridge & 0.1405 & 0.1952 & 0.7202 &  \\
+BTC-USD_SLV & 14 & fisher_z & ElasticNet & 0.1411 & 0.1960 & 0.7180 &  \\
+BTC-USD_SLV & 14 & fisher_z & RF & 0.1496 & 0.2040 & 0.6943 &  \\
+BTC-USD_SLV & 14 & fisher_z & GBM & 0.1540 & 0.2083 & 0.6814 &  \\
+BTC-USD_SLV & 14 & fisher_z & XGB_GPU & 0.1591 & 0.2129 & 0.6673 &  \\
+BTC-USD_SLV & 14 & fisher_z & DCC_GARCH & 0.3006 & 0.3776 & -0.0471 &  \\
+BTC-USD_SLV & 30 & fisher_z & AR1 & 0.0375 & 0.0616 & 0.9425 &  \\
+BTC-USD_SLV & 30 & fisher_z & Naive_Last & 0.0367 & 0.0619 & 0.9418 &  \\
+BTC-USD_SLV & 30 & fisher_z & Ridge & 0.0617 & 0.0872 & 0.8847 &  \\
+BTC-USD_SLV & 30 & fisher_z & ElasticNet & 0.0621 & 0.0875 & 0.8839 &  \\
+BTC-USD_SLV & 30 & fisher_z & RF & 0.0711 & 0.0983 & 0.8535 &  \\
+BTC-USD_SLV & 30 & fisher_z & XGB_GPU & 0.0761 & 0.1027 & 0.8400 &  \\
+BTC-USD_SLV & 30 & fisher_z & GBM & 0.0750 & 0.1036 & 0.8373 &  \\
+BTC-USD_SLV & 30 & fisher_z & DCC_GARCH & 0.2120 & 0.2616 & -0.0386 &  \\
+\bottomrule
+\end{tabular}
+\end{table}

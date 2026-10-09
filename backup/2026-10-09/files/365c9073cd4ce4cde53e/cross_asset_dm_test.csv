@@ -1,0 +1,2 @@
+group_a,assets_a,group_b,assets_b,n_pairs_a,n_pairs_b,window,significance,DM_stat,p_value,n
+equity,"['^GSPC', '^IXIC']",non_equity,"['GLD', 'SLV', 'UUP']",2,3,30,***,-9.016131536243252,2.2250738585072014e-308,2161

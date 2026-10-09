@@ -1,0 +1,24 @@
+\begin{table}[H]
+\centering
+\small
+\caption{Automated validation suite, summarised by test class. All 81 tests pass on the present outputs, with none skipped. The complete per-test log, including parametrised cases and per-test timings, is written to \texttt{outputs/results/test\_results.xml} in the repository.}
+\label{tab:test_report}
+\begin{tabular}{lccr}
+\toprule
+Test class & Tests & Passed & Time (s) \\
+\midrule
+\texttt{TestDatasetIntegrity} & 13 & \textcolor{teal}{13/13} & 0.12 \\
+\texttt{TestDataQuality} & 9 & \textcolor{teal}{9/9} & 0.09 \\
+\texttt{TestFeatureEngineering} & 6 & \textcolor{teal}{6/6} & 0.05 \\
+\texttt{TestModelMetrics} & 12 & \textcolor{teal}{12/12} & 0.03 \\
+\texttt{TestDMTests} & 8 & \textcolor{teal}{8/8} & 0.02 \\
+\texttt{TestSignalMetrics} & 7 & \textcolor{teal}{7/7} & 0.02 \\
+\texttt{TestWalkForward} & 5 & \textcolor{teal}{5/5} & 0.07 \\
+\texttt{TestOutputFiles} & 14 & \textcolor{teal}{14/14} & 0.00 \\
+\texttt{TestBootstrapCI} & 3 & \textcolor{teal}{3/3} & 0.00 \\
+\texttt{TestSensitivity} & 4 & \textcolor{teal}{4/4} & 0.00 \\
+\midrule
+\textbf{Total} & \textbf{81} & \textbf{81} & \textbf{0.41} \\
+\bottomrule
+\end{tabular}
+\end{table}

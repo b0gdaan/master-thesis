@@ -1,0 +1,79 @@
+﻿\section{Discussion}
+
+\subsection{What the thesis demonstrates}
+
+The strongest conclusion of the thesis is that time-varying intermarket dependency is not merely descriptive; it is forecastable. This matters because much of the literature treats rolling correlation primarily as an ex post diagnostic tool. In the present work, it becomes a genuine prediction target evaluated under strict temporal ordering. The empirical evidence shows that this target retains enough structure to support meaningful out-of-sample forecasting.
+
+However, the thesis also demonstrates something equally important: forecastability does not automatically imply that highly flexible models dominate. In fact, the average ranking shows the opposite. The best performers are simple persistence-based models. This reveals a central property of the target itself. Because rolling dependency is constructed from overlapping windows and then Fisher-transformed, it behaves as a smooth, highly autocorrelated series. Any model that ignores this fact is likely to misunderstand the problem.
+
+\subsection{Why the persistence result is valuable}
+
+At first glance, it may seem disappointing that AR1 and Naive\_Last outperform the more complex alternatives. Yet this is a scientifically useful finding. A thesis does not become stronger by forcing machine learning to win at any cost. It becomes stronger by identifying the true source of predictability.
+
+In this case, the evidence indicates that the main forecasting signal is embedded in the recent path of the dependency series itself. This has two implications. First, dependence processes between Bitcoin and conventional assets possess memory. Second, many sophisticated predictors add only marginal information beyond that memory, at least for the one-step-ahead horizon studied here.
+
+This interpretation is also methodologically healthy. Financial forecasting often suffers from exaggerated claims driven by in-sample flexibility. The present thesis resists that temptation and shows that when the evaluation design is honest, simple baselines can remain formidable competitors.
+
+\subsection{How machine learning still adds value}
+
+The fact that simple baselines dominate average ranking does not mean that machine learning is irrelevant. Machine learning adds value in at least three ways.
+
+First, it provides a broader comparison class, allowing the thesis to test whether nonlinear and interaction-capable methods can exploit information unavailable to linear persistence models. Second, even when these models do not win on average, they often improve upon the DCC-GARCH benchmark. Third, machine learning becomes more relevant in the second-layer signal problem, where the objective shifts from direct dependency forecasting to stress-warning classification.
+
+This means the contribution of machine learning in the thesis is comparative and structural rather than purely top-ranked. The thesis demonstrates where machine learning helps, where it does not, and why.
+
+\subsection{Interpretation of the DCC-GARCH result}
+
+The relatively weak performance of DCC-GARCH deserves careful discussion. DCC is a respected econometric benchmark and remains conceptually appropriate for modeling dynamic covariance structures. Nevertheless, the empirical setup of this thesis places it in a demanding role: short-horizon direct forecasting of a smoothed target under walk-forward re-estimation.
+
+Under those conditions, DCC-GARCH appears less competitive than expected. There are several possible reasons. The benchmark is parametric and therefore less flexible in responding to unusual local changes. The target of interest is not the entire covariance structure but a derived correlation-like quantity. Finally, the leakage-safe walk-forward implementation removes any accidental advantage that might arise from fitting the benchmark on the full sample.
+
+This result should not be interpreted as a universal rejection of DCC-GARCH. Rather, it suggests that in the specific setting of one-step-ahead forecasting of rolling dependency between Bitcoin and conventional assets, DCC is a weaker forecasting engine than simpler persistence models and several machine-learning alternatives.
+
+\subsection{Practical meaning for investors}
+
+The investor motivation behind the thesis must be interpreted carefully. The empirical results do not support the claim that cryptocurrency data can reliably predict the exact next-day direction of all conventional markets. Such a claim would be too strong. What the thesis does support is a narrower and more defensible practical statement: cryptocurrency-derived information can contribute to an early warning system for elevated risk in conventional assets.
+
+This is why the signal layer is framed as a \emph{risk overlay}. In practical portfolio terms, such a signal would not replace valuation, macro analysis, or strategic allocation. Instead, it could be used to increase caution, reduce exposure, or tighten risk limits when the probability of a stress regime becomes elevated.
+
+For a real investor, this distinction is crucial. A moderate but interpretable warning signal can still be useful, especially when the cost of missing major downside episodes is large relative to the cost of occasional unnecessary caution.
+
+\subsection{Why broad equities respond more clearly than some other assets}
+
+The signal results are strongest for the S\&P 500 and somewhat weaker for NASDAQ, metals, and the dollar index proxy. This pattern is economically plausible. Broad equity markets are strongly tied to global risk appetite, liquidity conditions, and investor sentiment, all of which also influence Bitcoin. Precious metals and dollar-related instruments may react to a broader set of macro forces not fully captured by the crypto-centered feature set used in the thesis.
+
+This suggests that the signal layer is most naturally interpreted as a crypto-informed risk indicator for growth-sensitive conventional markets rather than a universal warning engine across all asset classes.
+
+\subsection{Methodological strengths of the thesis}
+
+Several methodological choices strengthen the credibility of the empirical conclusions.
+
+First, the pipeline is reproducible and modular. Second, the DCC benchmark is implemented in a leakage-safe manner rather than through a shortcut comparison. Third, all main models are evaluated in a walk-forward structure. Fourth, the thesis does not rely on a single metric but combines RMSE, MAE, $R^2$, Diebold--Mariano testing, Balanced Accuracy, F1, AUC, and exit-rate interpretation.
+
+Together, these choices reduce the risk that the reported conclusions are artifacts of one particular model, one particular metric, or one particular coding shortcut. This is especially important for a thesis that aims to bridge methodological rigor and practical usefulness.
+
+\subsection{Limitations}
+
+The thesis also has important limitations that must be acknowledged openly.
+
+The first limitation is frequency. All experiments are conducted on daily data. This is appropriate for a broad academic study and compatible with the chosen asset universe, but it may miss intraday information flow and very short-lived spillovers.
+
+The second limitation is horizon. The core forecasting problem is one-step-ahead. This is a natural first design choice, yet it favors persistence-driven models and does not fully explore how predictive structure might evolve at multi-day or weekly horizons.
+
+The third limitation is target design. Rolling correlation is interpretable and useful, but it is only one representation of dependency. Alternative dependence measures, such as tail dependence, copula-based measures, realized covariance, or dynamic partial correlations, could reveal additional structure.
+
+The fourth limitation concerns the signal layer. The stress target is economically sensible, but still relatively simple. Different definitions of stress, including drawdown events, volatility bursts, or joint downside episodes, may produce different conclusions.
+
+Finally, the thesis does not include a full transaction-cost-aware portfolio backtest. This is intentional. The signal layer is presented as a warning mechanism rather than as a finished trading strategy. A future extension could convert the signal into explicit allocation rules and evaluate resulting portfolio outcomes.
+
+\subsection{Directions for future work}
+
+Future research could proceed in several directions. A natural extension would be to test multiple forecast horizons and assess whether machine learning gains become more visible once the problem moves beyond one-step persistence. Another direction would be the inclusion of macro-financial predictors such as rates, volatility indices, credit spreads, or on-chain crypto indicators. A third path would be to move from rolling correlation to richer dependence representations, including tail-sensitive measures.
+
+On the practical side, the signal layer could be integrated into a portfolio optimization framework with turnover constraints and transaction costs. This would allow the researcher to evaluate not only statistical metrics but also utility-relevant outcomes such as drawdown reduction, volatility control, or improvement in downside-risk-adjusted performance.
+
+\subsection{Overall interpretation}
+
+Taken together, the findings support a balanced conclusion. The thesis does not show that cryptocurrency markets magically predict conventional markets. It does show that cryptocurrency dynamics carry information about changing intermarket structure, that this structure is forecastable, and that such forecasts can be translated into a modest but potentially useful risk signal.
+
+This balance is precisely what gives the work academic credibility. The claims are neither trivial nor exaggerated. They are aligned with the evidence, methodologically grounded, and practically interpretable.

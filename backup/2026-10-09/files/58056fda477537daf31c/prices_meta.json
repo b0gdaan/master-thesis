@@ -1,0 +1,13 @@
+{
+  "start": "2016-01-01",
+  "end": "2026-05-17",
+  "tickers": [
+    "BTC-USD",
+    "ETH-USD",
+    "GLD",
+    "SLV",
+    "UUP",
+    "^GSPC",
+    "^IXIC"
+  ]
+}

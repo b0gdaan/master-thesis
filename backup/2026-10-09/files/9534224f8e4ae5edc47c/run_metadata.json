@@ -1,0 +1,82 @@
+{
+  "python": "3.14.0 (tags/v3.14.0:ebf955d, Oct  7 2025, 10:15:03) [MSC v.1944 64 bit (AMD64)]",
+  "config": {
+    "base_dir": ".",
+    "start_date": "2016-01-01",
+    "end_date": "2026-05-17",
+    "yahoo_access_date": "2026-01-01",
+    "assets": {
+      "crypto": [
+        "BTC-USD",
+        "ETH-USD"
+      ],
+      "traditional": [
+        "^GSPC",
+        "^IXIC",
+        "GLD",
+        "SLV",
+        "UUP"
+      ]
+    },
+    "base_asset": "BTC-USD",
+    "extra_assets": [
+      "ETH-USD"
+    ],
+    "rolling_windows": [
+      14,
+      30,
+      60,
+      90
+    ],
+    "forecast_horizon": 1,
+    "use_fisher_transform": true,
+    "use_dcc_garch": true,
+    "min_train_size": 800,
+    "refit_every": 20,
+    "dm_nw_lag": 0,
+    "random_state": 42,
+    "use_xgboost": true,
+    "xgb_device": "cuda",
+    "enable_signal_layer": true,
+    "signal_probability_threshold": 0.55,
+    "signal_min_train_size": 800,
+    "signal_refit_every": 20,
+    "signal_target_mode": "stress",
+    "signal_stress_sigma": 0.75,
+    "signal": {
+      "stress_sigma_threshold": 0.75
+    },
+    "bootstrap": {
+      "n_samples": 500
+    },
+    "sensitivity": {
+      "refit_every_values": [
+        5,
+        10,
+        21,
+        42,
+        63
+      ],
+      "stress_thresholds": [
+        0.5,
+        0.75,
+        1.0,
+        1.5,
+        2.0
+      ]
+    },
+    "reproducibility": {
+      "xgb_seed": 42
+    },
+    "n_parallel_workers": 4
+  },
+  "packages": {
+    "numpy": "2.4.2",
+    "pandas": "3.0.1",
+    "scikit-learn": "1.8.0",
+    "scipy": "1.17.1",
+    "yfinance": "1.2.0",
+    "xgboost": "3.2.0",
+    "arch": "8.0.0"
+  }
+}

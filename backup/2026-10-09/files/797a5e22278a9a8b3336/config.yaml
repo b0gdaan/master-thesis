@@ -1,0 +1,47 @@
+base_dir: "D:/progr"
+
+# Data window
+start_date: "2016-01-01"
+end_date: null
+
+# For reproducibility in the thesis (web sources must have access date)
+# (You asked to use 2026-01-01)
+yahoo_access_date: "2026-01-01"
+
+assets:
+  crypto:
+    - "BTC-USD"
+    - "ETH-USD"
+  traditional:
+    - "^GSPC"
+    - "^IXIC"
+    - "GLD"
+    - "SLV"
+    - "UUP"
+
+# Pair setup
+base_asset: "BTC-USD"
+extra_assets:
+  - "ETH-USD"   # include crypto-crypto dependency as well
+
+# Dependency definition: rolling correlation windows (sensitivity analysis)
+rolling_windows: [14, 30, 60, 90]
+
+# Forecast settings
+forecast_horizon: 1
+
+# Target transform (recommended for correlations)
+use_fisher_transform: true
+
+# Econometric benchmark (Variant A)
+use_dcc_garch: true
+
+# Walk-forward evaluation
+min_train_size: 800
+refit_every: 20
+
+# Diebold–Mariano test (Newey–West lag; for h=1, 0 is typical)
+dm_nw_lag: 0
+
+random_state: 42
+use_xgboost: true

@@ -1,0 +1,72 @@
+\begin{table}[H]
+\centering
+\small
+\caption{Investor signal layer: down-market detection from crypto and dependency forecasts}
+\label{tab:signal_metrics}
+\begin{tabular}{lllllrrrrr}
+\toprule
+Dependency & $w$ & Target & Dep. model & Signal model & BalAcc & F1_down & AUC & ExitRate & Flagged/Clear \\
+\midrule
+corr_BTC-USD_GLD & 14 & stress_GLD & AR1 & Logit & 0.4965 & 0.1566 & 0.4978 & 0.1726 & 0.0009 / 0.0006 \\
+corr_BTC-USD_GLD & 14 & stress_GLD & AR1 & GBM_Cls & 0.5028 & 0.0269 & 0.4993 & 0.0095 & -0.0014 / 0.0007 \\
+corr_BTC-USD_GLD & 14 & stress_GLD & AR1 & RF_Cls & 0.4994 & 0.0092 & 0.5045 & 0.0058 & -0.0011 / 0.0006 \\
+corr_BTC-USD_GLD & 30 & stress_GLD & AR1 & Logit & 0.4829 & 0.1302 & 0.4988 & 0.1643 & 0.0011 / 0.0006 \\
+corr_BTC-USD_GLD & 30 & stress_GLD & AR1 & RF_Cls & 0.5015 & 0.0095 & 0.4875 & 0.0022 & 0.0011 / 0.0007 \\
+corr_BTC-USD_GLD & 30 & stress_GLD & AR1 & GBM_Cls & 0.4950 & 0.0089 & 0.5062 & 0.0133 & 0.0043 / 0.0006 \\
+corr_BTC-USD_GLD & 60 & stress_GLD & AR1 & Logit & 0.5068 & 0.1895 & 0.4936 & 0.2223 & 0.0010 / 0.0007 \\
+corr_BTC-USD_GLD & 60 & stress_GLD & AR1 & GBM_Cls & 0.4981 & 0.0267 & 0.4965 & 0.0181 & 0.0035 / 0.0007 \\
+corr_BTC-USD_GLD & 60 & stress_GLD & AR1 & RF_Cls & 0.5012 & 0.0098 & 0.4954 & 0.0030 & -0.0037 / 0.0007 \\
+corr_BTC-USD_GLD & 90 & stress_GLD & AR1 & Logit & 0.5125 & 0.1868 & 0.4847 & 0.1858 & 0.0008 / 0.0007 \\
+corr_BTC-USD_GLD & 90 & stress_GLD & AR1 & RF_Cls & 0.4996 & 0.0189 & 0.4626 & 0.0108 & 0.0017 / 0.0007 \\
+corr_BTC-USD_GLD & 90 & stress_GLD & AR1 & GBM_Cls & 0.4941 & 0.0000 & 0.4816 & 0.0100 & 0.0014 / 0.0007 \\
+corr_BTC-USD_SLV & 14 & stress_SLV & AR1 & Logit & 0.5059 & 0.2032 & 0.4916 & 0.2469 & 0.0011 / 0.0007 \\
+corr_BTC-USD_SLV & 14 & stress_SLV & AR1 & GBM_Cls & 0.5002 & 0.0171 & 0.5117 & 0.0087 & 0.0056 / 0.0008 \\
+corr_BTC-USD_SLV & 14 & stress_SLV & AR1 & RF_Cls & 0.4962 & 0.0084 & 0.5237 & 0.0109 & 0.0097 / 0.0007 \\
+corr_BTC-USD_SLV & 30 & stress_SLV & AR1 & Logit & 0.5071 & 0.2295 & 0.5132 & 0.3596 & 0.0016 / 0.0004 \\
+corr_BTC-USD_SLV & 30 & stress_SLV & AR1 & RF_Cls & 0.5152 & 0.0930 & 0.5329 & 0.0295 & -0.0034 / 0.0010 \\
+corr_BTC-USD_SLV & 30 & stress_SLV & AR1 & GBM_Cls & 0.4994 & 0.0252 & 0.4985 & 0.0147 & 0.0043 / 0.0008 \\
+corr_BTC-USD_SLV & 60 & stress_SLV & AR1 & Logit & 0.5025 & 0.2032 & 0.5181 & 0.2720 & 0.0015 / 0.0008 \\
+corr_BTC-USD_SLV & 60 & stress_SLV & AR1 & GBM_Cls & 0.5038 & 0.0429 & 0.5072 & 0.0173 & 0.0019 / 0.0010 \\
+corr_BTC-USD_SLV & 60 & stress_SLV & AR1 & RF_Cls & 0.4986 & 0.0259 & 0.5314 & 0.0166 & 0.0008 / 0.0010 \\
+corr_BTC-USD_SLV & 90 & stress_SLV & AR1 & Logit & 0.5068 & 0.2073 & 0.5135 & 0.2652 & 0.0016 / 0.0007 \\
+corr_BTC-USD_SLV & 90 & stress_SLV & AR1 & RF_Cls & 0.4983 & 0.0093 & 0.5171 & 0.0077 & -0.0033 / 0.0010 \\
+corr_BTC-USD_SLV & 90 & stress_SLV & AR1 & GBM_Cls & 0.4918 & 0.0000 & 0.5240 & 0.0139 & 0.0115 / 0.0008 \\
+corr_BTC-USD_UUP & 14 & stress_UUP & AR1 & Logit & 0.5095 & 0.2293 & 0.5282 & 0.3161 & 0.0001 / 0.0001 \\
+corr_BTC-USD_UUP & 14 & stress_UUP & AR1 & RF_Cls & 0.4982 & 0.0683 & 0.5014 & 0.0466 & 0.0007 / 0.0001 \\
+corr_BTC-USD_UUP & 14 & stress_UUP & AR1 & GBM_Cls & 0.4978 & 0.0444 & 0.5047 & 0.0299 & 0.0004 / 0.0001 \\
+corr_BTC-USD_UUP & 30 & stress_UUP & AR1 & Logit & 0.5054 & 0.2312 & 0.5272 & 0.3419 & 0.0003 / 0.0000 \\
+corr_BTC-USD_UUP & 30 & stress_UUP & AR1 & RF_Cls & 0.5068 & 0.0897 & 0.5351 & 0.0457 & -0.0006 / 0.0001 \\
+corr_BTC-USD_UUP & 30 & stress_UUP & AR1 & GBM_Cls & 0.5051 & 0.0667 & 0.5399 & 0.0310 & -0.0006 / 0.0001 \\
+corr_BTC-USD_UUP & 60 & stress_UUP & AR1 & Logit & 0.5088 & 0.2315 & 0.5159 & 0.3188 & 0.0002 / 0.0000 \\
+corr_BTC-USD_UUP & 60 & stress_UUP & AR1 & RF_Cls & 0.5032 & 0.0722 & 0.5241 & 0.0392 & 0.0006 / 0.0001 \\
+corr_BTC-USD_UUP & 60 & stress_UUP & AR1 & GBM_Cls & 0.5005 & 0.0650 & 0.5264 & 0.0392 & -0.0002 / 0.0001 \\
+corr_BTC-USD_UUP & 90 & stress_UUP & AR1 & Logit & 0.5044 & 0.2229 & 0.5253 & 0.3092 & 0.0002 / 0.0000 \\
+corr_BTC-USD_UUP & 90 & stress_UUP & AR1 & GBM_Cls & 0.5021 & 0.0733 & 0.5464 & 0.0424 & 0.0002 / 0.0001 \\
+corr_BTC-USD_UUP & 90 & stress_UUP & AR1 & RF_Cls & 0.4989 & 0.0597 & 0.5190 & 0.0386 & 0.0002 / 0.0001 \\
+corr_BTC-USD_^GSPC & 14 & stress_^GSPC & AR1 & Logit & 0.5163 & 0.2264 & 0.5157 & 0.3059 & 0.0004 / 0.0003 \\
+corr_BTC-USD_^GSPC & 14 & stress_^GSPC & AR1 & RF_Cls & 0.5005 & 0.0256 & 0.5374 & 0.0131 & -0.0008 / 0.0003 \\
+corr_BTC-USD_^GSPC & 14 & stress_^GSPC & AR1 & GBM_Cls & 0.5012 & 0.0177 & 0.5615 & 0.0073 & 0.0054 / 0.0003 \\
+corr_BTC-USD_^GSPC & 30 & stress_^GSPC & AR1 & Logit & 0.5358 & 0.2504 & 0.5331 & 0.3265 & 0.0004 / 0.0004 \\
+corr_BTC-USD_^GSPC & 30 & stress_^GSPC & AR1 & RF_Cls & 0.5008 & 0.0179 & 0.5294 & 0.0081 & -0.0015 / 0.0004 \\
+corr_BTC-USD_^GSPC & 30 & stress_^GSPC & AR1 & GBM_Cls & 0.4962 & 0.0088 & 0.5306 & 0.0111 & 0.0070 / 0.0003 \\
+corr_BTC-USD_^GSPC & 60 & stress_^GSPC & AR1 & Logit & 0.5292 & 0.2450 & 0.5156 & 0.3353 & 0.0004 / 0.0003 \\
+corr_BTC-USD_^GSPC & 60 & stress_^GSPC & AR1 & GBM_Cls & 0.5049 & 0.0437 & 0.5454 & 0.0158 & 0.0015 / 0.0004 \\
+corr_BTC-USD_^GSPC & 60 & stress_^GSPC & AR1 & RF_Cls & 0.4960 & 0.0000 & 0.5198 & 0.0068 & 0.0029 / 0.0004 \\
+corr_BTC-USD_^GSPC & 90 & stress_^GSPC & AR1 & Logit & 0.5266 & 0.2450 & 0.5066 & 0.3454 & 0.0002 / 0.0004 \\
+corr_BTC-USD_^GSPC & 90 & stress_^GSPC & AR1 & GBM_Cls & 0.4988 & 0.0343 & 0.5278 & 0.0216 & 0.0017 / 0.0003 \\
+corr_BTC-USD_^GSPC & 90 & stress_^GSPC & AR1 & RF_Cls & 0.4971 & 0.0179 & 0.5071 & 0.0146 & 0.0035 / 0.0003 \\
+corr_BTC-USD_^IXIC & 14 & stress_^IXIC & AR1 & Logit & 0.4997 & 0.2070 & 0.5077 & 0.2986 & -0.0001 / 0.0006 \\
+corr_BTC-USD_^IXIC & 14 & stress_^IXIC & AR1 & RF_Cls & 0.5066 & 0.0351 & 0.5414 & 0.0073 & -0.0104 / 0.0005 \\
+corr_BTC-USD_^IXIC & 14 & stress_^IXIC & AR1 & GBM_Cls & 0.5066 & 0.0351 & 0.5359 & 0.0073 & -0.0052 / 0.0004 \\
+corr_BTC-USD_^IXIC & 30 & stress_^IXIC & AR1 & Logit & 0.4912 & 0.2065 & 0.4995 & 0.3419 & 0.0008 / 0.0003 \\
+corr_BTC-USD_^IXIC & 30 & stress_^IXIC & AR1 & GBM_Cls & 0.5003 & 0.0177 & 0.5369 & 0.0088 & -0.0014 / 0.0005 \\
+corr_BTC-USD_^IXIC & 30 & stress_^IXIC & AR1 & RF_Cls & 0.4939 & 0.0000 & 0.5552 & 0.0103 & 0.0052 / 0.0004 \\
+corr_BTC-USD_^IXIC & 60 & stress_^IXIC & AR1 & Logit & 0.4861 & 0.1962 & 0.4999 & 0.3173 & 0.0006 / 0.0004 \\
+corr_BTC-USD_^IXIC & 60 & stress_^IXIC & AR1 & GBM_Cls & 0.5023 & 0.0346 & 0.5083 & 0.0151 & -0.0032 / 0.0005 \\
+corr_BTC-USD_^IXIC & 60 & stress_^IXIC & AR1 & RF_Cls & 0.4952 & 0.0088 & 0.5318 & 0.0128 & 0.0039 / 0.0004 \\
+corr_BTC-USD_^IXIC & 90 & stress_^IXIC & AR1 & Logit & 0.4710 & 0.1847 & 0.4888 & 0.3323 & 0.0009 / 0.0001 \\
+corr_BTC-USD_^IXIC & 90 & stress_^IXIC & AR1 & GBM_Cls & 0.5057 & 0.0515 & 0.5231 & 0.0193 & -0.0027 / 0.0004 \\
+corr_BTC-USD_^IXIC & 90 & stress_^IXIC & AR1 & RF_Cls & 0.4979 & 0.0178 & 0.5206 & 0.0131 & 0.0009 / 0.0004 \\
+\bottomrule
+\end{tabular}
+\end{table}

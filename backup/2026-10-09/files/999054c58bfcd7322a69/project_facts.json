@@ -1,0 +1,105 @@
+{
+  "observed_at_utc": "2026-09-11T11:40:17.560525+00:00",
+  "commit": "1fe8f4e9be05151b4bde0711eccf1c54f1fc5941",
+  "commit_count": 85,
+  "tests_rerun_by_this_script": false,
+  "sources": {
+    "config.yaml": {
+      "bytes": 2696,
+      "sha256": "880ebf7851d3cc1dc74904372da92ac42ada796eda98ade799f75a5797813ddd"
+    },
+    "requirements.txt": {
+      "bytes": 302,
+      "sha256": "4f9ba4609d7321efa178519f9fde8c613c944b3303dfddafe060fdcf47fc3ee3"
+    },
+    "run_all.py": {
+      "bytes": 13576,
+      "sha256": "6bb7b467d4bd3e03cf5050c5bb84a9b394b8150be31888af4b7d93eaa251dd27"
+    },
+    "run_ablation.py": {
+      "bytes": 6507,
+      "sha256": "a844f5d94d277b33d1afeea9b4e56f4e0e4adb2ecc5bffe7491d7fc56966878c"
+    },
+    "tests/test_pipeline.py": {
+      "bytes": 31517,
+      "sha256": "95692bcfecb76513f854a8f326f4c75d53c52e084f4d65e176ef38009699a421"
+    },
+    "thesis_app/pipeline.py": {
+      "bytes": 59683,
+      "sha256": "b677ecb15e8ae95ed234141c7fb5762132f0678d2b691cd03c92ce976cc60ad4"
+    },
+    "thesis_app/dcc_walk.py": {
+      "bytes": 6544,
+      "sha256": "89a188aeb440f59fad7e3be231328187261b8b942c2024262eb6799d88034960"
+    },
+    "thesis_app/signal_layer.py": {
+      "bytes": 24352,
+      "sha256": "8cf68a301abaf4d5f65c0535440aab19e52545e47b31c7e03477c340edcf989f"
+    },
+    "outputs/results/dataset_summary.json": {
+      "bytes": 223,
+      "sha256": "80d484ddfbfb2c831cace490444da08d79b05ca21fd2935852353b7af2de3f5a"
+    },
+    "outputs/results/metrics.csv": {
+      "bytes": 24649,
+      "sha256": "9f8ff5e18048483342ff060509b6910e98d83039eda55d051d0f5a2dde343c14"
+    },
+    "outputs/results/test_results.txt": {
+      "bytes": 8101,
+      "sha256": "9aa3aef1de2f55b77e118442c480a141333cc295d7e65de095678053560d7159"
+    },
+    "outputs/results/test_results.xml": {
+      "bytes": 9661,
+      "sha256": "b0276a5797d380426329bd53960481c2ac8608cc52db5b29ebcaf12114c96a43"
+    }
+  },
+  "datasets": {
+    "data/raw/prices.csv": {
+      "rows": 3053,
+      "columns": [
+        "Date",
+        "BTC-USD",
+        "ETH-USD",
+        "GLD",
+        "SLV",
+        "UUP",
+        "^GSPC",
+        "^IXIC"
+      ],
+      "first_index": "2017-11-09",
+      "last_index": "2026-05-16",
+      "sha256": "b44874fecc002d6099a41a0b57470bc942a2a70450eca5458304af1f9e6699c7"
+    },
+    "data/processed/returns.csv": {
+      "rows": 3052,
+      "columns": [
+        "Date",
+        "BTC-USD",
+        "ETH-USD",
+        "GLD",
+        "SLV",
+        "UUP",
+        "^GSPC",
+        "^IXIC"
+      ],
+      "first_index": "2017-11-10",
+      "last_index": "2026-05-16",
+      "sha256": "fd60831dbf0c616ad15261453de4dc9511fbbdb09b2b412b32faf91af9fd080d"
+    }
+  },
+  "stored_dataset_summary": {
+    "n_days_prices": 3053,
+    "n_days_returns": 3052,
+    "start": "2017-11-09",
+    "end": "2026-05-16",
+    "tickers": [
+      "BTC-USD",
+      "ETH-USD",
+      "GLD",
+      "SLV",
+      "UUP",
+      "^GSPC",
+      "^IXIC"
+    ]
+  }
+}

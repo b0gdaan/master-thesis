@@ -1,0 +1,10 @@
+numpy
+pandas
+yfinance
+matplotlib
+scikit-learn
+scipy
+xgboost
+pyyaml
+pyarrow
+arch

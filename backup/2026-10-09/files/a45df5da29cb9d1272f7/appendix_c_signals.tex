@@ -1,0 +1,59 @@
+\section{Supplementary Signal-Layer Results}
+
+This appendix collects the supporting material for the investor warning layer. A
+representative signal output is shown below, and the per-pair, per-window summary is
+given in Table~\ref{tab:app_signal_summary}. The full set of signal figures for all
+pairs and windows is produced by the pipeline and ships with the repository.
+
+\subsection{Representative signal output}
+
+Figure~\ref{fig:app_signal_ixic_w30} shows the signal for the Bitcoin--NASDAQ pair at
+the 30-day window, the weakest of the equity pairs. It contrasts with the stronger
+Bitcoin--S\&P~500 output shown in the main text (Figure~\ref{fig:signal_sp500}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../outputs/figures/signal_corr_BTC-USD_^IXIC_w30.png}
+    \caption{Signal-layer output for the Bitcoin--NASDAQ relation at the 30-day window.
+             The upper panel shows the predicted stress probability and the decision
+             threshold; the lower panel marks flagged and missed stress events.}
+    \label{fig:app_signal_ixic_w30}
+\end{figure}
+
+\subsection{Cross-market warning interpretation}
+
+The per-pair results show that the warning layer behaves very differently from market to
+market. The S\&P~500 produces the clearest warning episodes; NASDAQ is markedly weaker,
+dipping below chance at the longer windows, probably because its sector concentration
+adds idiosyncratic noise that the crypto channel cannot see. The metal and dollar targets
+are noisier but not uniformly useless. The signal should therefore be applied selectively
+rather than across the asset universe.
+
+\subsection{Summary table}
+
+\begin{table}[H]
+    \centering
+    \caption{Balanced accuracy of the Logit signal layer by asset pair and rolling-window
+             length. Family-level averages across all pairs and windows are reported in
+             Table~\ref{tab:signal_summary}; this breakdown shows where the signal is
+             informative.}
+    \label{tab:app_signal_summary}
+    \begin{tabular}{lrrrrr}
+        \toprule
+        Asset pair & $w{=}14$ & $w{=}30$ & $w{=}60$ & $w{=}90$ & Mean \\
+        \midrule
+        BTC--S\&P 500  & 0.5169 & 0.5308 & 0.5212 & 0.5264 & 0.5238 \\
+        BTC--NASDAQ    & 0.5190 & 0.5016 & 0.4865 & 0.4917 & 0.4997 \\
+        BTC--Gold      & 0.5053 & 0.5041 & 0.5078 & 0.5202 & 0.5093 \\
+        BTC--Silver    & 0.4938 & 0.5187 & 0.5053 & 0.5189 & 0.5092 \\
+        BTC--USD index & 0.5071 & 0.5197 & 0.5131 & 0.5204 & 0.5151 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+This breakdown supports the main-text reading. The Bitcoin--S\&P~500 pair is the
+strongest and most consistent, peaking at 0.5308 at the 30-day window. Bitcoin--NASDAQ
+is the weakest, averaging 0.4997 and falling below the 0.50 chance level at the 60- and
+90-day windows. The precious-metal and dollar pairs are positive on average but remain
+close to chance. The signal is therefore best applied selectively to broad-equity pairs
+rather than uniformly across the asset universe.

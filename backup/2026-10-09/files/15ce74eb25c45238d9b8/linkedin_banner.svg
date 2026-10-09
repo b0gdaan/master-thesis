@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1584" height="396" viewBox="0 0 1584 396">
+  <defs>
+    <!-- Background gradient: deep navy to dark slate -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0f1e;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#0d1b3e;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#0f2350;stop-opacity:1"/>
+    </linearGradient>
+
+    <!-- Accent glow -->
+    <radialGradient id="glow1" cx="75%" cy="50%" r="40%">
+      <stop offset="0%" style="stop-color:#1a6cf8;stop-opacity:0.25"/>
+      <stop offset="100%" style="stop-color:#0a0f1e;stop-opacity:0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="20%" cy="30%" r="30%">
+      <stop offset="0%" style="stop-color:#00d4aa;stop-opacity:0.12"/>
+      <stop offset="100%" style="stop-color:#0a0f1e;stop-opacity:0"/>
+    </radialGradient>
+
+    <filter id="blur2">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>
+
+  <!-- Base -->
+  <rect width="1584" height="396" fill="url(#bg)"/>
+  <rect width="1584" height="396" fill="url(#glow1)"/>
+  <rect width="1584" height="396" fill="url(#glow2)"/>
+
+  <!-- Grid lines (subtle) -->
+  <g stroke="#1e3a6e" stroke-width="0.5" opacity="0.4">
+    <!-- Vertical -->
+    <line x1="132" y1="0" x2="132" y2="396"/>
+    <line x1="264" y1="0" x2="264" y2="396"/>
+    <line x1="396" y1="0" x2="396" y2="396"/>
+    <line x1="528" y1="0" x2="528" y2="396"/>
+    <line x1="660" y1="0" x2="660" y2="396"/>
+    <line x1="792" y1="0" x2="792" y2="396"/>
+    <line x1="924" y1="0" x2="924" y2="396"/>
+    <line x1="1056" y1="0" x2="1056" y2="396"/>
+    <line x1="1188" y1="0" x2="1188" y2="396"/>
+    <line x1="1320" y1="0" x2="1320" y2="396"/>
+    <line x1="1452" y1="0" x2="1452" y2="396"/>
+    <!-- Horizontal -->
+    <line x1="0" y1="66" x2="1584" y2="66"/>
+    <line x1="0" y1="132" x2="1584" y2="132"/>
+    <line x1="0" y1="198" x2="1584" y2="198"/>
+    <line x1="0" y1="264" x2="1584" y2="264"/>
+    <line x1="0" y1="330" x2="1584" y2="330"/>
+  </g>
+
+  <!-- Right side: decorative data chart bars -->
+  <g transform="translate(1150, 280)" opacity="0.18">
+    <rect x="0"   y="-120" width="24" height="120" rx="3" fill="#1a6cf8"/>
+    <rect x="32"  y="-80"  width="24" height="80"  rx="3" fill="#1a6cf8"/>
+    <rect x="64"  y="-150" width="24" height="150" rx="3" fill="#00d4aa"/>
+    <rect x="96"  y="-60"  width="24" height="60"  rx="3" fill="#1a6cf8"/>
+    <rect x="128" y="-180" width="24" height="180" rx="3" fill="#00d4aa"/>
+    <rect x="160" y="-100" width="24" height="100" rx="3" fill="#1a6cf8"/>
+    <rect x="192" y="-140" width="24" height="140" rx="3" fill="#00d4aa"/>
+    <rect x="224" y="-90"  width="24" height="90"  rx="3" fill="#1a6cf8"/>
+    <rect x="256" y="-160" width="24" height="160" rx="3" fill="#1a6cf8"/>
+    <rect x="288" y="-110" width="24" height="110" rx="3" fill="#00d4aa"/>
+  </g>
+
+  <!-- Right side: neural network dots -->
+  <g opacity="0.22">
+    <!-- Layer 1 -->
+    <circle cx="1380" cy="80"  r="5" fill="#1a6cf8"/>
+    <circle cx="1380" cy="140" r="5" fill="#1a6cf8"/>
+    <circle cx="1380" cy="200" r="5" fill="#1a6cf8"/>
+    <circle cx="1380" cy="260" r="5" fill="#1a6cf8"/>
+    <circle cx="1380" cy="320" r="5" fill="#1a6cf8"/>
+    <!-- Layer 2 -->
+    <circle cx="1460" cy="100" r="5" fill="#00d4aa"/>
+    <circle cx="1460" cy="170" r="5" fill="#00d4aa"/>
+    <circle cx="1460" cy="240" r="5" fill="#00d4aa"/>
+    <circle cx="1460" cy="310" r="5" fill="#00d4aa"/>
+    <!-- Layer 3 -->
+    <circle cx="1540" cy="130" r="5" fill="#1a6cf8"/>
+    <circle cx="1540" cy="220" r="5" fill="#1a6cf8"/>
+    <circle cx="1540" cy="290" r="5" fill="#1a6cf8"/>
+    <!-- Connections L1→L2 -->
+    <line x1="1380" y1="80"  x2="1460" y2="100" stroke="#1a6cf8" stroke-width="0.8"/>
+    <line x1="1380" y1="80"  x2="1460" y2="170" stroke="#1a6cf8" stroke-width="0.8"/>
+    <line x1="1380" y1="140" x2="1460" y2="100" stroke="#1a6cf8" stroke-width="0.8"/>
+    <line x1="1380" y1="140" x2="1460" y2="170" stroke="#1a6cf8" stroke-width="0.8"/>
+    <line x1="1380" y1="140" x2="1460" y2="240" stroke="#1a6cf8" stroke-width="0.8"/>
+    <line x1="1380" y1="200" x2="1460" y2="170" stroke="#1a6cf8" stroke-width="0.8"/>
+    <line x1="1380" y1="200" x2="1460" y2="240" stroke="#1a6cf8" stroke-width="0.8"/>
+    <line x1="1380" y1="260" x2="1460" y2="240" stroke="#1a6cf8" stroke-width="0.8"/>
+    <line x1="1380" y1="260" x2="1460" y2="310" stroke="#1a6cf8" stroke-width="0.8"/>
+    <line x1="1380" y1="320" x2="1460" y2="310" stroke="#1a6cf8" stroke-width="0.8"/>
+    <!-- Connections L2→L3 -->
+    <line x1="1460" y1="100" x2="1540" y2="130" stroke="#00d4aa" stroke-width="0.8"/>
+    <line x1="1460" y1="100" x2="1540" y2="220" stroke="#00d4aa" stroke-width="0.8"/>
+    <line x1="1460" y1="170" x2="1540" y2="130" stroke="#00d4aa" stroke-width="0.8"/>
+    <line x1="1460" y1="170" x2="1540" y2="220" stroke="#00d4aa" stroke-width="0.8"/>
+    <line x1="1460" y1="240" x2="1540" y2="220" stroke="#00d4aa" stroke-width="0.8"/>
+    <line x1="1460" y1="240" x2="1540" y2="290" stroke="#00d4aa" stroke-width="0.8"/>
+    <line x1="1460" y1="310" x2="1540" y2="290" stroke="#00d4aa" stroke-width="0.8"/>
+  </g>
+
+  <!-- Left accent line -->
+  <rect x="60" y="100" width="3" height="196" rx="2" fill="url(#accentLine)"/>
+  <defs>
+    <linearGradient id="accentLine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4aa;stop-opacity:0"/>
+      <stop offset="40%" style="stop-color:#00d4aa;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#1a6cf8;stop-opacity:0.6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Floating dots, left zone -->
+  <circle cx="90"  cy="80"  r="2" fill="#00d4aa" opacity="0.5"/>
+  <circle cx="140" cy="60"  r="1.5" fill="#1a6cf8" opacity="0.4"/>
+  <circle cx="200" cy="100" r="2.5" fill="#00d4aa" opacity="0.3"/>
+  <circle cx="110" cy="320" r="2" fill="#1a6cf8" opacity="0.4"/>
+  <circle cx="170" cy="340" r="1.5" fill="#00d4aa" opacity="0.3"/>
+  <circle cx="230" cy="300" r="2" fill="#1a6cf8" opacity="0.35"/>
+
+  <!-- MAIN TEXT GROUP -->
+  <!-- Tagline / role line above name -->
+  <text x="100" y="148"
+        font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="17"
+        font-weight="400"
+        letter-spacing="5"
+        fill="#00d4aa"
+        opacity="0.9">DATA SCIENCE  ·  AI ENGINEERING  ·  MACHINE LEARNING</text>
+
+  <!-- Name -->
+  <text x="97" y="228"
+        font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="72"
+        font-weight="700"
+        letter-spacing="-1"
+        fill="white">Bogdan Babaev</text>
+
+  <!-- Subtitle / stack line -->
+  <text x="102" y="272"
+        font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="18"
+        font-weight="300"
+        letter-spacing="1"
+        fill="#8aafd4"
+        opacity="0.85">Python · XGBoost · LLM APIs · RAG · FastAPI · PostgreSQL · M.Sc. AI</text>
+
+  <!-- Bottom bar -->
+  <rect x="0" y="376" width="1584" height="20" fill="#1a6cf8" opacity="0.15"/>
+  <rect x="0" y="376" width="320" height="2" fill="#1a6cf8" opacity="0.9"/>
+  <rect x="0" y="376" width="80"  height="2" fill="#00d4aa" opacity="1"/>
+</svg>

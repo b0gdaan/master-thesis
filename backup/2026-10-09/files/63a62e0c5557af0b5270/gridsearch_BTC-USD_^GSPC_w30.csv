@@ -1,0 +1,5 @@
+model,best_params,cv_rmse,pair,window
+ElasticNet,"{'model__alpha': 0.001, 'model__l1_ratio': 1.0}",0.08799978566959758,BTC-USD_vs_^GSPC,30
+Ridge,{'model__alpha': 0.001},0.08808233808927508,BTC-USD_vs_^GSPC,30
+RF,"{'max_depth': 4, 'min_samples_leaf': 5, 'n_estimators': 400}",0.09150429409181522,BTC-USD_vs_^GSPC,30
+XGB,"{'colsample_bytree': 0.9, 'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 600, 'subsample': 0.7}",0.09258446762224679,BTC-USD_vs_^GSPC,30

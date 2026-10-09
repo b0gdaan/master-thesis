@@ -1,0 +1,162 @@
+\section{Appendix F: Market-Event Case Studies}
+\label{app:market_events}
+
+This appendix examines the landmark market events of 2020--2026 through the lens of
+the thesis's central variable: the rolling Pearson correlation between Bitcoin and
+conventional assets. A master timeline and a correlation regime map first summarise
+all eleven episodes jointly; detailed four-panel diagnostics are then provided for
+four representative events --- the COVID crash, the FTX collapse, the SVB banking
+crisis, and the 2025 ``Liberation Day'' tariff shock --- chosen to span the main
+regime types: a liquidity-driven co-crash, a crypto-idiosyncratic shock, a brief
+safe-haven decoupling, and a macro risk-off shock. The remaining seven episodes are
+marked on the master timeline and reproduced in full by notebook
+\texttt{08\_Market\_Events\_Showcase.ipynb} in the repository. The purpose is to
+anchor the aggregate quantitative results of Chapter~4 in concrete historical
+episodes and to show how the regime-transition problem manifests in practice.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection*{Master Timeline}
+
+Figure~\ref{fig:events_timeline} presents the full sample period with all eleven events
+marked. The three panels show Bitcoin's normalised price trajectory (log scale),
+the S\&P~500 and NASDAQ together with gold, and the 30-day rolling BTC--S\&P~500
+Pearson correlation. The event markers make visible how correlation spikes cluster
+around macro risk-off episodes while remaining subdued during crypto-specific events.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../outputs/figures/market_events_master_timeline.png}
+    \caption{Master timeline 2018--2026: Bitcoin price, conventional-asset prices,
+             and the 30-day rolling BTC--S\&P~500 correlation, with all eleven
+             landmark events marked. Red dotted lines~=~crash/shock events;
+             green~=~rallies and all-time highs; blue~=~structural divergences;
+             purple~=~institutional milestones.}
+    \label{fig:events_timeline}
+\end{figure}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection*{Correlation Regime Map}
+
+Figure~\ref{fig:events_heatmap} summarises all events jointly.
+The left panel shows the 30-day average BTC correlation with each conventional asset
+\emph{after} each event; the right panel shows the change in correlation
+($\Delta\rho = \text{post} - \text{pre}$), isolating the regime shift attributable
+to the event itself.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../outputs/figures/market_events_correlation_heatmap.png}
+    \caption{Correlation regime map. Left: post-event BTC correlation (30-day average)
+             with each conventional asset. Right: change in correlation relative to
+             the 30-day pre-event average. Red/blue = strong positive/negative shifts.}
+    \label{fig:events_heatmap}
+\end{figure}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection*{Individual Event Panels}
+
+The following figures provide a four-panel deep-dive for each of the four
+representative events: (top-left) normalised price trajectories for Bitcoin and the
+most relevant comparison assets; (top-right) daily log-returns as a bar chart;
+(bottom-left) 30-day and 14-day rolling BTC correlation with the primary comparison
+asset; (bottom-right) pre-/post-event correlation for all pairs.
+
+\needspace{4\baselineskip}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../outputs/figures/event_covid.png}
+    \caption{\textbf{Event 1 --- COVID Black Thursday (12 March 2020).}
+             Bitcoin fell about 37\% in a single session, sharply outpacing the
+             S\&P~500's 10\% drop. The 30-day BTC--S\&P~500 correlation rose from near
+             zero to about 0.52 --- a liquidity-driven sell-off in which
+             Bitcoin's diversification benefit temporarily disappeared.
+             Source: \protect\href{https://www.reuters.com/article/us-health-coronavirus-markets-idUSKBN20Z0TO}{Reuters}}
+    \label{fig:event_covid}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../outputs/figures/event_ftx.png}
+    \caption{\textbf{Event 2 --- FTX Collapse (8--11 November 2022).}
+             SBF's exchange filed for bankruptcy; Bitcoin fell about 25\% over the
+             following two weeks. Paradoxically the S\&P~500 \emph{rose} that same week
+             on a positive CPI print --- producing a sharp short-term
+             decoupling: the 14-day BTC--equity correlation fell from about 0.6 toward
+             zero, though the 30-day measure barely moved (about 0.55).
+             Source: \protect\href{https://www.bbc.com/news/technology-63631492}{BBC News}}
+    \label{fig:event_ftx}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../outputs/figures/event_svb.png}
+    \caption{\textbf{Event 3 --- SVB Banking Crisis (10 March 2023).}
+             Silicon Valley Bank's failure triggered a Bitcoin rally of about 40\% over
+             the following week as investors sought alternatives to the banking system.
+             Both Bitcoin and Gold rose (Gold about 8\%) while equities fell --- one of
+             the rare episodes in the sample where the short-window correlation turned
+             negative: the 14-day BTC--S\&P~500 measure dipped to about $-0.4$, while the
+             30-day measure fell from 0.37 to 0.16.
+             Source: \protect\href{https://www.nytimes.com/2023/03/10/business/silicon-valley-bank-failure-explained.html}{The New York Times}}
+    \label{fig:event_svb}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../outputs/figures/event_liberation_day.png}
+    \caption{\textbf{Event 4 --- ``Liberation Day'' Tariff Shock (2 April 2025).}
+             Sweeping tariffs on 185 countries caused the S\&P~500 to fall about 12\% in
+             four trading days --- its fastest drop since March 2020. Bitcoin fell
+             alongside equities over the same week, while Gold climbed to record highs
+             above \$3\,000/oz. Although both risk assets sold off together --- confirming
+             that Bitcoin behaves as a risk asset, not a safe haven, during acute macro
+             shocks --- the 30-day rolling BTC--S\&P~500 correlation showed no clear spike:
+             it edged only from about 0.33 to 0.43, as the sharp partial
+             recovery in the days that followed desynchronised the daily moves. The episode
+             illustrates that even a major macro shock need not durably raise the rolling dependency.
+             Source: \protect\href{https://www.reuters.com/markets/trump-liberation-day-tariffs-global-markets-crash-2025-04-02/}{Reuters}}
+    \label{fig:event_liberation}
+\end{figure}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection*{Interpretation}
+
+Across the full set of episodes --- those detailed above together with the remainder
+marked on the master timeline --- four conclusions complement the aggregate
+quantitative findings of Chapter~4:
+
+\begin{enumerate}
+    \item \textbf{Macro risk-off events create the largest correlation spikes.}
+    The COVID crash (2020) and the 2021--22 Fed tightening cycle pushed BTC--equity
+    correlation to its highest sustained levels in the sample: the 30-day measure rose
+    to about 0.52 in March 2020 and ran near 0.6--0.7 through the 2022 sell-off. These
+    are precisely the episodes where rolling-RMSE peaks in Figure~\ref{fig:rolling_rmse}.
+    By contrast, the 2025 ``Liberation Day'' shock was a co-crash in prices that left the
+    rolling correlation little changed --- a reminder that even severe macro shocks do
+    not always raise measured dependency.
+
+    \item \textbf{Crypto-idiosyncratic shocks leave equity correlations largely unchanged.}
+    The China mining ban, Luna collapse, and FTX bankruptcy each caused severe Bitcoin
+    losses while equity markets barely moved, producing at most a brief, transitory
+    swing in the rolling correlation rather than a sustained regime shift.
+
+    \item \textbf{The institutional era (post-2024 ETF approval) keeps correlations elevated.}
+    The structural inflow of institutional capital via ETF wrappers means Bitcoin is
+    now traded alongside growth equities in the same risk-on/off frameworks. The 30-day
+    BTC--NASDAQ correlation has remained elevated since the January 2024 ETF approval,
+    averaging about 0.36 over 2024--2026, although it does not exceed the peak of about
+    0.58 reached during the 2022 monetary-tightening cycle, when both assets sold off together.
+
+    \item \textbf{Rare safe-haven episodes exist but are short-lived.}
+    The SVB crisis produced a genuine negative BTC--equity correlation, but it lasted
+    only two to three weeks before reverting. This transience explains why persistence-based
+    models continue to dominate out-of-sample: the autoregressive signal is strong
+    enough to absorb regime shifts after a short lag, even if it cannot anticipate them.
+\end{enumerate}
+
+The full set of event-level figures, summary statistics, and news references for all
+eleven episodes is produced automatically by notebook
+\texttt{08\_Market\_Events\_Showcase.ipynb}, which runs as the final step of
+\texttt{run\_all.py}.
+
+\clearpage

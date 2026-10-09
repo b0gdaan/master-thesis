@@ -1,0 +1,17 @@
+# Thesis Copilot - RAG stack. Install into a Python 3.11 virtual environment:
+#   py -3.11 -m venv .venv
+#   .venv\Scripts\activate        (Windows)   |   source .venv/bin/activate  (Unix)
+#   pip install -r requirements.txt
+#
+# Exact resolved versions are captured in requirements.lock.txt.
+
+langchain-core==1.4.0
+langchain-text-splitters==1.1.2
+langchain-chroma==1.1.0
+langchain-huggingface==1.2.2
+langchain-groq==1.1.2
+langchain-openai==1.2.2
+sentence-transformers==5.5.1
+pymupdf==1.27.2.3
+streamlit==1.58.0
+python-dotenv==1.2.2

@@ -1,0 +1,37 @@
+\begin{table}[H]
+\centering
+\small
+\caption{Out-of-sample error comparison between XGBoost (GPU) and DCC-GARCH. Improvement is relative RMSE reduction.}
+\label{tab:rmse_xgb_vs_dcc}
+\begin{tabular}{lrrrrrrr}
+\toprule
+dependency & window & RMSE\_XGB & RMSE\_DCC & MAE\_XGB & MAE\_DCC & n\_test & RMSE\_impr\_\% \\
+\midrule
+corr\_BTC-USD\_ETH-USD & 14 & 0.1497 & 0.2957 & 0.1076 & 0.2392 & 405 & 49.3757 \\
+corr\_BTC-USD\_ETH-USD & 30 & 0.0735 & 0.1788 & 0.0501 & 0.1472 & 402 & 58.8657 \\
+corr\_BTC-USD\_ETH-USD & 60 & 0.0391 & 0.1340 & 0.0267 & 0.1107 & 396 & 70.8033 \\
+corr\_BTC-USD\_ETH-USD & 90 & 0.0243 & 0.1371 & 0.0164 & 0.1103 & 390 & 82.3135 \\
+corr\_BTC-USD\_GLD & 14 & 0.1453 & 0.3142 & 0.1009 & 0.2513 & 405 & 53.7441 \\
+corr\_BTC-USD\_GLD & 30 & 0.0697 & 0.1807 & 0.0459 & 0.1455 & 402 & 61.4046 \\
+corr\_BTC-USD\_GLD & 60 & 0.0414 & 0.1067 & 0.0246 & 0.0874 & 396 & 61.1865 \\
+corr\_BTC-USD\_GLD & 90 & 0.0264 & 0.0784 & 0.0164 & 0.0649 & 390 & 66.3462 \\
+corr\_BTC-USD\_SLV & 14 & 0.1310 & 0.3159 & 0.0970 & 0.2460 & 405 & 58.5428 \\
+corr\_BTC-USD\_SLV & 30 & 0.0656 & 0.2141 & 0.0465 & 0.1777 & 402 & 69.3445 \\
+corr\_BTC-USD\_SLV & 60 & 0.0336 & 0.1322 & 0.0220 & 0.1076 & 396 & 74.6036 \\
+corr\_BTC-USD\_SLV & 90 & 0.0223 & 0.0784 & 0.0151 & 0.0663 & 390 & 71.5534 \\
+corr\_BTC-USD\_UUP & 14 & 0.1398 & 0.3493 & 0.1001 & 0.2776 & 405 & 59.9808 \\
+corr\_BTC-USD\_UUP & 30 & 0.0865 & 0.2428 & 0.0561 & 0.1981 & 402 & 64.3656 \\
+corr\_BTC-USD\_UUP & 60 & 0.0416 & 0.1411 & 0.0271 & 0.1216 & 396 & 70.4939 \\
+corr\_BTC-USD\_UUP & 90 & 0.0318 & 0.1047 & 0.0196 & 0.0847 & 390 & 69.6673 \\
+corr\_BTC-USD\_\textasciicircum GSPC & 14 & 0.1508 & 0.3138 & 0.1088 & 0.2478 & 405 & 51.9365 \\
+corr\_BTC-USD\_\textasciicircum GSPC & 30 & 0.0698 & 0.1790 & 0.0454 & 0.1405 & 402 & 61.0090 \\
+corr\_BTC-USD\_\textasciicircum GSPC & 60 & 0.0389 & 0.1388 & 0.0244 & 0.1174 & 396 & 71.9716 \\
+corr\_BTC-USD\_\textasciicircum GSPC & 90 & 0.0265 & 0.1163 & 0.0159 & 0.1031 & 390 & 77.2400 \\
+corr\_BTC-USD\_\textasciicircum IXIC & 14 & 0.1527 & 0.3138 & 0.1060 & 0.2463 & 405 & 51.3330 \\
+corr\_BTC-USD\_\textasciicircum IXIC & 30 & 0.0682 & 0.1701 & 0.0460 & 0.1359 & 402 & 59.8979 \\
+corr\_BTC-USD\_\textasciicircum IXIC & 60 & 0.0372 & 0.1209 & 0.0236 & 0.1042 & 396 & 69.2536 \\
+corr\_BTC-USD\_\textasciicircum IXIC & 90 & 0.0239 & 0.1011 & 0.0154 & 0.0887 & 390 & 76.3738 \\
+\bottomrule
+\end{tabular}
+
+\end{table}

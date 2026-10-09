@@ -1,0 +1,87 @@
+\section{Discussion}
+
+\subsection{Principal findings}
+
+The most robust conclusion supported by the empirical evidence is that time-varying intermarket dependency is forecastable in a strict out-of-sample sense. This finding is non-trivial because a substantial portion of the literature treats rolling correlation primarily as a retrospective diagnostic instrument. In the present framework, it is operationalized as a genuine prediction target and evaluated under temporal ordering constraints that preclude any use of future information. The evidence demonstrates that the target retains sufficient statistical structure to support meaningful out-of-sample accuracy across multiple asset pairs and window lengths.
+
+The analysis simultaneously establishes a second, equally consequential finding: predictive success does not automatically favor highly flexible models. The average performance ranking reveals the contrary---simple persistence-based models constitute the most competitive forecasters. This outcome reflects a fundamental property of the target. Rolling dependency, constructed from overlapping observation windows and subsequently Fisher-transformed, exhibits strong serial autocorrelation. Any model that fails to account for this dominant autoregressive signal is likely to produce suboptimal predictions, irrespective of its representational capacity.
+
+\subsection{Interpretation of the persistence result}
+
+The dominance of AR1 and naive last-observation benchmarks might appear, at first inspection, to undermine the contribution of the thesis. This interpretation is incorrect. The identification of persistence as the primary source of forecastability is a substantive scientific result rather than a methodological failure. The objective of forecasting research is to determine the true structure of predictability, not to demonstrate that a particular class of methods prevails.
+
+The empirical evidence implies two specific conclusions about the dependency process. First, the dependence structure between Bitcoin and conventional assets exhibits meaningful memory: the current state of the rolling correlation is informative about its near-future state. Second, the incremental information contributed by cross-asset features and higher-capacity models is small relative to this autoregressive signal, at least within the one-step-ahead horizon studied. This result is consistent with the broader literature on return and correlation predictability, which consistently documents that the signal-to-noise ratio in financial forecasting is low and that persistence frequently constitutes the dominant component of forecastability \cite{welch2008}.
+
+The methodological integrity of the walk-forward evaluation reinforces the credibility of this finding. Financial forecasting studies are susceptible to inflationary bias when in-sample flexibility is mistaken for genuine out-of-sample predictive value. The present thesis resists that tendency and demonstrates that under an honest evaluation protocol, simple autoregressive baselines remain formidable competitors.
+
+\subsection{The incremental contribution of machine learning}
+
+The finding that persistence baselines dominate the average performance ranking does not render machine-learning methods superfluous in the present framework. Their contribution operates through three distinct channels.
+
+First, the inclusion of machine-learning models broadens the comparison class in a theoretically important way: it permits a direct empirical test of whether nonlinear, interaction-capable methods can extract predictive signal from the feature set that is inaccessible to linear autoregressive models. The evidence on this point is informative, even when the answer is that they cannot do so systematically.
+
+Second, machine-learning models frequently achieve lower prediction error than the DCC-GARCH benchmark, even when they trail persistence baselines. This is a meaningful result because DCC-GARCH is a theoretically motivated and widely deployed econometric standard, and outperforming it indicates that flexible data-driven methods can improve upon the parametric benchmark in this specific forecasting task.
+
+Third, machine-learning methods demonstrate more pronounced comparative advantages in the second-layer signal problem, where the objective transitions from direct dependency forecasting to the binary classification of stress regimes. This shift in task design aligns better with the strengths of ensemble methods, which can model complex decision boundaries and handle class imbalance more flexibly than autoregressive specifications.
+
+The contribution of machine learning in this thesis is therefore comparative and structural: the thesis identifies the conditions under which flexible methods are and are not beneficial, thereby adding analytic value beyond a simple performance ranking.
+
+\subsection{Interpretation of the DCC-GARCH result}
+
+The comparatively weak performance of DCC-GARCH warrants careful interpretation. The model is a theoretically grounded and empirically established benchmark for dynamic covariance estimation, and its conceptual appropriateness for problems involving time-varying co-movement is not in question. However, the specific empirical task of this thesis---short-horizon point forecasting of a smoothed, Fisher-transformed correlation target under walk-forward re-estimation---is considerably more demanding than the use case for which DCC-GARCH was originally designed.
+
+Several factors contribute to its underperformance in this setting. The parametric DCC-GARCH structure is relatively inflexible in responding to rapid or nonlinear local changes in dependence, particularly when the true process departs from the assumptions of the updating equations. The target of interest is not the conditional covariance matrix itself but a derived, smoothed scalar, introducing a mismatch between the model's output and the forecasting objective. Furthermore, the leakage-safe walk-forward implementation deprives the benchmark of any advantage that would arise from full-sample estimation, and periodic re-fitting on short windows may produce unstable parameter estimates for a model with several degrees of freedom.
+
+This result should not be generalized as a systematic rejection of DCC-GARCH. The model remains appropriate for longer-horizon covariance forecasting, portfolio construction, and risk hedging applications where the full conditional covariance structure is the quantity of interest. The specific conclusion is limited to the one-step-ahead forecasting of rolling pairwise correlation between Bitcoin and conventional assets, a task for which persistence-based and machine-learning methods demonstrate superior empirical performance.
+
+\subsection{Practical implications for investors}
+
+The investor motivation of the thesis requires careful qualification. The empirical results do not support the strong claim that cryptocurrency-derived information enables reliable prediction of next-day price direction across conventional asset classes. Such a claim would be inconsistent with the evidence and incompatible with the degree of market efficiency that characterizes liquid conventional markets.
+
+What the evidence does support is a more precisely bounded and defensible practical statement: cryptocurrency dynamics contain information about the evolving dependence structure of conventional assets, and this information can be incorporated into an early-warning mechanism for periods of elevated downside risk. The signal layer is accordingly framed as a \emph{risk overlay}---a supplementary input to the risk-management process rather than a standalone directional trading signal.
+
+In a practical portfolio context, such a signal would function alongside, rather than in replacement of, fundamental valuation, macro-economic analysis, and strategic asset allocation. Its operational role would be to raise the probability threshold for accepting risk, to prompt reductions in gross exposure, or to tighten dynamic risk limits when the classified probability of a stress regime is elevated. For a risk-aware investor whose loss function assigns disproportionate weight to severe drawdowns, a moderate but statistically meaningful warning signal can generate positive expected utility even when its classification accuracy is imperfect.
+
+\subsection{Cross-asset heterogeneity in signal performance}
+
+The investor signal layer exhibits heterogeneous performance across the conventional asset universe. Signal quality is strongest for broad equity market indices and is attenuated for precious metals and dollar-related instruments. This pattern is economically interpretable. Broad equity markets are tightly linked to global risk appetite, funding liquidity, and investor sentiment---the same set of macro-financial forces that exert material influence on Bitcoin. Consequently, the crypto-derived feature set captures a meaningful portion of the information that drives equity stress episodes.
+
+Precious metals and dollar-index instruments respond to a wider set of structural macro-economic forces---including real interest rate differentials, safe-haven demand, and geopolitical risk premia---that are not fully represented in the cryptocurrency-centered predictor set. The attenuated signal performance for these instruments is therefore consistent with an information-gap hypothesis: the feature set is well specified for equity stress but is incomplete relative to the drivers of stress in other asset classes.
+
+This observation implies that the signal layer is most appropriately applied as a crypto-informed risk indicator for growth-sensitive and risk-appetite-driven conventional markets. Generalizing it as a universal warning system across all asset classes would overstate the scope of the empirical evidence.
+
+\subsection{Methodological strengths}
+
+The empirical conclusions of this thesis are supported by several methodological design choices that collectively reduce the risk of artifactual findings.
+
+First, the entire pipeline from data ingestion through evaluation is modular and reproducible, enabling independent verification of all results. Second, the DCC-GARCH benchmark is implemented within the same walk-forward framework as the machine-learning models, eliminating the asymmetric information advantage that would arise from full-sample benchmark estimation. Third, model performance is assessed across multiple complementary metrics---RMSE, MAE, $R^2$, Balanced Accuracy, F1 score, AUC, and exit-rate interpretation---reducing sensitivity to any single loss function. Fourth, the Diebold--Mariano test is applied to adjudicate between competing models under a formal statistical criterion rather than relying on point estimates of average error.
+
+These design choices collectively limit the probability that the reported conclusions reflect the choice of a particular model, a particular metric, or a particular implementation shortcut, rather than the underlying structure of the forecasting problem.
+
+\subsection{Limitations}
+
+The thesis is subject to several limitations that must be acknowledged to bound the scope of valid inference.
+
+The first limitation concerns data frequency. All analyses are conducted on daily return series. This resolution is appropriate for an asset universe that spans both liquid conventional markets and cryptocurrency exchanges, and it is consistent with the daily rebalancing horizon implicit in the signal layer. However, daily data necessarily excludes intraday information flows and very short-lived volatility spillovers, which may be relevant in high-frequency trading contexts.
+
+The second limitation concerns forecast horizon. The core dependency-forecasting problem is specified as one-step-ahead prediction. This is a natural baseline design choice, but it structurally favors persistence-driven models and does not illuminate whether the relative performance of machine-learning methods improves at multi-day or multi-week horizons where the autoregressive signal may decay more rapidly.
+
+The third limitation concerns the choice of dependency measure. Rolling window correlation is a tractable and interpretable estimator, but it represents only one member of a broader family of dependence measures. Tail dependence coefficients, copula-based concordance measures, realized covariance estimators, and dynamic partial correlations may reveal structural features of the joint distribution that are not adequately captured by the Pearson correlation framework.
+
+The fourth limitation concerns the stress-regime target. The binary stress indicator employed in the signal layer is economically motivated, but it is necessarily a simplified representation of the complex and multidimensional phenomenon of market stress. Alternative operationalizations---including maximum drawdown events over a rolling window, realized variance exceedance thresholds, or simultaneous multi-asset downside episodes---may yield qualitatively different signal characteristics.
+
+Finally, the thesis does not include a transaction-cost-aware portfolio backtest. This omission is deliberate: the signal layer is presented as a risk-monitoring instrument rather than as a complete trading strategy, and the primary evaluation criterion is statistical predictive accuracy rather than realized portfolio performance. A portfolio-level extension would require explicit specification of position sizing rules, turnover constraints, and transaction cost assumptions that lie beyond the scope of the present study.
+
+\subsection{Directions for future research}
+
+Several natural extensions follow from the findings of this thesis. The most immediate priority is the investigation of longer forecast horizons to determine whether the comparative advantage of machine-learning methods is more pronounced when the problem moves beyond the one-step persistence regime. A complementary extension would enrich the predictor set with macro-financial variables---including term spreads, credit default swap spreads, equity implied volatility indices, and on-chain cryptocurrency metrics---to assess whether these variables contribute incremental information beyond the cryptocurrency-return-based features employed here.
+
+Substituting richer dependence measures for rolling Pearson correlation represents a substantive theoretical extension. Copula-based dependence structures, in particular, permit the separate modelling of marginal distributions and co-movement intensity, and tail dependence coefficients provide a more targeted characterization of joint extreme-return behavior.
+
+On the applied side, integration of the signal layer into a portfolio optimization framework with explicit turnover constraints and transaction costs would permit evaluation of the signal's practical utility in terms of utility-relevant performance metrics such as maximum drawdown reduction, downside volatility control, and improvement in the Calmar or Sortino ratio. Such an extension would close the gap between the statistical evaluation conducted in this thesis and the economic evaluation required to justify operational deployment of the signal.
+
+\subsection{Overall assessment}
+
+The aggregate evidence supports a balanced and empirically grounded conclusion. The thesis does not demonstrate that cryptocurrency markets possess predictive power over the directional movements of conventional assets in a general sense. It does demonstrate, rigorously, that cryptocurrency dynamics contain information about the temporal evolution of intermarket dependence, that this dependency process is forecastable out of sample, and that the resulting forecasts can be operationalized as a statistically meaningful, if moderate, early-warning signal for elevated downside risk in conventional markets.
+
+The principal contribution of the thesis lies precisely in the precision of this claim. The findings are neither trivially confirmatory nor implausibly strong. They are calibrated to the evidence, grounded in a rigorous methodological framework, and practically interpretable within the constraints of what the data can legitimately support.

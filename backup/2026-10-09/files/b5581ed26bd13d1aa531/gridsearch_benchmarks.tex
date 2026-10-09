@@ -1,0 +1,42 @@
+\begin{longtable}{lrlrrrrl}
+\caption{Best-performing models per dependency and rolling window (selected by minimum RMSE on the test split). Tuned models use time-series cross-validation.} \label{tab:gridsearch_best} \\
+\toprule
+dependency & window & model & MAE & RMSE & R2 & n & best_params \\
+\midrule
+\endfirsthead
+\caption[]{Best-performing models per dependency and rolling window (selected by minimum RMSE on the test split). Tuned models use time-series cross-validation.} \\
+\toprule
+dependency & window & model & MAE & RMSE & R2 & n & best_params \\
+\midrule
+\endhead
+\midrule
+\multicolumn{8}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+corr\_BTC-USD\_ETH-USD & 14 & Ridge\_tuned & 0.098027 & 0.141863 & 0.875707 & 405 & {'alpha': 1.0, 'fit\_intercept': True} \\
+corr\_BTC-USD\_ETH-USD & 30 & baseline\_AR1 & 0.041490 & 0.061882 & 0.964490 & 248 &  \\
+corr\_BTC-USD\_ETH-USD & 60 & baseline\_Naive\_Last & 0.019242 & 0.030228 & 0.982785 & 242 &  \\
+corr\_BTC-USD\_ETH-USD & 90 & baseline\_AR1 & 0.012663 & 0.020148 & 0.985480 & 236 &  \\
+corr\_BTC-USD\_GLD & 14 & Ridge\_tuned & 0.084592 & 0.127751 & 0.850464 & 405 & {'alpha': 0.1, 'fit\_intercept': True} \\
+corr\_BTC-USD\_GLD & 30 & baseline\_AR1 & 0.037148 & 0.057305 & 0.881068 & 248 &  \\
+corr\_BTC-USD\_GLD & 60 & baseline\_AR1 & 0.018781 & 0.031178 & 0.921470 & 242 &  \\
+corr\_BTC-USD\_GLD & 90 & Ridge\_tuned & 0.013255 & 0.023316 & 0.934094 & 390 & {'alpha': 0.01, 'fit\_intercept': True} \\
+corr\_BTC-USD\_SLV & 14 & Ridge\_tuned & 0.079052 & 0.113205 & 0.866801 & 405 & {'alpha': 0.1, 'fit\_intercept': True} \\
+corr\_BTC-USD\_SLV & 30 & baseline\_AR1 & 0.035996 & 0.054292 & 0.885187 & 248 &  \\
+corr\_BTC-USD\_SLV & 60 & baseline\_AR1 & 0.018646 & 0.030548 & 0.889004 & 242 &  \\
+corr\_BTC-USD\_SLV & 90 & Ridge\_tuned & 0.012907 & 0.021382 & 0.919615 & 390 & {'alpha': 0.01, 'fit\_intercept': True} \\
+corr\_BTC-USD\_UUP & 14 & baseline\_AR1 & 0.082118 & 0.123855 & 0.835377 & 251 &  \\
+corr\_BTC-USD\_UUP & 30 & baseline\_AR1 & 0.036787 & 0.054689 & 0.931865 & 248 &  \\
+corr\_BTC-USD\_UUP & 60 & baseline\_AR1 & 0.018954 & 0.029454 & 0.949531 & 242 &  \\
+corr\_BTC-USD\_UUP & 90 & baseline\_AR1 & 0.012424 & 0.020969 & 0.943841 & 236 &  \\
+corr\_BTC-USD\_^GSPC & 14 & Ridge\_tuned & 0.092097 & 0.133495 & 0.845976 & 405 & {'alpha': 0.1, 'fit\_intercept': True} \\
+corr\_BTC-USD\_^GSPC & 30 & Ridge\_tuned & 0.041359 & 0.066909 & 0.902477 & 402 & {'alpha': 0.1, 'fit\_intercept': True} \\
+corr\_BTC-USD\_^GSPC & 60 & baseline\_AR1 & 0.019648 & 0.035532 & 0.944439 & 242 &  \\
+corr\_BTC-USD\_^GSPC & 90 & Ridge\_tuned & 0.013404 & 0.024351 & 0.948084 & 390 & {'alpha': 0.01, 'fit\_intercept': True} \\
+corr\_BTC-USD\_^IXIC & 14 & Ridge\_tuned & 0.091233 & 0.136739 & 0.836652 & 405 & {'alpha': 0.1, 'fit\_intercept': True} \\
+corr\_BTC-USD\_^IXIC & 30 & Ridge\_tuned & 0.040527 & 0.063248 & 0.894749 & 402 & {'alpha': 0.1, 'fit\_intercept': True} \\
+corr\_BTC-USD\_^IXIC & 60 & baseline\_AR1 & 0.018941 & 0.033580 & 0.930200 & 242 &  \\
+corr\_BTC-USD\_^IXIC & 90 & Ridge\_tuned & 0.012720 & 0.022224 & 0.942425 & 390 & {'alpha': 0.01, 'fit\_intercept': True} \\
+\end{longtable}

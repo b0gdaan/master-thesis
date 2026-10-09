@@ -1,0 +1,97 @@
+﻿\section{Appendix A: Data Description and Additional Background}
+
+This appendix collects the descriptive material that would have slowed the main text down --- the background and diagnostics behind the empirical setup --- so the body can stay focused on argument and interpretation.
+
+\subsection{Descriptive role of the asset universe}
+
+The choice of assets in the thesis is not arbitrary. Each instrument represents a distinct dimension of the conventional financial system against which Bitcoin can be compared.
+
+\begin{itemize}
+    \item The S\&P 500 is used as a broad proxy for U.S. equity-market risk and general investor sentiment.
+    \item The NASDAQ Composite captures a more growth-oriented and technology-heavy market segment, making it especially interesting in relation to crypto assets.
+    \item Gold and silver ETFs represent precious-metal exposure, a domain frequently associated with hedging, inflation narratives, and safe-haven debates.
+    \item The U.S. dollar index proxy reflects macro-defensive positioning and global dollar strength.
+    \item Ethereum is included as a crypto-native comparison asset in order to contrast same-ecosystem dependency with cross-market dependency.
+\end{itemize}
+
+Between them, these assets differ in investor base, liquidity, macro sensitivity, and economic meaning --- enough variety to keep the conclusions from being an artefact of one narrow corner of the market.
+
+\subsection{Visual overview of the dataset}
+
+Figure~\ref{fig:eda_prices_appendix} presents normalised price paths for the asset universe. The normalisation puts all series on a common starting point, which makes visible how different the underlying market trajectories are.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../outputs/figures/eda_normalized_prices.png}
+    \caption{Normalised prices of the assets included in the study.}
+    \label{fig:eda_prices_appendix}
+\end{figure}
+
+Figure~\ref{fig:eda_vol_appendix} shows rolling volatility profiles. These reveal that Bitcoin and related crypto assets inhabit a much higher-volatility environment than the conventional asset set, which is one more reason to study the dependence dynamically.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../outputs/figures/eda_rolling_vol.png}
+    \caption{Rolling volatility across the asset universe.}
+    \label{fig:eda_vol_appendix}
+\end{figure}
+
+Figure~\ref{fig:eda_heatmap_appendix} provides the static correlation heatmap; the dynamic rolling-correlation structure is shown in the methodology chapter (Figure~\ref{fig:rolling_corr_all}). Together they motivate the main modelling choice of the thesis: static summaries are insufficient for describing the cross-market relations under study.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../outputs/figures/eda_corr_heatmap.png}
+    \caption{Static correlation heatmap of the return series.}
+    \label{fig:eda_heatmap_appendix}
+\end{figure}
+
+\subsection{Dataset validation and quality diagnostics}
+
+All price series are subjected to a systematic quality inspection before any modelling step. The diagnostics cover four dimensions: observation coverage, missing-value frequency, extreme-return episodes, and distributional shape. Table~\ref{tab:data_quality} summarises the per-ticker results.
+
+\input{../outputs/tables/data_quality_table.tex}
+
+Figure~\ref{fig:dq_coverage} confirms that all seven tickers share an uninterrupted observation window from November 2017 to May 2026, with no gaps in coverage after alignment.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{../outputs/figures/fig_price_coverage.png}
+    \caption{Observation coverage window per ticker. All assets share an identical aligned date range after the ETH-USD availability cutoff in November 2017.}
+    \label{fig:dq_coverage}
+\end{figure}
+
+Figure~\ref{fig:dq_outliers} highlights extreme return episodes ($|z\text{-score}| > 5\sigma$) for each asset. Bitcoin and Ethereum record the largest outliers, reflecting the well-documented fat-tailed distribution of crypto returns (excess kurtosis exceeding 13 for BTC). All five conventional series --- the two equity indices as well as the precious-metal ETFs and the dollar proxy --- carry a large number of zero-return days. This is not an ETF quirk: it follows directly from aligning these five-day-a-week instruments onto Bitcoin's seven-day calendar and forward-filling the weekend gaps, so every Saturday and Sunday records a forced zero return, while the continuously traded crypto series show none. This calendar mismatch is a genuine limitation: on weekend rows a real Bitcoin return is paired with a zero conventional return, which mechanically attenuates the rolling correlation. A natural worry is that this forward-filling also inflates the serial persistence of the target --- the very property that dominates the forecasting results of Chapters~\ref{sec:results_overview} and~\ref{sec:discussion}. To test this directly, the 30-day Bitcoin--S\&P~500 rolling correlation was recomputed on common trading days only, dropping the 914 weekend and holiday rows on which the S\&P~500 is forward-filled, and its persistence was compared with the full-calendar version. The persistence is essentially unchanged --- if anything marginally higher without the weekend rows: the lag-1 autocorrelation of the Fisher-$z$ target is 0.977 on the full seven-day calendar versus 0.981 on trading days only, and the naive ``tomorrow-equals-today'' $R^2$ is 0.954 versus 0.961 (the same ordering holds at the 14- and 90-day windows). The forced weekend zeros therefore inject a little noise rather than artificial persistence, so the dominant role of persistence is not an artefact of the calendar convention. Restricting the analysis to common trading days remains a clean refinement for future work, but it would not overturn the conclusions. None of the detected outliers, by contrast, are data errors; they are genuine price events and are kept in the analysis.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../outputs/figures/fig_return_outliers.png}
+    \caption{Log-return series with extreme observations ($|z|>5\sigma$) highlighted in red. Crypto assets exhibit sporadic but large outliers; conventional assets are more contained but not outlier-free.}
+    \label{fig:dq_outliers}
+\end{figure}
+
+\subsection{Fisher-z transformation of the correlation target}
+
+The rolling Pearson correlation $\rho_t$ is bounded on $(-1, 1)$ and exhibits variance compression near the boundaries. Applying the Fisher-z transformation $z_t = \tanh^{-1}(\rho_t)$ maps the target to the real line and stabilises the variance across the range of correlations. Figure~\ref{fig:eda_fisher} illustrates the distributional improvement for the representative Bitcoin--S\&P~500 pair at the 30-day window: the untransformed correlation distribution is left-skewed and bounded, while the Fisher-transformed version is more symmetric and approximately Gaussian.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{../outputs/figures/eda_fisher_transform.png}
+    \caption{Distribution of the 30-day rolling correlation before and after Fisher-z transformation for the Bitcoin--S\&P~500 pair. The transformation improves normality and removes boundary compression.}
+    \label{fig:eda_fisher}
+\end{figure}
+
+\subsection{Why multiple rolling windows are used}
+
+The thesis uses 14-, 30-, 60-, and 90-day windows because no single horizon is the right one. A short window reacts fast to recent shocks but is noisy; a long window is smoother and more persistent but slow to register a regime change. Running all four lets the analysis tease these effects apart.
+
+The window choice turns out to shape the whole forecastability profile. Longer windows are easier to forecast because they are smoother --- but that success is almost entirely persistence. Shorter windows are noisier, yet more informative about local instability.
+
+\subsection{Additional implementation remarks}
+
+Every run of the pipeline writes consistent outputs into \texttt{outputs/results}, \texttt{outputs/tables}, \texttt{outputs/figures}, and \texttt{outputs/predictions}. That helps reproducibility, but it also helps the writing: because the tables and figures come straight from the code, there is very little distance between running an experiment and reporting it.
+
+The notebooks were kept in step with the pipeline and not allowed to drift: figures stay interpretable, benchmarks are selected robustly, and helper functions are reused without fragile path assumptions. This matters in practice, since exploratory notebooks frequently diverge from the code that produced the results and become unreliable over time.
+
+\subsection{Summary}
+
+The takeaway is methodological: the environment studied here is heterogeneous, economically nonstationary, and rich enough to justify treating dependence as time-varying. The descriptive evidence backs the modelling strategy of the main text.

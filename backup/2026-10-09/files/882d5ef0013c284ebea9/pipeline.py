@@ -1,0 +1,762 @@
+"""
+Main pipeline for intermarket dependency forecasting.
+Handles data download, feature engineering, walk-forward ML training,
+DCC benchmark evaluation, metrics, DM tests, and figures.
+"""
+import json
+import math
+import os
+import sys
+import warnings
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+import numpy as np
+import pandas as pd
+import yfinance as yf
+import yaml
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Tuple
+
+from scipy import stats
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from sklearn.linear_model import ElasticNet, LinearRegression, Ridge
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+try:
+    import xgboost as xgb
+    XGB_AVAILABLE = True
+except Exception:
+    XGB_AVAILABLE = False
+
+try:
+    from thesis_app.dcc_walk import dcc_garch_walk_forward_predict
+    DCC_AVAILABLE = True
+except Exception:
+    try:
+        from dcc_walk import dcc_garch_walk_forward_predict
+        DCC_AVAILABLE = True
+    except Exception:
+        DCC_AVAILABLE = False
+
+try:
+    from thesis_app.signal_layer import run_signal_experiment, signal_metrics_to_latex
+except Exception:
+    from signal_layer import run_signal_experiment, signal_metrics_to_latex
+
+
+@dataclass
+class Paths:
+    base_dir: str
+    data_raw: str
+    data_processed: str
+    outputs: str
+    figures: str
+    results: str
+    predictions: str
+    tables: str
+    models: str
+    notebooks: str
+
+
+def build_paths(base_dir: str) -> Paths:
+    return Paths(
+        base_dir=base_dir,
+        data_raw=os.path.join(base_dir, "data", "raw"),
+        data_processed=os.path.join(base_dir, "data", "processed"),
+        outputs=os.path.join(base_dir, "outputs"),
+        figures=os.path.join(base_dir, "outputs", "figures"),
+        results=os.path.join(base_dir, "outputs", "results"),
+        predictions=os.path.join(base_dir, "outputs", "predictions"),
+        tables=os.path.join(base_dir, "outputs", "tables"),
+        models=os.path.join(base_dir, "models"),
+        notebooks=os.path.join(base_dir, "notebooks"),
+    )
+
+
+def ensure_dirs(paths: Paths) -> None:
+    for directory in vars(paths).values():
+        if directory and directory != paths.base_dir:
+            os.makedirs(directory, exist_ok=True)
+
+
+def load_config(path: str) -> Dict:
+    with open(path, "r", encoding="utf-8") as handle:
+        return yaml.safe_load(handle)
+
+
+def _pick_close(df: pd.DataFrame) -> pd.DataFrame:
+    if isinstance(df.columns, pd.MultiIndex):
+        level0 = df.columns.get_level_values(0)
+        for field_name in ("Adj Close", "Close"):
+            if field_name in level0:
+                return df[field_name]
+        raise KeyError(f"No close field found. Available: {sorted(set(level0))}")
+
+    for field_name in ("Adj Close", "Close"):
+        if field_name in df.columns:
+            return df[[field_name]]
+    raise KeyError("No close field found.")
+
+
+def fetch_prices(paths: Paths, tickers: List[str], start: str, end: Optional[str]) -> pd.DataFrame:
+    prices_path = os.path.join(paths.data_raw, "prices.csv")
+    if os.path.exists(prices_path):
+        cached = pd.read_csv(prices_path, index_col=0, parse_dates=True)
+        missing = [ticker for ticker in tickers if ticker not in cached.columns]
+        if not missing:
+            print(f"Loaded prices from cache: {prices_path}")
+            return cached.sort_index()
+        print(f"Re-downloading because cache is missing tickers: {missing}")
+
+    print(f"Downloading {len(tickers)} tickers from Yahoo Finance...")
+    downloaded = yf.download(
+        tickers=tickers,
+        start=start,
+        end=end,
+        auto_adjust=True,
+        group_by="column",
+        progress=True,
+        threads=True,
+    )
+    prices = _pick_close(downloaded)
+    prices = prices.dropna(how="all").ffill(limit=2).dropna().sort_index()
+    prices.to_csv(prices_path, encoding="utf-8")
+    print(f"Saved prices: {prices_path} shape={prices.shape}")
+    return prices
+
+
+def compute_returns(paths: Paths, prices: pd.DataFrame) -> pd.DataFrame:
+    ret_path = os.path.join(paths.data_processed, "returns.csv")
+    returns = np.log(prices / prices.shift(1)).dropna().sort_index()
+
+    if os.path.exists(ret_path):
+        cached = pd.read_csv(ret_path, index_col=0, parse_dates=True)
+        same_columns = list(cached.columns) == list(returns.columns)
+        same_index = cached.index.equals(returns.index)
+        if same_columns and same_index:
+            return cached
+        print("Recomputing returns.csv because cache does not match current prices.csv")
+
+    returns.to_csv(ret_path, encoding="utf-8")
+    return returns
+
+
+def fisher_z(r: pd.Series, eps: float = 1e-6) -> pd.Series:
+    return np.arctanh(r.clip(-1 + eps, 1 - eps))
+
+
+def inv_fisher_z(z):
+    return np.tanh(z)
+
+
+def rolling_corr(a: pd.Series, b: pd.Series, window: int) -> pd.Series:
+    return a.rolling(window).corr(b)
+
+
+def build_target(
+    returns: pd.DataFrame,
+    base: str,
+    other: str,
+    window: int,
+    horizon: int,
+    use_fisher: bool,
+) -> pd.Series:
+    corr = rolling_corr(returns[base], returns[other], window).dropna()
+    target = corr.shift(-horizon).dropna()
+    return fisher_z(target) if use_fisher else target
+
+
+def build_features(
+    returns: pd.DataFrame,
+    window: int,
+    y_target: pd.Series,
+    base: str,
+    other: str,
+    horizon: int,
+) -> pd.DataFrame:
+    idx = y_target.index
+    features = pd.DataFrame(index=idx)
+
+    y_current = y_target.shift(horizon).reindex(idx)
+    for lag in [1, 2, 5, 10]:
+        features[f"dep_lag{lag}"] = y_current.shift(lag)
+
+    features["vol_base"] = returns[base].rolling(window).std().reindex(idx)
+    features["vol_other"] = returns[other].rolling(window).std().reindex(idx)
+
+    for lag in [1, 2, 5]:
+        features[f"r_base_lag{lag}"] = returns[base].shift(lag).reindex(idx)
+        features[f"r_other_lag{lag}"] = returns[other].shift(lag).reindex(idx)
+
+    features["mean_base"] = returns[base].rolling(window).mean().reindex(idx)
+    features["mean_other"] = returns[other].rolling(window).mean().reindex(idx)
+    features["abs_spread"] = (returns[base] - returns[other]).abs().rolling(5).mean().reindex(idx)
+
+    corr_short = rolling_corr(returns[base], returns[other], max(5, window // 4)).reindex(idx)
+    corr_long = rolling_corr(returns[base], returns[other], window).reindex(idx)
+    features["corr_diff"] = corr_short - corr_long
+
+    return features.dropna()
+
+
+def _make_xgb(device: str, random_state: int):
+    if not XGB_AVAILABLE:
+        return None
+
+    common = dict(
+        n_estimators=600,
+        max_depth=5,
+        learning_rate=0.05,
+        subsample=0.8,
+        colsample_bytree=0.8,
+        random_state=random_state,
+        verbosity=0,
+    )
+    try:
+        return xgb.XGBRegressor(device=device, **common)
+    except TypeError:
+        tree_method = "gpu_hist" if device == "cuda" else "hist"
+        return xgb.XGBRegressor(tree_method=tree_method, **common)
+
+
+def compute_prediction_metrics(y_true: pd.Series, pred_df: pd.DataFrame) -> pd.DataFrame:
+    rows = []
+    for model_name in pred_df.columns:
+        mask = pred_df[model_name].notna() & y_true.notna()
+        if int(mask.sum()) < 50:
+            continue
+        yt = y_true.loc[mask].values
+        yp = pred_df.loc[mask, model_name].values
+        rows.append(
+            {
+                "model": model_name,
+                "MAE": float(mean_absolute_error(yt, yp)),
+                "RMSE": float(np.sqrt(mean_squared_error(yt, yp))),
+                "R2": float(r2_score(yt, yp)),
+                "n_test": int(mask.sum()),
+            }
+        )
+    if not rows:
+        return pd.DataFrame(columns=["model", "MAE", "RMSE", "R2", "n_test"])
+    return pd.DataFrame(rows).sort_values("RMSE").reset_index(drop=True)
+
+
+def fit_predict_walk_forward(
+    X: pd.DataFrame,
+    y: pd.Series,
+    min_train: int,
+    refit_every: int,
+    random_state: int,
+    use_xgb: bool,
+    xgb_device: str = "cuda",
+) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    X_values = X.values
+    idx = X.index
+    y_values = y.loc[idx].values
+    n_obs = len(idx)
+
+    model_specs: Dict[str, Optional[object]] = {
+        "Naive_Last": None,
+        "AR1": LinearRegression(),
+        "ElasticNet": make_pipeline(StandardScaler(), ElasticNet(alpha=0.01, l1_ratio=0.5, random_state=random_state, max_iter=5000)),
+        "Ridge": make_pipeline(StandardScaler(), Ridge(alpha=1.0)),
+        "RF": RandomForestRegressor(n_estimators=300, max_depth=8, random_state=random_state, n_jobs=-1),
+        "GBM": GradientBoostingRegressor(n_estimators=300, max_depth=4, learning_rate=0.05, random_state=random_state),
+    }
+
+    if use_xgb and XGB_AVAILABLE:
+        xgb_model = _make_xgb(xgb_device, random_state)
+        if xgb_model is not None:
+            key = f"XGB_{'GPU' if xgb_device == 'cuda' else 'CPU'}"
+            model_specs[key] = xgb_model
+
+    preds = {name: np.full(n_obs, np.nan, dtype=float) for name in model_specs}
+    y_series = pd.Series(y_values, index=idx)
+    fitted: Dict[str, object] = {}
+    last_refit = -10**9
+    xgb_fallback_used = False
+
+    for t in range(min_train, n_obs):
+        train_idx = np.arange(0, t)
+
+        if (t - last_refit) >= refit_every:
+            last_refit = t
+            X_train, y_train = X_values[train_idx], y_values[train_idx]
+
+            ar_y = y_series.iloc[train_idx].values
+            ar_x = y_series.iloc[train_idx].shift(1).values.reshape(-1, 1)
+            valid = ~np.isnan(ar_x[:, 0])
+            if int(valid.sum()) > 10:
+                try:
+                    model_specs["AR1"].fit(ar_x[valid], ar_y[valid])
+                    fitted["AR1"] = model_specs["AR1"]
+                except Exception:
+                    fitted.pop("AR1", None)
+
+            for name, model in list(model_specs.items()):
+                if model is None or name == "AR1":
+                    continue
+                try:
+                    model.fit(X_train, y_train)
+                    fitted[name] = model
+                except Exception as exc:
+                    if name.startswith("XGB") and xgb_device == "cuda" and not xgb_fallback_used:
+                        warnings.warn(f"XGBoost GPU fit failed, falling back to CPU: {exc}")
+                        fallback = _make_xgb("cpu", random_state)
+                        if fallback is not None:
+                            fallback.fit(X_train, y_train)
+                            model_specs.pop(name, None)
+                            fitted.pop(name, None)
+                            model_specs["XGB_CPU"] = fallback
+                            fitted["XGB_CPU"] = fallback
+                            preds["XGB_CPU"] = np.full(n_obs, np.nan, dtype=float)
+                            xgb_fallback_used = True
+                            continue
+                    warnings.warn(f"Fit failed for {name} at t={t}: {exc}")
+                    fitted.pop(name, None)
+
+        if t > 0 and not np.isnan(y_values[t - 1]):
+            preds["Naive_Last"][t] = y_values[t - 1]
+
+        if "AR1" in fitted and not np.isnan(y_values[t - 1]):
+            try:
+                preds["AR1"][t] = fitted["AR1"].predict([[y_values[t - 1]]])[0]
+            except Exception:
+                pass
+
+        for name, model in fitted.items():
+            if name == "AR1":
+                continue
+            try:
+                preds[name][t] = model.predict(X_values[t : t + 1])[0]
+            except Exception:
+                pass
+
+    pred_df = pd.DataFrame(preds, index=idx)
+    metrics_df = compute_prediction_metrics(y.loc[idx], pred_df)
+    return pred_df, metrics_df
+
+
+def diebold_mariano(
+    e_model: np.ndarray,
+    e_bench: np.ndarray,
+    h: int = 1,
+    power: int = 2,
+    nw_lag: int = 0,
+) -> Dict:
+    e_model = np.asarray(e_model, dtype=float)
+    e_bench = np.asarray(e_bench, dtype=float)
+    mask = np.isfinite(e_model) & np.isfinite(e_bench)
+    e_model, e_bench = e_model[mask], e_bench[mask]
+    sample_size = len(e_model)
+    if sample_size < 30:
+        return {"DM_stat": np.nan, "p_value": np.nan, "n": sample_size}
+
+    d = (np.abs(e_bench) ** power) - (np.abs(e_model) ** power)
+    d_mean = d.mean()
+    variance = np.var(d, ddof=1)
+    for lag in range(1, nw_lag + 1):
+        cov = np.cov(d[lag:], d[:-lag], ddof=1)[0, 1]
+        weight = 1.0 - lag / (nw_lag + 1.0)
+        variance += 2 * weight * cov
+
+    dm_stat = d_mean / math.sqrt(variance / sample_size) if variance > 0 else np.nan
+    p_value = 2 * (1 - stats.t.cdf(abs(dm_stat), df=sample_size - 1)) if np.isfinite(dm_stat) else np.nan
+    return {
+        "DM_stat": float(dm_stat) if np.isfinite(dm_stat) else None,
+        "p_value": float(p_value) if np.isfinite(p_value) else None,
+        "n": sample_size,
+    }
+
+
+def plot_series(out_path: str, title: str, series_dict: Dict[str, pd.Series], figsize=(12, 5)) -> None:
+    plt.figure(figsize=figsize)
+    for label, series in series_dict.items():
+        plt.plot(series.index, series.values, label=label, linewidth=1)
+    plt.title(title)
+    plt.legend(ncol=2)
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=120)
+    plt.close()
+
+
+def plot_forecast(
+    y_true: pd.Series,
+    pred_df: pd.DataFrame,
+    out_path: str,
+    title: str,
+    top_models: Optional[List[str]] = None,
+    top_k: int = 4,
+) -> None:
+    plt.figure(figsize=(13, 5))
+    plt.plot(y_true.index, y_true.values, label="Actual", linewidth=1.8, color="black")
+    cols = top_models if top_models else [c for c in pred_df.columns if pred_df[c].notna().sum() > 50][:top_k]
+    colors = plt.cm.tab10.colors
+    for i, column in enumerate(cols[:top_k]):
+        plt.plot(pred_df.index, pred_df[column].values, label=column, alpha=0.85, linewidth=1, color=colors[i % len(colors)])
+    plt.legend(ncol=2)
+    plt.title(title)
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=120)
+    plt.close()
+
+
+def describe_dataset(prices: pd.DataFrame, returns: pd.DataFrame, paths: Paths, cfg: Dict) -> None:
+    fig, ax = plt.subplots(figsize=(13, 6))
+    for column in prices.columns:
+        normed = prices[column] / prices[column].iloc[0]
+        ax.plot(prices.index, normed, label=column, linewidth=1)
+    ax.set_title("Normalized prices (Yahoo Finance, adjusted close)")
+    ax.legend(loc="best", ncol=2, fontsize=9)
+    plt.tight_layout()
+    plt.savefig(os.path.join(paths.figures, "dataset_prices.png"), dpi=120)
+    plt.close()
+
+    fig, ax = plt.subplots(figsize=(13, 5))
+    roll = returns.rolling(30).std()
+    for column in roll.columns:
+        ax.plot(roll.index, roll[column], label=column, linewidth=1)
+    ax.set_title("30-day rolling volatility of log-returns")
+    ax.legend(loc="best", ncol=2, fontsize=9)
+    plt.tight_layout()
+    plt.savefig(os.path.join(paths.figures, "dataset_volatility.png"), dpi=120)
+    plt.close()
+
+    corr = returns.corr()
+    fig, ax = plt.subplots(figsize=(9, 7))
+    im = ax.imshow(corr.values, vmin=-1, vmax=1, cmap="RdBu_r")
+    ax.set_xticks(range(len(corr.columns)))
+    ax.set_xticklabels(corr.columns, rotation=45, ha="right", fontsize=9)
+    ax.set_yticks(range(len(corr.index)))
+    ax.set_yticklabels(corr.index, fontsize=9)
+    ax.set_title("Full-sample correlation matrix (log-returns)")
+    plt.colorbar(im, ax=ax)
+    plt.tight_layout()
+    plt.savefig(os.path.join(paths.figures, "dataset_corr_heatmap.png"), dpi=120)
+    plt.close()
+
+    n_assets = len(returns.columns)
+    n_cols = min(4, max(1, n_assets))
+    n_rows = int(math.ceil(n_assets / n_cols))
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(4 * n_cols, 3.5 * n_rows))
+    axes = np.atleast_1d(axes).reshape(n_rows, n_cols)
+    for i, column in enumerate(returns.columns):
+        ax = axes[i // n_cols, i % n_cols]
+        ax.hist(returns[column].dropna(), bins=80, edgecolor="none", color="#2077b4", alpha=0.8)
+        ax.set_title(column, fontsize=9)
+        ax.set_xlabel("log-return")
+    for j in range(n_assets, n_rows * n_cols):
+        axes[j // n_cols, j % n_cols].axis("off")
+    plt.suptitle("Return distributions", fontsize=11)
+    plt.tight_layout()
+    plt.savefig(os.path.join(paths.figures, "dataset_return_dist.png"), dpi=120)
+    plt.close()
+
+    summary = {
+        "n_days_prices": int(len(prices)),
+        "n_days_returns": int(len(returns)),
+        "start": str(prices.index.min().date()),
+        "end": str(prices.index.max().date()),
+        "tickers": list(prices.columns),
+    }
+    with open(os.path.join(paths.results, "dataset_summary.json"), "w", encoding="utf-8") as handle:
+        json.dump(summary, handle, indent=2)
+
+
+def write_metadata(paths: Paths, cfg: Dict) -> None:
+    metadata = {"python": sys.version, "config": cfg}
+    try:
+        import importlib.metadata as md
+        metadata["packages"] = {}
+        for package in ["numpy", "pandas", "scikit-learn", "scipy", "yfinance", "xgboost", "arch"]:
+            try:
+                metadata["packages"][package] = md.version(package)
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+    with open(os.path.join(paths.results, "run_metadata.json"), "w", encoding="utf-8") as handle:
+        json.dump(metadata, handle, indent=2)
+
+
+def metrics_to_latex(df: pd.DataFrame, out_tex: str, caption: str, label: str) -> None:
+    if df.empty:
+        return
+    needed = ["dependency", "window", "target_space", "model", "MAE", "RMSE", "R2", "n_test"]
+    out = df.copy()
+    for column in needed:
+        if column not in out.columns:
+            out[column] = ""
+    out = out[needed]
+    for column in ["MAE", "RMSE", "R2"]:
+        out[column] = out[column].apply(lambda value: f"{float(value):.4f}")
+    out["n_test"] = out["n_test"].astype(str)
+
+    lines = [
+        r"\begin{table}[H]",
+        r"\centering",
+        r"\small",
+        r"\caption{" + caption + "}",
+        r"\label{" + label + "}",
+        r"\begin{tabular}{llllrrrr}",
+        r"\toprule",
+        r"Dependency & $w$ & Space & Model & MAE & RMSE & $R^2$ & $n$ \\",
+        r"\midrule",
+    ]
+    for _, row in out.iterrows():
+        lines.append(
+            f"{row['dependency']} & {row['window']} & {row['target_space']} & {row['model']} & {row['MAE']} & {row['RMSE']} & {row['R2']} & {row['n_test']} \\\\"
+        )
+    lines.extend([r"\bottomrule", r"\end{tabular}", r"\end{table}"])
+    with open(out_tex, "w", encoding="utf-8") as handle:
+        handle.write("\n".join(lines))
+
+
+def dm_to_latex(df: pd.DataFrame, out_tex: str) -> None:
+    if df.empty:
+        return
+    lines = [
+        r"\begin{table}[H]",
+        r"\centering",
+        r"\small",
+        r"\caption{Diebold--Mariano tests for equal predictive accuracy}",
+        r"\label{tab:dm_tests}",
+        r"\begin{tabular}{llllrrl}",
+        r"\toprule",
+        r"Dependency & $w$ & Model & Benchmark & DM stat & $p$-value & Sign \\",
+        r"\midrule",
+    ]
+    for _, row in df.iterrows():
+        dm_stat = row.get("DM_stat", "")
+        p_value = row.get("p_value", "")
+        try:
+            dm_fmt = f"{float(dm_stat):.2f}"
+            p_fmt = f"{float(p_value):.4f}"
+            sign = "***" if float(p_value) < 0.01 else ("**" if float(p_value) < 0.05 else ("*" if float(p_value) < 0.1 else ""))
+        except Exception:
+            dm_fmt, p_fmt, sign = str(dm_stat), str(p_value), ""
+        lines.append(
+            f"{row.get('dependency', '')} & {row.get('window', '')} & {row.get('model', '')} & {row.get('benchmark', '')} & {dm_fmt} & {p_fmt} & {sign} \\\\"
+        )
+    lines.extend([r"\bottomrule", r"\end{tabular}", r"\end{table}"])
+    with open(out_tex, "w", encoding="utf-8") as handle:
+        handle.write("\n".join(lines))
+
+
+def run_experiment(
+    returns: pd.DataFrame,
+    paths: Paths,
+    cfg: Dict,
+    base: str,
+    other: str,
+    window: int,
+    horizon: int,
+    use_fisher: bool,
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    dependency_name = f"corr_{base}_{other}"
+    target_space = "fisher_z" if use_fisher else "raw_corr"
+
+    y = build_target(returns, base, other, window, horizon, use_fisher)
+    X = build_features(returns, window, y, base, other, horizon)
+    y_aligned = y.loc[X.index]
+
+    pred_df, _ = fit_predict_walk_forward(
+        X=X,
+        y=y_aligned,
+        min_train=int(cfg["min_train_size"]),
+        refit_every=int(cfg["refit_every"]),
+        random_state=int(cfg["random_state"]),
+        use_xgb=bool(cfg.get("use_xgboost", True)),
+        xgb_device=str(cfg.get("xgb_device", "cuda")),
+    )
+
+    out_df = pd.concat([y_aligned.rename("y_true"), pred_df], axis=1)
+
+    if bool(cfg.get("use_dcc_garch", True)) and DCC_AVAILABLE:
+        try:
+            r1 = returns[base].loc[out_df.index]
+            r2 = returns[other].loc[out_df.index]
+            dcc_pred = dcc_garch_walk_forward_predict(
+                r1,
+                r2,
+                min_train=int(cfg["min_train_size"]),
+                refit_every=int(cfg["refit_every"]),
+                horizon=horizon,
+            )
+            dcc_series = pd.Series(dcc_pred, index=out_df.index)
+            out_df["DCC_GARCH"] = fisher_z(dcc_series) if use_fisher else dcc_series
+        except Exception as exc:
+            warnings.warn(f"DCC failed for {dependency_name} w={window}: {exc}")
+
+    model_preds = out_df.drop(columns=["y_true"])
+    metrics_df = compute_prediction_metrics(out_df["y_true"], model_preds)
+
+    pred_csv = os.path.join(paths.predictions, f"{dependency_name}_w{window}_{target_space}_predictions.csv")
+    out_df.to_csv(pred_csv, encoding="utf-8")
+
+    top_models = metrics_df["model"].head(4).tolist() if not metrics_df.empty else None
+    fig_path = os.path.join(paths.figures, f"{dependency_name}_w{window}_{target_space}.png")
+    plot_forecast(
+        out_df["y_true"],
+        model_preds,
+        fig_path,
+        title=f"Forecasting: {dependency_name} | h={horizon} | w={window} | {target_space}",
+        top_models=top_models,
+        top_k=4,
+    )
+
+    dm_rows = []
+    rmse_map = dict(zip(metrics_df["model"], metrics_df["RMSE"])) if not metrics_df.empty else {}
+    benchmark_candidates = [model for model in metrics_df["model"].tolist() if model not in {"Naive_Last", "AR1", "DCC_GARCH"}]
+    best_model = min(benchmark_candidates, key=lambda model: rmse_map[model]) if benchmark_candidates else None
+
+    if best_model:
+        e_best = (out_df["y_true"] - out_df[best_model]).values
+        for benchmark in ["Naive_Last", "DCC_GARCH"]:
+            if benchmark in out_df.columns:
+                e_bench = (out_df["y_true"] - out_df[benchmark]).values
+                dm = diebold_mariano(e_best, e_bench, h=horizon, nw_lag=int(cfg.get("dm_nw_lag", 0)))
+                dm_rows.append(
+                    {
+                        "dependency": dependency_name,
+                        "window": window,
+                        "space": target_space,
+                        "model": best_model,
+                        "benchmark": benchmark,
+                        **dm,
+                    }
+                )
+
+    dm_df = pd.DataFrame(dm_rows)
+    signal_metrics_df = pd.DataFrame()
+    if other in cfg.get("assets", {}).get("traditional", []) and bool(cfg.get("enable_signal_layer", True)):
+        _, signal_metrics_df = run_signal_experiment(
+            returns=returns,
+            paths=paths,
+            cfg=cfg,
+            base=base,
+            other=other,
+            window=window,
+            dependency_name=dependency_name,
+            out_df=out_df,
+            dependency_metrics=metrics_df,
+        )
+
+    if not metrics_df.empty:
+        metrics_df.insert(0, "target_space", target_space)
+        metrics_df.insert(0, "window", window)
+        metrics_df.insert(0, "dependency", dependency_name)
+
+    return out_df, metrics_df, dm_df, signal_metrics_df
+
+
+def run_pipeline(config_path: str = "config.yaml") -> None:
+    cfg = load_config(config_path)
+    paths = build_paths(cfg["base_dir"])
+    ensure_dirs(paths)
+
+    tickers = cfg["assets"]["crypto"] + cfg["assets"]["traditional"]
+    prices = fetch_prices(paths, tickers, cfg["start_date"], cfg.get("end_date"))
+    returns = compute_returns(paths, prices)
+
+    describe_dataset(prices, returns, paths, cfg)
+    write_metadata(paths, cfg)
+
+    base = cfg.get("base_asset", "BTC-USD")
+    others = cfg["assets"]["traditional"] + cfg.get("extra_assets", [])
+    others = list(dict.fromkeys([other for other in others if other != base]))
+    horizon = int(cfg.get("forecast_horizon", 1))
+    windows = [int(window) for window in cfg.get("rolling_windows", [30])]
+    use_fisher = bool(cfg.get("use_fisher_transform", True))
+
+    all_metrics = []
+    all_dm = []
+    all_signal_metrics = []
+
+    for other in others:
+        if other not in returns.columns:
+            print(f"Skip {other}: not in returns data.")
+            continue
+
+        sensitivity = {f"w={window}": rolling_corr(returns[base], returns[other], window).dropna() for window in windows}
+        plot_series(
+            os.path.join(paths.figures, f"sensitivity_{base}_{other}.png"),
+            f"Rolling correlation sensitivity: {base} vs {other}",
+            sensitivity,
+        )
+
+        for window in windows:
+            print(f"\n> {base} vs {other} | w={window} | fisher={use_fisher}")
+            try:
+                _, metrics_df, dm_df, signal_metrics_df = run_experiment(
+                    returns=returns,
+                    paths=paths,
+                    cfg=cfg,
+                    base=base,
+                    other=other,
+                    window=window,
+                    horizon=horizon,
+                    use_fisher=use_fisher,
+                )
+                if not metrics_df.empty:
+                    all_metrics.append(metrics_df)
+                    best_row = metrics_df.iloc[0]
+                    print(f"  Best dependency model: {best_row['model']} RMSE={best_row['RMSE']:.4f} R2={best_row['R2']:.3f}")
+                if not dm_df.empty:
+                    all_dm.append(dm_df)
+                if not signal_metrics_df.empty:
+                    all_signal_metrics.append(signal_metrics_df)
+                    best_signal = signal_metrics_df.iloc[0]
+                    print(f"  Best investor signal: {best_signal['signal_model']} F1_down={best_signal['F1Down']:.3f} BalAcc={best_signal['BalancedAccuracy']:.3f}")
+            except Exception as exc:
+                warnings.warn(f"Experiment failed for {base} vs {other} w={window}: {exc}")
+                import traceback
+                traceback.print_exc()
+
+    if all_metrics:
+        metrics_all = pd.concat(all_metrics).reset_index(drop=True)
+        metrics_path = os.path.join(paths.results, "metrics.csv")
+        metrics_all.to_csv(metrics_path, index=False)
+        print(f"\nSaved metrics -> {metrics_path}")
+
+        metrics_tex = os.path.join(paths.tables, "metrics_table.tex")
+        metrics_to_latex(
+            metrics_all.sort_values(["dependency", "window", "RMSE"]).head(60),
+            metrics_tex,
+            caption="Out-of-sample forecasting metrics.",
+            label="tab:metrics",
+        )
+        print(f"Saved metrics LaTeX -> {metrics_tex}")
+
+    if all_signal_metrics:
+        signal_all = pd.concat(all_signal_metrics).reset_index(drop=True)
+        signal_path = os.path.join(paths.results, "signal_metrics.csv")
+        signal_all.to_csv(signal_path, index=False)
+        print(f"Saved investor signal metrics -> {signal_path}")
+
+        signal_tex = os.path.join(paths.tables, "signal_metrics.tex")
+        signal_metrics_to_latex(
+            signal_all.sort_values(["dependency", "window", "F1Down"], ascending=[True, True, False]).head(60),
+            signal_tex,
+        )
+        print(f"Saved signal LaTeX -> {signal_tex}")
+
+    if all_dm:
+        dm_all = pd.concat(all_dm).reset_index(drop=True)
+        dm_path = os.path.join(paths.results, "dm_tests.csv")
+        dm_all.to_csv(dm_path, index=False)
+        print(f"Saved DM tests -> {dm_path}")
+
+        dm_tex = os.path.join(paths.tables, "dm_tests.tex")
+        dm_to_latex(dm_all, dm_tex)
+        print(f"Saved DM LaTeX -> {dm_tex}")
+
+    print("\nPipeline complete.")
+    if bool(cfg.get("use_dcc_garch", True)) and not DCC_AVAILABLE:
+        print("Warning: DCC-GARCH was requested but could not be imported. Install 'arch' and check thesis_app/dcc_walk.py.")

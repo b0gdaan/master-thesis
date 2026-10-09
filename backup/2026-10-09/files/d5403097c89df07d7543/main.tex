@@ -1,0 +1,142 @@
+﻿    \documentclass[master, usehyperref, pdfmetadata]{finthesis}
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{csquotes}
+\usepackage{xurl}
+\usepackage{needspace}
+% Embed a ToUnicode CMap so text extraction / copy-paste preserves the
+% f-ligatures (fi, fl, ff, ffi, ffl); without it pdflatex exports e.g.
+% "finding" as "nding". The on-page rendering is unaffected.
+\input{glyphtounicode}
+\pdfgentounicode=1
+\sloppy
+\raggedbottom
+
+\addbibresource{references.bib}
+
+% Use standard ttfamily instead of Bera Mono (fvmr8r not available)
+\lstset{basicstyle=\small\ttfamily, extendedchars=false}
+% Rename listing caption prefix from Serbian "Листинг" to English
+\renewcommand{\lstlistingname}{Listing}
+\renewcommand{\lstlistlistingname}{List of Listings}
+
+\title{Forecasting Time-Varying Intermarket Dependencies Between Cryptocurrencies and Conventional Assets Using Machine Learning}
+\author{Bogdan Babaev}
+\date{2026-03-03}
+\studid{1ВИ/2023}
+\studprog{ВЕШТАЧКА ИНТЕЛИГЕНЦИЈА}
+\module{}
+\course{Напредно машинско учење}
+\advisor{ванр. проф. др Владимир М. Миловановић}
+\advisorfull{Др Владимир М. Миловановић,\\ванредни професор}
+\committee{др Александар Пеулић, редовни професор}
+\committee{др Јасна Радуловић, редовни професор}
+\committee{др Милан Чабаркапа, доцент}
+\committee{др Иван Крстић, ванредни професор}
+
+% Задатак кандидата — приказује се на трећој насловној страни
+\studentshould{истражи могућност прогнозирања временски-променљивих међутржишних зависности између криптовалута и конвенционалних финансијских актива применом модела машинског учења. У склопу тога кандидат треба да:
+\begin{enumerate}
+    \item прикупи историјске дневне цене за Bitcoin и традиционалне активе (акцијске индексе, фондове племенитих метала, индекс америчког долара, Ethereum) и изврши одговарајућу предобраду и синхронизацију скупа података;
+    \item развије репродуцибилан рачунарски поступак за израчунавање временски-променљивих корелационих циљева помоћу клизних прозора различитих дужина и конструкцију предиктивних особина заснованих на инерцији зависности, волатилности и повратима;
+    \item реализује ванузорачну евалуацију и поређење неколико модела машинског учења (AR, ElasticNet, Ridge, Random Forest, GBM, XGBoost) са DCC-GARCH(1,1) економетријским репером применом процедуре проклизавајућег прозора и Diebold-Mariano теста статистичке значајности;
+    \item уведе практични сигнални слој за рано детектовање стресних дана на тржишту традиционалних актива на основу динамике криптовалута и прогноза зависности, и вреднује га метрикама класификационе тачности прикладним за неуравнотежен скуп класа.
+\end{enumerate}}
+
+\titlepagebib{engle2002}
+\titlepagebib{diebold1995}
+\titlepagebib{zou2005}
+\titlepagebib{friedman2001}
+\titlepagebib{chen2016}
+
+% Четврта насловна страна садржи скенирану оверену пријаву мастер рада.
+% Сама пријава носи својеручне потписе, па се не чува у репозиторијуму; датотека
+% се додаје локално пре штампе. Ако је нема, рад се и даље компајлира — само без
+% четврте насловне стране.
+\IfFileExists{finthesis_assets/thesis_application.pdf}{%
+    \thesisapplicationfile{finthesis_assets/thesis_application.pdf}%
+    \renewcommand{\maketitle}{%
+        \firsttitlepage%
+        \secondtitlepage%
+        \thirdtitlepage%
+        \fourthtitlepage%
+    }%
+}{%
+    \renewcommand{\maketitle}{%
+        \firsttitlepage%
+        \secondtitlepage%
+        \thirdtitlepage%
+    }%
+}
+
+\abstractsr{Тема овог рада је испитивање да ли динамика тржишта криптовалута пружа информације о томе како се њихова зависност од традиционалних финансијских актива мења током времена и да ли се те информације могу користити као сигнал раног упозорења за инвеститоре. Bitcoin се користи као основна криптовалута, а Ethereum као секундарна референтна криптовалута. Скуп традиционалних актива обухвата берзанске индексе, ETF фондове везане за племените метале и индекс америчког долара.\par Развијен је поновљиви процес машинског учења за прикупљање података, конструкцију приноса, израчунавање покретних корелација, креирање карактеристика и евалуацију модела коришћењем walk-forward поступка у поређењу са DCC-GARCH репером. Резултати показују да се међутржишна зависност може предвиђати ван узорка за сваки пар актива и сваку дужину прозора. Међутим, највећи део ове предвидљивости потиче од постојаности саме серије зависности.\par Ridge регресија, AR(1) модел и HAR модел постижу најбоље резултате и показују готово идентичну тачност, јер сва три модела користе ову постојаност. Ridge регресија постиже најнижи просечни RMSE од 0.0656. Сви ови модели значајно надмашују DCC-GARCH репер. Такође је тестиран сигнал за инвеститоре другог степена, заснован на карактеристикама криптовалута и ауторегресивним прогнозама. Сигнал показује умерене резултате и углавном је изнад нивоа случајности, али није довољно јак да самостално одређује тренутак уласка или изласка са тржишта.}
+\keywordssr{криптовалуте, Bitcoin, међутржишна зависност, корелација, машинско учење, DCC-GARCH, прогнозирање, управљање ризиком}
+
+\abstracten{This paper examines whether the dynamics of cryptocurrency markets provide insights into how their correlation with traditional assets changes over time, and whether this information can serve as an early warning signal for investors. Bitcoin is used as the primary cryptocurrency, and Ethereum as the secondary benchmark cryptocurrency. The set of traditional assets includes stock market indices, precious metals ETFs, and the U.S. Dollar Index.\par A reproducible machine learning pipeline was developed to collect data, generate results, calculate moving correlation metrics, create functions, and evaluate models using a step-by-step procedure in comparison with the DCC-GARCH test. The results show that intermarket dependence can be predicted based on a sample for each asset pair and interval length. However, most of this predictability is due to the constancy of the dependence series itself.\par Crest regression, the AR(1) model, and the HAR model yield the best results and exhibit nearly identical accuracy, as all three models capitalize on this constancy. Crest regression yields the lowest average RMSE of 0.0656. All of these models significantly outperform the DCC-GARCH benchmark. The signal for second-stage investors was also tested using cryptocurrency features and autoregressive forecasts. The signal performs modestly and is generally above the probability threshold, but it is not strong enough to independently determine market timing.}
+\keywordsen{cryptocurrencies, Bitcoin, intermarket dependency, correlation, machine learning, DCC-GARCH, forecasting, risk management}
+
+% Редослед чланова комисије на другој насловној страни мора да прати редослед
+% из Одлуке IV-07-277/6 (четврта насловна страна), где је ментор наведен последњи.
+\makeatletter
+\renewcommand\@enumeratecommittee{%
+    \gdef\nextcommitteemember{\item}%
+    \gdef\missingcommitteemember{\hrulefill}%
+    \begin{enumerate}[left=0pt]
+        \@committeemembers
+        \nextcommitteemember \@advisor ~- ментор
+    \end{enumerate}%
+}
+\makeatother
+
+\begin{document}
+
+% Disable page anchors for the title pages to prevent hyperref from generating
+% duplicate bookmark destinations (name{page.1}) for each title page.
+\hypersetup{pageanchor=false}
+\maketitle
+\hypersetup{pageanchor=true}
+\makeabstract
+\selectlanguage{english}
+\tableofcontents
+\listoffigures
+\listoftables
+\input{chapters/00_abbreviations}
+
+\input{chapters/01_uvod}
+\input{chapters/02_teorijske_osnove}
+\input{chapters/03_metodologija}
+\input{chapters/04_rezultati}
+\input{chapters/05_diskusija}
+\input{chapters/06_zakljucak}
+
+\appendix
+% Прилози морају бити јасно означени као прилог (appendix), а не као поглавља:
+% наслов сваког прилога добија реч "Appendix" испред слова, а у садржају се
+% прилози одвајају засебним међунасловом.
+% \@seccntformat се разрешава и унутар \edef-контекста (садржај, живо заглавље),
+% па мора да остане раскривајућа наредба: префикс се бира преко \csname, а за
+% нивое за које префикс није дефинисан \csname даје \relax, тј. ништа.
+\makeatletter
+\expandafter\def\csname fin@appprefix@section\endcsname{Appendix~}
+\renewcommand{\@seccntformat}[1]{%
+    \csname fin@appprefix@#1\endcsname\csname the#1\endcsname\quad}
+\makeatother
+\addtocontents{toc}{\protect\vspace{6pt}\protect\noindent\textbf{Appendices}\protect\par}
+
+\input{chapters/appendix_a_dataset}
+\input{chapters/appendix_b_forecasts}
+\input{chapters/appendix_c_signals}
+\input{chapters/appendix_d_reproducibility}
+\input{chapters/appendix_e_tests}
+\input{chapters/appendix_f_market_events}
+
+\printbibliography[heading=bibintoc]
+
+\end{document}

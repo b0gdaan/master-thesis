@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Secrets
+.env
+
+# Built artifacts (rebuild with `python ingest.py`)
+chroma_db/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

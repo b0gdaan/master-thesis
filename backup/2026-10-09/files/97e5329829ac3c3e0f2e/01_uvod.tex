@@ -1,0 +1,34 @@
+\section{Introduction}
+
+\subsection{Motivation and research context}
+
+Over the last decade, Bitcoin went from a curiosity on niche internet forums to an asset class that institutional investors actually worry about. That shift has a concrete consequence for risk management: when a previously isolated market grows large enough to attract serious capital, its price swings start to matter for portfolios that never held a single satoshi. The question is not whether Bitcoin now influences other markets, but \emph{how} and \emph{when} that influence changes over time.
+
+This thesis focuses on \emph{time-varying intermarket dependency}---the evolving statistical relationship between Bitcoin and conventional assets like equity indices, gold, silver, and the dollar. Rather than asking whether Bitcoin and the S\&P~500 are correlated on average, the question is whether that correlation is predictable at all, and whether cryptocurrency price dynamics contain any early-warning signal for stress in traditional markets.
+
+The practical angle matters. A risk manager does not need a crystal-ball return forecast to get value from this kind of analysis. What matters is recognising when co-movement patterns are changing, when a market regime is shifting from decorrelated to tightly coupled, or when the probability of a bad day on conventional markets is quietly rising. Even a modest, statistically honest signal of that kind can be useful---as long as you know what it can and cannot do.
+
+\subsection{Research questions}
+
+The thesis is structured around two connected layers. The first is a forecasting problem: can rolling correlation between Bitcoin and a conventional asset be predicted one step ahead, and how do machine-learning models compare to a classical econometric benchmark under strict out-of-sample evaluation? The second is an applied question: can those forecasts be turned into a practical warning signal for investors?
+
+More specifically, the four research questions addressed are:
+
+\begin{enumerate}
+    \item Is the rolling dependency between Bitcoin and conventional assets forecastable out of sample?
+    \item Do machine-learning models outperform a leakage-safe DCC-GARCH benchmark?
+    \item Do machine-learning models add value beyond simple persistence-based baselines such as AR1?
+    \item Can crypto-derived dependency forecasts support a practically useful stress-warning signal for conventional markets?
+\end{enumerate}
+
+\subsection{Contributions of the thesis}
+
+To address these questions, a reproducible Python pipeline was built from scratch. It downloads price data, constructs log-return series, computes rolling correlations across multiple window lengths, engineers lagged and volatility-based features, and evaluates a range of models within a walk-forward experimental design. The model set includes two naive baselines (random-walk and AR(1)), regularised linear models (Ridge, ElasticNet), tree-based ensembles (Random Forest, GBM, XGBoost), and a leakage-safe DCC-GARCH(1,1) benchmark. On top of the forecasting stage, a second layer converts predictions into a binary stress classifier for conventional assets.
+
+The main empirical finding is that the dependency process is forecastable out of sample---but that most of that predictability comes from its own past, not from novel cross-asset signals. Autoregressive baselines dominate the average performance ranking. This is not a failure; it is a precise characterisation of what the forecasting problem actually looks like. Machine learning adds value relative to DCC-GARCH and helps most in the stress-classification task, where the problem structure suits ensemble methods better than pure time-series regression.
+
+The contribution is threefold: (i) a clean, reproducible framework for rolling intermarket dependency forecasting; (ii) a systematic comparison of ML and econometric methods under consistent walk-forward evaluation; and (iii) an explicit bridge from statistical forecasting to a practically relevant investor-warning application.
+
+\subsection{Thesis outline}
+
+Section~2 reviews the relevant theory and literature: time-varying dependence, financial contagion, machine-learning forecasting methods, and the Diebold--Mariano test. Section~3 describes the data, target construction, feature engineering, model specifications, and evaluation design. Section~4 reports empirical results for both layers. Section~5 interprets and qualifies those results. Section~6 concludes.

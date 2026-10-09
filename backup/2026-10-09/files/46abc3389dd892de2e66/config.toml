@@ -1,0 +1,9 @@
+# Streamlit settings for Thesis Copilot.
+# The file-watcher walks every `transformers` submodule on each run, which
+# triggers noisy (and harmless) torchvision import errors in the console.
+# This app doesn't need hot-reload, so we turn the watcher off for a clean run.
+[server]
+fileWatcherType = "none"
+
+[browser]
+gatherUsageStats = false

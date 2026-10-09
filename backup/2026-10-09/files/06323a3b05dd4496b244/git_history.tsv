@@ -1,0 +1,86 @@
+commit	author_date	committer_date	subject
+0bf7fbfe0667a0995ee7d076686b745377b5e3f7	2026-04-18T21:36:53+02:00	2026-04-18T21:36:53+02:00	Initial public release: ML forecasting of crypto-asset intermarket dependencies
+70cdfea127a781d46110f30ccc9937562e7a7869	2026-05-18T21:17:34+02:00	2026-05-18T21:17:34+02:00	Add GitHub Pages website and fix data end date
+13aa1e4ac6c9978bf1249957b4df2d7f5c13eaec	2026-05-18T21:23:51+02:00	2026-05-18T21:23:51+02:00	Add author photo and update LinkedIn URL
+2f3956a8afd5ab596936efd80555365a1d02244a	2026-05-18T21:33:10+02:00	2026-05-18T21:33:10+02:00	Add test suite (81 tests) and rewrite thesis chapters for readability
+c9b6097314ac9e3b7480f5f9ce95b52567bfc69d	2026-05-18T23:26:18+02:00	2026-05-18T23:26:18+02:00	Update data to May 2026, optimize pipeline, refresh all outputs
+9e325c327149dd44002ee99edf1743ad83e76202	2026-05-19T00:46:52+02:00	2026-05-19T00:46:52+02:00	Add files via upload
+1b3cfaed608fe8e30659e3a3d6bb80237c4b1cfd	2026-05-18T23:40:30+02:00	2026-05-19T09:51:57+02:00	Fix DM heatmap white cells: run DM tests for all ML models
+f0f6b73702b4ff20f435619d7666456882d6f7e8	2026-05-19T00:00:33+02:00	2026-05-19T09:51:57+02:00	Audit fixes: correct stale metrics, IXIC signal claim, DM figure
+c782222b19d36341e1f0d41d7512714250a9cb13	2026-05-19T00:35:55+02:00	2026-05-19T09:51:57+02:00	Update website figures: DM heatmap fix + refreshed plots
+f99859b24308759476344503e5341f9d97695440	2026-05-19T00:42:59+02:00	2026-05-19T09:51:57+02:00	Force GitHub Pages cache invalidation
+2e7c11215ad1dfa6cf36ac7d2558a08d7004407f	2026-05-19T09:48:46+02:00	2026-05-19T09:51:57+02:00	Add trained signal model, Appendix E tests, title page fixes, website update
+4050587ef1e022d8f1ff2d1a9c4257292865f8e6	2026-05-19T11:42:00+02:00	2026-05-19T11:42:00+02:00	Fix stale/incorrect data in website: remove PPTX benchmark table, correct all metrics
+c70813da12a7adfb60a6f45768af6b274244cec1	2026-05-19T11:51:58+02:00	2026-05-19T11:51:58+02:00	Fix remaining stale data: observation count, model count, metrics, tech stack
+eb513c73941b7e68dca09e02aa8b2589241a7612	2026-05-19T11:54:44+02:00	2026-05-19T11:54:44+02:00	Fix stale README: Python version, packages, LinkedIn URL, dataset dates
+531f415fbed1ad36a004a1a52a1d5b58b4eb420e	2026-05-19T12:02:37+02:00	2026-05-19T12:02:37+02:00	Fix translation errors: RU 'квантовой' -> 'количественной', SR 'было' -> 'било'
+1e68c1d6b6e5a1b1dc66ca66f9175d7031754492	2026-05-19T12:45:08+02:00	2026-05-19T12:45:08+02:00	Clean up: fix project path in appendix, update gitignore comment
+fd22de92a690f646a8feaa8e152d358d5b0567b1	2026-05-19T12:53:50+02:00	2026-05-19T12:53:50+02:00	Fix README author: M.Sc. -> M.Sc. student (degree not yet awarded)
+0e5a6a6d52e182eabf761821d0d2807f7b24aea4	2026-05-20T20:40:04+02:00	2026-05-20T20:40:04+02:00	Redesign website: deep navy palette, hero gradient, card shadows, animations
+239c70bc1cf457a2b906a8e3d92286ca9d9f8911	2026-05-20T20:53:58+02:00	2026-05-20T20:53:58+02:00	Redesign website: deep navy palette, hero gradient mesh, animation suite
+5c9579bafd2f53ce6ccddcf86ea0a9175dc1c815	2026-05-20T21:33:01+02:00	2026-05-20T21:33:01+02:00	Fix all data regressions from design-branch overwrite: restore correct metrics, dates, translations
+991906d431d79ab9fce89f0d8ee7f2b7ae70fd80	2026-05-20T23:50:59+02:00	2026-05-20T23:50:59+02:00	Redesign website: apply modern visual overhaul with verified data
+04cfaa0d549afb7cb0dbb4b96b81d24dd1a816b7	2026-05-20T23:53:46+02:00	2026-05-20T23:53:46+02:00	Fix university name on title page: Универзитета → Универзитет (nominative case)
+03edda8c0a8b7ed0725538edea90d234dba43ca3	2026-05-21T00:00:55+02:00	2026-05-21T00:01:34+02:00	Sync: fresh pipeline outputs, correct website design, fix title page
+8022e6331309194e22a573ed2c184f7cc0e73832	2026-05-21T00:09:45+02:00	2026-05-21T00:09:45+02:00	Fix photo visibility: remove baked-in display:none from browser-saved HTML
+0f1cbe2b0bcbe41eb087df02ff4cecf912d2645c	2026-05-21T00:21:44+02:00	2026-05-21T00:21:44+02:00	Fix PDF whitespace: raggedbottom, pack appendix signal figures, needspace B.5
+0f6f2bee9b54840c805adeecac1dcb32040ed60b	2026-05-25T12:43:24+02:00	2026-05-25T12:43:24+02:00	Fix bugs, expand features, improve hyperparameters
+99329bbd62d5c6ffb612314b3c4ce9ca33574439	2026-05-25T12:58:27+02:00	2026-05-25T12:58:27+02:00	Add test automation, ensemble model, VS Code config, fix .bat paths
+9c751b37aea44596d10678f30cccf96f0168e9dd	2026-05-25T13:08:20+02:00	2026-05-25T13:08:20+02:00	Wire test results into thesis: auto-generate appendix table, update execution flow
+af2d4f9f4e4dbdec7f134963245e8ae7bf539a73	2026-05-25T13:10:46+02:00	2026-05-25T13:10:46+02:00	Recompile thesis PDF: Appendix E now includes 81-test report table
+e81f055801d653546bebdb0bae34316a8d505d06	2026-05-26T01:14:37+02:00	2026-05-26T01:14:37+02:00	Fix test: Ridge now sometimes beats Naive_Last after model improvements — relax assertion to majority-wins
+80bbd58bf0f3ec1102ae3ca6fc799221a81b0f5a	2026-05-26T15:56:47+02:00	2026-05-26T15:56:47+02:00	Add HAR model, adaptive ensemble, model-development chapter, website journey section
+d64a2bbe79906767bedf8d1f0c5d1ed0f586892e	2026-05-26T16:19:18+02:00	2026-05-26T16:19:18+02:00	perf: replace legacy GBM with HistGBM, parallelize sensitivity, fix DCC look-ahead
+734213b5dca4ea11614c718beed9a77569fb31a8	2026-05-26T19:15:08+02:00	2026-05-26T19:15:08+02:00	fix: correct HAR citation key corsi2009simple -> corsi2009har
+8c2c1a3ffea2dcdf9a46869b22b467db11a76d73	2026-05-26T19:19:32+02:00	2026-05-26T19:19:32+02:00	chore: replace university logo with new official crest (required from 10 March)
+4d3b1febf3fb99d8f0b03833b2e2449e332db44b	2026-05-26T20:21:41+02:00	2026-05-26T20:21:41+02:00	update: sync thesis content with current pipeline metrics
+d3749f361b975193a94508283edeb1a486f36e76	2026-05-29T12:02:35+02:00	2026-05-29T12:02:35+02:00	fix: comprehensive consistency audit — code bugs, stale numbers, date mismatches
+398a6c3ee1bffb07320b925693e4b0fd6e799ef5	2026-05-29T12:34:23+02:00	2026-05-29T12:34:23+02:00	feat: add notebook 08 — Market Events Showcase with 11 landmark episodes
+226f029ce439482b1017070d051adeb3b86377ef	2026-05-29T14:09:50+02:00	2026-05-29T14:09:50+02:00	fix: VS Code interpreter — point to local .venv instead of D:\clode9
+80a9ced4146115ac5a5d697960e99eaa1c8877d2	2026-05-29T22:25:15+02:00	2026-05-29T22:25:15+02:00	Website: add market-event case studies, fix journey timeline dates, polish prose
+4e93fd1faf78ec4fb7d94adfea2a4b82a0659793	2026-05-29T22:25:16+02:00	2026-05-29T22:25:16+02:00	Thesis: add defense committee to title page, convert Appendix F sources to named links, correct version dates
+f3199548f3aec0931739cf5c9519150de6d11081	2026-05-29T22:25:16+02:00	2026-05-29T22:25:16+02:00	Regenerate notebooks and figures from full pipeline run
+c827829964e05fc4a7a1cb0a2c0a777c0fc51a36	2026-05-29T23:38:43+02:00	2026-05-29T23:38:43+02:00	Set up GitHub Pages deployment via Actions; make asset paths relative for project-page subpath
+b5b930f5db39067e5705fe6d91d0e3621ec892ff	2026-05-31T13:04:06+02:00	2026-05-31T13:04:06+02:00	Clean up repo: drop stale docs/ Pages copy and obsolete VPS deploy scripts; publish profile photo via Actions build
+4af6cc4491aaf30189df78325edd826671d933fe	2026-05-31T13:17:45+02:00	2026-05-31T13:17:45+02:00	Thesis ch.2: rewrite theory and literature-review prose in a natural voice (data, citations, equations unchanged)
+92903f5c74dc3c0c1b89db4bb8f72ef29d285909	2026-05-31T13:26:00+02:00	2026-05-31T13:26:00+02:00	Thesis ch.3: rewrite methodology prose in a natural voice (data, citations, code, equations unchanged)
+751e62a6215f19469d1c79d671b93d284852c9bc	2026-05-31T13:28:40+02:00	2026-05-31T13:28:40+02:00	fix: correct sample end date to 16 May 2026 (was 17) for consistency with data and results
+3630fa79d89812077e58fea87be65ac643525ebd	2026-05-31T13:39:47+02:00	2026-05-31T13:39:47+02:00	fix: correct two Chapter 4 claims to match the data (tree-model RMSE range; NASDAQ sub-0.50 window count 3 to 2)
+6c8660cde1afa794abe53184bae0e4ec3e495d7c	2026-05-31T13:55:03+02:00	2026-05-31T13:55:03+02:00	Thesis ch.4: rewrite results prose in a natural voice (all numbers verified against metrics/signal CSVs; unchanged)
+8bf9b0a3cd159bebd0c17c3b6b25c1b7476d46a5	2026-05-31T14:05:18+02:00	2026-05-31T14:05:18+02:00	Thesis ch.5: correct signal-layer metric ranges to match data (AUC, BA max, exit rate); prose already in natural voice
+089b3dc019765230ce286277439770e81868b3e3	2026-05-31T14:07:29+02:00	2026-05-31T14:07:29+02:00	Thesis ch.6: correct signal-layer metric ranges in conclusion to match data; prose already in natural voice
+d0d2f5a3a5ec5823dd01fcb248891966d0515e19	2026-05-31T14:08:38+02:00	2026-05-31T14:08:38+02:00	Rebuild thesis PDF after chapter 2-6 prose polish and consistency fixes
+07f2625e2081facb8f3e1bf749d6d184e750e65f	2026-05-31T17:33:58+02:00	2026-05-31T17:33:58+02:00	Thesis: polish abstract and appendices A-E; fix Serbian typo, notebook count (7->8), and signal-range wording
+71a0b14c52dfe9a36b148021e1b95a1ee14e5ecc	2026-05-31T17:34:22+02:00	2026-05-31T17:34:22+02:00	Rebuild thesis PDF after abstract and appendix polish
+405f2fdcce07a3f4294a41eee6f4495f8c7f9835	2026-05-31T17:40:38+02:00	2026-05-31T17:40:38+02:00	Website: polish hero and conclusion prose to match the thesis voice (numbers unchanged)
+a300df96c3b62b2f6948cc79dea35426e5f2561b	2026-05-31T17:56:09+02:00	2026-05-31T17:56:09+02:00	Appendix D: align config excerpt with frozen end_date (2026-05-17) for reproducibility; rebuild PDF
+28f2ff724379ffb317e5fce8a5f6d2b3b79a319c	2026-05-31T22:24:06+02:00	2026-05-31T22:24:06+02:00	chore: regenerate notebooks, figures, and thesis PDF from full run_all (data through 16 May 2026)
+454577b3eddfbbe3e651738f469c76ef395969cf	2026-05-31T22:24:06+02:00	2026-05-31T22:24:06+02:00	Website: sync cross-asset DM value to latest run (-9.016)
+2db1ff2d54cec7749a2e27688f34b28b8da81a6f	2026-05-31T22:58:57+02:00	2026-05-31T22:58:57+02:00	Thesis: address technical review (MZ sign, weekend-fill limitation, nested-DM caveat, alpha/HAR notation, count/caption fixes, longtable for Table 11, missing citations, refit sweep includes 20)
+634fe1f715cf7f210c4010b24cd1a8504a8a1d5a	2026-05-31T22:58:57+02:00	2026-05-31T22:58:57+02:00	Rebuild thesis PDF (86 pp): review fixes applied, test-report Table 11 now populated
+44926bd3d61abf8eae59cf555bda2e89f8fbfe52	2026-06-02T13:17:47+02:00	2026-06-02T13:25:22+02:00	Finalize thesis: prose polish, figure consistency, copy-paste-safe fonts; fix README
+f8076dcd9e463d3386610b0c38cc6cfe30dfc2d2	2026-06-02T13:53:14+02:00	2026-06-02T13:53:14+02:00	Fix navbar overflow: single-line nav on desktop, clean wrap on narrow widths
+c173fff8d1eee37354db775b9ff1544c12ec0904	2026-06-11T18:12:55+02:00	2026-06-11T18:12:55+02:00	Audit fixes: remove all emoji, factual corrections, citations, methodology copyedit, website noindex
+5e0e2e7a0650c390c9c40f98248290e394678760	2026-06-11T18:25:05+02:00	2026-06-11T18:25:05+02:00	Audit fixes II: add next-day-return table, methodological caveats (NW lag, pooled DM, DCC weekend zeros), calibration citations, fix false BTC-NASDAQ claim
+1a287042c4a923f6330305bdcaf7136cb9a71f8d	2026-06-12T13:15:27+02:00	2026-06-12T13:15:27+02:00	Copyedit: tighten phrasing in results overview; rebuild PDF
+b51c15c477f4de45bb31064aef8c1a6e3744631b	2026-06-12T13:26:32+02:00	2026-06-12T13:26:32+02:00	Figures: trim Appendix C to one signal example + table; reshape rolling-correlation figure to a readable 3x2 grid with larger fonts
+f07cbf71eaa9e93ef233937a50532d1368781ce2	2026-06-15T14:51:20+02:00	2026-06-15T14:51:20+02:00	Sync market-event data across thesis, figures, and website to one reproducible method
+464669e00dfb26c25fbd80105e1580d1f250ecd5	2026-07-06T20:26:17+02:00	2026-07-06T20:26:17+02:00	Fix run-over-run accumulation of signal result files and dead price cache
+6719b2e98b936d75faff672114cfd236cb2f85e2	2026-07-06T20:26:31+02:00	2026-07-06T20:26:31+02:00	Refresh regenerated notebooks, figures, and PDF from full run_all pass
+87949c5b799b4adb5700830537df5cb079e398aa	2026-07-12T10:25:39+02:00	2026-07-12T10:25:39+02:00	Copyedit pass: tighten prose in abstract and all chapters
+fb8b2d6dc182f56dc42a79c61eb465e9032f5feb	2026-07-12T10:36:29+02:00	2026-07-12T10:36:29+02:00	Copyedit pass II: trim intensifiers and repeated phrasings
+9916d03200c75f7003273fe65c0661e536235667	2026-07-12T10:43:48+02:00	2026-07-12T10:43:48+02:00	Fix Table 2 overflowing the right margin
+b7320818ecb01c810edc6942016ca27d756d7975	2026-07-12T10:58:19+02:00	2026-07-12T10:58:19+02:00	Unify spelling to British English across prose
+fa7e70baa27290902baa12e3bc73f0f9c08bbef6	2026-07-19T11:31:17+02:00	2026-07-19T11:31:17+02:00	Add build_thesis.py and make a fresh clone compile
+b6be40c7aeb5d186c45d5ec9e33f9e660904690d	2026-07-19T11:34:17+02:00	2026-07-19T11:34:17+02:00	Add BUILD.md: compiling the thesis on a second machine
+a69e921019b0566fe5b5eed35c391bdb852312b9	2026-07-19T12:00:26+02:00	2026-07-19T12:00:26+02:00	Remove local machine paths from notebook outputs
+be0b0c55702530a659f08e564f1b99c8cdc5e491	2026-07-26T10:34:44+02:00	2026-07-26T10:34:44+02:00	README: document the thesis sources and the PDF build
+b21cda58202b4dd8981c46b089832ce03cc574a6	2026-08-11T15:03:01+02:00	2026-08-11T15:03:01+02:00	Add the fourth title page for the print build and drop non-public files
+7c5aebc0653a55efc677c2636571884d2b00e5d2	2026-08-11T15:09:03+02:00	2026-08-11T15:09:03+02:00	Keep a single thesis PDF: the print copy stays out of git
+d202301ee0d51e3cfca6b90f98e30186f377013a	2026-08-11T15:32:08+02:00	2026-08-11T15:32:08+02:00	Review fixes: bootstrap CIs in Table 3, readable model names, citation cleanup
+954c9c00f493ccc81eac97440dde4ad3d795a103	2026-08-16T01:06:57+02:00	2026-08-16T01:06:57+02:00	Address supervisor review: ablation, appendix labelling, legible figures
+4af6a7c39e57afb2491a028bbcf81a416b338cad	2026-08-16T01:08:04+02:00	2026-08-16T01:08:04+02:00	Rebuild the repository PDF from the revised sources (77 pp.)
+fdf7182e48bf58801677e12f0eb622dba65d8e6a	2026-09-07T11:37:42+02:00	2026-09-07T11:37:42+02:00	Redesign thesis demonstrator site
+3388eaea6522cb13005f6b1b4b75a330eb4e7183	2026-09-07T12:02:29+02:00	2026-09-07T12:02:29+02:00	Add dated thesis model snapshot
+fcb1cbff7978b78932f2175ce055bc14c7271779	2026-09-07T12:03:54+02:00	2026-09-07T12:03:54+02:00	Publish model snapshot with site
+1fe8f4e9be05151b4bde0711eccf1c54f1fc5941	2026-09-09T13:21:43+02:00	2026-09-09T13:21:43+02:00	Publish final thesis sources and defense materials

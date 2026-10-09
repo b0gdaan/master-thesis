@@ -1,0 +1,78 @@
+﻿\section{Appendix D: Reproducibility and Code Structure}
+
+\subsection{Project organization}
+
+The computational part of the thesis is structured as a reproducible research project rather than a collection of disconnected scripts. The main directories are organized as follows:
+
+\begin{table}[H]
+    \centering
+    \caption{Simplified project structure.}
+    \begin{tabular}{ll}
+        \toprule
+        Path & Role \\
+        \midrule
+        \texttt{thesis\_app/} & Core Python modules for the pipeline \\
+        \texttt{notebooks/} & Exploratory and presentation-oriented notebooks \\
+        \texttt{data/raw/} & Cached downloaded price data \\
+        \texttt{data/processed/} & Derived returns and processed datasets \\
+        \texttt{outputs/results/} & CSV summaries of experiments \\
+        \texttt{outputs/tables/} & LaTeX-exported tables \\
+        \texttt{outputs/figures/} & Forecast, EDA, and signal figures \\
+        \texttt{thesis/} & Final thesis document and appendices \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Main implementation modules}
+
+The following modules constitute the core of the forecasting system:
+
+\begin{itemize}
+    \item \texttt{pipeline.py}: orchestrates the full dependency-forecasting and signal-generation workflow.
+    \item \texttt{dcc\_walk.py}: contains the leakage-safe walk-forward DCC-GARCH implementation.
+    \item \texttt{signal\_layer.py}: defines the investor warning layer and associated classification metrics.
+    \item \texttt{notebook\_helpers.py}: provides consistent styling and helper routines for notebook-based analysis.
+\end{itemize}
+
+This separation of concerns is useful both scientifically and practically. Scientifically, it makes the logic of the workflow easier to audit. Practically, it allows individual modules to be tested or improved without rewriting the entire system.
+
+\subsection{Execution flow}
+
+At a high level, the execution flow can be summarized as follows:
+
+\begin{enumerate}
+    \item Load configuration and path settings.
+    \item Load or refresh raw price data.
+    \item Compute synchronized log returns.
+    \item Generate rolling-correlation targets for each asset pair and window.
+    \item Build lagged and volatility-based feature matrices.
+    \item Fit models in walk-forward mode.
+    \item Save predictions, metrics, comparison tables, and figures.
+    \item Run the investor signal layer on top of the best dependency forecast.
+    \item Export thesis-ready artifacts.
+\end{enumerate}
+
+The main advantage of this design is that every figure and summary reported in the thesis can be traced back to a consistent computational procedure.
+
+\subsection{Verification performed during the project cleanup}
+
+During the refinement of the project, several implementation issues were corrected in order to align the code with thesis-level standards.
+
+\begin{itemize}
+    \item A leakage-safe walk-forward DCC benchmark was introduced to avoid full-sample look-ahead contamination.
+    \item The metrics pipeline was made consistent so that all relevant models, including DCC, are evaluated through the same summary path.
+    \item Feature scaling was added for the regularized linear models.
+    \item The XGBoost block was made robust to GPU failure through CPU fallback.
+    \item The investor signal layer was integrated into the main pipeline and exported to dedicated tables and figures.
+    \item Notebook imports and notebook-specific plotting logic were stabilized for presentation and interpretation.
+\end{itemize}
+
+These improvements matter because a thesis is evaluated not only by its conceptual idea but also by whether its empirical implementation is reliable, reproducible, and internally coherent.
+
+\subsection{How to rebuild the thesis artifacts}
+
+A practical benefit of the current project state is that the full workflow can be rerun. The user can execute the Python pipeline to regenerate output CSV files and figures, and then rebuild the thesis document using \texttt{pdflatex} and \texttt{biber}. This makes the written work maintainable even if the underlying market data are refreshed.
+
+\subsection{Final reproducibility note}
+
+The value of reproducibility in this thesis is not merely technical. Because the subject concerns financial forecasting, where accidental leakage and selective reporting are constant risks, a transparent and rerunnable codebase directly strengthens the credibility of the empirical conclusions.

@@ -1,0 +1,81 @@
+﻿\section{Theoretical Background and Literature Review}
+
+\subsection{Why intermarket dependency matters}
+
+Intermarket dependency is one of the central concepts in modern finance because diversification benefits, contagion mechanisms, hedging decisions, and portfolio risk all depend on how assets move relative to one another. In the simplest textbook setting, dependence is often summarized by a constant correlation coefficient. In real markets, however, that assumption is too restrictive. Correlations are known to vary over time, to respond asymmetrically to shocks, and to strengthen precisely in those periods when diversification is most needed. This makes the forecasting of \emph{time-varying dependence} both theoretically meaningful and practically valuable.
+
+The importance of dynamic dependence becomes even stronger when one of the markets under consideration is cryptocurrency-based. Bitcoin trades continuously, reacts rapidly to shifts in sentiment and liquidity, and is influenced by a wide range of narratives: inflation hedging, speculative demand, technological optimism, regulatory concerns, and global macro uncertainty. Because of that hybrid nature, Bitcoin can behave at different times like a speculative growth asset, a high-beta liquidity proxy, or a market-specific sentiment barometer. That shifting role makes its relationship with conventional assets especially suitable for a time-varying approach.
+
+\subsection{Cryptocurrencies and conventional assets}
+
+The literature on cryptocurrencies and conventional assets has developed along several lines. One strand studies Bitcoin as a standalone asset class and examines its return distribution, volatility clustering, tail risk, and weak-form efficiency. Another strand focuses on portfolio diversification and asks whether Bitcoin provides diversification benefits relative to equities, gold, oil, or fiat currencies. A third strand investigates connectedness, contagion, and spillovers across markets, especially during crisis periods.
+
+A recurring theme in this literature is instability. The relationship between Bitcoin and stock indices, for example, tends to be weak or inconsistent in quiet periods but can strengthen during episodes of broad risk-on or risk-off positioning. Gold-related instruments, by contrast, may exhibit lower and more erratic dependence with Bitcoin, reflecting their different investor bases and different roles in multi-asset portfolios. Currency-related instruments such as the U.S. dollar index introduce another dimension because they proxy global liquidity conditions and defensive positioning.
+
+These observations motivate the modeling choice adopted in this thesis. Rather than imposing a static relationship or fitting a single full-sample coefficient, the thesis models dependence as a moving object. This allows the analysis to capture gradual changes, abrupt regime shifts, and differences across window lengths.
+
+\subsection{Rolling correlation as a forecasting target}
+
+A rolling correlation is conceptually simple and empirically useful. At each point in time, the analyst computes the correlation between two return series over the most recent window of length $w$. By repeating this through time, one obtains a new series that summarizes the evolution of intermarket co-movement.
+
+Using rolling correlation as a target has several advantages. First, it is directly interpretable. A positive value indicates co-movement in the same direction, whereas a negative value suggests a hedge-like relationship. Second, it is simple enough to be compared across assets and window lengths. Third, it allows the researcher to focus on changes in market structure rather than changes in price level alone.
+
+At the same time, rolling correlation introduces methodological challenges. Because the target is already a smoothed function of recent returns, it is often highly persistent. That persistence may dominate predictive performance and make it difficult for more complex models to outperform simple autoregressive benchmarks. The thesis explicitly embraces this challenge rather than treating it as an inconvenience. If the dependency process is mainly predictable because it is persistent, then that fact itself is an important empirical result.
+
+To stabilize the target and reduce boundary effects, the thesis applies the Fisher transform to the rolling correlation series. This step is common when dealing with correlation-like quantities because it maps bounded correlation values into an unbounded space that is often easier to model statistically.
+
+\subsection{Econometric benchmark: DCC-GARCH}
+
+A classical approach to dynamic dependence is the Dynamic Conditional Correlation Generalized Autoregressive Conditional Heteroskedasticity model proposed by Engle \cite{engle2002}. The DCC-GARCH framework separates the modeling of conditional volatility from the modeling of dynamic conditional correlation. In practical terms, each return series is assigned its own univariate GARCH-type process, while the correlation matrix evolves through time according to a dynamic updating equation.
+
+DCC-GARCH is attractive because it is grounded in financial econometrics, explicitly accounts for heteroskedasticity, and has become a standard benchmark for studies of dynamic dependence. It is also especially relevant in this thesis because the target of interest is not merely volatility, but the relationship between two markets under changing variance conditions.
+
+Nevertheless, DCC-GARCH is not guaranteed to dominate more flexible alternatives. It relies on a specific parametric structure and may struggle when the data exhibit nonlinear interactions or when the researcher is interested in short-horizon point forecasting of a smoothed target rather than full conditional covariance modeling. Moreover, naive implementations can inadvertently use future information if the model is fit over the full sample and only then compared to out-of-sample targets. For that reason, this thesis uses a leakage-safe walk-forward implementation of the DCC benchmark.
+
+\subsection{Machine-learning approaches to forecasting}
+
+Machine learning is useful in financial forecasting not because it automatically guarantees better performance, but because it provides a family of models capable of representing nonlinear patterns, threshold effects, and interactions among predictors. In this thesis, machine-learning methods are evaluated against both DCC-GARCH and simple persistence benchmarks.
+
+\subsubsection{Regularized linear models}
+
+Regularized linear models such as Ridge regression and Elastic Net are often strong baselines in structured tabular forecasting problems. Ridge regression shrinks coefficients to reduce variance, while Elastic Net combines shrinkage and variable selection through a mixture of L1 and L2 penalties \cite{zou2005}. These models are especially useful when features are correlated, as is often the case with lagged financial variables, rolling volatility measures, and multiple transformations of related return series.
+
+Although linear in form, regularized models can remain competitive when the target is smooth and persistence-driven. In many real-world financial settings, such models perform well not because the underlying market is truly linear, but because the signal-to-noise ratio is limited and aggressive nonlinear fitting leads to overfitting.
+
+\subsubsection{Tree-based ensemble models}
+
+Random Forests aggregate many decision trees trained on bootstrapped samples and random feature subsets, reducing variance and improving robustness \cite{breiman2001}. Gradient Boosting Machines build trees sequentially so that each new tree focuses on residual errors made by the previous ensemble \cite{friedman2001}. XGBoost refines this boosting framework with regularization, optimized tree construction, and computational efficiency \cite{chen2016}.
+
+These models are natural candidates for the present thesis because the relation between crypto-derived information and dynamic dependence may involve nonlinearities. For example, the effect of Bitcoin volatility on future equity dependence may differ depending on whether the market is already in a high-correlation regime. Tree ensembles are capable of detecting such interaction-like behavior without requiring the analyst to pre-specify it parametrically.
+
+At the same time, tree-based models are not always favored in one-step-ahead forecasting of a smoothed target. If the target is overwhelmingly governed by its own lag, more flexible models may gain little while paying a variance penalty. This is one reason why a disciplined out-of-sample comparison is essential.
+
+\subsection{Walk-forward evaluation and information leakage}
+
+Financial time series require special care in evaluation. Random train-test splits are inappropriate because they destroy temporal order and create implicit look-ahead bias. The only credible way to compare models in a forecasting context is to ensure that every prediction uses only information available up to the forecast origin.
+
+For that reason, this thesis uses a walk-forward procedure. At each step, models are fit on an expanding historical sample, predictions are produced for the next observation, and the process moves forward through time. Refitting is performed periodically rather than at every single point in order to balance realism and computational cost.
+
+This evaluation design matters as much as model selection itself. A sophisticated model estimated with leakage can easily appear better than a simpler but properly evaluated competitor. Since one of the goals of the thesis is to provide a defensible empirical result, methodological discipline is treated as a first-class requirement.
+
+\subsection{Model comparison and the Diebold--Mariano test}
+
+When multiple forecasting models are available, simple ranking by average error is informative but not sufficient. A difference in RMSE or MAE does not automatically imply a statistically meaningful performance gap. The Diebold--Mariano test addresses this issue by comparing the loss differential of two forecast series under the null hypothesis of equal predictive accuracy \cite{diebold1995}.
+
+In the context of this thesis, the DM test plays two roles. First, it clarifies whether the strongest machine-learning configuration materially outperforms the DCC-GARCH benchmark. Second, it helps determine whether any apparent machine-learning advantage remains meaningful once compared to simple autoregressive or naive persistence baselines.
+
+This distinction is crucial for interpretation. Outperforming DCC-GARCH may justify the claim that flexible prediction methods add value relative to a classical benchmark. Failing to outperform a simple AR(1) baseline, however, would indicate that most forecastability is due to serial dependence in the target itself rather than rich cross-feature learning.
+
+\subsection{From dependency forecasting to investor signaling}
+
+A thesis focused purely on forecasting rolling correlation would already have a valid academic contribution. However, the practical motivation behind the present study requires an additional step. If investors are to benefit from crypto-derived information, that information must be translated into a decision-relevant object.
+
+This is why the thesis introduces a second layer: an investor warning signal. Instead of asking whether the next-day return of a conventional asset will be positive or negative in a simplistic sense, the signal layer asks whether the next day is likely to belong to a \emph{stress regime}. This formulation is better aligned with the practical problem of risk reduction. Investors do not need a perfect classifier of every daily move; they need a timely warning that the environment is deteriorating.
+
+The move from dependency forecasting to stress signaling also reflects a broader methodological insight. A model that is scientifically useful may not be directly tradable, and a model that is directly tradable may fail to explain much. By separating the two tasks, the thesis creates a transparent bridge between academic forecasting and applied portfolio risk management.
+
+\subsection{Positioning of the present thesis}
+
+The present thesis is positioned at the intersection of financial econometrics, machine learning, and applied risk analysis. It does not claim that cryptocurrency data alone can solve market timing. Instead, it examines a more defensible and intellectually coherent claim: that cryptocurrency dynamics contain information about changing intermarket dependencies, and that these dependency forecasts can be used to derive a modest but meaningful early warning signal for conventional markets.
+
+This positioning matters for the final interpretation. The strongest contribution of the thesis lies in the forecastability of dynamic dependence and in the careful comparison between persistence baselines, machine-learning models, and a DCC-GARCH benchmark. The investor signal layer extends that contribution into a practical direction without overstating what the empirical evidence can support.

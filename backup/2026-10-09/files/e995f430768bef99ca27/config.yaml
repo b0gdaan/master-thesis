@@ -1,0 +1,49 @@
+base_dir: "D:/clode9"
+
+# Data window
+start_date: "2016-01-01"
+end_date: null
+
+# For reproducibility (web source access date)
+yahoo_access_date: "2026-01-01"
+
+assets:
+  crypto:
+    - "BTC-USD"
+    - "ETH-USD"
+  traditional:
+    - "^GSPC"
+    - "^IXIC"
+    - "GLD"
+    - "SLV"
+    - "UUP"
+
+# Pair setup
+base_asset: "BTC-USD"
+extra_assets:
+  - "ETH-USD"   # crypto-crypto dependency
+
+# Dependency definition: rolling correlation windows (sensitivity analysis)
+rolling_windows: [14, 30, 60, 90]
+
+# Forecast settings
+forecast_horizon: 1
+
+# Target transform (recommended for correlations, stabilizes variance)
+use_fisher_transform: true
+
+# Econometric benchmark (Variant A: DCC-GARCH)
+use_dcc_garch: true
+
+# Walk-forward evaluation (expanding window)
+min_train_size: 800
+refit_every: 20
+
+# Diebold–Mariano test (Newey–West lag; for h=1, 0 is standard)
+dm_nw_lag: 0
+
+random_state: 42
+use_xgboost: true
+
+# XGBoost device: "cuda" for GPU, "cpu" for CPU
+xgb_device: "cuda"

@@ -1,0 +1,15 @@
+{
+  "n_days_prices": 3016,
+  "n_days_returns": 3015,
+  "start": "2017-11-09",
+  "end": "2026-04-09",
+  "tickers": [
+    "BTC-USD",
+    "ETH-USD",
+    "GLD",
+    "SLV",
+    "UUP",
+    "^GSPC",
+    "^IXIC"
+  ]
+}

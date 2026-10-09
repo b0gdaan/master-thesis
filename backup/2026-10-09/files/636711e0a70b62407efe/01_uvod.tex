@@ -1,0 +1,34 @@
+\section{Introduction}
+
+\subsection{Motivation and research context}
+
+The progressive integration of cryptocurrency markets into the global financial system has elevated them from a technological experiment to a substantive channel of cross-market risk transmission. Bitcoin, in particular, has become a continuously traded, high-visibility asset whose price dynamics attract attention not only from crypto-native participants but also from institutional portfolio managers, macro strategists, and regulatory observers. As the market infrastructure matures and institutional participation deepens, a consequential research question emerges: does information embedded in cryptocurrency price dynamics carry predictive content for future conditions in conventional asset classes such as equities, metals, or currency-related instruments?
+
+This thesis addresses that question by investigating \emph{time-varying intermarket dependency}. Rather than attempting to forecast price levels or returns directly, the analysis models the evolving relationship between Bitcoin and conventional assets through rolling correlation structures and examines whether those structures are forecastable in a rigorous out-of-sample framework. The distinction is methodologically important. Cross-market correlation is well documented to be non-stationary, exhibiting pronounced temporal variation in periods characterized by liquidity stress, inflationary pressure, monetary tightening, or abrupt transitions in investor risk appetite. Under such conditions, the sign and magnitude of intermarket linkages may change at rates that conventional long-horizon static diversification assumptions fail to accommodate.
+
+The practical motivation is equally compelling. A risk-oriented portfolio manager does not require a precise one-day-ahead return forecast to derive actionable intelligence. In many risk-management contexts, the more important information concerns early recognition that the market environment is undergoing a structural shift---that co-movement patterns are changing and that the conditional probability of a stress episode in conventional asset markets is rising. If cryptocurrency-derived information contributes measurably to such early-warning capacity, then even a modest and statistically bounded forecasting advantage constitutes a meaningful input to quantitative risk management.
+
+\subsection{Research questions}
+
+The central research problem is decomposed into two complementary layers. The first layer is scientific and methodological: are time-varying intermarket dependencies between Bitcoin and conventional assets forecastable in a disciplined out-of-sample framework, and how do machine-learning models perform relative to classical econometric benchmarks under rigorous walk-forward evaluation? The second layer is applied: can dependency forecasts derived from cryptocurrency dynamics be converted into a market-relevant warning signal capable of providing timely identification of elevated downside risk in conventional markets?
+
+More specifically, the thesis addresses the following research questions:
+
+\begin{enumerate}
+    \item Is the rolling dependency between Bitcoin and conventional assets forecastable out of sample?
+    \item Do machine-learning models outperform a leakage-safe DCC-GARCH benchmark?
+    \item Do machine-learning models add value beyond simple persistence-based baselines such as AR1?
+    \item Can crypto-derived dependency forecasts be converted into a practically useful stress-warning signal for conventional markets?
+\end{enumerate}
+
+\subsection{Contributions of the thesis}
+
+To address these questions, the thesis constructs a reproducible, modular forecasting pipeline implemented in Python. The pipeline ingests price data, computes log returns, constructs rolling-correlation targets across multiple window lengths, engineers lagged and volatility-based predictors, and evaluates a range of models within a walk-forward experimental design. The model set encompasses simple persistence benchmarks, regularized linear methods, tree-based ensemble methods, XGBoost, and a leakage-safe implementation of the DCC-GARCH benchmark. A second, investor-oriented layer is superimposed on the dependency-forecasting stage; this layer classifies stress regimes for conventional assets on the basis of crypto-derived features and forecasted dependency dynamics.
+
+The empirical findings support a substantive but carefully bounded conclusion. Out-of-sample dependency forecasting is feasible; the target is not unpredictable noise. However, the dominant source of predictability is the strong serial persistence inherent in the dependency process itself, and consequently the most competitive baseline models are autoregressive and naive persistence variants. This result is not a deficiency of the framework; it is a substantive empirical finding. It establishes that machine-learning value in this context is incremental and comparative rather than transformative, and that any claim of dramatic forecasting gains must be evaluated against appropriately strong persistence baselines. The second-layer signal model demonstrates moderate but statistically meaningful predictive value, functioning most effectively as an auxiliary risk filter rather than as a comprehensive directional predictor.
+
+The contribution of the thesis is therefore threefold. First, it constructs a clean, reproducible framework for forecasting rolling intermarket dependency between cryptocurrency and conventional asset markets. Second, it provides a structured, methodologically rigorous comparison between classical econometric modeling and a representative set of machine-learning approaches under walk-forward evaluation. Third, it extends the dependency-forecasting analysis to an applied investor-warning layer, thereby establishing an explicit and transparent bridge between the statistical forecasting problem and a practically relevant decision-making context.
+
+\subsection{Thesis outline}
+
+The remainder of the thesis is organized as follows. Section~2 reviews the theoretical foundations of time-varying dependence modeling, financial contagion, machine-learning forecasting methods, and the statistical framework for model comparison. Section~3 presents the dataset, target construction methodology, feature engineering procedure, model specifications, and the evaluation framework. Section~4 reports the empirical results for both the dependency-forecasting layer and the investor signal layer. Section~5 interprets the findings in depth, examines what the results do and do not imply, and acknowledges the principal limitations of the study. Section~6 concludes and proposes directions for future research.

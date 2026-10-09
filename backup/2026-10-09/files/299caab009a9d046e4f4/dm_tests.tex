@@ -1,0 +1,60 @@
+\begin{table}[H]
+\centering
+\small
+\caption{Diebold--Mariano tests for equal predictive accuracy}
+\label{tab:dm_tests}
+\begin{tabular}{llllrrl}
+\toprule
+Dependency & $w$ & Model & Benchmark & DM stat & $p$-value & Sign \\
+\midrule
+corr_BTC-USD_^GSPC & 14 & Ridge & Naive_Last & -12.19 & <0.0001 & *** \\
+corr_BTC-USD_^GSPC & 14 & Ridge & DCC_GARCH & 21.74 & <0.0001 & *** \\
+corr_BTC-USD_^GSPC & 30 & Ridge & Naive_Last & -10.41 & <0.0001 & *** \\
+corr_BTC-USD_^GSPC & 30 & Ridge & DCC_GARCH & 25.51 & <0.0001 & *** \\
+corr_BTC-USD_^GSPC & 60 & Ridge & Naive_Last & -9.26 & <0.0001 & *** \\
+corr_BTC-USD_^GSPC & 60 & Ridge & DCC_GARCH & 33.23 & <0.0001 & *** \\
+corr_BTC-USD_^GSPC & 90 & Ridge & Naive_Last & -8.33 & <0.0001 & *** \\
+corr_BTC-USD_^GSPC & 90 & Ridge & DCC_GARCH & 23.49 & <0.0001 & *** \\
+corr_BTC-USD_^IXIC & 14 & Ridge & Naive_Last & -12.58 & <0.0001 & *** \\
+corr_BTC-USD_^IXIC & 14 & Ridge & DCC_GARCH & 21.94 & <0.0001 & *** \\
+corr_BTC-USD_^IXIC & 30 & Ridge & Naive_Last & -10.36 & <0.0001 & *** \\
+corr_BTC-USD_^IXIC & 30 & Ridge & DCC_GARCH & 23.86 & <0.0001 & *** \\
+corr_BTC-USD_^IXIC & 60 & Ridge & Naive_Last & -9.86 & <0.0001 & *** \\
+corr_BTC-USD_^IXIC & 60 & Ridge & DCC_GARCH & 30.13 & <0.0001 & *** \\
+corr_BTC-USD_^IXIC & 90 & Ridge & Naive_Last & -8.68 & <0.0001 & *** \\
+corr_BTC-USD_^IXIC & 90 & Ridge & DCC_GARCH & 19.30 & <0.0001 & *** \\
+corr_BTC-USD_GLD & 14 & Ridge & Naive_Last & -11.31 & <0.0001 & *** \\
+corr_BTC-USD_GLD & 14 & Ridge & DCC_GARCH & 19.73 & <0.0001 & *** \\
+corr_BTC-USD_GLD & 30 & ElasticNet & Naive_Last & -10.04 & <0.0001 & *** \\
+corr_BTC-USD_GLD & 30 & ElasticNet & DCC_GARCH & 28.83 & <0.0001 & *** \\
+corr_BTC-USD_GLD & 60 & Ridge & Naive_Last & -9.15 & <0.0001 & *** \\
+corr_BTC-USD_GLD & 60 & Ridge & DCC_GARCH & 28.96 & <0.0001 & *** \\
+corr_BTC-USD_GLD & 90 & Ridge & Naive_Last & -8.05 & <0.0001 & *** \\
+corr_BTC-USD_GLD & 90 & Ridge & DCC_GARCH & 22.85 & <0.0001 & *** \\
+corr_BTC-USD_SLV & 14 & Ridge & Naive_Last & -12.40 & <0.0001 & *** \\
+corr_BTC-USD_SLV & 14 & Ridge & DCC_GARCH & 25.02 & <0.0001 & *** \\
+corr_BTC-USD_SLV & 30 & Ridge & Naive_Last & -12.29 & <0.0001 & *** \\
+corr_BTC-USD_SLV & 30 & Ridge & DCC_GARCH & 32.35 & <0.0001 & *** \\
+corr_BTC-USD_SLV & 60 & Ridge & Naive_Last & -11.05 & <0.0001 & *** \\
+corr_BTC-USD_SLV & 60 & Ridge & DCC_GARCH & 32.37 & <0.0001 & *** \\
+corr_BTC-USD_SLV & 90 & Ridge & Naive_Last & -9.69 & <0.0001 & *** \\
+corr_BTC-USD_SLV & 90 & Ridge & DCC_GARCH & 33.62 & <0.0001 & *** \\
+corr_BTC-USD_UUP & 14 & Ridge & Naive_Last & -12.81 & <0.0001 & *** \\
+corr_BTC-USD_UUP & 14 & Ridge & DCC_GARCH & 23.19 & <0.0001 & *** \\
+corr_BTC-USD_UUP & 30 & ElasticNet & Naive_Last & -12.03 & <0.0001 & *** \\
+corr_BTC-USD_UUP & 30 & ElasticNet & DCC_GARCH & 22.17 & <0.0001 & *** \\
+corr_BTC-USD_UUP & 60 & Ridge & Naive_Last & -10.30 & <0.0001 & *** \\
+corr_BTC-USD_UUP & 60 & Ridge & DCC_GARCH & 23.19 & <0.0001 & *** \\
+corr_BTC-USD_UUP & 90 & Ridge & Naive_Last & -9.96 & <0.0001 & *** \\
+corr_BTC-USD_UUP & 90 & Ridge & DCC_GARCH & 21.89 & <0.0001 & *** \\
+corr_BTC-USD_ETH-USD & 14 & Ridge & Naive_Last & -10.35 & <0.0001 & *** \\
+corr_BTC-USD_ETH-USD & 14 & Ridge & DCC_GARCH & 21.19 & <0.0001 & *** \\
+corr_BTC-USD_ETH-USD & 30 & Ridge & Naive_Last & -10.81 & <0.0001 & *** \\
+corr_BTC-USD_ETH-USD & 30 & Ridge & DCC_GARCH & 21.63 & <0.0001 & *** \\
+corr_BTC-USD_ETH-USD & 60 & Ridge & Naive_Last & -8.25 & <0.0001 & *** \\
+corr_BTC-USD_ETH-USD & 60 & Ridge & DCC_GARCH & 20.62 & <0.0001 & *** \\
+corr_BTC-USD_ETH-USD & 90 & Ridge & Naive_Last & -5.79 & <0.0001 & *** \\
+corr_BTC-USD_ETH-USD & 90 & Ridge & DCC_GARCH & 24.81 & <0.0001 & *** \\
+\bottomrule
+\end{tabular}
+\end{table}

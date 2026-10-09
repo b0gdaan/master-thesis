@@ -1,0 +1,370 @@
+% Презентација за одбрану мастер рада.
+% Заснована на finbeamer класи (github.com/elektrotehnika/finlatex),
+% коју је ментор препоручио 1. марта 2026.
+%
+% Компилација (latexmk не ради без Perl-а):
+%     pdflatex -interaction=nonstopmode presentation.tex
+%     pdflatex -interaction=nonstopmode presentation.tex
+%
+\documentclass[aspectratio=169]{beamer}
+
+\usepackage[T1, T2A]{fontenc}
+\usepackage[english, serbianc]{babel}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+% ── Боје Универзитета ────────────────────────────────────────────────────────
+\definecolor{UniBurgundy}{HTML}{970B30}
+\definecolor{UniBurgundyDark}{HTML}{5C071E}
+\definecolor{UniRose}{HTML}{F4E9EC}
+\definecolor{UniInk}{HTML}{241F20}
+\definecolor{UniMuted}{HTML}{6D6265}
+
+% A clean university treatment: the burgundy of the official mark is the only
+% structural accent, while charts retain their own analytical colour scales.
+\usetheme{default}
+\setbeamercolor{normal text}{fg=UniInk,bg=white}
+\setbeamercolor{structure}{fg=UniBurgundy}
+\setbeamercolor{frametitle}{fg=white,bg=UniBurgundy}
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+\setbeamercolor{title}{fg=UniBurgundy}
+\setbeamercolor{author}{fg=UniInk}
+\setbeamercolor{date}{fg=UniMuted}
+\setbeamercolor{section in toc}{fg=UniBurgundy}
+\setbeamercolor{subsection in toc}{fg=UniMuted}
+\setbeamercolor{itemize item}{fg=UniBurgundy}
+\setbeamercolor{itemize subitem}{fg=UniBurgundy}
+\setbeamercolor{enumerate item}{fg=UniBurgundy}
+\setbeamercolor{block title}{fg=white,bg=UniBurgundy}
+\setbeamercolor{block body}{fg=UniInk,bg=UniRose}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{caption}{\insertcaption}
+\setbeamertemplate{frametitle}{\nointerlineskip\hbox{\begin{beamercolorbox}[wd=\paperwidth,ht=0.82cm,dp=0.16cm,leftskip=0.55cm]{frametitle}\usebeamerfont{frametitle}\insertframetitle\end{beamercolorbox}}}
+
+% ── Нумерација слајдова ──────────────────────────────────────────────────────
+\newcommand\numbered{\setbeamertemplate{footline}{\leavevmode\hbox{\begin{beamercolorbox}[wd=\paperwidth,ht=.34cm,dp=.12cm,rightskip=.38cm]{author in head/foot}\color{UniBurgundy}\scriptsize\hfill\insertframenumber\,/\,\inserttotalframenumber\end{beamercolorbox}}}}
+\newcommand\samenumbered{\numbered\addtocounter{framenumber}{-1}}
+\newcommand\unnumbered{\setbeamertemplate{footline}{}\addtocounter{framenumber}{-1}}
+
+% ── Лого ─────────────────────────────────────────────────────────────────────
+% Користи се НОВИ лого Универзитета (исти као у раду), а не стари грб из
+% шаблона — студентска служба је 11. јуна изричито упозорила да се рад не сме
+% штампати са старим грбом.
+\newcommand{\titlelogouni}{\def\titlelogo{\begin{figure}\includegraphics[height=52pt]{./slike/grb/unikg_logo}\end{figure}}}
+\titlelogouni
+
+\newcommand{\footlogo}[1]{\setbeamertemplate{background canvas}{%
+\ifnum\insertframenumber>0
+    \begin{tikzpicture}[overlay, remember picture]
+        \node[anchor=south west] at (current page.south west) {\includegraphics[width=20pt]{#1}};
+    \end{tikzpicture}%
+\fi}}
+\footlogo{slike/grb/unikg_logo.png}
+
+% ── Подаци о раду ────────────────────────────────────────────────────────────
+\title{\large Предвиђање временски променљивих међутржишних зависности\\између криптовалута и традиционалне имовине\\применом машинског учења}
+\author{Богдан Бабаев\texorpdfstring{\vspace{-1.5em}}{}}
+\institute{\textbf{Мастер академске студије --- Вештачка интелигенција}\\Универзитет у Крагујевцу%
+\vspace{4pt}\titlelogo\vspace{-12pt}}
+\date{Крагујевац, 10. септембар 2026.}
+
+\newcommand{\FIG}{../outputs/figures}
+
+\begin{document}
+\numbered
+
+{\unnumbered
+\begin{frame}[plain]
+    \centering
+    \vspace{0.45cm}
+    {\color{UniBurgundy}\large Предвиђање временски променљивих међутржишних зависности\\
+    између криптовалута и традиционалне имовине\\
+    применом машинског учења\par}
+    \vspace{0.55cm}
+    {\large Богдан Бабаев\par}
+    \vspace{0.12cm}
+    {\small\textbf{Мастер академске студије --- Вештачка интелигенција}\\
+    Универзитет у Крагујевцу\par}
+    \vspace{0.18cm}
+    {\small Ментор: ред. проф. др Владимир М. Миловановић\par}
+    \vspace{0.22cm}
+    \includegraphics[height=52pt]{./slike/grb/unikg_logo.png}\par
+    \vfill
+    {\color{UniMuted}\small Крагујевац, 10. септембар 2026.}
+\end{frame}}
+
+\section*{Садржај}
+\begin{frame}{\secname}
+    \begin{columns}[c]
+        \begin{column}{0.72\linewidth}
+            \tableofcontents[hideallsubsections]
+        \end{column}
+        \begin{column}{0.28\linewidth}
+            \centering
+            \includegraphics[width=0.78\linewidth]{slike/qr/master_thesis_site_qr.png}\\[4pt]
+            {\scriptsize Интерактивна презентација рада}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Проблем}
+
+\begin{frame}{Зашто прогнозирати зависност}
+    \begin{itemize}
+        \item Корелација је основа диверсификације, хеџинга и портфолио-ризика, док је анализа средње вредности и варијансе често третира као константу
+        \item Она није константна. Корелације асиметрично реагују на лоше вести и расту када тржишта падају, баш када је диверсификација најпотребнија
+        \item Bitcoin додатно наглашава проблем: њиме се тргује глобално и непрекидно, а његова улога на спектру ризика није фиксна
+        \item Зато је предмет истраживања \textbf{променљива} величина. Једна корелација за цео узорак сакрила би важне тржишне режиме
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Истраживачка питања}
+    \begin{enumerate}
+        \item Да ли је склизна зависност прогнозива ван узорка?
+        \item Да ли машинско учење надмашује DCC-GARCH модел без цурења будућих информација?
+        \item Да ли надмашује једноставне моделе постојаности, као што је AR(1)?
+        \item Да ли прогнозе могу бити основа за сигнал упозорења на стрес за инвеститора?
+    \end{enumerate}
+\end{frame}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Подаци и циљна променљива}
+
+\begin{frame}{Подаци}
+    \begin{columns}
+        \begin{column}{0.46\linewidth}
+            \begin{itemize}
+                \item Основни актив: BTC-USD
+                \item Упарен са \^{}GSPC, \^{}IXIC, GLD, SLV, UUP и ETH-USD
+                \item Од 9. новембра 2017. до 16. маја 2026, 3\,053 дневна посматрања
+                \item Почетни датум одређује Ethereum, јер раније нема цена ETH-USD
+                \item Дневни лог-приноси, заједнички временски индекс и без празнина после поравнања
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.54\linewidth}
+            \includegraphics[width=\linewidth]{\FIG/eda_normalized_prices.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Циљна променљива: склизна зависност и Fisher-$z$}
+    \begin{columns}
+        \begin{column}{0.44\linewidth}
+            \begin{itemize}
+                \item Склизна Pearson-ова корелација у прозорима $w = 14, 30, 60, 90$ дана
+                \item Fisher-$z$ пресликава $(-1,1)$ на реалну праву, па се RMSE коректно понаша близу граница
+                \item Хоризонт прогнозе $h = 1$
+                \item 6 парова $\times$ 4 прозора $=$ \textbf{24 експеримента}
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.56\linewidth}
+            \includegraphics[width=\linewidth]{\FIG/eda_fisher_transform.png}
+            \medskip
+            {\scriptsize Ограничена корелација је лево, а Fisher-$z$ трансформација је десно.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Методологија}
+
+\begin{frame}{\secname}
+    \begin{description}
+        \item[Walk-forward] проширујући прозор, $\mathrm{min\_train} = 800$, поновно оцењивање на сваких 20 корака
+        \item[Модели] Naive, AR(1), HAR, Ridge, ElasticNet, RF, GBM, XGBoost и Ensemble
+        \item[Референтни модел] DCC-GARCH(1,1), поново оцењен унутар петље
+        \item[Тестирање] Diebold--Mariano тест на упареним разликама губитка
+    \end{description}
+    \bigskip
+    \begin{itemize}
+        \item Сваки корак који би могао открити будућност --- конструкција циља, поравнање обележја, оцена референтног модела и генерисање сигнала --- извршава се \emph{унутар} петље
+        \item Хиперпараметри су једном изабрани временски унакрсном валидацијом за BTC--S\&P\,500, $w=30$; тај репрезентативни случај је зато истраживачки, а не независна потврдна оцена
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Репрезентативна прогноза}
+    \begin{center}
+        \includegraphics[width=0.70\linewidth]{\FIG/thesis_forecast_corr_BTC-USD_^GSPC_w30_fisher_z.png}
+    \end{center}
+    \vspace{-4pt}
+    {\scriptsize Bitcoin--S\&P\,500, $w = 30$. Модели прате путању, а грешке се групишу при променама режима.}
+\end{frame}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Резултати}
+
+\begin{frame}{Рангирање модела}
+    \small
+    \begin{center}
+    \begin{tabular}{lrrr}
+        \toprule
+        Модел & RMSE & MAE & $R^2$ \\
+        \midrule
+        Ridge              & \textbf{0.0656} & 0.0419 & 0.9432 \\
+        AR(1)              & 0.0659 & 0.0403 & 0.9424 \\
+        HAR                & 0.0659 & 0.0405 & 0.9424 \\
+        Naive (последња вредност) & 0.0666 & \textbf{0.0395} & 0.9412 \\
+        \midrule
+        GBM                & 0.0886 & 0.0625 & 0.8983 \\
+        Random Forest      & 0.0905 & 0.0636 & 0.8936 \\
+        XGBoost            & 0.1241 & 0.0864 & 0.7923 \\
+        \midrule
+        DCC-GARCH          & 0.2136 & 0.1683 & 0.3715 \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \medskip
+    {\small Разлика од 0.0003 на врху није значајна: сваки bootstrap интервал има ширину око 0.009, а по MAE метрици Naive је први. Табела подржава \textbf{групе модела}, а не редослед унутар најбоље групе.}
+\end{frame}
+
+\begin{frame}{Зашто постојаност побеђује}
+    \begin{columns}
+        \begin{column}{0.55\linewidth}
+            \begin{itemize}
+                \item Склизна корелација од 30 дана дели 29 од 30 посматрања са јучерашњом вредношћу
+                \item После Fisher-$z$ трансформације први лаг већ обухвата већину прогнозиве варијансе
+                \item Упарени DM, Ridge наспрам Naive: \textbf{6} победа, \textbf{9} пораза и \textbf{9} нерешених од 24 случаја
+                \item GBM, Random Forest и XGBoost имају већи RMSE од Naive модела у свих 24 експеримента
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.45\linewidth}
+            \includegraphics[width=\linewidth]{\FIG/model_improvement_over_naive.png}
+        \end{column}
+    \end{columns}
+    \medskip
+    {\small Зато $R^2 = 0.94$ говори више о циљној променљивој него о моделу.}
+\end{frame}
+
+\begin{frame}{Аблација група обележја}
+    \scriptsize
+    \begin{center}
+    \begin{tabular}{lrrrr}
+        \toprule
+        Скуп обележја & \# & Ridge & Random Forest & XGBoost \\
+        \midrule
+        G1 само лаг зависности        &  1 & 0.0899 & 0.0986 & \textbf{0.0980} \\
+        G2 $+$ историја зависности    & 11 & \textbf{0.0649} & \textbf{0.0884} & 0.1030 \\
+        G3 $+$ приноси Bitcoin-а      & 20 & 0.0649 & 0.0891 & 0.1058 \\
+        G4 $+$ приноси повезаних актива & 29 & 0.0650 & 0.0902 & 0.1078 \\
+        G5 пуни модел                 & 32 & 0.0651 & 0.0910 & 0.1134 \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \normalsize
+    \medskip
+    \begin{itemize}
+        \item Једна колона, без међуактивних информација, већ даје Ridge $R^2 = 0.885$
+        \item Помаже само сопствена историја циља; од G2 надаље две трећине матрице обележја не додаје ништа
+        \item Код стабала сваки додати блок \emph{штети}: XGBoost се погоршава за 16\% од G1 до G5
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Машинско учење и DCC-GARCH}
+    \begin{columns}
+        \begin{column}{0.52\linewidth}
+            \includegraphics[width=\linewidth]{\FIG/dm_heatmap_Ridge_vs_DCC.png}
+        \end{column}
+        \begin{column}{0.48\linewidth}
+            \footnotesize
+            \begin{itemize}
+                \item Мањи RMSE у свим приказаним експериментима: 0.066 наспрам 0.214, приближно три пута мање
+                \item DM статистике са нултим лагом су описне, а не формални доказ значајности: преклапајући прозори аутокорелишу разлике губитка
+                \item DCC-GARCH процењује \emph{тренутну} условну корелацију, а циљ је изглађена склизна корелација, што уводи систематско кашњење
+                \item Традиционалне серије су такође прилагођене Bitcoin-овом седмодневном календару: око 30\% посматрања за GARCH компоненте су викенд-нуле
+            \end{itemize}
+            \normalsize
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Слој сигнала за инвеститора}
+    \begin{columns}
+        \begin{column}{0.48\linewidth}
+            \small
+            \begin{itemize}
+                \item Стресни дан: принос наредног дана испод $-0.75\,\sigma_t$; праг упозорења $\geq 0.55$
+                \item Logit у просеку: BA 0.511, F1\textsubscript{пад} 0.214, AUC 0.513
+                \item Најбољи случај: BTC--S\&P\,500, $w = 30$, BA 0.5308, F1 0.2430; максимум међу 20 конфигурација
+                \item Random Forest дегенерише (F1 0.042): вероватноће нису калибрисане и ретко прелазе праг
+            \end{itemize}
+            \normalsize
+        \end{column}
+        \begin{column}{0.52\linewidth}
+            \includegraphics[width=\linewidth]{\FIG/signal_corr_BTC-USD_^GSPC_w30.png}
+        \end{column}
+    \end{columns}
+    \medskip
+    {\tiny Регуларизовани Logit се боље генерализује од сложеног ансамбла: слаб сигнал и корелисани предиктори.}
+\end{frame}
+
+\begin{frame}{Да ли сигнал има практичну вредност?}
+    \small
+    \begin{center}
+    \begin{tabular}{lrrrr}
+        \toprule
+        Пар актива & Означено (bp) & Без сигнала (bp) & Разлика & Стопа сигнала (\%) \\
+        \midrule
+        BTC--S\&P 500  & 4.08 & 5.05 & $+0.96$ & 33.1 \\
+        BTC--NASDAQ    & 4.70 & 6.64 & $+1.94$ & 32.0 \\
+        BTC--злато     & 7.01 & 7.10 & $+0.08$ & 20.1 \\
+        BTC--сребро    & 10.23 & 10.13 & $-0.10$ & 26.4 \\
+        BTC--USD индекс & 0.57 & 0.89 & $+0.32$ & 31.4 \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \medskip
+    \begin{itemize}
+        \item Код два акцијска пара означени дани су у просеку лошији од дана без сигнала, што је и сврха сигнала
+        \item Означени приноси су и даље позитивни: узорак је растуће тржиште, па сигнал смањује изложеност релативно лошијим данима, а не предвиђа губитке
+        \item Резултати су пре трансакционих трошкова, уз промену позиције приближно сваког трећег дана
+    \end{itemize}
+\end{frame}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Закључци}
+
+\begin{frame}{Шта рад показује}
+    \begin{enumerate}
+        \item Временски променљива међутржишна зависност Bitcoin-а и традиционалних актива \textbf{јесте} прогнозива ван узорка: шест парова, четири прозора и строг walk-forward
+        \item Прогнозивост потиче из постојаности самог циља: један лаг зависности већ даје $R^2 = 0.885$
+        \item Машинско учење има мањи RMSE од DCC-GARCH модела без цурења информација у сваком приказаном експерименту, али је поређење описно; AR(1) није доследно надмашен
+        \item Слој сигнала је скроман додатни индикатор ризика, најјачи за широку изложеност акцијама, а не самостално правило темпирања
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Шта рад \emph{не} тврди}
+    \begin{itemize}
+        \item Bitcoin не предвиђа \emph{приносе} акција. Делимично предвиђа променљиву \emph{зависност} Bitcoin-а и акција, што је ужи и прецизнији исказ
+        \item Сигнал процењује вероватноћу повећаног ризика пада; не говори о смеру, величини ни времену кретања у означеном периоду
+        \item Најбоља конфигурација сигнала изабрана је међу двадесет, без корекције за вишеструка поређења, па је индикативна, а не потврђена хипотеза
+        \item Рад не показује да је DCC-GARCH лош модел за оно за шта је конструисан
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Ограничења и будући рад}
+    \begin{itemize}
+        \item Дневна учесталост и хоризонт од једног корака: ауторегресивна предност би требало да слаби са дужим хоризонтом
+        \item Pearson-ова склизна корелација је једина мера зависности; мера осетљива на репове тестирала би иста питања другачије
+        \item Једна основна криптовалута
+        \item Нема калибрације вероватноћа у слоју сигнала ни портфолио backtest-а са трансакционим трошковима
+        \item Потврдни рад треба да користи угнежђено walk-forward подешавање и HAC спецификацију која моделира преклапање склизних прозора
+    \end{itemize}
+    \bigskip
+    {\small Свако ограничење је природан правац наставка рада. Ниједно не поништава резултате у оквиру онога што је заиста тестирано.}
+\end{frame}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section*{Питања}
+{\setbeamertemplate{footline}{}
+\begin{frame}[noframenumbering]{\secname}
+    \centering
+    \vfill
+    \includegraphics[width=0.34\linewidth]{slike/qr/master_thesis_site_qr.png}\\[5pt]
+    {\small Интерактивна презентација рада}
+    \vfill
+\end{frame}}
+
+\end{document}

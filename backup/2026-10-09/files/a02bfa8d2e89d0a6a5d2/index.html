@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Thesis Copilot — RAG Q&A over a master's thesis</title>
+<meta name="description" content="A Retrieval-Augmented Generation assistant that answers questions about a master's thesis, grounded in the text with page citations. LangChain, Chroma, sentence-transformers, Streamlit." />
+<style>
+  :root {
+    --bg: #0d1117; --panel: #161b22; --border: #30363d;
+    --text: #e6edf3; --muted: #9da7b3;
+    --accent: #818cf8; --accent2: #c084fc;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+  header { padding: 72px 0 40px; text-align: center;
+    background: radial-gradient(900px 380px at 50% -120px, rgba(129,140,248,.18), transparent); }
+  .kicker { display: inline-block; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; margin-bottom: 18px; }
+  h1 { font-size: clamp(2rem, 6vw, 3rem); margin: 0 0 12px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .tagline { font-size: 1.15rem; color: var(--muted); max-width: 620px; margin: 0 auto 28px; }
+  .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 10px;
+    font-weight: 600; border: 1px solid var(--border); }
+  .btn.primary { background: linear-gradient(90deg, var(--accent), var(--accent2)); color: #0d1117; border: none; }
+  .btn.primary:hover, .btn:hover { text-decoration: none; filter: brightness(1.08); }
+  .btn.ghost { background: var(--panel); color: var(--text); }
+  .note { font-size: .85rem; color: var(--muted); margin-top: 14px; }
+  section { padding: 36px 0; border-top: 1px solid var(--border); }
+  h2 { font-size: 1.4rem; margin: 0 0 18px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+  .card h3 { margin: 0 0 6px; font-size: 1.05rem; }
+  .card p { margin: 0; color: var(--muted); font-size: .95rem; }
+  .pipe { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--muted); }
+  .step { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; font-size: .9rem; color: var(--text); }
+  .arrow { color: var(--accent); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { background: rgba(129,140,248,.12); border: 1px solid rgba(129,140,248,.35);
+    color: #c7cdfa; border-radius: 999px; padding: 5px 13px; font-size: .88rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; }
+  code, pre { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+  pre { background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px; overflow-x: auto; font-size: .88rem; }
+  .inline { background: var(--panel); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; font-size: .9em; }
+  footer { padding: 40px 0 64px; border-top: 1px solid var(--border); color: var(--muted); font-size: .9rem; text-align: center; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <span class="kicker">GenAI · Retrieval-Augmented Generation</span>
+    <h1>📈 Thesis Copilot</h1>
+    <p class="tagline">Ask a master's thesis anything — and get answers grounded in the text, with page citations.</p>
+    <div class="btns">
+      <a class="btn primary" href="https://huggingface.co/spaces/b0gdaan/thesis-copilot">🚀 Live demo</a>
+      <a class="btn ghost" href="https://github.com/b0gdaan/thesis-copilot">⌨︎ Source on GitHub</a>
+      <a class="btn ghost" href="https://b0gdaan.github.io/master-thesis/">📄 The thesis</a>
+    </div>
+    <p class="note">The live demo runs on Hugging Face Spaces. First load builds the search index (~1–2 min), then it's instant.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <h2>What it does</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Ingests</h3>
+        <p>Reads the 76-page thesis PDF + defense Q&amp;A, splits it into overlapping chunks, and stores local embeddings in Chroma — keeping page numbers for citations.</p>
+      </div>
+      <div class="card">
+        <h3>Retrieves</h3>
+        <p>Finds the most relevant passages for any question in <strong>English, Serbian, or Russian</strong> — the question and the thesis need not share a language.</p>
+      </div>
+      <div class="card">
+        <h3>Answers</h3>
+        <p>Generates a concise, cited answer with an LLM. With no API key it returns the top passages instead — semantic search runs fully offline.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How it works</h2>
+    <div class="pipe">
+      <span class="step">PDF + page no.</span><span class="arrow">→</span>
+      <span class="step">chunk</span><span class="arrow">→</span>
+      <span class="step">embed (multilingual)</span><span class="arrow">→</span>
+      <span class="step">Chroma</span><span class="arrow">→</span>
+      <span class="step">top-k retrieve</span><span class="arrow">→</span>
+      <span class="step">LLM + context</span><span class="arrow">→</span>
+      <span class="step">answer + citations</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Stack</h2>
+    <div class="chips">
+      <span class="chip">Python</span>
+      <span class="chip">LangChain</span>
+      <span class="chip">Chroma</span>
+      <span class="chip">sentence-transformers</span>
+      <span class="chip">PyMuPDF</span>
+      <span class="chip">Groq LLM</span>
+      <span class="chip">Streamlit</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Cross-lingual retrieval</h2>
+    <p style="color:var(--muted);margin-top:-6px">A Russian or Serbian question finds the right English passage:</p>
+    <table>
+      <thead><tr><th>Question</th><th>Top source found</th></tr></thead>
+      <tbody>
+        <tr><td><code>Which model had the best RMSE?</code></td><td>thesis.pdf p.29 — model-ranking table</td></tr>
+        <tr><td><code>Why does DCC-GARCH perform worst?</code></td><td>defense_script.md — “Why is DCC-GARCH weaker here?”</td></tr>
+        <tr><td><code>Почему простые модели обошли сложные?</code> (RU)</td><td>defense_script.md — “Why are simple models better than complex ones?”</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Run it locally</h2>
+    <pre><code>git clone https://github.com/b0gdaan/thesis-copilot
+cd thesis-copilot
+py -3.11 -m venv .venv &amp;&amp; .venv\Scripts\activate
+pip install -r requirements.txt
+python ingest.py
+streamlit run app.py</code></pre>
+    <p style="color:var(--muted)">Optional generated answers: drop a free <span class="inline">GROQ_API_KEY</span> into <span class="inline">.env</span> (see <span class="inline">.env.example</span>).</p>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    Built by <a href="https://github.com/b0gdaan">Bogdan Babaev</a> ·
+    <a href="https://github.com/b0gdaan/thesis-copilot">thesis-copilot</a> ·
+    <a href="https://github.com/b0gdaan/master-thesis">master-thesis</a>
+  </div>
+</footer>
+</body>
+</html>

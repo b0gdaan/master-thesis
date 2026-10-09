@@ -1,0 +1,149 @@
+﻿\section{Methodology}
+
+\subsection{Research design}
+
+The thesis adopts a layered research design. The first layer is a regression-style forecasting problem in which the target is the next value of a transformed rolling correlation series between Bitcoin and another asset. The second layer is a classification-style problem in which the output of the first layer, together with crypto-derived features, is used to estimate the probability of a stress day for the conventional asset. This structure mirrors the distinction between scientific measurement and practical action.
+
+The design is intentionally conservative. Rather than optimizing purely for in-sample fit, all important modeling decisions are embedded in a walk-forward evaluation framework. This includes target formation, feature alignment, benchmark estimation, and signal generation. The objective is to preserve temporal realism and minimize the risk of accidental look-ahead bias.
+
+\subsection{Asset universe and data source}
+
+The empirical analysis uses daily market data obtained through the \texttt{yfinance} interface \cite{yfinance2026}. Bitcoin, represented by \texttt{BTC-USD}, serves as the base cryptocurrency throughout the study. The comparison set includes the following assets:
+
+\begin{table}[H]
+    \centering
+    \caption{Asset universe used in the thesis.}
+    \label{tab:asset_universe}
+    \begin{tabular}{ll}
+        \toprule
+        Ticker & Interpretation \\
+        \midrule
+        \texttt{BTC-USD} & Bitcoin, base cryptocurrency \\
+        \texttt{ETH-USD} & Ethereum, crypto reference asset \\
+        \texttt{\^{}GSPC} & S\&P 500 index \\
+        \texttt{\^{}IXIC} & NASDAQ Composite index \\
+        \texttt{GLD} & Gold ETF \\
+        \texttt{SLV} & Silver ETF \\
+        \texttt{UUP} & U.S. Dollar Index ETF proxy \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+This universe was chosen for substantive rather than purely technical reasons. The two equity indices represent broad U.S. risk assets. Gold and silver ETFs capture precious-metal exposure, often linked to inflation concerns, safe-haven narratives, or commodity sentiment. The dollar index proxy reflects global dollar strength and defensive macro positioning. Ethereum is included as an additional crypto benchmark in order to contrast cross-crypto dependency with crypto-to-conventional dependency.
+
+\subsection{Return construction and preprocessing}
+
+All price series are converted into daily log returns. Log returns are preferred because they are additive over time and are standard in both econometric modeling and machine-learning pipelines for financial time series. Missing observations are handled through alignment across available dates, and all downstream targets and features are built only after the return matrix is synchronized.
+
+A cache-aware preprocessing workflow is used in the codebase. If raw price data already exist, they are reused to guarantee reproducibility. If the structure of prices or the ticker universe changes, the processed returns are recomputed. This avoids stale intermediary files while keeping the workflow efficient.
+
+\subsection{Target construction: rolling dependency}
+
+For each pair consisting of Bitcoin and another asset, a rolling correlation series is computed over windows of 14, 30, 60, and 90 trading days. Let $r_t^{(b)}$ denote the return of Bitcoin and $r_t^{(a)}$ the return of the other asset. For a given window length $w$, the dependency target at time $t$ is
+\[
+\rho_t^{(w)} = \text{corr}(r_{t-w+1:t}^{(b)}, r_{t-w+1:t}^{(a)}).
+\]
+
+The resulting series is then transformed using the Fisher transformation
+\[
+z_t^{(w)} = \frac{1}{2}\log\left(\frac{1 + \rho_t^{(w)}}{1 - \rho_t^{(w)}}\right),
+\]
+which maps the bounded correlation domain into an unbounded real-valued space. In the empirical implementation, the one-step-ahead value of the transformed dependency series is used as the main forecasting target.
+
+A key implication of this design is that the target is already a smooth object. It is therefore much more persistent than a raw return series. This persistence is one of the defining empirical features of the thesis and is directly reflected in the later results.
+
+\subsection{Feature engineering}
+
+The feature set is intentionally structured around interpretable financial quantities. The goal is not to create an excessively large black-box predictor matrix, but to engineer a compact set of variables that can plausibly affect future dependency dynamics.
+
+The features fall into several groups:
+
+\begin{table}[H]
+    \centering
+    \caption{Main groups of predictors used in the dependency-forecasting layer.}
+    \label{tab:feature_groups}
+    \begin{tabular}{ll}
+        \toprule
+        Group & Description \\
+        \midrule
+        Dependency lags & Recent values of the rolling dependency target \\
+        Return lags & Lagged returns of Bitcoin and the paired asset \\
+        Rolling means & Local average return over short windows \\
+        Rolling volatility & Local standard deviation of returns \\
+        Spread features & Absolute and signed gaps between crypto and asset behavior \\
+        Interaction-like structure & Implicitly captured by tree-based models \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Dependency lags are especially important because the target is persistent by construction. Return lags allow the models to react to recent directional information. Rolling means and volatility measures summarize local regime conditions. Spread-style features capture whether Bitcoin is currently moving more aggressively than the paired asset and whether that divergence might precede a change in dependency.
+
+The investor signal layer inherits the best dependency forecast available for the pair and combines it with crypto-derived predictors to form a smaller classification-oriented feature set. In practice, this means that the second layer is informed by both the current crypto state and the estimated direction of the dependency process.
+
+\subsection{Forecasting models}
+
+\subsubsection{Baseline models}
+
+Two simple baselines are included in every forecasting experiment. The first is \texttt{Naive\_Last}, which predicts the next dependency value using the most recent observed dependency. The second is \texttt{AR1}, which estimates a one-lag autoregressive structure. These baselines are essential because the target is persistent. Any more complex model must therefore justify itself relative to these very strong simple alternatives.
+
+\subsubsection{Regularized linear models}
+
+The linear machine-learning block includes Ridge and Elastic Net. Standardization is applied before fitting these models, since coefficient regularization depends on feature scaling. Ridge is expected to perform well when many predictors are weak but correlated. Elastic Net is more aggressive and can be advantageous if only a subset of variables contains stable information.
+
+\subsubsection{Tree ensembles}
+
+The non-linear block includes Random Forest, Gradient Boosting, and XGBoost. These models are fit in a walk-forward setting with periodic refits. In the implementation, XGBoost attempts GPU execution when available, but automatically falls back to CPU mode if the environment does not support the requested configuration. This makes the pipeline more robust and prevents a hardware-specific failure from invalidating the experiment.
+
+\subsubsection{DCC-GARCH benchmark}
+
+A leakage-safe DCC-GARCH walk-forward benchmark is implemented as a separate module in the project. This is a key methodological correction relative to many simplified comparisons found in exploratory work. Instead of fitting DCC over the full sample and then evaluating it as if it were out of sample, the benchmark is repeatedly re-estimated on the training window only, and forecasts are produced forward from that point. This makes the benchmark slower, but methodologically consistent.
+
+\subsection{Investor signal layer}
+
+The signal layer reframes the problem as an early warning classification task. The target is not generic next-day direction, but a \emph{stress day} indicator for the conventional asset. A stress day is defined relative to the distribution of negative returns, using a configurable sigma-based threshold. This target design is intentionally conservative and aligns better with the practical goal of downside protection.
+
+Three classifiers are evaluated in this layer: logistic regression, random-forest classification, and gradient-boosted classification. The probability output of each model is compared with a threshold to decide whether the investor should treat the next day as elevated-risk. This makes the output interpretable as a probability-guided warning rather than a binary black-box trade instruction.
+
+\subsection{Walk-forward estimation framework}
+
+All experiments use an expanding-window walk-forward design. Let the initial estimation sample contain the first $T_0$ observations. For each forecast origin $t \geq T_0$, the model is fit using observations up to time $t$, then used to produce a prediction for $t+1$. The process continues until the end of the sample. Periodic refitting is used to reduce computational burden while preserving causal ordering.
+
+This design has several benefits. It mirrors real forecasting conditions, supports fair benchmark comparisons, and generates a full time series of out-of-sample prediction errors. The latter is useful not only for average metrics, but also for rolling error diagnostics and Diebold--Mariano testing.
+
+\subsection{Evaluation metrics}
+
+For the dependency-forecasting layer, performance is evaluated using mean absolute error (MAE), root mean squared error (RMSE), and the out-of-sample coefficient of determination $R^2$. RMSE is emphasized in model ranking because it penalizes large deviations more strongly and is well suited to smooth continuous targets.
+
+For the investor signal layer, the primary metrics are Balanced Accuracy, F1 score for the downside class, area under the ROC curve (AUC), and exit rate. Balanced Accuracy is especially important because stress-day classification is an imbalanced problem. F1 for the downside class focuses attention on the quality of negative-event detection. Exit rate measures how often the signal would remove the investor from the market, thereby connecting prediction quality with practical usage frequency.
+
+\subsection{Model comparison methodology}
+
+Average metrics alone can be misleading when model differences are small. The thesis therefore applies the Diebold--Mariano test to compare forecast loss series between selected model pairs. The main comparison of interest is between the strongest non-benchmark machine-learning model and the DCC-GARCH benchmark. A secondary comparison contrasts that machine-learning model with the naive persistence baseline.
+
+This setup is intentionally transparent. The thesis does not hide the fact that the best overall model may be a simple baseline. Instead, the DM framework is used to distinguish between three levels of claim:
+
+\begin{enumerate}
+    \item whether dependency is forecastable at all,
+    \item whether machine learning improves upon a classical econometric benchmark,
+    \item whether machine learning adds value beyond persistence.
+\end{enumerate}
+
+The empirical conclusions of the thesis are organized around precisely these three levels.
+
+\subsection{Implementation and reproducibility}
+
+The entire workflow is implemented in Python and organized as a modular codebase. The main pipeline coordinates loading configuration files, computing returns, generating targets, building features, fitting models, producing prediction files, saving figures, and exporting LaTeX-ready tables. Dedicated modules are used for DCC walk-forward benchmarking, notebook support, and the investor signal layer. This modular structure is important because the thesis is not merely a conceptual study but a reproducible computational artifact.
+
+Outputs are stored in a structured directory hierarchy. Metrics, DM tests, and signal results are saved as CSV files; thesis-ready tables are exported to LaTeX; and visual diagnostics are saved as figures. This design reduces manual post-processing and helps align the research workflow with the writing workflow.
+
+\subsection{Methodological expectations}
+
+Before turning to the empirical results, it is useful to clarify what would count as success. Success in this thesis does not mean discovering a model that perfectly predicts all conventional markets from Bitcoin. That would be an unrealistic standard for any serious financial forecasting study. A more appropriate standard is the following:
+
+\begin{itemize}
+    \item the dependency target should display out-of-sample forecastability,
+    \item the benchmark comparison should reveal whether machine learning improves on DCC-GARCH,
+    \item the investor signal layer should provide non-random and practically interpretable stress warnings.
+\end{itemize}
+
+These criteria are modest but scientifically defensible. They allow the thesis to make claims that are both empirically supported and intellectually honest.
