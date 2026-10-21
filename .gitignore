@@ -87,3 +87,15 @@ presentation/*.toc
 # OS
 .DS_Store
 Thumbs.db
+
+# Local credentials and development artifacts
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore

@@ -11,15 +11,22 @@ This project investigates whether cryptocurrency market dynamics can be used to 
 time-varying dependency structures between Bitcoin and conventional financial assets —
 equity indices, precious-metal ETFs, and the U.S. dollar index.
 
-A fully reproducible machine-learning pipeline is developed covering:
+The research pipeline covers:
 data acquisition, return construction, rolling-correlation target generation,
 feature engineering, walk-forward model evaluation, and benchmarking against
-a leakage-safe DCC-GARCH(1,1) specification.
+a walk-forward DCC-GARCH(1,1) specification.
 
-**Key finding:** Intermarket dependency is forecastable out of sample. Ridge, AR(1), and HAR form
-a near-indistinguishable top cluster (avg RMSE 0.0656–0.0659, R² ≈ 0.942–0.943), confirming
-that serial persistence is the dominant driver. All ML models substantially outperform the
-DCC-GARCH econometric benchmark (avg RMSE 0.2136).
+**Reported results:** Ridge, AR(1) and HAR form a close cluster by average RMSE
+(0.0656–0.0659), versus 0.0666 for the last-value baseline. The last-value baseline
+has the lowest average MAE (0.0395). Strong persistence in overlapping rolling
+correlations explains much of the high R². DCC-GARCH has higher average RMSE
+(0.2136), but forecasts conditional correlation rather than the same rolling
+Pearson statistic. The stress classifier is near chance; the study does not
+establish a profitable trading strategy.
+
+Start with [the focused code repository](https://github.com/b0gdaan/master_rad)
+for the pipeline, or `thesis/` here for the research text. Results above summarize
+the committed thesis, not a newly reproduced experiment.
 
 ---
 
@@ -35,7 +42,8 @@ DCC-GARCH econometric benchmark (avg RMSE 0.2136).
 | SLV | iShares Silver Trust ETF | Precious metal |
 | UUP | Invesco US Dollar Index | Currency |
 
-Daily prices 2017–2026 · source: Yahoo Finance
+Configured download window: 2016-01-01 to 2026-05-17 · source: Yahoo Finance.
+Effective samples depend on asset coverage, alignment and rolling-window warm-up.
 
 ---
 
@@ -45,8 +53,8 @@ Daily prices 2017–2026 · source: Yahoo Finance
 - **Transform**: Fisher-z (arctanh) for variance stabilization
 - **Features**: momentum, volatility, return-based predictors derived from the dependency series
 - **Models**: Naive_Last, AR(1), HAR, ElasticNet, Ridge, Adaptive Ensemble, Random Forest, GBM, XGBoost vs DCC-GARCH(1,1) benchmark (10 specifications total)
-- **Evaluation**: walk-forward expanding window (no data leakage)
-- **Statistical tests**: Diebold-Mariano with Newey-West correction
+- **Evaluation**: walk-forward expanding window; preprocessing and feature availability must respect each forecast date
+- **Statistical tests**: Diebold-Mariano with configurable variance lag (`dm_nw_lag`); the committed configuration uses lag 0, so serial dependence requires careful interpretation
 - **Signal layer**: logistic classifier for investor stress-day detection on traditional assets
 
 ---
@@ -101,7 +109,7 @@ Daily prices 2017–2026 · source: Yahoo Finance
 git clone https://github.com/b0gdaan/master-thesis.git
 cd master-thesis
 
-# 2. Create virtual environment (Python 3.14 recommended)
+# 2. Create virtual environment (use a Python version compatible with requirements.txt)
 python -m venv .venv
 .venv\Scripts\activate       # Windows
 # source .venv/bin/activate   # Linux / macOS
